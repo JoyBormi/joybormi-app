@@ -1,10 +1,22 @@
-import { Button, Text } from '@/components/ui';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
-import dayjs from 'dayjs';
+import dayjs, { extend } from 'dayjs';
+import localeData from 'dayjs/plugin/localeData';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import weekday from 'dayjs/plugin/weekday';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { Button } from '@/components/ui/button';
+import { Text } from '@/components/ui/text';
+import { useLanguage } from '@/hooks/common';
+import { LocaleConfig } from 'react-native-calendars';
+
+/* dayjs setup */
+extend(localeData);
+extend(weekday);
+extend(localizedFormat);
 
 interface CalendarRef {
   current: {
@@ -22,9 +34,34 @@ interface IStackHeaderProps {
 
 export const StackHeader: React.FC<IStackHeaderProps> = ({ options }) => {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
+
   const calendarRef = options.calendarRef;
-  const title = options?.title ?? dayjs().format('MMMM');
-  const year = options?.headerBackTitle ?? dayjs().format('YYYY');
+
+  /* ---- LocaleConfig is the ONLY locale source ---- */
+  const calendarLocale =
+    LocaleConfig.locales[currentLanguage] ?? LocaleConfig.locales.en;
+
+  /* weekdays from LocaleConfig */
+  const weekdays = calendarLocale.dayNamesShort;
+
+  // fallback in-case options is undefined
+  const date = new Date();
+  const yearFallback = date.getFullYear();
+  const monthIndexFallback = date.getMonth();
+
+  const rawYear = Number(options.headerBackTitle);
+  const year = Number.isNaN(rawYear) ? yearFallback : rawYear;
+
+  const monthIndexFromTitle =
+    typeof options.title === 'string'
+      ? LocaleConfig.locales.en.monthNames.indexOf(options.title)
+      : -1;
+
+  const monthIndex =
+    monthIndexFromTitle >= 0 ? monthIndexFromTitle : monthIndexFallback;
+
+  const title = calendarLocale.monthNames[monthIndex];
 
   return (
     <View className="bg-background border-b border-border">
@@ -34,8 +71,11 @@ export const StackHeader: React.FC<IStackHeaderProps> = ({ options }) => {
             <Text className="font-caption text-xs text-muted-foreground">
               {year}
             </Text>
-            <Text className="text-primary font-heading text-2xl">{title}</Text>
+            <Text className="text-primary font-heading capitalize">
+              {title}
+            </Text>
           </View>
+
           <Button
             size="sm"
             onPress={() =>
@@ -50,8 +90,11 @@ export const StackHeader: React.FC<IStackHeaderProps> = ({ options }) => {
       </SafeAreaView>
 
       <View className="flex-row justify-between py-2 px-8 gap-1">
-        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-          <Text key={day} className="font-caption font-regular">
+        {weekdays.map((day: string) => (
+          <Text
+            key={day}
+            className="text-caption capitalize text-muted-foreground"
+          >
             {day}
           </Text>
         ))}

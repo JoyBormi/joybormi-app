@@ -1,42 +1,36 @@
 import { Text } from '@/components/ui';
-import { useColorScheme } from '@/hooks/common';
+import { useColorScheme, useLanguage } from '@/hooks/common';
 import Icons from '@/lib/icons';
-import { formatMonth } from '@/utils/date';
-import { searchbox, StackHeader } from '@/views/calendars';
+import { StackHeader } from '@/views/calendars';
+import dayjs from 'dayjs';
 import { Stack, useGlobalSearchParams, useRouter } from 'expo-router';
-import React, { useCallback, useRef, useState } from 'react';
+import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import { SearchBarCommands } from 'react-native-screens';
+import { LocaleConfig } from 'react-native-calendars';
 
 export default function CalendarLayout() {
-  const { date, month } = useGlobalSearchParams<{
-    date: string;
-    month: string;
-  }>();
   const router = useRouter();
   const { colors } = useColorScheme();
-  const [showSearch, setShowSearch] = useState(false);
-  // Use the month parameter from the URL or calculate it from the date
-  const monthName = month || formatMonth(date);
+  const { currentLanguage } = useLanguage();
+  const { date, month } = useGlobalSearchParams<{
+    date: string;
+    month?: string;
+  }>();
 
-  const ref = useRef<SearchBarCommands>(null);
+  const locale =
+    LocaleConfig.locales[currentLanguage] ?? LocaleConfig.locales.en;
 
-  const handle = useCallback(() => {
-    if (showSearch) {
-      // When search is already showing, blur and hide it
-      ref.current?.blur();
-      setShowSearch(false);
-    } else {
-      // When search is not showing, show it and focus after a short delay
-      setShowSearch(true);
-      // Use setTimeout to ensure the search bar is rendered before trying to focus
-      setTimeout(() => {
-        if (ref.current) {
-          ref.current.focus();
-        }
-      }, 150); // Slightly longer delay for more reliability
-    }
-  }, [setShowSearch, showSearch, ref]);
+  const enLocale = LocaleConfig.locales.en;
+
+  // month from param (ALWAYS ENGLISH)
+  const monthIndexFromParam =
+    typeof month === 'string' ? enLocale.monthNames.indexOf(month) : -1;
+
+  // fallback to date
+  const monthIndex =
+    monthIndexFromParam >= 0 ? monthIndexFromParam : dayjs(date).month();
+
+  const monthName = locale.monthNames[monthIndex];
 
   return (
     <Stack
@@ -46,12 +40,6 @@ export default function CalendarLayout() {
         keyboardHandlingEnabled: true,
         headerBackButtonMenuEnabled: false,
         headerTransparent: false,
-        headerSearchBarOptions: searchbox({
-          ref: ref as React.RefObject<SearchBarCommands>,
-          colors: colors,
-          showSearch,
-          setShowSearch,
-        }),
       }}
     >
       <Stack.Screen
@@ -67,7 +55,7 @@ export default function CalendarLayout() {
         name="(week)/[date]"
         options={{
           headerShown: true,
-          headerBackTitle: month,
+          headerBackTitle: monthName,
           headerStyle: {
             backgroundColor: colors.background,
           },
@@ -78,13 +66,10 @@ export default function CalendarLayout() {
           ),
           headerTitle: () => (
             <View className="min-w-fit">
-              <Text className="font-subtitle w-28 truncate">{monthName}</Text>
+              <Text className="font-subtitle text-center truncate">
+                {monthName}
+              </Text>
             </View>
-          ),
-          headerRight: () => (
-            <TouchableOpacity onPress={handle}>
-              <Icons.Search size={24} className="text-primary" />
-            </TouchableOpacity>
           ),
         }}
       />

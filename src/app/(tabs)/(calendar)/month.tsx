@@ -1,13 +1,21 @@
 import { useHeaderMonthControls } from '@/hooks/calendar';
 import { useColorScheme, useLanguage } from '@/hooks/common';
 import { getMonthTheme } from '@/styles/calendar';
+import { setCalendarLocale } from '@/utils/month-names';
 import { RenderHeader } from '@/views/calendars/month/header';
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
+import { Locale } from 'i18n.config';
 import { debounce } from 'lodash';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { View } from 'react-native';
-import { CalendarList, DateData } from 'react-native-calendars';
+import { CalendarList, DateData, LocaleConfig } from 'react-native-calendars';
 
 const initialDate = dayjs().format('YYYY-MM-DD');
 
@@ -31,9 +39,10 @@ const dynamicEvents = [
 
 const MonthScreen = () => {
   const router = useRouter();
-  const { currentLanguage } = useLanguage();
   const calendarRef = useRef(null);
+  const { currentLanguage } = useLanguage();
   const { colors, isDarkColorScheme } = useColorScheme();
+  const [renderVersion, setRenderVersion] = useState<number>(0);
   const theme = useMemo(() => getMonthTheme(colors), [colors]);
   const monthControlsCallback = useHeaderMonthControls(calendarRef);
 
@@ -77,26 +86,42 @@ const MonthScreen = () => {
     [router],
   );
 
-  return (
-    <View
-      className="safe-area"
-      key={isDarkColorScheme ? 'dark' : 'light'}
-      style={{ backgroundColor: colors.background }}
-    >
+  // Locale updates
+  useEffect(() => {
+    setCalendarLocale(currentLanguage as Locale);
+    LocaleConfig.defaultLocale = currentLanguage;
+    setRenderVersion((prev) => prev + 1);
+  }, [currentLanguage]);
+
+  // Force refresh when theme changes
+  useEffect(() => {
+    setRenderVersion((prev) => prev + 1);
+  }, [currentLanguage, colors, isDarkColorScheme]);
+
+  const calendarKey = useMemo(
+    () => `${currentLanguage}-${isDarkColorScheme}-${renderVersion}`,
+    [currentLanguage, isDarkColorScheme, renderVersion],
+  );
+
+  const calendar = useMemo(
+    () => (
       <CalendarList
         ref={calendarRef}
+        key={calendarKey}
         id="month-calendar"
         testID="month-calendar"
         current={initialDate}
-        futureScrollRange={12}
-        pastScrollRange={16}
+        futureScrollRange={2}
+        pastScrollRange={2}
         firstDay={1}
         onDayPress={onDayPress}
         markedDates={marked}
         onVisibleMonthsChange={handleVisibleMonthsChange}
         theme={theme}
         extraData={selected} // only depends on selected
-        renderHeader={RenderHeader}
+        renderHeader={(date) => (
+          <RenderHeader date={date} locale={currentLanguage} />
+        )}
         hideDayNames
         calendarHeight={260}
         maxToRenderPerBatch={10}
@@ -108,6 +133,25 @@ const MonthScreen = () => {
           minIndexForVisible: 1,
         }}
       />
+    ),
+    [
+      calendarKey,
+      handleVisibleMonthsChange,
+      currentLanguage,
+      marked,
+      onDayPress,
+      selected,
+      theme,
+    ],
+  );
+
+  return (
+    <View
+      className="safe-area"
+      key={calendarKey}
+      style={{ backgroundColor: colors.background }}
+    >
+      {calendar}
     </View>
   );
 };
