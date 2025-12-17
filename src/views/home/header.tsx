@@ -70,7 +70,7 @@ export function Header({ user, className }: Props) {
             <View className="flex-1">
               <View className="flex-row items-center">
                 <Icons.Scissors className="w-8 h-8 text-primary mr-2" />
-                <Text className="font-subtitle text-foreground">Reservefy</Text>
+                <Text className="font-subtitle text-foreground">Joy Bormi</Text>
               </View>
               <View className="mt-1">{LocationDisplay}</View>
             </View>

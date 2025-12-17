@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Localization from 'expo-localization';
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
@@ -8,6 +7,7 @@ import enLocalization from '@/locales/en.json';
 import ruLocalization from '@/locales/ru.json';
 import uzLocalization from '@/locales/uz.json';
 
+import { storage } from '@/lib/mmkv';
 import { z } from 'zod';
 import { makeZodI18nMap, zodI18nMap } from 'zod-i18n-map';
 
@@ -25,7 +25,7 @@ export const initI18n = async () => {
   try {
     const localeCode = Localization.getLocales()[0]?.languageCode;
     if (Platform.OS !== 'web') {
-      const stored = await AsyncStorage.getItem('language');
+      const stored = await storage.getItem('language');
       savedLanguage = stored || localeCode || 'en-US';
     } else {
       savedLanguage = localeCode || 'en-US';

@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { storage } from '@/lib/mmkv';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -7,17 +7,17 @@ export function useLanguage() {
   const currentLanguage = i18n.language?.split('-')[0] ?? 'en-US'; // normalize
 
   useEffect(() => {
-    const loadLanguage = async () => {
-      const savedLanguage = await AsyncStorage.getItem('language');
+    const loadLanguage = () => {
+      const savedLanguage = storage.getItem('language');
       if (savedLanguage) {
-        i18n.changeLanguage(savedLanguage);
+        i18n.changeLanguage((savedLanguage as string) ?? 'en-US');
       }
     };
     loadLanguage();
   }, [i18n]);
 
-  const changeLanguage = async (lang: string) => {
-    await AsyncStorage.setItem('language', lang);
+  const changeLanguage = (lang: string) => {
+    storage.setItem('language', lang);
     i18n.changeLanguage(lang);
   };
 

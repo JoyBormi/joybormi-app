@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Joy Bormi?",
+    "name": "Joy Bormi",
     "slug": "joybormi",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,8 +14,10 @@
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         },
-        "CFBundleAllowMixedLocalizations": true
-      }
+        "CFBundleAllowMixedLocalizations": true,
+        "ExpoLocalization_supportsRTL": true
+      },
+      "bundleIdentifier": "com.salahbm-dev.joybormi"
     },
     "android": {
       "adaptiveIcon": {
@@ -48,8 +50,7 @@
           "fonts": [
             "./src/assets/fonts/Montserrat-Regular.ttf",
             "./src/assets/fonts/Montserrat-Medium.ttf",
-            "./src/assets/fonts/Montserrat-Bold.ttf",
-            "./src/assets/fonts/Montserrat-Light.ttf"
+            "./src/assets/fonts/Montserrat-Bold.ttf"
           ],
           "android": {
             "fonts": [

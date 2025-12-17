@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { storage } from '@/lib/mmkv';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
@@ -17,7 +17,7 @@ export const LanguageToggle = () => {
   const currentLanguage = i18n.language;
 
   const changeLanguage = async (lang: string) => {
-    await AsyncStorage.setItem('language', lang);
+    storage.setItem('language', lang);
     i18n.changeLanguage(lang);
   };
   const translateX = useSharedValue(0);
@@ -33,9 +33,9 @@ export const LanguageToggle = () => {
 
   useEffect(() => {
     const loadLanguage = async () => {
-      const savedLanguage = await AsyncStorage.getItem('language');
+      const savedLanguage = storage.getItem('language');
       if (savedLanguage) {
-        i18n.changeLanguage(savedLanguage);
+        i18n.changeLanguage((savedLanguage as string) ?? 'en-US');
       }
     };
     loadLanguage();

@@ -25,3 +25,7 @@ export class Feedback {
     Haptics.selectionAsync();
   }
 }
+
+const haptics = new Feedback();
+
+export default haptics;

@@ -1,5 +1,5 @@
 // CHecks onboarding visited or not
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { storage } from '@/lib/mmkv';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -20,7 +20,7 @@ export const useOnboarding = create<OnboardingState>()(
     }),
     {
       name: 'onboarding-storage',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => storage),
     },
   ),
 );

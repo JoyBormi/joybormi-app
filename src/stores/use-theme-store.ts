@@ -1,5 +1,5 @@
+import { storage } from '@/lib/mmkv';
 import { ThemeName } from '@/styles/themes';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -16,7 +16,7 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: 'theme-store',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => storage),
     },
   ),
 );
