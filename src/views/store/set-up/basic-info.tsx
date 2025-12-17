@@ -13,46 +13,44 @@ export function BasicInfo<T extends FieldValues>({
   return (
     <View className="gap-6">
       {/* Header */}
-      <View className="border-4 border-black bg-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-        <Text className="text-2xl font-black uppercase tracking-tight">
-          01. BASIC INFO
-        </Text>
-        <Text className="text-sm font-bold text-gray-600 mt-1">
+      <View className="bg-card/50 dark:bg-card/30 p-5 rounded-2xl backdrop-blur-sm">
+        <Text className="font-title text-foreground">01. Basic Info</Text>
+        <Text className="font-caption text-muted-foreground mt-1">
           Tell us about your brand
         </Text>
       </View>
 
       {/* Form Fields */}
-      <View className="gap-5">
-        <View className="border-2 border-black bg-white p-4">
+      <View className="gap-4">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
           <FormField
             control={control}
             name="brandName"
             fieldType={FormFieldType.INPUT}
             label={
-              <Text className="text-xs font-black uppercase tracking-wider mb-2">
+              <Text className="font-caption text-foreground font-medium mb-2">
                 Brand Name *
               </Text>
             }
-            placeholder="YOUR BRAND NAME"
+            placeholder="Your brand name"
             required
           />
         </View>
 
-        <View className="border-2 border-black bg-white p-4">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
           <FormField
             control={control}
             name="description"
             fieldType={FormFieldType.INPUT}
             label={
-              <Text className="text-xs font-black uppercase tracking-wider mb-2">
+              <Text className="font-caption text-foreground font-medium mb-2">
                 Description
               </Text>
             }
             placeholder="Describe your brand..."
             message={
-              <View className="mt-2 bg-gray-100 p-2 border-l-4 border-black">
-                <Text className="text-xs font-bold text-gray-700">
+              <View className="mt-2 bg-primary/10 dark:bg-primary/20 p-3 rounded-xl">
+                <Text className="font-caption text-muted-foreground">
                   💡 What makes your brand unique?
                 </Text>
               </View>
@@ -60,21 +58,21 @@ export function BasicInfo<T extends FieldValues>({
           />
         </View>
 
-        <View className="border-2 border-black bg-white p-4">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
           <FormField
             control={control}
             name="workingFields"
             fieldType={FormFieldType.INPUT}
             label={
-              <Text className="text-xs font-black uppercase tracking-wider mb-2">
+              <Text className="font-caption text-foreground font-medium mb-2">
                 Working Fields *
               </Text>
             }
             placeholder="Hair Salon, Barbershop, Spa"
             required
             message={
-              <View className="mt-2 bg-yellow-100 p-2 border-l-4 border-yellow-600">
-                <Text className="text-xs font-bold text-yellow-900">
+              <View className="mt-2 bg-warning/10 dark:bg-warning/20 p-3 rounded-xl">
+                <Text className="font-caption text-muted-foreground">
                   ⚠️ Enter 3-5 keywords, separated by commas
                 </Text>
               </View>

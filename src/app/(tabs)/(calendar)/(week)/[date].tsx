@@ -23,11 +23,6 @@ import {
 } from 'react-native-calendars';
 import { UpdateSources } from 'react-native-calendars/src/expandableCalendar/commons';
 import { PackedEvent } from 'react-native-calendars/src/timeline/EventBlock';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-/* ---------------------------------- */
-/* EVENTS */
-/* ---------------------------------- */
 
 /* ---------------------------------- */
 /* HELPER FUNCTIONS */
@@ -49,7 +44,6 @@ const createLoopedEvents = (events: TimeEvent[]): TimeEvent[] => [
 
 export default function TimelineCalendarScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { date } = useLocalSearchParams();
   const { colors, isDarkColorScheme } = useColorScheme();
   const theme = useMemo(() => getTimelineTheme(colors), [colors]);
@@ -222,7 +216,7 @@ export default function TimelineCalendarScreen() {
       format24h: true,
       renderEvent,
       overlapEventsSpacing: -1,
-      rightEdgeSpacing: 1,
+      rightEdgeSpacing: 0,
       start: 0,
       end: 25,
       theme,
@@ -280,10 +274,7 @@ export default function TimelineCalendarScreen() {
       theme={theme}
     >
       <View
-        style={{
-          flex: 1,
-          backgroundColor: colors.background,
-        }}
+        className="flex-1 bg-background"
         key={isDarkColorScheme ? 'dark' : 'light'}
       >
         <WeekCalendar
@@ -294,7 +285,6 @@ export default function TimelineCalendarScreen() {
           theme={theme}
         />
         <TimelineList events={eventsByDate} timelineProps={timelineProps} />
-        <View style={{ height: insets.bottom }} />
       </View>
 
       <ColorPickerModal

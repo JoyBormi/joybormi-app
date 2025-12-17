@@ -43,16 +43,15 @@ export function StepIndicator({
               />
 
               {/* The Label */}
-              <View
-                className={cn(
-                  'px-2 py-0.5 border border-black',
-                  isActive ? 'bg-black' : 'bg-transparent border-transparent',
-                )}
-              >
+              <View className="px-2 py-1 rounded-lg">
                 <Text
                   className={cn(
-                    'text-[10px] uppercase font-bold tracking-widest',
-                    isActive ? 'text-white' : 'text-gray-500',
+                    'text-[10px] font-medium',
+                    isActive
+                      ? 'text-primary font-bold'
+                      : isCompleted
+                        ? 'text-foreground'
+                        : 'text-muted-foreground',
                   )}
                 >
                   {step.label}
@@ -63,27 +62,18 @@ export function StepIndicator({
         })}
 
         {/* Connector Line (Background visual) */}
-        <View className="absolute top-7 left-0 right-0 h-0.5 bg-black -z-10 mt-[1px]" />
+        <View className="absolute top-7 left-0 right-0 h-0.5 bg-muted/30 -z-10 mt-[1px]" />
       </View>
 
-      {/* Brutalist Progress Bar */}
-      <View className="border-2 border-black p-1 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-        <View className="flex-row justify-between mb-1">
-          <Text className="text-[10px] font-bold uppercase">Progress</Text>
-          <Text className="text-[10px] font-bold">
+      {/* Progress Bar */}
+      <View className="bg-card/50 dark:bg-card/30 p-4 rounded-2xl backdrop-blur-sm">
+        <View className="flex-row justify-between mb-2">
+          <Text className="font-caption text-muted-foreground">Progress</Text>
+          <Text className="font-caption text-foreground font-medium">
             {Math.round(((currentStep + 1) / totalSteps) * 100)}%
           </Text>
         </View>
-        <View className="h-4 w-full bg-gray-100 border border-black relative overflow-hidden">
-          {/* Striped Background Pattern for empty state */}
-          <View
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage:
-                'repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 50%)',
-              backgroundSize: '10px 10px',
-            }}
-          />
+        <View className="h-2 w-full bg-muted/20 rounded-full relative overflow-hidden">
           <AnimatedProgress currentStep={currentStep} totalSteps={totalSteps} />
         </View>
       </View>
@@ -106,7 +96,12 @@ function AnimatedProgress({
     };
   });
 
-  return <Animated.View className="h-full bg-black" style={animatedStyle} />;
+  return (
+    <Animated.View
+      className="h-full bg-primary rounded-full"
+      style={animatedStyle}
+    />
+  );
 }
 
 function AnimatedBox({
@@ -121,8 +116,8 @@ function AnimatedBox({
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
-        { scale: withSpring(isActive ? 1.05 : 1, { damping: 12 }) },
-        { translateY: withSpring(isActive ? -4 : 0, { damping: 12 }) },
+        { scale: withSpring(isActive ? 1.1 : 1, { damping: 12 }) },
+        { translateY: withSpring(isActive ? -2 : 0, { damping: 12 }) },
       ],
     };
   });
@@ -131,18 +126,22 @@ function AnimatedBox({
     <Animated.View
       style={animatedStyle}
       className={cn(
-        'w-14 h-14 border-2 border-black justify-center items-center mb-2',
+        'w-12 h-12 rounded-2xl justify-center items-center mb-2',
         isActive
-          ? 'bg-primary border-b-4 border-r-4'
+          ? 'bg-primary/20 dark:bg-primary/30'
           : isCompleted
-            ? 'bg-black border-b-2 border-r-2'
-            : 'bg-white border-b-2 border-r-2',
+            ? 'bg-primary/10 dark:bg-primary/20'
+            : 'bg-muted/20',
       )}
     >
       <Text
         className={cn(
-          'font-black text-lg',
-          isCompleted ? 'text-white' : 'text-black',
+          'font-bold text-base',
+          isActive
+            ? 'text-primary'
+            : isCompleted
+              ? 'text-primary'
+              : 'text-muted-foreground',
         )}
       >
         {isCompleted ? '✓' : `0${index + 1}`}

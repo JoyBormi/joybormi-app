@@ -75,42 +75,42 @@ export function WorkingHours<T extends FieldValues>({
   return (
     <View className="gap-6">
       {/* Header */}
-      <View className="border-4 border-black bg-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-        <Text className="text-2xl font-black uppercase tracking-tight">
-          04. SCHEDULE
-        </Text>
-        <Text className="text-sm font-bold text-gray-600 mt-1">
+      <View className="bg-card/50 dark:bg-card/30 p-5 rounded-2xl backdrop-blur-sm">
+        <Text className="font-title text-foreground">04. Schedule</Text>
+        <Text className="font-caption text-muted-foreground mt-1">
           When is your brand open?
         </Text>
       </View>
 
-      <View className="gap-4">
+      <View className="gap-3">
         {DAYS_OF_WEEK.map((day) => {
           const isSelected = isDaySelected(day.value);
           return (
             <Pressable
               key={day.value}
               onPress={() => toggleDay(day.value)}
-              className={`border-2 border-black p-4 flex-row items-center justify-between ${
+              className={`p-4 rounded-2xl flex-row items-center justify-between ${
                 isSelected
-                  ? 'bg-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
-                  : 'bg-white'
+                  ? 'bg-primary/20 dark:bg-primary/30'
+                  : 'bg-card/30 dark:bg-card/20'
               }`}
             >
               <Text
-                className={`text-base font-black uppercase tracking-wide ${
-                  isSelected ? 'text-primary-foreground' : 'text-black'
+                className={`font-subtitle ${
+                  isSelected ? 'text-primary font-bold' : 'text-foreground'
                 }`}
               >
                 {day.label}
               </Text>
               <View
-                className={`w-8 h-8 border-2 border-black items-center justify-center ${
-                  isSelected ? 'bg-black' : 'bg-white'
+                className={`w-7 h-7 rounded-lg items-center justify-center ${
+                  isSelected ? 'bg-primary' : 'bg-muted/30'
                 }`}
               >
                 {isSelected && (
-                  <Text className="text-white font-black text-lg">✓</Text>
+                  <Text className="text-primary-foreground font-bold text-base">
+                    ✓
+                  </Text>
                 )}
               </View>
             </Pressable>
@@ -118,11 +118,11 @@ export function WorkingHours<T extends FieldValues>({
         })}
       </View>
 
-      <View className="border-2 border-black bg-yellow-50 p-4">
-        <Text className="text-xs font-bold text-gray-800">
-          ⏰ DEFAULT HOURS: 9:00 AM - 6:00 PM
+      <View className="bg-warning/10 dark:bg-warning/20 p-4 rounded-2xl">
+        <Text className="font-caption text-foreground font-medium">
+          ⏰ Default Hours: 9:00 AM - 6:00 PM
         </Text>
-        <Text className="text-xs font-bold text-gray-600 mt-1">
+        <Text className="font-caption text-muted-foreground mt-1">
           You can customize hours for each day later
         </Text>
       </View>

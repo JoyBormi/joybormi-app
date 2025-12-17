@@ -13,23 +13,21 @@ export function ContactInfo<T extends FieldValues>({
   return (
     <View className="gap-6">
       {/* Header */}
-      <View className="border-4 border-black bg-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-        <Text className="text-2xl font-black uppercase tracking-tight">
-          03. CONTACT
-        </Text>
-        <Text className="text-sm font-bold text-gray-600 mt-1">
+      <View className="bg-card/50 dark:bg-card/30 p-5 rounded-2xl backdrop-blur-sm">
+        <Text className="font-title text-foreground">03. Contact</Text>
+        <Text className="font-caption text-muted-foreground mt-1">
           How can customers reach you?
         </Text>
       </View>
 
-      <View className="gap-5">
-        <View className="border-2 border-black bg-white p-4">
+      <View className="gap-4">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
           <FormField
             control={control}
             name="email"
             fieldType={FormFieldType.INPUT}
             label={
-              <Text className="text-xs font-black uppercase tracking-wider mb-2">
+              <Text className="font-caption text-foreground font-medium mb-2">
                 Email Address *
               </Text>
             }
@@ -38,8 +36,8 @@ export function ContactInfo<T extends FieldValues>({
             capitalize="none"
             required
             message={
-              <View className="mt-2 bg-blue-100 p-2 border-l-4 border-blue-600">
-                <Text className="text-xs font-bold text-blue-900">
+              <View className="mt-2 bg-primary/10 dark:bg-primary/20 p-3 rounded-xl">
+                <Text className="font-caption text-muted-foreground">
                   📧 We&apos;ll use this to verify your brand
                 </Text>
               </View>
@@ -47,21 +45,21 @@ export function ContactInfo<T extends FieldValues>({
           />
         </View>
 
-        <View className="border-2 border-black bg-white p-4">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
           <FormField
             control={control}
             name="phone"
             fieldType={FormFieldType.INPUT}
             label={
-              <Text className="text-xs font-black uppercase tracking-wider mb-2">
+              <Text className="font-caption text-foreground font-medium mb-2">
                 Phone Number
               </Text>
             }
             placeholder="+1 (555) 000-0000"
             keyboard="phone-pad"
             message={
-              <View className="mt-2 bg-green-100 p-2 border-l-4 border-green-600">
-                <Text className="text-xs font-bold text-green-900">
+              <View className="mt-2 bg-success/10 dark:bg-success/20 p-3 rounded-xl">
+                <Text className="font-caption text-muted-foreground">
                   📞 Customers will use this to contact you
                 </Text>
               </View>

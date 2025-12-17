@@ -28,7 +28,7 @@ type RegisterMethod = 'email' | 'phone' | string;
 export default function RegisterScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const [tab, setTab] = useState<RegisterMethod>('email');
+  const [tab, setTab] = useState<RegisterMethod>('phone');
 
   const {
     control: emailControl,
@@ -79,11 +79,11 @@ export default function RegisterScreen() {
 
           <Tabs value={tab} onValueChange={setTab} className="w-full mt-10">
             <TabsList>
-              <TabsTrigger value="email">
-                <Text>{t('auth.register.emailTab')}</Text>
-              </TabsTrigger>
               <TabsTrigger value="phone">
                 <Text>{t('auth.register.phoneTab')}</Text>
+              </TabsTrigger>
+              <TabsTrigger value="email">
+                <Text>{t('auth.register.emailTab')}</Text>
               </TabsTrigger>
             </TabsList>
             <TabsContent value="email" className="gap-y-6 mt-6">

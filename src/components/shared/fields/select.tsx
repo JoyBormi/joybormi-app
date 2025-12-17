@@ -1,14 +1,14 @@
 import { Text } from '@/components/ui';
 import { Select, SelectItem } from '@/components/ui/select';
 import React from 'react';
-import { Controller, FieldValues } from 'react-hook-form';
+import { Controller, FieldValues, Path } from 'react-hook-form';
 import { BaseFieldProps } from './form';
 
 export function SelectField<T extends FieldValues>(props: BaseFieldProps<T>) {
   return (
     <Controller
       control={props.control}
-      name={props.name}
+      name={props.name as Path<T>}
       render={({ field, fieldState }) => (
         <>
           <Select value={field.value} onValueChange={field.onChange}>

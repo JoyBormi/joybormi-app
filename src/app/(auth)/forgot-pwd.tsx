@@ -35,7 +35,7 @@ export default function ForgotPwdScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const [state, setState] = useState<ForgotPwdState>({
-    tab: 'email',
+    tab: 'phone',
     emailCodeSent: false,
     phoneCodeSent: false,
     isResending: false,
@@ -110,11 +110,11 @@ export default function ForgotPwdScreen() {
             className="w-full gap-y-6 mt-10"
           >
             <TabsList>
-              <TabsTrigger value="email">
-                <Text>{t('auth.register.emailTab')}</Text>
-              </TabsTrigger>
               <TabsTrigger value="phone">
                 <Text>{t('auth.register.phoneTab')}</Text>
+              </TabsTrigger>
+              <TabsTrigger value="email">
+                <Text>{t('auth.register.emailTab')}</Text>
               </TabsTrigger>
             </TabsList>
             <TabsContent value="email">

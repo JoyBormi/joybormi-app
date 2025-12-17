@@ -18,11 +18,11 @@ export function ServiceCard({
   subtitle,
   rating,
   id,
-  }: ServiceCardProps) {
-    const router = useRouter();
-    return (
-      <TouchableOpacity
-        onPress={() => id && router.push(`/professional/${id}`)}
+}: ServiceCardProps) {
+  const router = useRouter();
+  return (
+    <TouchableOpacity
+      onPress={() => id && router.push(`/professional/${id}`)}
       className="w-[180px] aspect-[3/4] bg-popover border border-ring/10 relative overflow-hidden rounded-xl mr-4"
     >
       <Image

@@ -24,38 +24,36 @@ export function Review<T extends FieldValues>({ control }: ReviewProps<T>) {
   return (
     <View className="gap-6">
       {/* Header */}
-      <View className="border-4 border-black bg-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-        <Text className="text-2xl font-black uppercase tracking-tight">
-          05. REVIEW
-        </Text>
-        <Text className="text-sm font-bold text-gray-600 mt-1">
+      <View className="bg-card/50 dark:bg-card/30 p-5 rounded-2xl backdrop-blur-sm">
+        <Text className="font-title text-foreground">05. Review</Text>
+        <Text className="font-caption text-muted-foreground mt-1">
           Double-check everything before submitting
         </Text>
       </View>
 
-      <View className="gap-5">
+      <View className="gap-4">
         {/* Basic Info Card */}
-        <View className="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <Text className="text-sm font-black uppercase tracking-wider mb-3 border-b-2 border-black pb-2">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
+          <Text className="font-subtitle text-foreground mb-3 pb-2 border-b border-border/30">
             📝 Basic Information
           </Text>
 
           <View className="gap-2">
             <View className="flex-row">
-              <Text className="text-xs font-bold text-gray-500 w-24">
-                NAME:
+              <Text className="font-caption text-muted-foreground w-24">
+                Name:
               </Text>
-              <Text className="text-xs font-black flex-1">
+              <Text className="font-caption text-foreground font-medium flex-1">
                 {formData.brandName || 'Not provided'}
               </Text>
             </View>
 
             {formData.description && (
               <View className="flex-row">
-                <Text className="text-xs font-bold text-gray-500 w-24">
-                  INFO:
+                <Text className="font-caption text-muted-foreground w-24">
+                  Info:
                 </Text>
-                <Text className="text-xs font-bold flex-1">
+                <Text className="font-caption text-foreground flex-1">
                   {formData.description}
                 </Text>
               </View>
@@ -63,10 +61,10 @@ export function Review<T extends FieldValues>({ control }: ReviewProps<T>) {
 
             {formData.workingFields && (
               <View className="flex-row">
-                <Text className="text-xs font-bold text-gray-500 w-24">
-                  FIELDS:
+                <Text className="font-caption text-muted-foreground w-24">
+                  Fields:
                 </Text>
-                <Text className="text-xs font-bold flex-1">
+                <Text className="font-caption text-foreground flex-1">
                   {formData.workingFields}
                 </Text>
               </View>
@@ -75,53 +73,53 @@ export function Review<T extends FieldValues>({ control }: ReviewProps<T>) {
         </View>
 
         {/* Location Card */}
-        <View className="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <Text className="text-sm font-black uppercase tracking-wider mb-3 border-b-2 border-black pb-2">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
+          <Text className="font-subtitle text-foreground mb-3 pb-2 border-b border-border/30">
             📍 Location
           </Text>
 
           <View className="gap-1">
-            <Text className="text-xs font-black">
+            <Text className="font-caption text-foreground font-medium">
               {formData.street || 'Street not provided'}
             </Text>
             {formData.detailedAddress && (
-              <Text className="text-xs font-bold text-gray-600">
+              <Text className="font-caption text-muted-foreground">
                 {formData.detailedAddress}
               </Text>
             )}
-            <Text className="text-xs font-bold">
+            <Text className="font-caption text-foreground">
               {[formData.city, formData.state, formData.postalCode]
                 .filter(Boolean)
                 .join(', ') || 'City/State not provided'}
             </Text>
-            <Text className="text-xs font-black uppercase">
+            <Text className="font-caption text-foreground font-medium">
               {formData.country || 'Country not provided'}
             </Text>
           </View>
         </View>
 
         {/* Contact Card */}
-        <View className="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <Text className="text-sm font-black uppercase tracking-wider mb-3 border-b-2 border-black pb-2">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
+          <Text className="font-subtitle text-foreground mb-3 pb-2 border-b border-border/30">
             📞 Contact
           </Text>
 
           <View className="gap-2">
             <View className="flex-row">
-              <Text className="text-xs font-bold text-gray-500 w-20">
-                EMAIL:
+              <Text className="font-caption text-muted-foreground w-20">
+                Email:
               </Text>
-              <Text className="text-xs font-black flex-1">
+              <Text className="font-caption text-foreground font-medium flex-1">
                 {formData.email || 'Not provided'}
               </Text>
             </View>
 
             {formData.phone && (
               <View className="flex-row">
-                <Text className="text-xs font-bold text-gray-500 w-20">
-                  PHONE:
+                <Text className="font-caption text-muted-foreground w-20">
+                  Phone:
                 </Text>
-                <Text className="text-xs font-black flex-1">
+                <Text className="font-caption text-foreground font-medium flex-1">
                   {formData.phone}
                 </Text>
               </View>
@@ -130,14 +128,16 @@ export function Review<T extends FieldValues>({ control }: ReviewProps<T>) {
         </View>
 
         {/* Working Days Card */}
-        <View className="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <Text className="text-sm font-black uppercase tracking-wider mb-3 border-b-2 border-black pb-2">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
+          <Text className="font-subtitle text-foreground mb-3 pb-2 border-b border-border/30">
             📅 Schedule
           </Text>
 
           <View>
-            <Text className="text-xs font-black">{workingDaysText}</Text>
-            <Text className="text-xs font-bold text-gray-600 mt-1">
+            <Text className="font-caption text-foreground font-medium">
+              {workingDaysText}
+            </Text>
+            <Text className="font-caption text-muted-foreground mt-1">
               9:00 AM - 6:00 PM (Default)
             </Text>
           </View>

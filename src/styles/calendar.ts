@@ -62,6 +62,9 @@ export const getTimelineTheme = (colors: ThemeHex['dark']['colors']): Theme => {
       color: colors.text,
       opacity: 0.7,
     },
+    timelineContainer: {
+      backgroundColor: colors.background,
+    },
     event: {
       borderRadius: 4,
       paddingHorizontal: 1.5,

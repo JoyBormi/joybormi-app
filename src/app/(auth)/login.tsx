@@ -19,11 +19,11 @@ import { TouchableOpacity, View } from 'react-native';
 export default function LoginScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const [tab, setTab] = useState('email');
+  const [tab, setTab] = useState('phone');
   const { control, handleSubmit, setValue } = useForm<LoginFormType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      method: 'email',
+      method: 'phone',
       email: '',
       phone: '',
       password: '',
@@ -49,11 +49,11 @@ export default function LoginScreen() {
           />
           <Tabs value={tab} onValueChange={handleTab} className="w-full mt-10">
             <TabsList>
-              <TabsTrigger value="email">
-                <Text>{t('auth.register.emailTab')}</Text>
-              </TabsTrigger>
               <TabsTrigger value="phone">
                 <Text>{t('auth.register.phoneTab')}</Text>
+              </TabsTrigger>
+              <TabsTrigger value="email">
+                <Text>{t('auth.register.emailTab')}</Text>
               </TabsTrigger>
             </TabsList>
             <TabsContent value="email" className="gap-y-6 mt-10">

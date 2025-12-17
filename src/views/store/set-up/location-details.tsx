@@ -13,32 +13,30 @@ export function LocationDetails<T extends FieldValues>({
   return (
     <View className="gap-6">
       {/* Header */}
-      <View className="border-4 border-black bg-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-        <Text className="text-2xl font-black uppercase tracking-tight">
-          02. LOCATION
-        </Text>
-        <Text className="text-sm font-bold text-gray-600 mt-1">
+      <View className="bg-card/50 dark:bg-card/30 p-5 rounded-2xl backdrop-blur-sm">
+        <Text className="font-title text-foreground">02. Location</Text>
+        <Text className="font-caption text-muted-foreground mt-1">
           Where is your brand located?
         </Text>
       </View>
 
-      <View className="gap-5">
-        <View className="border-2 border-black bg-white p-4">
+      <View className="gap-4">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
           <FormField
             control={control}
             name="country"
             fieldType={FormFieldType.INPUT}
             label={
-              <Text className="text-xs font-black uppercase tracking-wider mb-2">
+              <Text className="font-caption text-foreground font-medium mb-2">
                 Country *
               </Text>
             }
-            placeholder="COUNTRY"
+            placeholder="Country"
             required
           />
         </View>
 
-        <View className="border-2 border-black bg-white p-4">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
           <View className="flex-row gap-4">
             <View className="flex-1">
               <FormField
@@ -46,11 +44,11 @@ export function LocationDetails<T extends FieldValues>({
                 name="state"
                 fieldType={FormFieldType.INPUT}
                 label={
-                  <Text className="text-xs font-black uppercase tracking-wider mb-2">
+                  <Text className="font-caption text-foreground font-medium mb-2">
                     State
                   </Text>
                 }
-                placeholder="STATE"
+                placeholder="State"
               />
             </View>
             <View className="flex-1">
@@ -59,38 +57,38 @@ export function LocationDetails<T extends FieldValues>({
                 name="city"
                 fieldType={FormFieldType.INPUT}
                 label={
-                  <Text className="text-xs font-black uppercase tracking-wider mb-2">
+                  <Text className="font-caption text-foreground font-medium mb-2">
                     City
                   </Text>
                 }
-                placeholder="CITY"
+                placeholder="City"
               />
             </View>
           </View>
         </View>
 
-        <View className="border-2 border-black bg-white p-4">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
           <FormField
             control={control}
             name="street"
             fieldType={FormFieldType.INPUT}
             label={
-              <Text className="text-xs font-black uppercase tracking-wider mb-2">
+              <Text className="font-caption text-foreground font-medium mb-2">
                 Street Address *
               </Text>
             }
-            placeholder="123 MAIN STREET"
+            placeholder="123 Main Street"
             required
           />
         </View>
 
-        <View className="border-2 border-black bg-white p-4">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
           <FormField
             control={control}
             name="detailedAddress"
             fieldType={FormFieldType.INPUT}
             label={
-              <Text className="text-xs font-black uppercase tracking-wider mb-2">
+              <Text className="font-caption text-foreground font-medium mb-2">
                 Details
               </Text>
             }
@@ -98,13 +96,13 @@ export function LocationDetails<T extends FieldValues>({
           />
         </View>
 
-        <View className="border-2 border-black bg-white p-4">
+        <View className="bg-card/30 dark:bg-card/20 p-4 rounded-2xl">
           <FormField
             control={control}
             name="postalCode"
             fieldType={FormFieldType.INPUT}
             label={
-              <Text className="text-xs font-black uppercase tracking-wider mb-2">
+              <Text className="font-caption text-foreground font-medium mb-2">
                 Postal Code
               </Text>
             }
