@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Reservefy",
-    "slug": "Reservefy",
+    "name": "Joy Bormi?",
+    "slug": "joybormi",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
-    "scheme": "reservefyapp",
+    "scheme": "joy-bormi-app",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

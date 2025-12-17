@@ -361,6 +361,16 @@
   },
   "categories": {
     "title": "Categories",
-    "seeAll": "See All"
+    "seeAll": "See All",
+    "all": "All Categories",
+    "noServices": "No Services Found",
+    "noServicesDescription": "There are no services available in this category at the moment.",
+    "serviceAvailable": "service available",
+    "servicesAvailable": "services available",
+    "slotsAvailable": "slots",
+    "bookNow": "Book Now",
+    "reviews": "reviews",
+    "duration": "Duration",
+    "price": "Price"
   }
 }

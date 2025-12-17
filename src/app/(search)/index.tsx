@@ -2,7 +2,7 @@ import { Text } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { useGlobalSearchParams } from 'expo-router';
 import React, { useEffect } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface ISearchProps {}

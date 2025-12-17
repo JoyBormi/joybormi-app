@@ -1,5 +1,6 @@
 import { Major } from '@/constants/enum';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'expo-router';
 import { MotiView } from 'moti';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +22,7 @@ interface Props {
 
 export function CategoryPills({ className }: Props) {
   const { t } = useTranslation();
+  const router = useRouter();
 
   return (
     <View className={cn('mt-10 px-4', className)}>
@@ -33,7 +35,10 @@ export function CategoryPills({ className }: Props) {
             key={category.id}
             className="w-[22%]"
           >
-            <Pressable className="aspect-square items-center justify-center bg-card/50 rounded-xl border border-border">
+            <Pressable
+              onPress={() => router.push(`/(category)/${category.id}`)}
+              className="aspect-square items-center justify-center bg-card/50 rounded-xl border border-border active:opacity-80"
+            >
               <Animated.View
                 entering={FadeIn.delay(150 + index * 100)}
                 className="items-center"
@@ -53,7 +58,10 @@ export function CategoryPills({ className }: Props) {
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ delay: 750 }}
       >
-        <Pressable className="py-3 mt-4 items-center justify-center bg-card/50 rounded-xl border border-border">
+        <Pressable
+          onPress={() => router.push('/(category)/all')}
+          className="py-3 mt-4 items-center justify-center bg-card/50 rounded-xl border border-border active:opacity-80"
+        >
           <Text className="font-caption text-sm text-primary">
             {t('categories.seeAll')}
           </Text>

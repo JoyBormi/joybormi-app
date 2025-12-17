@@ -12,12 +12,16 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dimensions, Image, ScrollView, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 
 export default function WebsiteScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { setVisited, setCanVisitAgain } = useOnboarding();
   const { t } = useTranslation();
 
@@ -209,7 +213,8 @@ export default function WebsiteScreen() {
 
       <Animated.View
         entering={FadeInUp.delay(800).springify()}
-        className="absolute bottom-6 left-4 right-4"
+        className="absolute left-4 right-4"
+        style={{ bottom: insets.bottom }}
       >
         <Button className="py-4" onPress={handleGetStarted}>
           <Text className="text-primary-foreground font-semibold text-center">
