@@ -41,7 +41,7 @@ export function TabButton({ isFocused, icon, children, ...props }: Props) {
       },
     ],
     opacity: withTiming(isFocused ? 1 : 0, { duration: 120 }),
-    fontWeight: withTiming(isFocused ? '700' : '500', { duration: 120 }),
+    fontWeight: withTiming(isFocused ? '600' : '500', { duration: 120 }),
   }));
 
   const iconAnim = useAnimatedStyle(() => ({

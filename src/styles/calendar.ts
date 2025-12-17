@@ -36,43 +36,67 @@ export const getTimelineTheme = (colors: ThemeHex['dark']['colors']): Theme => {
     textSectionTitleColor: colors.text,
     dayTextColor: colors.text,
     todayTextColor: colors.primary,
-    selectedDayTextColor: colors.text,
+    selectedDayTextColor: colors.background,
     selectedDayBackgroundColor: colors.primary,
     todayDotColor: colors.primary,
     dotColor: colors.primary,
-    selectedDotColor: colors.primary,
+    selectedDotColor: colors.background,
     textDisabledColor: colors.border,
-    weekVerticalMargin: 4,
+    weekVerticalMargin: 6,
     monthTextColor: colors.primary,
-    textMonthFontWeight: '600',
-    textMonthFontSize: 16,
+    textMonthFontWeight: '700',
+    textMonthFontSize: 18,
     textMonthFontFamily: 'Montserrat-Bold',
     todayButtonPosition: 'center',
     line: {
       borderColor: colors.border,
-      borderWidth: 0.2,
+      borderWidth: 0.5,
     },
     verticalLine: {
       borderColor: colors.border,
-      borderWidth: 0.2,
+      borderWidth: 0.5,
     },
     timeLabel: {
       fontFamily: 'Montserrat-Regular',
-      fontSize: 12,
+      fontSize: 11,
       color: colors.text,
+      opacity: 0.7,
+    },
+    event: {
+      borderRadius: 4,
+      paddingHorizontal: 1.5,
+      paddingVertical: 0.5,
+      overflow: 'hidden',
+      border: 1,
     },
   };
 };
 
 export const TIMELINE_MARK_COLORS = {
-  red: '#FF0000',
-  green: '#00FF00',
-  blue: '#0000FF',
-  yellow: '#FFFF00',
-  orange: '#FFA500',
-  purple: '#800080',
-  pink: '#FFC0CB',
-  gray: '#808080',
-  black: '#000000',
-  white: '#FFFFFF',
+  light: {
+    red: '#ef4444', // Modern red
+    green: '#10b981', // Modern green
+    blue: '#3b82f6', // Modern blue
+    yellow: '#f59e0b', // Modern amber/yellow
+    orange: '#f97316', // Modern orange
+    purple: '#a855f7', // Modern purple
+    pink: '#ec4899', // Modern pink
+    teal: '#14b8a6', // Teal
+    indigo: '#6366f1', // Indigo
+    gray: '#6b7280', // Modern gray
+  },
+  dark: {
+    red: '#f87171', // Lighter red for dark mode
+    green: '#34d399', // Lighter green for dark mode
+    blue: '#60a5fa', // Lighter blue for dark mode
+    yellow: '#fbbf24', // Lighter amber/yellow for dark mode
+    orange: '#fb923c', // Lighter orange for dark mode
+    purple: '#c084fc', // Lighter purple for dark mode
+    pink: '#f472b6', // Lighter pink for dark mode
+    teal: '#2dd4bf', // Lighter teal for dark mode
+    indigo: '#818cf8', // Lighter indigo for dark mode
+    gray: '#9ca3af', // Lighter gray for dark mode
+  },
 };
+
+export type TimelineColorName = keyof typeof TIMELINE_MARK_COLORS.light;

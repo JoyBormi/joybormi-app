@@ -1,33 +1,53 @@
 import { Text } from '@/components/ui';
-import { cn } from '@/lib/utils';
+import { useColorScheme } from '@/hooks/common';
 import dayjs from 'dayjs';
-import React, { memo, type FC } from 'react';
+import React, { type FC } from 'react';
 import { View } from 'react-native';
 import { PackedEvent } from 'react-native-calendars/src/timeline/EventBlock';
 
-const TimelineEvent: FC<PackedEvent> = memo(
-  ({ title, start, end, color, summary }) => {
-    return (
-      <View
-        className={cn('p-2 rounded my-0.5', `bg-[${color ?? 'var(--muted)'}]`)}
+const TimelineEvent: FC<PackedEvent> = ({
+  title,
+  start,
+  end,
+  color,
+  summary,
+}) => {
+  const { isDarkColorScheme } = useColorScheme();
+  const textColor = isDarkColorScheme ? '#000000' : '#FFFFFF';
+
+  const durationMinutes = dayjs(end).diff(dayjs(start), 'minute');
+
+  const showTime = durationMinutes >= 30;
+  const showSummary = durationMinutes >= 60 && !!summary;
+
+  return (
+    <View style={{ backgroundColor: color }}>
+      <Text
+        className="font-semibold text-sm"
+        style={{ color: textColor }}
+        numberOfLines={2}
       >
-        <Text className="font-medium">{title}</Text>
-        <Text className="text-xs">
+        {title}
+      </Text>
+      {showTime && (
+        <Text
+          className="text-xs my-0.5"
+          style={{ color: textColor, opacity: 0.9 }}
+        >
           {dayjs(start).format('HH:mm')} - {dayjs(end).format('HH:mm')}
         </Text>
-        <Text className="font-caption">{summary}</Text>
-      </View>
-    );
-  },
-  (prev, next) =>
-    prev.id === next.id &&
-    prev.title === next.title &&
-    prev.start === next.start &&
-    prev.end === next.end &&
-    prev.color === next.color &&
-    prev.summary === next.summary,
-);
-
-TimelineEvent.displayName = 'TimelineEvent';
+      )}
+      {summary && showSummary && (
+        <Text
+          className="text-xs"
+          style={{ color: textColor, opacity: 0.8 }}
+          numberOfLines={2}
+        >
+          {summary}
+        </Text>
+      )}
+    </View>
+  );
+};
 
 export { TimelineEvent };
