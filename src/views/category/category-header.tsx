@@ -35,7 +35,7 @@ export function CategoryHeader({ category, onBack }: CategoryHeaderProps) {
 
         {/* Category Title */}
         <View className="flex-1 items-center mr-10">
-          <Text className="font-title text-foreground text-xl">{title}</Text>
+          <Text className="font-title text-foreground text-lg">{title}</Text>
         </View>
       </View>
     </MotiView>

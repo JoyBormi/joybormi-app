@@ -38,7 +38,7 @@ export default function TabLayout() {
         <TabTrigger name="store" href="/(store)/set-up" asChild>
           <TabButton icon="Store">{t('common.tabs.store')}</TabButton>
         </TabTrigger>
-        <TabTrigger name="third" href="/third" asChild>
+        <TabTrigger name="settings" href="/(tabs)/settings" asChild>
           <TabButton icon="Settings">{t('common.tabs.settings')}</TabButton>
         </TabTrigger>
       </TabList>

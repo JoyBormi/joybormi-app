@@ -195,26 +195,9 @@ export function ServiceGrid({ category }: ServiceGridProps) {
   }
 
   return (
-    <View className="px-4 pb-4">
-      {/* Results Count */}
-      <MotiView
-        from={{ opacity: 0, translateX: -20 }}
-        animate={{ opacity: 1, translateX: 0 }}
-        transition={{ type: 'timing', duration: 300 }}
-        className="mb-4"
-      >
-        <Text className="font-subtitle text-foreground">
-          {filteredServices.length}{' '}
-          <Text className="font-body text-muted-foreground">
-            {filteredServices.length === 1
-              ? t('categories.serviceAvailable')
-              : t('categories.servicesAvailable')}
-          </Text>
-        </Text>
-      </MotiView>
-
+    <View className="px-4 py-4">
       {/* Service List - Vertical */}
-      <View>
+      <View className="py-6">
         {filteredServices.map((service, index) => (
           <ServiceCard key={service.id} service={service} index={index} />
         ))}

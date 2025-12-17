@@ -1,26 +1,24 @@
 import { Major } from '@/constants/enum';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
-import { useRouter } from 'expo-router';
 import { MotiView } from 'moti';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import {
-  Dimensions,
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import React, { useState } from 'react';
+import { Dimensions, Image, Pressable, Text, View } from 'react-native';
 import Animated, {
+  Extrapolation,
+  interpolate,
+  SharedValue,
+  useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
   withSpring,
+  withTiming,
 } from 'react-native-reanimated';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CARD_MARGIN = 16;
+const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 2.5;
 
 interface Service {
   id: string;
@@ -31,7 +29,7 @@ interface Service {
   durationRange: { min: number; max: number };
   rating: number;
   reviewCount: number;
-  distance: number; // in km
+  distance: number;
   images: string[];
   hashtags: string[];
 }
@@ -41,202 +39,215 @@ interface ServiceCardProps {
   index: number;
 }
 
+/**
+ * Atomic Sub-component for Pagination Dots to fix Hook Rules
+ */
+const PaginationDot = ({
+  index,
+  scrollX,
+}: {
+  index: number;
+  scrollX: SharedValue<number>;
+}) => {
+  const animatedDotStyle = useAnimatedStyle(() => {
+    const inputRange = [
+      (index - 1) * CARD_WIDTH,
+      index * CARD_WIDTH,
+      (index + 1) * CARD_WIDTH,
+    ];
+    return {
+      width: interpolate(
+        scrollX.value,
+        inputRange,
+        [6, 20, 6],
+        Extrapolation.CLAMP,
+      ),
+      opacity: interpolate(
+        scrollX.value,
+        inputRange,
+        [0.5, 1, 0.5],
+        Extrapolation.CLAMP,
+      ),
+    };
+  });
+
+  return (
+    <Animated.View
+      style={animatedDotStyle}
+      className="h-1.5 rounded-full bg-foreground border-[0.5px] border-primary mx-0.5"
+    />
+  );
+};
+
 export function ServiceCard({ service, index }: ServiceCardProps) {
-  const { t } = useTranslation();
-  const router = useRouter();
+  const scrollX = useSharedValue(0);
   const scale = useSharedValue(1);
   const heartScale = useSharedValue(1);
+  const heartRotate = useSharedValue(0);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const animatedStyle = useAnimatedStyle(() => ({
+  // Reanimated Scroll Handler
+  const onScrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollX.value = event.contentOffset.x;
+    },
+  });
+
+  const cardAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
 
   const heartAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: heartScale.value }],
+    transform: [
+      { scale: heartScale.value },
+      { rotate: `${heartRotate.value}deg` },
+    ],
   }));
 
   const handlePressIn = () => {
     scale.value = withSpring(0.98);
   };
-
   const handlePressOut = () => {
     scale.value = withSpring(1);
   };
 
-  const handlePress = () => {
-    // Navigate to service detail
-    // router.push(`/service/${service.id}`);
-  };
-
-  const handleFavoritePress = () => {
+  const toggleFavorite = (e) => {
+    e.stopPropagation(); // Prevent card navigation
     setIsFavorite(!isFavorite);
-    heartScale.value = withSequence(
-      withSpring(1.3, { damping: 5 }),
-      withSpring(1),
+    heartScale.value = withSequence(withSpring(1.3), withSpring(1));
+    heartRotate.value = withSequence(
+      withTiming(-15),
+      withTiming(15),
+      withTiming(0),
     );
   };
 
-  // Determine how many images to show based on screen width
-  const imagesToShow = SCREEN_WIDTH > 400 ? 4 : 3;
-  const displayImages = service.images.slice(0, imagesToShow);
+  const imagesToShow =
+    service.images.length > 0
+      ? service.images
+      : ['https://placehold.co/600x400/png'];
 
   return (
     <MotiView
-      from={{ opacity: 0, translateX: -50 }}
-      animate={{ opacity: 1, translateX: 0 }}
-      transition={{
-        type: 'spring',
-        delay: index * 150,
-        damping: 20,
-        stiffness: 90,
-      }}
+      from={{ opacity: 0, translateY: 20 }}
+      animate={{ opacity: 1, translateY: 0 }}
+      transition={{ delay: index * 100 }}
       className="mb-6"
     >
-      <Animated.View style={animatedStyle}>
+      <Animated.View
+        style={[
+          cardAnimatedStyle,
+          {
+            elevation: 5,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.1,
+            shadowRadius: 12,
+          },
+        ]}
+        className="bg-card rounded-3xl overflow-hidden"
+      >
+        {/* Top Section: Image Carousel */}
+        <View className="relative h-56 w-full">
+          <Animated.ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={onScrollHandler}
+            scrollEventThrottle={16}
+            decelerationRate="fast"
+          >
+            {imagesToShow.map((image, idx) => (
+              <View
+                key={idx}
+                style={{ width: CARD_WIDTH }}
+                className="h-full border-r border-border"
+              >
+                <Image
+                  source={{ uri: image }}
+                  className="w-full h-full"
+                  resizeMode="cover"
+                />
+              </View>
+            ))}
+          </Animated.ScrollView>
+
+          {/* Indicators */}
+          {imagesToShow.length > 1 && (
+            <View className="absolute bottom-3 left-0 right-0 flex-row justify-center">
+              {imagesToShow.map((_, idx) => (
+                <PaginationDot key={idx} index={idx} scrollX={scrollX} />
+              ))}
+            </View>
+          )}
+
+          {/* Favorite Button */}
+          <Pressable
+            onPress={toggleFavorite}
+            className="absolute top-3 right-3 w-9 h-9 bg-black/20 backdrop-blur-md rounded-full items-center justify-center"
+          >
+            <Animated.View style={heartAnimatedStyle}>
+              <Icons.Heart
+                size={18}
+                className={cn(
+                  isFavorite ? 'text-red-500 fill-red-500' : 'text-white',
+                )}
+              />
+            </Animated.View>
+          </Pressable>
+        </View>
+
+        {/* Bottom Section: Clickable Content */}
         <Pressable
-          onPress={handlePress}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
-          className="bg-card overflow-hidden rounded-2xl"
+          onPress={() => {
+            /* Navigate */
+          }}
+          className="p-4"
         >
-          {/* Image Gallery */}
-          <View className="relative">
-            <ScrollView
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              onMomentumScrollEnd={(e) => {
-                const index = Math.round(
-                  e.nativeEvent.contentOffset.x / (SCREEN_WIDTH - 32),
-                );
-                setCurrentImageIndex(index);
-              }}
+          <View className="flex-row justify-between items-start mb-1">
+            <Text
+              className="font-bold text-lg text-foreground flex-1"
+              numberOfLines={1}
             >
-              {displayImages.map((image, idx) => (
-                <View
-                  key={idx}
-                  style={{ width: SCREEN_WIDTH - 32 }}
-                  className="aspect-video bg-muted"
-                >
-                  <Image
-                    source={{ uri: image }}
-                    className="w-full h-full"
-                    resizeMode="cover"
-                  />
-                </View>
-              ))}
-            </ScrollView>
-
-            {/* Favorite Button */}
-            <Pressable
-              onPress={handleFavoritePress}
-              className="absolute top-3 right-3 w-9 h-9 bg-background/80 backdrop-blur-sm rounded-full items-center justify-center active:opacity-70"
-            >
-              <Animated.View style={heartAnimatedStyle}>
-                <Icons.Heart
-                  size={18}
-                  className={cn(
-                    isFavorite
-                      ? 'text-destructive fill-destructive'
-                      : 'text-foreground',
-                  )}
-                />
-              </Animated.View>
-            </Pressable>
-
-            {/* Image Indicators */}
-            {displayImages.length > 1 && (
-              <View className="absolute bottom-3 left-0 right-0 flex-row justify-center gap-1.5">
-                {displayImages.map((_, idx) => (
-                  <View
-                    key={idx}
-                    className={cn(
-                      'h-1.5 rounded-full transition-all',
-                      idx === currentImageIndex
-                        ? 'w-6 bg-white'
-                        : 'w-1.5 bg-white/50',
-                    )}
-                  />
-                ))}
-              </View>
-            )}
+              {service.name}
+            </Text>
+            <View className="flex-row items-center bg-popover-foreground px-2 py-1 rounded-md">
+              <Icons.Star
+                size={12}
+                className="text-amber-500 fill-amber-500 mr-1"
+              />
+              <Text className="font-bold text-xs text-primary">
+                {service.rating.toFixed(1)}
+              </Text>
+            </View>
           </View>
-
-          {/* Content Section */}
-          <View className="p-4">
-            {/* Title and Rating */}
-            <View className="flex-row items-start justify-between mb-2">
-              <Text
-                className="font-title text-foreground flex-1 mr-2"
-                numberOfLines={1}
-              >
-                {service.name}
-              </Text>
-              <View className="flex-row items-center gap-1">
-                <Icons.Star
-                  size={14}
-                  className="text-foreground fill-foreground"
-                />
-                <Text className="font-subtitle text-sm text-foreground">
-                  {service.rating.toFixed(1)}
-                </Text>
-              </View>
-            </View>
-
-            {/* Provider and Distance */}
-            <View className="flex-row items-center gap-3 mb-3">
-              <Text
-                className="font-body text-muted-foreground"
-                numberOfLines={1}
-              >
-                {service.provider}
-              </Text>
-              <View className="flex-row items-center gap-1">
-                <Icons.MapPin size={12} className="text-muted-foreground" />
-                <Text className="font-caption text-muted-foreground">
-                  {service.distance.toFixed(1)} km
-                </Text>
-              </View>
-            </View>
-
-            {/* Reviews Count */}
-            <Text className="font-caption text-muted-foreground mb-3">
-              {service.reviewCount.toLocaleString()} {t('categories.reviews')}
+          <View className="flex flex-row items-center justify-between mb-3">
+            <Text className="text-muted-foreground text-sm">
+              {service.provider}
             </Text>
 
-            {/* Hashtags */}
-            <View className="flex-row flex-wrap gap-2 mb-3">
-              {service.hashtags.slice(0, 3).map((tag, idx) => (
-                <View key={idx} className="bg-muted px-2.5 py-1 rounded-full">
-                  <Text className="font-caption text-muted-foreground">
-                    #{tag}
-                  </Text>
-                </View>
-              ))}
+            <View className="flex-row items-center gap-1">
+              <Icons.MapPin size={12} className="text-primary" />
+              <Text className="text-xs font-medium text-muted-foreground">
+                {service.distance.toFixed(1)} km
+              </Text>
+              <Text className="text-muted-foreground">•</Text>
+              <Text className="text-xs text-muted-foreground">
+                {service.reviewCount} reviews
+              </Text>
             </View>
+          </View>
 
-            {/* Price and Duration Range */}
-            <View className="flex-row items-center justify-between pt-2 border-t border-border">
-              <View>
-                <Text className="font-caption text-muted-foreground mb-0.5">
-                  {t('categories.duration')}
-                </Text>
-                <Text className="font-subtitle text-foreground">
-                  {service.durationRange.min}-{service.durationRange.max}{' '}
-                  {t('common.min')}
+          <View className="flex-row flex-wrap gap-1.5">
+            {service.hashtags.slice(0, 3).map((tag, i) => (
+              <View key={i} className="bg-secondary px-2 py-1 rounded-full">
+                <Text className="text-[10px] font-semibold text-secondary-foreground">
+                  #{tag}
                 </Text>
               </View>
-              <View className="items-end">
-                <Text className="font-caption text-muted-foreground mb-0.5">
-                  {t('categories.price')}
-                </Text>
-                <Text className="font-title text-foreground">
-                  ${service.priceRange.min}-${service.priceRange.max}
-                </Text>
-              </View>
-            </View>
+            ))}
           </View>
         </Pressable>
       </Animated.View>

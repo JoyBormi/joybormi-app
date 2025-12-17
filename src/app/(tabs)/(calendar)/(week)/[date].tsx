@@ -213,6 +213,7 @@ export default function TimelineCalendarScreen() {
 
   const timelineProps = useMemo<Partial<TimelineProps>>(
     () => ({
+      keyExtractor: (item: TimeEvent) => item.id,
       format24h: true,
       renderEvent,
       overlapEventsSpacing: -1,
