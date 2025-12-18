@@ -1,13 +1,18 @@
-import { FormField, FormFieldType } from '@/components/shared/fields';
+import FormField from '@/components/shared/form-field';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import {
   Button,
+  Input,
+  PasswordInput,
+  PhoneInput,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
   Text,
 } from '@/components/ui';
+import { Feedback } from '@/lib/haptics';
+
 import { AuthHeader, LoginFormType, loginSchema } from '@/views/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
@@ -61,21 +66,30 @@ export default function LoginScreen() {
                 control={control}
                 name="email"
                 label={t('auth.email')}
-                placeholder={t('auth.emailPlaceholder')}
-                fieldType={FormFieldType.INPUT}
-                keyboard="email-address"
-                returnKeyType="next"
                 required
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder={t('auth.emailPlaceholder')}
+                    keyboardType="email-address"
+                    returnKeyType="next"
+                  />
+                )}
               />
 
               <FormField
                 control={control}
                 name="password"
                 label={t('auth.password')}
-                placeholder={t('auth.passwordPlaceholder')}
-                fieldType={FormFieldType.PASSWORD}
-                returnKeyType="done"
                 required
+                render={({ field }) => (
+                  <PasswordInput
+                    placeholder={t('auth.passwordPlaceholder')}
+                    secureTextEntry
+                    returnKeyType="done"
+                    {...field}
+                  />
+                )}
               />
             </TabsContent>
             <TabsContent value="phone" className="gap-y-6 mt-10">
@@ -83,21 +97,32 @@ export default function LoginScreen() {
                 control={control}
                 name="phone"
                 label={t('auth.phone')}
-                placeholder={t('auth.phonePlaceholder')}
-                fieldType={FormFieldType.INPUT}
-                keyboard="email-address"
-                returnKeyType="next"
                 required
+                render={({ field }) => (
+                  <PhoneInput
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onBlur={field.onBlur}
+                    placeholder={t('auth.phonePlaceholder')}
+                    returnKeyType="next"
+                    defaultCountry="UZ"
+                  />
+                )}
               />
 
               <FormField
                 control={control}
                 name="password"
                 label={t('auth.password')}
-                placeholder={t('auth.passwordPlaceholder')}
-                fieldType={FormFieldType.PASSWORD}
-                returnKeyType="done"
                 required
+                render={({ field }) => (
+                  <PasswordInput
+                    {...field}
+                    placeholder={t('auth.passwordPlaceholder')}
+                    secureTextEntry
+                    returnKeyType="done"
+                  />
+                )}
               />
             </TabsContent>
           </Tabs>
@@ -113,14 +138,22 @@ export default function LoginScreen() {
           </Text>
           <Button
             variant="link"
-            onPress={() => router.push('/(auth)/register')}
+            onPress={() => {
+              Feedback.medium();
+              router.push('/(auth)/register');
+            }}
           >
             <Text className="font-primary">{t('auth.login.register')}</Text>
           </Button>
         </View>
 
         <View className="justify-center items-center mt-4">
-          <TouchableOpacity onPress={() => router.push('/(auth)/forgot-pwd')}>
+          <TouchableOpacity
+            onPress={() => {
+              Feedback.soft();
+              router.push('/(auth)/forgot-pwd');
+            }}
+          >
             <Text className="font-primary underline text-sm">
               {t('auth.login.forgotPassword')}
             </Text>

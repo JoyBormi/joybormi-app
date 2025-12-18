@@ -11,7 +11,7 @@ export interface MinimalHeaderProps {
 }
 
 const MinimalHeader = React.forwardRef<
-  React.ElementRef<typeof View>,
+  React.ComponentRef<typeof View>,
   MinimalHeaderProps
 >(({ title, subtitle, badge, className }, ref) => {
   return (

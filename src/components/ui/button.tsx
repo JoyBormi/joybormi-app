@@ -1,4 +1,5 @@
 import { TextClassContext } from '@/components/ui/text';
+import { Feedback } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
@@ -64,9 +65,9 @@ type ButtonProps = React.ComponentPropsWithoutRef<typeof Pressable> &
   VariantProps<typeof buttonVariants>;
 
 const Button = React.forwardRef<
-  React.ElementRef<typeof Pressable>,
+  React.ComponentRef<typeof Pressable>,
   ButtonProps
->(({ className, variant, size, ...props }, ref) => {
+>(({ className, variant, size, onPress, ...props }, ref) => {
   return (
     <TextClassContext.Provider
       value={buttonTextVariants({
@@ -82,6 +83,10 @@ const Button = React.forwardRef<
         )}
         ref={ref}
         role="button"
+        onPress={(e) => {
+          Feedback.soft();
+          onPress?.(e);
+        }}
         {...props}
       />
     </TextClassContext.Provider>

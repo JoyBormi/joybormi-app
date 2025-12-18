@@ -2,6 +2,7 @@ import { Button, Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 import { useNavigation } from 'expo-router';
 
+import { Feedback } from '@/lib/haptics';
 import { AnimatePresence, MotiView } from 'moti';
 import { View } from 'react-native';
 
@@ -24,7 +25,10 @@ export function AuthHeader({
       >
         {navigation.canGoBack() && (
           <Button
-            onPress={() => navigation.goBack()}
+            onPress={() => {
+              Feedback.soft();
+              navigation.goBack();
+            }}
             className="p-2 w-fit aspect-square rounded-full !pl-0"
             variant="ghost"
           >

@@ -1,13 +1,15 @@
-import { FormField, FormFieldType } from '@/components/shared/fields';
+import FormField from '@/components/shared/form-field';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import {
   Button,
+  Input,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
   Text,
 } from '@/components/ui';
+import { Feedback } from '@/lib/haptics';
 
 import {
   AuthHeader,
@@ -91,41 +93,52 @@ export default function RegisterScreen() {
                 control={emailControl}
                 name="username"
                 label={t('auth.username')}
-                placeholder={t('auth.usernamePlaceholder')}
-                fieldType={FormFieldType.INPUT}
-                returnKeyType="next"
-                capitalize="none"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder={t('auth.usernamePlaceholder')}
+                    returnKeyType="next"
+                  />
+                )}
                 required
               />
               <FormField
                 control={emailControl}
                 name="email"
                 label={t('auth.email')}
-                placeholder={t('auth.emailPlaceholder')}
-                fieldType={FormFieldType.INPUT}
-                keyboard="email-address"
-                returnKeyType="next"
-                capitalize="none"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder={t('auth.emailPlaceholder')}
+                    returnKeyType="next"
+                  />
+                )}
                 required
               />
               <FormField
                 control={emailControl}
                 name="password"
                 label={t('auth.password')}
-                placeholder={t('auth.passwordPlaceholder')}
-                fieldType={FormFieldType.PASSWORD}
-                returnKeyType="next"
-                capitalize="none"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder={t('auth.passwordPlaceholder')}
+                    returnKeyType="next"
+                  />
+                )}
                 required
               />
               <FormField
                 control={emailControl}
                 name="confirmPassword"
                 label={t('auth.confirmPassword')}
-                placeholder={t('auth.confirmPasswordPlaceholder')}
-                fieldType={FormFieldType.PASSWORD}
-                returnKeyType="done"
-                capitalize="none"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder={t('auth.confirmPasswordPlaceholder')}
+                    returnKeyType="done"
+                  />
+                )}
                 required
               />
             </TabsContent>
@@ -134,40 +147,52 @@ export default function RegisterScreen() {
                 control={phoneControl}
                 name="username"
                 label={t('auth.username')}
-                placeholder={t('auth.usernamePlaceholder')}
-                fieldType={FormFieldType.INPUT}
-                returnKeyType="next"
-                capitalize="none"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder={t('auth.usernamePlaceholder')}
+                    returnKeyType="next"
+                  />
+                )}
                 required
               />
               <FormField
                 control={phoneControl}
                 name="phone"
                 label={t('auth.phone')}
-                placeholder={t('auth.phonePlaceholder')}
-                fieldType={FormFieldType.INPUT}
-                keyboard="phone-pad"
-                returnKeyType="next"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder={t('auth.phonePlaceholder')}
+                    returnKeyType="next"
+                  />
+                )}
                 required
               />
               <FormField
                 control={phoneControl}
                 name="password"
                 label={t('auth.password')}
-                placeholder={t('auth.passwordPlaceholder')}
-                fieldType={FormFieldType.PASSWORD}
-                returnKeyType="next"
-                capitalize="none"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder={t('auth.passwordPlaceholder')}
+                    returnKeyType="next"
+                  />
+                )}
                 required
               />
               <FormField
                 control={phoneControl}
                 name="confirmPassword"
                 label={t('auth.confirmPassword')}
-                placeholder={t('auth.confirmPasswordPlaceholder')}
-                fieldType={FormFieldType.PASSWORD}
-                returnKeyType="done"
-                capitalize="none"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder={t('auth.confirmPasswordPlaceholder')}
+                    returnKeyType="done"
+                  />
+                )}
                 required
               />
             </TabsContent>
@@ -192,7 +217,10 @@ export default function RegisterScreen() {
             </Text>
             <Button
               variant="link"
-              onPress={() => router.dismissTo('/(auth)/login')}
+              onPress={() => {
+                Feedback.soft();
+                router.dismissTo('/(auth)/login');
+              }}
             >
               <Text className="text-primary">{t('auth.register.login')}</Text>
             </Button>

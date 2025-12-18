@@ -1,13 +1,15 @@
-import { FormField, FormFieldType } from '@/components/shared/fields';
+import FormField from '@/components/shared/form-field';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import {
   Button,
+  Input,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
   Text,
 } from '@/components/ui';
+import { Feedback } from '@/lib/haptics';
 import {
   AuthHeader,
   ForgotPwdEmailFormType,
@@ -122,23 +124,28 @@ export default function ForgotPwdScreen() {
                 control={emailForm.control}
                 name="email"
                 label={t('auth.email')}
-                placeholder={t('auth.emailPlaceholder')}
-                fieldType={FormFieldType.INPUT}
-                keyboard="email-address"
-                returnKeyType="done"
-                capitalize="none"
+                render={({ field }) => (
+                  <Input
+                    placeholder={t('auth.emailPlaceholder')}
+                    returnKeyType="done"
+                    disabled={state.emailCodeSent}
+                    {...field}
+                  />
+                )}
                 required
-                disabled={state.emailCodeSent}
               />
               {state.emailCodeSent && (
                 <FormField
                   control={emailForm.control}
                   name="code"
                   label={t('auth.verificationCode')}
-                  placeholder={t('auth.codePlaceholder')}
-                  fieldType={FormFieldType.INPUT}
-                  keyboard="number-pad"
-                  returnKeyType="done"
+                  render={({ field }) => (
+                    <Input
+                      placeholder={t('auth.codePlaceholder')}
+                      returnKeyType="done"
+                      {...field}
+                    />
+                  )}
                   className="mt-6"
                   required
                 />
@@ -149,22 +156,28 @@ export default function ForgotPwdScreen() {
                 control={phoneForm.control}
                 name="phone"
                 label={t('auth.phone')}
-                placeholder={t('auth.phonePlaceholder')}
-                fieldType={FormFieldType.INPUT}
-                keyboard="phone-pad"
-                returnKeyType="done"
+                render={({ field }) => (
+                  <Input
+                    placeholder={t('auth.phonePlaceholder')}
+                    returnKeyType="done"
+                    disabled={state.phoneCodeSent}
+                    {...field}
+                  />
+                )}
                 required
-                disabled={state.phoneCodeSent}
               />
               {state.phoneCodeSent && (
                 <FormField
                   control={phoneForm.control}
                   name="code"
                   label={t('auth.verificationCode')}
-                  placeholder={t('auth.codePlaceholder')}
-                  fieldType={FormFieldType.INPUT}
-                  keyboard="number-pad"
-                  returnKeyType="done"
+                  render={({ field }) => (
+                    <Input
+                      placeholder={t('auth.codePlaceholder')}
+                      returnKeyType="done"
+                      {...field}
+                    />
+                  )}
                   className="mt-6"
                   required
                 />
@@ -205,7 +218,12 @@ export default function ForgotPwdScreen() {
         )}
 
         <View className="justify-center items-center">
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity
+            onPress={() => {
+              Feedback.soft();
+              router.back();
+            }}
+          >
             <Text className="font-primary underline text-sm">
               {t('auth.forgotPwd.backToLogin')}
             </Text>

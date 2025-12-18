@@ -1,4 +1,5 @@
 import { Button, Text } from '@/components/ui';
+import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
 import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { MotiView } from 'moti';
@@ -56,7 +57,10 @@ export default function SuccessScreen() {
         </Text>
 
         <Button
-          onPress={() => router.dismissTo('/(auth)/login')}
+          onPress={() => {
+            Feedback.soft();
+            router.dismissTo('/(auth)/login');
+          }}
           className="w-full"
         >
           <Text>{t('auth.success.backToLogin')}</Text>

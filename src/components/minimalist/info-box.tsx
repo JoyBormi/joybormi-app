@@ -40,7 +40,7 @@ export interface MinimalInfoBoxProps
 }
 
 const MinimalInfoBox = React.forwardRef<
-  React.ElementRef<typeof View>,
+  React.ComponentRef<typeof View>,
   MinimalInfoBoxProps
 >(({ className, variant, children, ...props }, ref) => {
   return (

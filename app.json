@@ -17,14 +17,16 @@
         "CFBundleAllowMixedLocalizations": true,
         "ExpoLocalization_supportsRTL": true
       },
-      "bundleIdentifier": "com.salahbm-dev.joybormi"
+      "bundleIdentifier": "com.joybormi.app",
+      "appleTeamId": "A2Y67UR23Z"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.joybormi.app"
     },
     "web": {
       "bundler": "metro",

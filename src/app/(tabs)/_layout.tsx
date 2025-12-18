@@ -5,11 +5,14 @@ import { useSegments } from 'expo-router';
 import { TabList, Tabs, TabSlot, TabTrigger } from 'expo-router/ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SCREENS_WITHOUT_TAB = ['[date]'];
 
 export default function TabLayout() {
   const { t } = useTranslation();
+
+  const insets = useSafeAreaInsets();
 
   const isScrollingDown = useScrollStore((s) => s.isScrollingDown);
 
@@ -22,12 +25,13 @@ export default function TabLayout() {
       <TabSlot />
       <TabList
         className={cn(
-          'absolute bottom-9 self-center flex-row justify-evenly rounded-full transition-all duration-300 drop-shadow-2xl backdrop-blur-3xl',
+          'absolute self-center flex-row justify-evenly rounded-full transition-all duration-300 drop-shadow-2xl backdrop-blur-3xl',
           isScrollingDown ? 'bg-foreground/5' : 'bg-foreground/10',
           isTabBarHidden
             ? 'opacity-0 pointer-events-none translate-y-6'
             : 'opacity-100 pointer-events-auto translate-y-0',
         )}
+        style={{ bottom: insets.bottom + 5 }}
       >
         <TabTrigger name="Home" href="/" asChild>
           <TabButton icon="Home">{t('common.tabs.home')}</TabButton>

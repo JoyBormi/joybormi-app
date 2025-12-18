@@ -11,7 +11,7 @@ export interface MinimalCheckboxProps {
 }
 
 const MinimalCheckbox = React.forwardRef<
-  React.ElementRef<typeof Pressable>,
+  React.ComponentRef<typeof Pressable>,
   MinimalCheckboxProps
 >(({ checked, onPress, label, className }, ref) => {
   return (

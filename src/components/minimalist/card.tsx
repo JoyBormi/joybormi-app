@@ -21,7 +21,7 @@ export interface MinimalCardProps
     VariantProps<typeof minimalCardVariants> {}
 
 const MinimalCard = React.forwardRef<
-  React.ElementRef<typeof View>,
+  React.ComponentRef<typeof View>,
   MinimalCardProps
 >(({ className, size, ...props }, ref) => {
   return (

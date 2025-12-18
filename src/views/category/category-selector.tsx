@@ -1,16 +1,22 @@
 import { Major } from '@/constants/enum';
+import { useColorScheme } from '@/hooks/common/use-color-scheme';
 import { cn } from '@/lib/utils';
-import { AnimatePresence, MotiView } from 'moti';
-import React from 'react';
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
 
-/** * Optimized Configuration
+/**
+ * Optimized Configuration
  */
 const EMOJI_MAP: Record<string, string> = {
   all: '✨',
@@ -57,6 +63,68 @@ function CategoryChip({
     mass: 0.5,
   };
 
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const label =
+    category === 'all' ? t('categories.all') : t(`major.${category}`);
+
+  return (
+    <Animated.View style={animatedContainerStyle} className="mr-2">
+      <Pressable
+        onPress={onPress}
+        onPressIn={() => (scale.value = withSpring(0.92, springConfig))}
+        onPressOut={() => (scale.value = withSpring(1, springConfig))}
+        className={cn(
+          'px-4 py-2.5 rounded-2xl flex-row items-center gap-2 border transition-colors',
+          isSelected
+            ? 'bg-primary border-primary shadow-sm'
+            : 'bg-card border-border',
+        )}
+      >
+        <Text className="text-base">{emoji}</Text>
+        <Text
+          className={cn(
+            'font-semibold text-sm tracking-tight',
+            isSelected ? 'text-primary-foreground' : 'text-muted-foreground',
+          )}
+        >
+          {label}
+        </Text>
+
+        {/* Animated Selection Dot */}
+        {isSelected && (
+          <Animated.View className="w-1.5 h-1.5 rounded-full bg-primary-foreground/50" />
+        )}
+      </Pressable>
+    </Animated.View>
+  );
+}
+
+/**
+ * Grid Category Item for Bottom Sheet
+ */
+function CategoryGridItem({
+  category,
+  emoji,
+  isSelected,
+  onPress,
+}: {
+  category: string;
+  emoji: string;
+  isSelected: boolean;
+  onPress: () => void;
+}) {
+  const { t } = useTranslation();
+  const scale = useSharedValue(1);
+
+  const springConfig = {
+    damping: 15,
+    stiffness: 150,
+    mass: 0.5,
+  };
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
@@ -65,53 +133,83 @@ function CategoryChip({
     category === 'all' ? t('categories.all') : t(`major.${category}`);
 
   return (
-    <MotiView
-      from={{ opacity: 0, scale: 0.8, translateX: -10 }}
-      animate={{ opacity: 1, scale: 1, translateX: 0 }}
-      transition={{
-        type: 'spring',
-        delay: index * 30,
-        ...springConfig,
-      }}
-      className="mr-2"
-    >
-      <Animated.View style={animatedStyle}>
-        <Pressable
-          onPress={onPress}
-          onPressIn={() => (scale.value = withSpring(0.92, springConfig))}
-          onPressOut={() => (scale.value = withSpring(1, springConfig))}
-          // Using a subtle border or solid background based on selection
+    <Animated.View style={animatedStyle} className="w-[31%] mb-3">
+      <Pressable
+        onPress={onPress}
+        onPressIn={() => (scale.value = withSpring(0.92, springConfig))}
+        onPressOut={() => (scale.value = withSpring(1, springConfig))}
+        className={cn(
+          'aspect-square items-center justify-center rounded-2xl border-2',
+          isSelected ? 'bg-primary border-primary' : 'bg-card border-border',
+        )}
+      >
+        <Text className="text-3xl mb-2">{emoji}</Text>
+        <Text
+          numberOfLines={2}
           className={cn(
-            'px-4 py-2.5 rounded-2xl flex-row items-center gap-2 border transition-colors',
-            isSelected
-              ? 'bg-primary border-primary shadow-sm'
-              : 'bg-card border-border',
+            'font-semibold text-xs text-center px-2',
+            isSelected ? 'text-primary-foreground' : 'text-muted-foreground',
           )}
         >
-          <Text className="text-base">{emoji}</Text>
-          <Text
-            className={cn(
-              'font-semibold text-sm tracking-tight',
-              isSelected ? 'text-primary-foreground' : 'text-muted-foreground',
-            )}
-          >
-            {label}
-          </Text>
+          {label}
+        </Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
 
-          {/* Animated Selection Dot (Optional UI Polish) */}
-          <AnimatePresence>
-            {isSelected && (
-              <MotiView
-                from={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                className="w-1.5 h-1.5 rounded-full bg-primary-foreground/50"
-              />
-            )}
-          </AnimatePresence>
-        </Pressable>
+/**
+ * Draggable Knob Component
+ */
+function DraggableKnob({ onDrag }: { onDrag: () => void }) {
+  const translateY = useSharedValue(0);
+  const scale = useSharedValue(1);
+
+  const panGesture = Gesture.Pan()
+    .onStart(() => {
+      scale.value = withSpring(1.1);
+    })
+    .onUpdate((event) => {
+      // Only allow downward drag
+      if (event.translationY > 0) {
+        translateY.value = event.translationY;
+      }
+    })
+    .onEnd((event) => {
+      scale.value = withSpring(1);
+
+      // If dragged down more than 50px, open the sheet
+      if (event.translationY > 50) {
+        onDrag();
+      }
+
+      translateY.value = withSpring(0);
+    });
+
+  const tapGesture = Gesture.Tap()
+    .onStart(() => {
+      scale.value = withSpring(0.95);
+    })
+    .onEnd(() => {
+      scale.value = withSpring(1);
+      onDrag();
+    });
+
+  const composedGesture = Gesture.Race(panGesture, tapGesture);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }, { scale: scale.value }],
+  }));
+
+  return (
+    <GestureDetector gesture={composedGesture}>
+      <Animated.View
+        style={animatedStyle}
+        className="items-center justify-center py-3"
+      >
+        <View className="w-12 h-1.5 bg-muted-foreground/40 rounded-full" />
       </Animated.View>
-    </MotiView>
+    </GestureDetector>
   );
 }
 
@@ -125,20 +223,48 @@ export function CategorySelector({
   selectedCategory: string;
   onCategoryChange: (category: string) => void;
 }) {
+  const { colors, isDarkColorScheme } = useColorScheme();
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ['65%', '90%'], []);
+
+  const handleSheetOpen = useCallback(() => {
+    bottomSheetRef.current?.expand();
+  }, []);
+
+  const handleCategorySelect = useCallback(
+    (category: string) => {
+      onCategoryChange(category);
+      bottomSheetRef.current?.close();
+    },
+    [onCategoryChange],
+  );
+
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.5}
+      />
+    ),
+    [],
+  );
+
   return (
     <View className="bg-background">
+      {/* Horizontal Scroll Categories */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 16,
-          paddingVertical: 12,
+          paddingTop: 12,
           alignItems: 'center',
         }}
-        // Enable snapping for a more premium feel
         decelerationRate="fast"
       >
-        {CATEGORIES.map((category, index) => (
+        {CATEGORIES.slice(0, 6).map((category, index) => (
           <CategoryChip
             key={category}
             category={category}
@@ -150,8 +276,62 @@ export function CategorySelector({
         ))}
       </ScrollView>
 
-      {/* Subtle bottom separator with gradient feel */}
+      {/* Draggable Knob */}
+      <DraggableKnob onDrag={handleSheetOpen} />
+
+      {/* Subtle bottom separator */}
       <View className="h-[1px] w-full bg-border/40" />
+
+      {/* Bottom Sheet with All Categories */}
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        enablePanDownToClose
+        backdropComponent={renderBackdrop}
+        handleIndicatorStyle={{
+          backgroundColor: colors.border,
+          width: 40,
+        }}
+        backgroundStyle={{
+          backgroundColor: colors.background,
+        }}
+        style={{
+          shadowColor: isDarkColorScheme ? '#ffffff' : '#000000',
+          shadowOffset: {
+            width: 0,
+            height: -4,
+          },
+          shadowOpacity: isDarkColorScheme ? 0.1 : 0.25,
+          shadowRadius: 8,
+          elevation: 10,
+        }}
+      >
+        <BottomSheetView style={{ flex: 1, paddingHorizontal: 16 }}>
+          <Text className="font-heading text-xl mb-4 text-center">
+            All Categories
+          </Text>
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingBottom: 20,
+            }}
+          >
+            <View className="flex-row flex-wrap justify-between">
+              {CATEGORIES.map((category) => (
+                <CategoryGridItem
+                  key={category}
+                  category={category}
+                  emoji={EMOJI_MAP[category] || '📋'}
+                  isSelected={selectedCategory === category}
+                  onPress={() => handleCategorySelect(category)}
+                />
+              ))}
+            </View>
+          </ScrollView>
+        </BottomSheetView>
+      </BottomSheet>
     </View>
   );
 }

@@ -1,4 +1,5 @@
 import { Major } from '@/constants/enum';
+import { Feedback } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'expo-router';
 import { MotiView } from 'moti';
@@ -59,7 +60,10 @@ export function CategoryPills({ className }: Props) {
         transition={{ delay: 750 }}
       >
         <Pressable
-          onPress={() => router.push('/(category)/all')}
+          onPress={() => {
+            Feedback.medium();
+            router.push('/(category)/all');
+          }}
           className="py-3 mt-4 items-center justify-center bg-card/50 rounded-xl border border-border active:opacity-80"
         >
           <Text className="font-caption text-sm text-primary">

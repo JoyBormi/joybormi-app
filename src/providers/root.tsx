@@ -1,3 +1,4 @@
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { PortalHost } from '@rn-primitives/portal';
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -8,7 +9,9 @@ const RootProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <I18nProvider>
       <ThemeProvider>
-        <GestureHandlerRootView>{children}</GestureHandlerRootView>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+        </GestureHandlerRootView>
         <PortalHost />
       </ThemeProvider>
     </I18nProvider>

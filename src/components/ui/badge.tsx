@@ -57,29 +57,30 @@ const BadgeTextVariants = cva('w-auto', {
 type BadgeProps = React.ComponentPropsWithoutRef<typeof Pressable> &
   VariantProps<typeof BadgeVariants>;
 
-const Badge = React.forwardRef<React.ElementRef<typeof Pressable>, BadgeProps>(
-  ({ className, variant, size, role, ...props }, ref) => {
-    return (
-      <TextClassContext.Provider
-        value={BadgeTextVariants({
-          variant,
-          size,
-          className: 'web:pointer-events-none',
-        })}
-      >
-        <Pressable
-          className={cn(
-            props.disabled && 'opacity-50 web:pointer-events-none',
-            BadgeVariants({ variant, size, className }),
-          )}
-          ref={ref}
-          role={role}
-          {...props}
-        />
-      </TextClassContext.Provider>
-    );
-  },
-);
+const Badge = React.forwardRef<
+  React.ComponentRef<typeof Pressable>,
+  BadgeProps
+>(({ className, variant, size, role, ...props }, ref) => {
+  return (
+    <TextClassContext.Provider
+      value={BadgeTextVariants({
+        variant,
+        size,
+        className: 'web:pointer-events-none',
+      })}
+    >
+      <Pressable
+        className={cn(
+          props.disabled && 'opacity-50 web:pointer-events-none',
+          BadgeVariants({ variant, size, className }),
+        )}
+        ref={ref}
+        role={role}
+        {...props}
+      />
+    </TextClassContext.Provider>
+  );
+});
 Badge.displayName = 'Badge';
 
 export { Badge, BadgeTextVariants, BadgeVariants };

@@ -5,7 +5,7 @@ import { TextInput, type TextInputProps } from 'react-native';
 const Input = React.forwardRef<
   React.ComponentRef<typeof TextInput>,
   TextInputProps
->(({ className, placeholderClassName, ...props }, ref) => {
+>(({ className, ...props }, ref) => {
   return (
     <TextInput
       ref={ref}
