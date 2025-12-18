@@ -24,7 +24,8 @@
     "tabs": {
       "home": "Boshlash",
       "profile": "Profil",
-      "calendar": "Jadval",
+      "calendar": "Taqvim",
+      "reservations": "Band qilishlar",
       "settings": "Sozlamalar"
     }
   },
