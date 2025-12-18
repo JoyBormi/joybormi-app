@@ -10,9 +10,11 @@ const RootProvider = ({ children }: { children: React.ReactNode }) => {
     <I18nProvider>
       <ThemeProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+          <BottomSheetModalProvider>
+            {children}
+            <PortalHost />
+          </BottomSheetModalProvider>
         </GestureHandlerRootView>
-        <PortalHost />
       </ThemeProvider>
     </I18nProvider>
   );

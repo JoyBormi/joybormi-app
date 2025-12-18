@@ -69,7 +69,9 @@ export default function LoginScreen() {
                 required
                 render={({ field }) => (
                   <Input
-                    {...field}
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onBlur={field.onBlur}
                     placeholder={t('auth.emailPlaceholder')}
                     keyboardType="email-address"
                     returnKeyType="next"
@@ -84,10 +86,12 @@ export default function LoginScreen() {
                 required
                 render={({ field }) => (
                   <PasswordInput
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onBlur={field.onBlur}
                     placeholder={t('auth.passwordPlaceholder')}
                     secureTextEntry
                     returnKeyType="done"
-                    {...field}
                   />
                 )}
               />
@@ -117,7 +121,9 @@ export default function LoginScreen() {
                 required
                 render={({ field }) => (
                   <PasswordInput
-                    {...field}
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onBlur={field.onBlur}
                     placeholder={t('auth.passwordPlaceholder')}
                     secureTextEntry
                     returnKeyType="done"

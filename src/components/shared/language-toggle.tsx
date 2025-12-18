@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-const langs = ['en-US', 'ru-RU', 'uz-UZ'];
+const langs = ['en', 'ru', 'uz'];
 
 export const LanguageToggle = () => {
   const { i18n, t } = useTranslation();
@@ -35,7 +35,7 @@ export const LanguageToggle = () => {
     const loadLanguage = async () => {
       const savedLanguage = storage.getItem('language');
       if (savedLanguage) {
-        i18n.changeLanguage((savedLanguage as string) ?? 'en-US');
+        i18n.changeLanguage((savedLanguage as string) ?? 'en');
       }
     };
     loadLanguage();

@@ -1,57 +1,81 @@
 import * as Localization from 'expo-localization';
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { Platform } from 'react-native';
-
-import enLocalization from '@/locales/en.json';
-import ruLocalization from '@/locales/ru.json';
-import uzLocalization from '@/locales/uz.json';
+import { z } from 'zod/v4';
 
 import { storage } from '@/lib/mmkv';
-import { z } from 'zod';
-import { makeZodI18nMap, zodI18nMap } from 'zod-i18n-map';
+import { uzLocale } from '@/utils/uz.zod';
+
+import en from '@/locales/en.json';
+import ru from '@/locales/ru.json';
+import uz from '@/locales/uz.json';
+
+export type Locale = 'en' | 'ru' | 'uz';
 
 const resources = {
-  'en-US': { translation: enLocalization, zod: enLocalization.zod },
-  'ru-RU': { translation: ruLocalization, zod: ruLocalization.zod },
-  'uz-UZ': { translation: uzLocalization, zod: uzLocalization.zod },
+  en: { translation: en },
+  ru: { translation: ru },
+  uz: { translation: uz },
 };
 
-export type Locale = keyof typeof resources;
+let initialized = false;
 
-export const initI18n = async () => {
-  let savedLanguage = 'en-US';
+function normalizeLocale(value?: string): Locale {
+  if (!value) return 'ru';
+  const base = value.split('-')[0];
+  if (base === 'en' || base === 'ru' || base === 'uz') return base;
+  return 'ru';
+}
 
-  try {
-    const localeCode = Localization.getLocales()[0]?.languageCode;
-    if (Platform.OS !== 'web') {
-      const stored = await storage.getItem('language');
-      savedLanguage = stored || localeCode || 'en-US';
-    } else {
-      savedLanguage = localeCode || 'en-US';
-    }
-  } catch (e) {
-    console.warn('Error loading language:', e);
-  }
+export async function initI18n() {
+  if (initialized) return i18next;
+
+  const device =
+    Localization.getLocales()[0]?.languageCode ??
+    Localization.getLocales()[0]?.languageTag;
+
+  const stored = storage.getItem('language');
+  const lng = normalizeLocale((stored as string) ?? device);
 
   await i18next.use(initReactI18next).init({
-    compatibilityJSON: 'v4',
-    lng: savedLanguage,
-    fallbackLng: 'en-US',
-    ns: ['zod'],
-    defaultNS: 'translation',
+    lng,
+    fallbackLng: 'en',
     resources,
     interpolation: { escapeValue: false },
   });
 
-  try {
-    z.setErrorMap(makeZodI18nMap({ t: i18next.t, ns: ['zod'] }));
-  } catch (err) {
-    console.warn(err);
-    z.setErrorMap(zodI18nMap); // fallback
+  applyZodLocale(lng);
+
+  initialized = true;
+  return i18next;
+}
+
+export async function changeLanguage(lng: Locale) {
+  const normalized = normalizeLocale(lng);
+  storage.setItem('language', normalized);
+
+  if (!initialized) {
+    await initI18n();
   }
 
-  return i18next;
-};
+  await i18next.changeLanguage(normalized);
+  applyZodLocale(normalized);
+}
 
-export default i18next;
+function applyZodLocale(lng: Locale) {
+  try {
+    if (lng === 'uz') {
+      z.config({ localeError: uzLocale() });
+    } else if (z.locales?.[lng]) {
+      z.config(z.locales[lng]());
+    } else if (z.locales?.en) {
+      z.config(z.locales.en());
+    } else {
+      z.config({ localeError: undefined });
+    }
+  } catch {
+    // do nothing — never crash app startup
+  }
+}
+
+export { i18next as i18n };

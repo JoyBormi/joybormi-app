@@ -10,12 +10,12 @@ export const loginSchema = z.object({
 export type LoginFormType = z.infer<typeof loginSchema>;
 
 export const forgotPwdEmailSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   code: z.string().optional(),
 });
 
 export const forgotPwdCodeSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   code: z.string().length(6),
 });
 
@@ -25,7 +25,7 @@ export type ForgotPwdCodeFormType = z.infer<typeof forgotPwdCodeSchema>;
 export const forgotPwdPhoneSchema = z.object({
   phone: z.string().refine((data) => data.match(/^\+?[1-9]\d{1,14}$/), {
     params: {
-      i18n: 'custom.invalid_phone',
+      customCode: 'custom.required',
     },
   }),
   code: z.string().optional(),
@@ -34,7 +34,7 @@ export const forgotPwdPhoneSchema = z.object({
 export const forgotPwdPhoneCodeSchema = z.object({
   phone: z.string().refine((data) => data.match(/^\+?[1-9]\d{1,14}$/), {
     params: {
-      i18n: 'custom.invalid_phone',
+      customCode: 'custom.required',
     },
   }),
   code: z.string().length(6),
@@ -52,8 +52,9 @@ export const resetPwdSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
+
     params: {
-      i18n: 'custom.passwords_do_not_match',
+      customCode: 'custom.required',
     },
   });
 
@@ -65,7 +66,7 @@ const usernameSchema = z
   .max(20)
   .refine((data) => data.match(/^[a-zA-Z0-9_]+$/), {
     params: {
-      i18n: 'custom.invalid_username',
+      customCode: 'custom.required',
     },
   });
 
@@ -73,21 +74,22 @@ const phoneSchema = z
   .string()
   .refine((data) => data.match(/^\+?[1-9]\d{1,14}$/), {
     params: {
-      i18n: 'custom.invalid_phone',
+      customCode: 'custom.required',
     },
   });
 
 export const registerEmailSchema = z
   .object({
     username: usernameSchema,
-    email: z.string().email(),
+    email: z.email(),
     password: z.string().min(6),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
+
     params: {
-      i18n: 'custom.confirm_password_mismatch',
+      customCode: 'custom.required',
     },
   });
 
@@ -100,8 +102,9 @@ export const registerPhoneSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
+
     params: {
-      i18n: 'custom.confirm_password_mismatch',
+      customCode: 'custom.required',
     },
   });
 

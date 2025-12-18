@@ -3,6 +3,7 @@ import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import {
   Button,
   Input,
+  PhoneInput,
   Tabs,
   TabsContent,
   TabsList,
@@ -143,7 +144,9 @@ export default function ForgotPwdScreen() {
                     <Input
                       placeholder={t('auth.codePlaceholder')}
                       returnKeyType="done"
-                      {...field}
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      onBlur={field.onBlur}
                     />
                   )}
                   className="mt-6"
@@ -157,11 +160,13 @@ export default function ForgotPwdScreen() {
                 name="phone"
                 label={t('auth.phone')}
                 render={({ field }) => (
-                  <Input
+                  <PhoneInput
                     placeholder={t('auth.phonePlaceholder')}
                     returnKeyType="done"
-                    disabled={state.phoneCodeSent}
-                    {...field}
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onBlur={field.onBlur}
+                    defaultCountry="UZ"
                   />
                 )}
                 required
@@ -175,7 +180,9 @@ export default function ForgotPwdScreen() {
                     <Input
                       placeholder={t('auth.codePlaceholder')}
                       returnKeyType="done"
-                      {...field}
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      onBlur={field.onBlur}
                     />
                   )}
                   className="mt-6"

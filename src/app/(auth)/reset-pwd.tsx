@@ -1,6 +1,6 @@
 import FormField from '@/components/shared/form-field';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
-import { Button, Input, Text } from '@/components/ui';
+import { Button, PasswordInput, Text } from '@/components/ui';
 import { AuthHeader, ResetPwdFormType, resetPwdSchema } from '@/views/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
@@ -40,8 +40,10 @@ export default function ResetPwdScreen() {
               name="password"
               label={t('auth.password')}
               render={({ field }) => (
-                <Input
-                  {...field}
+                <PasswordInput
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
                   placeholder={t('auth.newPasswordPlaceholder')}
                   returnKeyType="next"
                 />
@@ -54,8 +56,10 @@ export default function ResetPwdScreen() {
               name="confirmPassword"
               label={t('auth.confirmPassword')}
               render={({ field }) => (
-                <Input
-                  {...field}
+                <PasswordInput
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
                   placeholder={t('auth.confirmPasswordPlaceholder')}
                   returnKeyType="done"
                 />

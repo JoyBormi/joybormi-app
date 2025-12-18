@@ -8,10 +8,10 @@ import MontserratMedium from '@/assets/fonts/Montserrat-Medium.ttf';
 import MontserratRegular from '@/assets/fonts/Montserrat-Regular.ttf';
 import { useColorScheme } from '@/hooks/common/use-color-scheme';
 
-// export const unstable_settings = {
-//   // Ensure that loading the initial screen does not block rendering of the app.
-//   initialRoute: '(tabs)',
-// };
+export const unstable_settings = {
+  // Ensure that loading the initial screen does not block rendering of the app.
+  initialRoute: '(tabs)',
+};
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

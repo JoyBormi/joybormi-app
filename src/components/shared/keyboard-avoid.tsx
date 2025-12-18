@@ -18,6 +18,7 @@ function KeyboardAvoid({ children }: { children: React.ReactNode }) {
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
+          className="bg-background"
         >
           {children}
         </ScrollView>
