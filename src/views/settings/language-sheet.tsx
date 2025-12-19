@@ -40,7 +40,7 @@ const LANGUAGE_OPTIONS: {
 export const LanguageSheet = forwardRef<BottomSheetModal, LanguageSheetProps>(
   ({ onClose }, ref) => {
     const insets = useSafeAreaInsets();
-    const { i18n, t } = useTranslation();
+    const { i18n } = useTranslation();
     const currentLanguage = i18n.language;
 
     const [selectedLanguage, setSelectedLanguage] = useState<LanguageCode>(

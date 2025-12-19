@@ -1,4 +1,5 @@
 import { Major } from '@/constants/enum';
+import { CategoryFilters } from './category-filter';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -152,24 +153,71 @@ const DUMMY_SERVICES = [
 
 interface ServiceGridProps {
   category: string;
+  searchQuery?: string;
+  filters?: CategoryFilters;
 }
 
-export function ServiceGrid({ category }: ServiceGridProps) {
+export function ServiceGrid({
+  category,
+  searchQuery,
+  filters,
+}: ServiceGridProps) {
   const { t } = useTranslation();
   const [isLoading] = useState(false);
 
-  // Filter services based on category
+  // Filter services based on category and search query
   // In the future, this will be replaced with TanStack Query
-  const filteredServices =
+  let filteredServices =
     category === 'all'
       ? DUMMY_SERVICES
       : DUMMY_SERVICES.filter((service) => service.category === category);
+
+  // Apply search filter if query exists
+  if (searchQuery && searchQuery.trim() !== '') {
+    const query = searchQuery.toLowerCase();
+    filteredServices = filteredServices.filter(
+      (service) =>
+        service.name.toLowerCase().includes(query) ||
+        service.provider.toLowerCase().includes(query) ||
+        service.hashtags.some((tag) => tag.toLowerCase().includes(query)),
+    );
+  }
+
+  // Apply filters if they exist
+  if (filters) {
+    // Filter by rating
+    if (filters.rating.length > 0) {
+      const minRating = Math.min(...filters.rating);
+      filteredServices = filteredServices.filter(
+        (service) => service.rating >= minRating,
+      );
+    }
+
+    // Filter by distance
+    filteredServices = filteredServices.filter(
+      (service) => service.distance <= filters.distance,
+    );
+
+    // Sort by selected option
+    filteredServices = [...filteredServices].sort((a, b) => {
+      switch (filters.sortBy) {
+        case 'distance':
+          return a.distance - b.distance;
+        case 'rating':
+          return b.rating - a.rating;
+        case 'price':
+          return a.priceRange.min - b.priceRange.min;
+        default:
+          return 0;
+      }
+    });
+  }
 
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center py-20">
         <Text className="font-body text-muted-foreground">
-          {t('common.loading')}
+          {t('common.labels.loading')}
         </Text>
       </View>
     );

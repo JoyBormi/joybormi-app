@@ -1,7 +1,13 @@
+import {
+  CategoryFilterSheet,
+  CategoryFilters,
+} from '@/views/category/category-filter';
 import { CategoryHeader } from '@/views/category/category-header';
 import { CategorySelector } from '@/views/category/category-selector';
 import { ServiceGrid } from '@/views/category/service-grid';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRef, useState } from 'react';
 import { Platform, ScrollView } from 'react-native';
 import {
   SafeAreaView,
@@ -9,9 +15,20 @@ import {
 } from 'react-native-safe-area-context';
 
 export default function CategoryScreen() {
-  const { category } = useLocalSearchParams<{ category: string }>();
+  const { category, query } = useLocalSearchParams<{
+    category: string;
+    query?: string;
+  }>();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const filterSheetRef = useRef<BottomSheetModal>(null);
+  const [filters, setFilters] = useState<CategoryFilters>({
+    search: query || '',
+    priceRange: { min: 0, max: 1000 },
+    rating: [],
+    distance: 20,
+    sortBy: 'distance',
+  });
 
   const handleCategoryChange = (newCategory: string) => {
     if (newCategory === 'all') {
@@ -21,11 +38,20 @@ export default function CategoryScreen() {
     }
   };
 
+  const handleFilterPress = () => {
+    filterSheetRef.current?.present();
+  };
+
+  const handleApplyFilters = (newFilters: CategoryFilters) => {
+    setFilters(newFilters);
+  };
+
   return (
     <SafeAreaView className="safe-area" edges={['top']}>
       <CategoryHeader
         category={category || 'all'}
         onBack={() => router.back()}
+        onFilterPress={handleFilterPress}
       />
 
       <ScrollView
@@ -40,8 +66,19 @@ export default function CategoryScreen() {
           onCategoryChange={handleCategoryChange}
         />
 
-        <ServiceGrid category={category || 'all'} />
+        <ServiceGrid
+          category={category || 'all'}
+          searchQuery={query}
+          filters={filters}
+        />
       </ScrollView>
+
+      <CategoryFilterSheet
+        ref={filterSheetRef}
+        filters={filters}
+        onApply={handleApplyFilters}
+        onClose={() => filterSheetRef.current?.dismiss()}
+      />
     </SafeAreaView>
   );
 }

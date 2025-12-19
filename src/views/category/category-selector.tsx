@@ -5,7 +5,7 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -13,6 +13,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withTiming,
 } from 'react-native-reanimated';
 
 /**
@@ -161,30 +162,14 @@ function CategoryGridItem({
 /**
  * Draggable Knob Component
  */
-function DraggableKnob({ onDrag }: { onDrag: () => void }) {
-  const translateY = useSharedValue(0);
+function DraggableKnob({
+  onDrag,
+  isSheetOpen,
+}: {
+  onDrag: () => void;
+  isSheetOpen: boolean;
+}) {
   const scale = useSharedValue(1);
-
-  const panGesture = Gesture.Pan()
-    .onStart(() => {
-      scale.value = withSpring(1.1);
-    })
-    .onUpdate((event) => {
-      // Only allow downward drag
-      if (event.translationY > 0) {
-        translateY.value = event.translationY;
-      }
-    })
-    .onEnd((event) => {
-      scale.value = withSpring(1);
-
-      // If dragged down more than 50px, open the sheet
-      if (event.translationY > 50) {
-        onDrag();
-      }
-
-      translateY.value = withSpring(0);
-    });
 
   const tapGesture = Gesture.Tap()
     .onStart(() => {
@@ -195,14 +180,15 @@ function DraggableKnob({ onDrag }: { onDrag: () => void }) {
       onDrag();
     });
 
-  const composedGesture = Gesture.Race(panGesture, tapGesture);
-
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }, { scale: scale.value }],
+    transform: [
+      { scale: scale.value },
+      { rotate: `${isSheetOpen ? 180 : 0}deg` },
+    ],
   }));
 
   return (
-    <GestureDetector gesture={composedGesture}>
+    <GestureDetector gesture={tapGesture}>
       <Animated.View
         style={animatedStyle}
         className="items-center justify-center py-3"
@@ -226,10 +212,17 @@ export function CategorySelector({
   const { colors, isDarkColorScheme } = useColorScheme();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['65%', '90%'], []);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const scrollViewOpacity = useSharedValue(1);
+  const scrollViewHeight = useSharedValue(1);
 
-  const handleSheetOpen = useCallback(() => {
-    bottomSheetRef.current?.expand();
-  }, []);
+  const handleSheetToggle = useCallback(() => {
+    if (isSheetOpen) {
+      bottomSheetRef.current?.close();
+    } else {
+      bottomSheetRef.current?.expand();
+    }
+  }, [isSheetOpen]);
 
   const handleCategorySelect = useCallback(
     (category: string) => {
@@ -239,7 +232,20 @@ export function CategorySelector({
     [onCategoryChange],
   );
 
+  const handleSheetChange = useCallback(
+    (index: number) => {
+      const isOpen = index >= 0;
+      setIsSheetOpen(isOpen);
+
+      // Animate horizontal scroll visibility
+      scrollViewOpacity.value = withTiming(isOpen ? 0 : 1, { duration: 200 });
+      scrollViewHeight.value = withTiming(isOpen ? 0 : 1, { duration: 200 });
+    },
+    [scrollViewOpacity, scrollViewHeight],
+  );
+
   const renderBackdrop = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (props: any) => (
       <BottomSheetBackdrop
         {...props}
@@ -251,33 +257,41 @@ export function CategorySelector({
     [],
   );
 
+  const animatedScrollViewStyle = useAnimatedStyle(() => ({
+    opacity: scrollViewOpacity.value,
+    height: scrollViewHeight.value === 0 ? 0 : undefined,
+    overflow: 'hidden',
+  }));
+
   return (
     <View className="bg-background">
       {/* Horizontal Scroll Categories */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingTop: 12,
-          alignItems: 'center',
-        }}
-        decelerationRate="fast"
-      >
-        {CATEGORIES.slice(0, 6).map((category, index) => (
-          <CategoryChip
-            key={category}
-            category={category}
-            emoji={EMOJI_MAP[category] || '📋'}
-            isSelected={selectedCategory === category}
-            onPress={() => onCategoryChange(category)}
-            index={index}
-          />
-        ))}
-      </ScrollView>
+      <Animated.View style={animatedScrollViewStyle}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingTop: 12,
+            alignItems: 'center',
+          }}
+          decelerationRate="fast"
+        >
+          {CATEGORIES.slice(0, 6).map((category, index) => (
+            <CategoryChip
+              key={category}
+              category={category}
+              emoji={EMOJI_MAP[category] || '📋'}
+              isSelected={selectedCategory === category}
+              onPress={() => onCategoryChange(category)}
+              index={index}
+            />
+          ))}
+        </ScrollView>
+      </Animated.View>
 
       {/* Draggable Knob */}
-      <DraggableKnob onDrag={handleSheetOpen} />
+      <DraggableKnob onDrag={handleSheetToggle} isSheetOpen={isSheetOpen} />
 
       {/* Subtle bottom separator */}
       <View className="h-[1px] w-full bg-border/40" />
@@ -289,6 +303,7 @@ export function CategorySelector({
         snapPoints={snapPoints}
         enablePanDownToClose
         backdropComponent={renderBackdrop}
+        onChange={handleSheetChange}
         handleIndicatorStyle={{
           backgroundColor: colors.border,
           width: 40,

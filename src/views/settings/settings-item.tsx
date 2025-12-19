@@ -1,7 +1,6 @@
 import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
-import { Link } from 'expo-router';
 import React from 'react';
 import { Switch, Text, TouchableOpacity, View } from 'react-native';
 import { ISettingsItem } from './types';
@@ -97,11 +96,14 @@ export const SettingsItem: React.FC<Props> = ({
 
   if (item.type === 'navigation' && item.href) {
     return (
-      <Link href={item.href} asChild>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => Feedback.light()}>
-          {content}
-        </TouchableOpacity>
-      </Link>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => {
+          Feedback.light();
+        }}
+      >
+        {content}
+      </TouchableOpacity>
     );
   }
 

@@ -7,9 +7,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 interface CategoryHeaderProps {
   category: string;
   onBack: () => void;
+  onFilterPress?: () => void;
 }
 
-export function CategoryHeader({ category, onBack }: CategoryHeaderProps) {
+export function CategoryHeader({
+  category,
+  onBack,
+  onFilterPress,
+}: CategoryHeaderProps) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
@@ -24,7 +29,7 @@ export function CategoryHeader({ category, onBack }: CategoryHeaderProps) {
       className="px-4 pb-3 bg-background"
       style={{ paddingTop: insets.top > 0 ? 0 : 12 }}
     >
-      <View className="flex-row items-center">
+      <View className="flex-row items-center justify-between">
         {/* Back Button */}
         <Pressable
           onPress={onBack}
@@ -34,9 +39,19 @@ export function CategoryHeader({ category, onBack }: CategoryHeaderProps) {
         </Pressable>
 
         {/* Category Title */}
-        <View className="flex-1 items-center mr-10">
+        <View className="flex-1 items-center">
           <Text className="font-title text-foreground text-lg">{title}</Text>
         </View>
+
+        {/* Filter Button */}
+        {onFilterPress && (
+          <Pressable
+            onPress={onFilterPress}
+            className="w-10 h-10 items-center justify-center active:opacity-60"
+          >
+            <Icons.SlidersHorizontal size={22} className="text-foreground" />
+          </Pressable>
+        )}
       </View>
     </MotiView>
   );

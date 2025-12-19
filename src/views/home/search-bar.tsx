@@ -1,4 +1,4 @@
-import { Input } from '@/components/ui';
+import { Input, PressableBounce } from '@/components/ui';
 import { Major } from '@/constants/enum';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
@@ -6,8 +6,7 @@ import { useRouter } from 'expo-router';
 import { MotiView } from 'moti';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable } from 'react-native';
-import {
+import Animated, {
   useSharedValue,
   withDelay,
   withRepeat,
@@ -20,20 +19,28 @@ interface Props {
 
 const MAJORS = Object.values(Major);
 
+const AnimatedPressable = Animated.createAnimatedComponent(PressableBounce);
+// const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
+
 export function SearchBar({ className }: Props) {
   const router = useRouter();
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
 
+  const [search, setSearch] = useState('');
+
   const trigger = useSharedValue(0);
 
-  const handleSearch = () =>
-    router.push({
-      pathname: '/(search)',
-      params: {
-        type: 'search',
-      },
-    });
+  const handleSearch = () => {
+    if (search.trim() !== '')
+      router.push({
+        pathname: '/(category)/[category]',
+        params: {
+          category: 'all',
+          query: search,
+        },
+      });
+  };
 
   useEffect(() => {
     trigger.value = withRepeat(
@@ -59,21 +66,39 @@ export function SearchBar({ className }: Props) {
       transition={{ type: 'timing', duration: 500 }}
       className={cn('px-4 mt-10', className)}
     >
-      <Pressable
-        onPress={handleSearch}
-        className="flex-row items-center px-4 bg-card/50 rounded-full border border-border"
-      >
+      <AnimatedPressable className="flex-row items-center px-4 bg-card/50 rounded-full border border-border">
         <Input
           placeholder={t('common.labels.searchFor', {
             type: t(`major.${currentType}`),
           })}
           className="flex-1 border-0 h-auto bg-transparent font-body"
           returnKeyLabel={t('common.labels.search')}
-          editable={false}
-          onPress={handleSearch}
+          value={search}
+          onChangeText={setSearch}
+          onSubmitEditing={handleSearch}
+          onKeyPress={(e) => {
+            if (e.nativeEvent.key === 'Enter') {
+              handleSearch();
+            }
+          }}
+          keyboardType="default"
+          onBlur={() => setSearch('')}
+          autoCapitalize="none"
+          autoCorrect={false}
+          nativeID="search"
+          returnKeyType="search"
         />
-        <Icons.Search size={22} className=" text-muted-foreground" />
-      </Pressable>
+        <Icons.Search
+          onPress={handleSearch}
+          size={22}
+          className=" text-muted-foreground"
+        />
+      </AnimatedPressable>
+      {/* <AnimatedBlurView
+        intensity={10}
+        style={[StyleSheet.absoluteFill]}
+        pointerEvents="none"
+      /> */}
     </MotiView>
   );
 }

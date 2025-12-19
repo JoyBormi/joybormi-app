@@ -2,23 +2,12 @@ import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-import { UserProfile, UserType } from './types';
+import { UserProfile } from './types';
 
 interface Props {
   profile: UserProfile;
   onPress?: () => void;
 }
-
-const getUserTypeLabel = (type: UserType): string => {
-  switch (type) {
-    case 'user':
-      return 'User';
-    case 'creator':
-      return 'Creator';
-    case 'worker':
-      return 'Worker';
-  }
-};
 
 export const UserProfileCard: React.FC<Props> = ({ profile, onPress }) => {
   return (
