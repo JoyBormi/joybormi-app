@@ -1,14 +1,10 @@
-import { useColorScheme } from '@/hooks/common';
+import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetView,
-} from '@gorhom/bottom-sheet';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import dayjs from 'dayjs';
-import React, { forwardRef, useCallback, useMemo, useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ReservationFilters, ReservationStatus } from './types';
 
@@ -33,23 +29,8 @@ const TYPE_OPTIONS = [
 
 export const ReservationFilterSheet = forwardRef<BottomSheetModal, Props>(
   ({ filters, onApply, onClose }, ref) => {
-    const { colors } = useColorScheme();
     const [localFilters, setLocalFilters] =
       useState<ReservationFilters>(filters);
-
-    const snapPoints = useMemo(() => ['70%'], []);
-
-    const renderBackdrop = useCallback(
-      (props: any) => (
-        <BottomSheetBackdrop
-          {...props}
-          disappearsAt={-1}
-          appearsAt={0}
-          opacity={0.5}
-        />
-      ),
-      [],
-    );
 
     const toggleStatus = (status: ReservationStatus) => {
       Feedback.light();
@@ -91,27 +72,29 @@ export const ReservationFilterSheet = forwardRef<BottomSheetModal, Props>(
     };
 
     return (
-      <BottomSheetModal
+      <CustomBottomSheet
         ref={ref}
+        snapPoints={['85%']}
         index={0}
-        snapPoints={snapPoints}
         enablePanDownToClose
-        backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: colors.card }}
-        handleIndicatorStyle={{ backgroundColor: colors.border, width: 40 }}
-        detached={true}
-        bottomInset={46}
-        style={{ marginHorizontal: 16 }}
+        enableDismissOnClose
+        scrollEnabled
+        scrollConfig={{ className: 'flex-1' }}
       >
-        <BottomSheetView className="flex-1 p-6">
+        <View>
           <View className="flex-row items-center justify-between mb-6">
-            <Text className="text-2xl text-foreground font-bold">Filters</Text>
+            <Text className="text-2xl text-foreground font-heading tracking-tight">
+              Filters
+            </Text>
             <TouchableOpacity onPress={handleReset}>
-              <Text className="text-primary font-medium">Reset</Text>
+              <Text className="text-primary font-subtitle">Reset</Text>
             </TouchableOpacity>
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            className="flex-1 -mx-6 px-6"
+          >
             {/* Date Range Summary */}
             <View className="mb-8">
               <Text className="text-sm text-muted-foreground uppercase tracking-wider font-bold mb-3">
@@ -197,17 +180,19 @@ export const ReservationFilterSheet = forwardRef<BottomSheetModal, Props>(
             </View>
           </ScrollView>
 
-          <TouchableOpacity
-            activeOpacity={0.8}
-            className="bg-primary h-14 rounded-2xl items-center justify-center mt-4"
-            onPress={handleApply}
-          >
-            <Text className="text-primary-foreground font-bold text-lg">
-              Apply Filters
-            </Text>
-          </TouchableOpacity>
-        </BottomSheetView>
-      </BottomSheetModal>
+          <View className="pt-4 border-t border-border/10 mt-4">
+            <TouchableOpacity
+              activeOpacity={0.8}
+              className="bg-primary h-14 rounded-2xl items-center justify-center"
+              onPress={handleApply}
+            >
+              <Text className="text-primary-foreground font-bold text-lg">
+                Apply Filters
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </CustomBottomSheet>
     );
   },
 );

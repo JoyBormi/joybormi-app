@@ -75,7 +75,7 @@ const CustomBottomSheet = forwardRef<BottomSheetModal, CustomBottomSheetProps>(
           backgroundColor: 'transparent',
         }}
         handleComponent={() => (
-          <View className="bg-card dark:bg-card/90 backdrop-blur-xl flex justify-center rounded-t-3xl py-4 border-t border-border/10">
+          <View className="bg-card backdrop-blur-xl flex justify-center rounded-t-3xl py-4 border-t border-border/10">
             <View className="h-1.5 w-[60px] rounded-full bg-muted-foreground/30 self-center" />
           </View>
         )}
@@ -84,7 +84,7 @@ const CustomBottomSheet = forwardRef<BottomSheetModal, CustomBottomSheetProps>(
           <BottomSheetScrollView
             {...scrollConfig}
             className={cn(
-              'bg-card dark:bg-card/90 backdrop-blur-xl px-6 flex-1',
+              'bg-card backdrop-blur-xl px-6 flex-1',
               scrollConfig?.className,
             )}
           >
@@ -94,7 +94,7 @@ const CustomBottomSheet = forwardRef<BottomSheetModal, CustomBottomSheetProps>(
           <BottomSheetView
             {...bottomSheetViewConfig}
             className={cn(
-              'bg-card dark:bg-card/90 backdrop-blur-xl px-6 flex-1',
+              'bg-card backdrop-blur-xl px-6 flex-1',
               bottomSheetViewConfig?.className,
             )}
           >

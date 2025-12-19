@@ -72,7 +72,7 @@ export const ReservationList = ({
     const activeFiltersCount = filters.statuses.length + filters.types.length;
 
     return (
-      <View className="mb-4 mt-4" style={{ paddingTop: insets.top }}>
+      <View style={{ paddingTop: insets.top }}>
         <View className="flex-row items-center justify-between mb-5">
           <View>
             <Text className="text-4xl text-foreground font-heading tracking-tight">
@@ -104,8 +104,8 @@ export const ReservationList = ({
               )}
             />
             {activeFiltersCount > 0 && (
-              <View className="absolute -top-1 -right-1 bg-destructive w-5 h-5 rounded-full items-center justify-center border-2 border-background">
-                <Text className="text-[10px] text-white font-subtitle">
+              <View className="absolute -top-1 -left-1 aspect-square bg-destructive rounded-full items-center justify-center border-2 border-background">
+                <Text className="text-caption text-white">
                   {activeFiltersCount}
                 </Text>
               </View>

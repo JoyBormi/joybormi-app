@@ -96,7 +96,15 @@ export const ReservationBottomSheet = forwardRef<
   const StatusIcon = statusConfig.icon;
 
   return (
-    <CustomBottomSheet ref={ref} snapPoints={['75%', '90%']} index={0}>
+    <CustomBottomSheet
+      ref={ref}
+      snapPoints={['75%', '85%', '90%']}
+      index={0}
+      enablePanDownToClose
+      enableDismissOnClose
+      scrollEnabled
+      scrollConfig={{ className: 'flex-1' }}
+    >
       <View className="gap-5 pb-6">
         {/* Header with Title and Brand */}
         <View className="gap-2">
@@ -128,7 +136,7 @@ export const ReservationBottomSheet = forwardRef<
           {/* Service & Worker */}
           <View className="flex-row items-center gap-3 py-4 rounded-2xl bg-card/30 backdrop-blur-sm">
             <View className="w-11 h-11 rounded-xl bg-primary/10 dark:bg-primary/20 items-center justify-center">
-              <Icons.Briefcase className="text-primary w-5 h-5" />
+              <Icons.Briefcase className="text-foreground w-5 h-5" />
             </View>
             <View className="flex-1">
               <Text className="text-xs text-muted-foreground font-caption uppercase tracking-wider">
@@ -146,7 +154,7 @@ export const ReservationBottomSheet = forwardRef<
           {/* Date & Time */}
           <View className="flex-row items-center gap-3 py-4  rounded-2xl bg-card/30 backdrop-blur-sm">
             <View className="w-11 h-11 rounded-xl bg-primary/10 dark:bg-primary/20 items-center justify-center">
-              <Icons.Calendar className="text-primary w-5 h-5" />
+              <Icons.Calendar className="text-foreground w-5 h-5" />
             </View>
             <View className="flex-1">
               <Text className="text-xs text-muted-foreground font-caption uppercase tracking-wider">
@@ -247,13 +255,17 @@ export const ReservationBottomSheet = forwardRef<
           )}
           <TouchableOpacity
             activeOpacity={0.7}
-            className="bg-card/50 h-14 px-5 rounded-2xl items-center justify-center"
+            hitSlop={20}
+            className="bg-card/50 h-14 rounded-2xl items-center justify-center"
             onPress={() => {
               Feedback.light();
               onClose();
             }}
           >
-            <Icons.X className="text-foreground w-5 h-5" />
+            <Icons.X
+              className="text-foreground stroke-foreground w-5 h-5"
+              strokeWidth="3"
+            />
           </TouchableOpacity>
         </View>
       </View>
