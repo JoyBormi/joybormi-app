@@ -5,66 +5,13 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import dayjs from 'dayjs';
 import React, { forwardRef, useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { Reservation, ReservationStatus } from './types';
+import { getStatusConfig } from './reservation.utils';
+import { Reservation } from './types';
 
 interface ReservationBottomSheetProps {
   reservation: Reservation | null;
   onClose: () => void;
 }
-
-const getStatusConfig = (
-  status: ReservationStatus,
-): {
-  icon: React.ComponentType<{ className?: string }>;
-  bgColor: string;
-  textColor: string;
-  label: string;
-} => {
-  switch (status) {
-    case 'approved':
-      return {
-        icon: Icons.CheckCircle,
-        bgColor: 'bg-success/10 dark:bg-success/20',
-        textColor: 'text-success',
-        label: 'Approved',
-      };
-    case 'pending':
-      return {
-        icon: Icons.Clock,
-        bgColor: 'bg-warning/10 dark:bg-warning/20',
-        textColor: 'text-warning',
-        label: 'Pending',
-      };
-    case 'rejected':
-      return {
-        icon: Icons.X,
-        bgColor: 'bg-destructive/10 dark:bg-destructive/20',
-        textColor: 'text-destructive',
-        label: 'Rejected',
-      };
-    case 'cancelled':
-      return {
-        icon: Icons.X,
-        bgColor: 'bg-muted/50',
-        textColor: 'text-muted-foreground',
-        label: 'Cancelled',
-      };
-    case 'confirmed':
-      return {
-        icon: Icons.CheckCircle,
-        bgColor: 'bg-primary/10 dark:bg-primary/20',
-        textColor: 'text-primary',
-        label: 'Confirmed',
-      };
-    case 'completed':
-      return {
-        icon: Icons.CheckCircle,
-        bgColor: 'bg-success/10 dark:bg-success/20',
-        textColor: 'text-success',
-        label: 'Completed',
-      };
-  }
-};
 
 export const ReservationBottomSheet = forwardRef<
   BottomSheetModal,

@@ -73,7 +73,7 @@ export default function ReservationsScreen() {
 
   useEffect(() => {
     loadData(true);
-  }, [filters]);
+  }, [filters, loadData]);
 
   const handleRefresh = useCallback(() => {
     setIsRefreshing(true);

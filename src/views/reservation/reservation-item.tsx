@@ -6,7 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { STATUS_STYLES } from './reservation';
+import { STATUS_STYLES } from './reservation.utils';
 import { Reservation } from './types';
 
 interface Props {
