@@ -5,7 +5,7 @@ import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 
 export function useYScroll(threshold = 1) {
   const lastY = useRef(0);
-  const setScrollingDown = useScrollStore((s) => s.setScrollingDown);
+  const { setScrollingDown } = useScrollStore();
 
   const onScroll = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {

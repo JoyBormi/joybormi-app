@@ -1,0 +1,5 @@
+Use strict TypeScript typing for all components and functions. Avoid any; it may be used only when no viable type is available and must be justified.
+Use Tailwind CSS for all styling. Refer to tailwind.config.js for design tokens, themes, and custom utilities.
+Use react-native-reanimated for animations and react-native-gesture-handler for gesture handling, moti for motion, nativewind for styling. Do not use alternative animation or gesture libraries.
+Use the custom design system (fonts, text styles, colors, spacing, and dimensions) defined in tailwind.config.js. Do not hardcode values.
+Use globals.css for global styles only. Component-specific styles must be handled via Tailwind utilities.

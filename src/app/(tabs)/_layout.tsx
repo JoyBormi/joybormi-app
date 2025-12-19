@@ -14,7 +14,7 @@ export default function TabLayout() {
 
   const insets = useSafeAreaInsets();
 
-  const isScrollingDown = useScrollStore((s) => s.isScrollingDown);
+  const { isScrollingDown } = useScrollStore();
 
   const segments = useSegments() as string[];
 
@@ -26,7 +26,7 @@ export default function TabLayout() {
       <TabList
         className={cn(
           'absolute self-center flex-row justify-evenly rounded-full transition-all duration-300 drop-shadow-2xl backdrop-blur-3xl',
-          isScrollingDown ? 'bg-foreground/5' : 'bg-foreground/10',
+          isScrollingDown ? 'bg-foreground/5' : 'bg-foreground/20',
           isTabBarHidden
             ? 'opacity-0 pointer-events-none translate-y-6'
             : 'opacity-100 pointer-events-auto translate-y-0',

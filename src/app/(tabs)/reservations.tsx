@@ -1,10 +1,14 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import dayjs from 'dayjs';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useColorScheme } from '@/hooks/common';
 import {
   Reservation,
   ReservationBottomSheet,
@@ -15,8 +19,6 @@ import {
 } from '@/views/reservation';
 
 export default function ReservationsScreen() {
-  const { colors } = useColorScheme();
-
   // State
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -84,8 +86,8 @@ export default function ReservationsScreen() {
 
   // Handlers
   const handleReservationPress = useCallback((reservation: Reservation) => {
-    setSelectedReservation(reservation);
     detailSheetRef.current?.present();
+    setSelectedReservation(reservation);
   }, []);
 
   const handleFilterPress = useCallback(() => {
@@ -97,7 +99,7 @@ export default function ReservationsScreen() {
   }, []);
 
   return (
-    <SafeAreaView className="safe-area" edges={['top']}>
+    <Fragment>
       <View className="main-area">
         <ReservationList
           reservations={reservations}
@@ -109,22 +111,23 @@ export default function ReservationsScreen() {
           isRefreshing={isRefreshing}
           onRefresh={handleRefresh}
         />
-
-        {/* Detail Sheet */}
-        <ReservationBottomSheet
-          ref={detailSheetRef}
-          reservation={selectedReservation}
-          onClose={() => setSelectedReservation(null)}
-        />
-
-        {/* Filter Sheet */}
-        <ReservationFilterSheet
-          ref={filterSheetRef}
-          filters={filters}
-          onApply={handleApplyFilters}
-          onClose={() => filterSheetRef.current?.dismiss()}
-        />
       </View>
-    </SafeAreaView>
+      <ReservationBottomSheet
+        ref={detailSheetRef}
+        reservation={selectedReservation}
+        onClose={() => {
+          detailSheetRef.current?.dismiss();
+          setSelectedReservation(null);
+        }}
+      />
+
+      {/* Filter Sheet */}
+      <ReservationFilterSheet
+        ref={filterSheetRef}
+        filters={filters}
+        onApply={handleApplyFilters}
+        onClose={() => filterSheetRef.current?.dismiss()}
+      />
+    </Fragment>
   );
 }

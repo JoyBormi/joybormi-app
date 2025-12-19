@@ -1,20 +1,23 @@
 export type ReservationStatus =
-  | 'confirmed'
   | 'pending'
-  | 'cancelled'
+  | 'approved'
   | 'rejected'
+  | 'cancelled'
+  | 'confirmed'
   | 'completed';
 
 export interface Reservation {
-  id: string;
-  name: string;
-  service: string;
+  uuid: string;
+  title: string;
   summary: string;
-  start: string;
-  end: string;
-  avatar: string;
+  start_time: string;
+  end_time: string;
   status: ReservationStatus;
-  type: string;
+  color: string;
+  brand_name: string;
+  service: string;
+  worker_name: string;
+  avatar?: string;
 }
 
 export interface ReservationSection {
