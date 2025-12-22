@@ -15,7 +15,7 @@ export default function AuthLayout() {
         keyboardHandlingEnabled: true,
         sheetGrabberVisible: true,
         sheetInitialDetentIndex: 0,
-        sheetAllowedDetents: [0.95, 1],
+        sheetAllowedDetents: [0.95, 0.99],
       }}
     />
   );

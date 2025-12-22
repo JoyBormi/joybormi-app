@@ -1,4 +1,3 @@
-import { UserTypeBlockedSheet } from '@/components/shared/block-sheet';
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
@@ -14,50 +13,54 @@ import { UserTypeActionRequiredSheet } from './action-required';
 
 interface UserTypeSheetProps {
   currentType: EUserType;
-  onSelect: (type: EUserType) => void;
   onClose: () => void;
 }
 
-const USER_TYPES: {
-  type: EUserType;
-  title: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  color: string;
-}[] = [
-  {
-    type: EUserType.USER,
-    title: 'User',
-    description: 'Book services and manage appointments',
-    icon: Icons.User,
-    color: 'text-blue-500',
-  },
-  {
-    type: EUserType.CREATOR,
-    title: 'Creator',
-    description: 'Manage your brand and services',
-    icon: Icons.Briefcase,
-    color: 'text-purple-500',
-  },
-  {
-    type: EUserType.WORKER,
-    title: 'Worker',
-    description: 'Provide services and manage bookings',
-    icon: Icons.Users,
-    color: 'text-green-500',
-  },
-];
+const USER_TYPES = (userType: EUserType) => {
+  return [
+    {
+      type: EUserType.USER,
+      title: 'User',
+      description: 'Book services and manage appointments',
+      icon: Icons.User,
+      color: 'text-blue-500',
+    },
+    ...(userType !== EUserType.WORKER
+      ? [
+          {
+            type: EUserType.CREATOR,
+            title: 'Creator',
+            description: 'Manage your brand and services',
+            icon: Icons.Briefcase,
+            color: 'text-purple-500',
+          },
+        ]
+      : []),
+    ...(userType !== EUserType.CREATOR
+      ? [
+          {
+            type: EUserType.WORKER,
+            title: 'Worker',
+            description: 'Provide services and manage bookings',
+            icon: Icons.Users,
+            color: 'text-green-500',
+          },
+        ]
+      : []),
+  ];
+};
 
 export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
-  ({ currentType, onSelect, onClose }, ref) => {
-    const insets = useSafeAreaInsets();
+  ({ currentType, onClose }, ref) => {
     const { user } = useUserStore();
+    const insets = useSafeAreaInsets();
+    const actionSheetRef = useRef<BottomSheetModal>(null);
+
+    // States
     const [selectedType, setSelectedType] = useState<EUserType>(currentType);
     const [actionReason, setActionReason] = useState<
       'NEED_CODE' | 'NEED_BRAND'
     >('NEED_CODE');
-    const actionSheetRef = useRef<BottomSheetModal>(null);
-    const blockedSheetRef = useRef<BottomSheetModal>(null);
 
     const handleSelect = (type: EUserType) => {
       Feedback.light();
@@ -71,11 +74,6 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
         user?.type === EUserType.CREATOR,
       );
 
-      if (reason === 'NOT_ALLOWED') {
-        blockedSheetRef.current?.present();
-        return;
-      }
-
       if (reason === 'NEED_CODE' || reason === 'NEED_BRAND') {
         setActionReason(reason);
         actionSheetRef.current?.present();
@@ -83,9 +81,10 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
       }
 
       Feedback.success();
-      onSelect(selectedType);
       onClose();
     };
+
+    const userTypeList = USER_TYPES(currentType);
 
     return (
       <CustomBottomSheet
@@ -113,7 +112,7 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
           </View>
 
           <View className="gap-3">
-            {USER_TYPES.map((userType) => {
+            {userTypeList.map((userType) => {
               const Icon = userType.icon;
               const isSelected = selectedType === userType.type;
 
@@ -170,23 +169,18 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
             </Text>
           </TouchableOpacity>
         </View>
-        <UserTypeBlockedSheet ref={blockedSheetRef} />
-
         <UserTypeActionRequiredSheet
           ref={actionSheetRef}
           type={actionReason}
           onPrimary={() => {
+            onClose();
             actionSheetRef.current?.dismiss();
 
-            if (actionReason === 'NEED_CODE') {
-              onClose?.();
-              router.push('/(tabs)/(settings)/(role-change)/invite-code'); // dummy
-            }
+            if (actionReason === 'NEED_CODE')
+              return router.push('/(slide-screens)/invite-code');
 
-            if (actionReason === 'NEED_BRAND') {
-              onClose?.();
-              router.push('/create-brand'); // dummy
-            }
+            if (actionReason === 'NEED_BRAND')
+              return router.push('/(slide-screens)/create-brand');
           }}
         />
       </CustomBottomSheet>

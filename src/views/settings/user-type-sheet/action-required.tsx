@@ -1,6 +1,9 @@
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import Icons from '@/lib/icons';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import {
+  BottomSheetModal,
+  useBottomSheetTimingConfigs,
+} from '@gorhom/bottom-sheet';
 import React, { forwardRef } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -31,12 +34,17 @@ export const UserTypeActionRequiredSheet = forwardRef<BottomSheetModal, Props>(
 
     const Icon = content.icon;
 
+    const animationConfigs = useBottomSheetTimingConfigs({
+      duration: 150,
+    });
+
     return (
       <CustomBottomSheet
         ref={ref}
         index={0}
         detached
         bottomInset={insets.bottom}
+        animationConfigs={animationConfigs}
         style={{
           paddingHorizontal: 12,
         }}

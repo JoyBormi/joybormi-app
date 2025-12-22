@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-export default function RoleChangeLayout() {
+export default function SlideScreensLayout() {
   return (
     <Stack
       screenOptions={{
@@ -15,7 +15,7 @@ export default function RoleChangeLayout() {
         keyboardHandlingEnabled: true,
         sheetGrabberVisible: true,
         sheetInitialDetentIndex: 0,
-        sheetAllowedDetents: [0.95, 1],
+        sheetAllowedDetents: [0.95, 0.99],
       }}
     />
   );

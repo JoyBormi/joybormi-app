@@ -23,7 +23,7 @@ const SettingsScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const { i18n } = useTranslation();
   const { isDarkColorScheme } = useColorScheme();
-  const { user, appType, isLoggedIn, setIsLoggedIn, setAppType } =
+  const { user, appType, isLoggedIn, setIsLoggedIn, setAppType, setUser } =
     useUserStore();
 
   const userTypeSheetRef = useRef<BottomSheetModal>(null);
@@ -58,15 +58,6 @@ const SettingsScreen: React.FC = () => {
     // TODO: Navigate to profile screen
   }, [isLoggedIn]);
 
-  const handleUserTypeSelect = useCallback(
-    (type: EUserType) => {
-      setAppType(type);
-      userTypeSheetRef.current?.dismiss();
-      // TODO: Update user type in backend
-    },
-    [setAppType],
-  );
-
   const handleLogout = useCallback(() => {
     if (!isLoggedIn) {
       router.push('/(auth)/login');
@@ -87,13 +78,14 @@ const SettingsScreen: React.FC = () => {
           onPress: () => {
             Feedback.medium();
             setIsLoggedIn(false);
-            // TODO: Implement logout logic
+            setAppType(EUserType.GUEST);
+            setUser(null);
           },
         },
       ],
       { cancelable: true },
     );
-  }, [isLoggedIn, setIsLoggedIn]);
+  }, [isLoggedIn, setIsLoggedIn, setAppType, setUser]);
 
   const settings = useMemo(
     () =>
@@ -147,7 +139,7 @@ const SettingsScreen: React.FC = () => {
         {/* Shiny Switch User Type Button */}
 
         {isLoggedIn && appType !== EUserType.GUEST && (
-          <View className="px-4 my-8">
+          <View className="px-4 mb-8">
             <TouchableOpacity
               activeOpacity={0.85}
               onPress={handleUserTypeSwitch}
@@ -212,7 +204,6 @@ const SettingsScreen: React.FC = () => {
       <UserTypeSheet
         ref={userTypeSheetRef}
         currentType={appType}
-        onSelect={handleUserTypeSelect}
         onClose={() => userTypeSheetRef.current?.dismiss()}
       />
 

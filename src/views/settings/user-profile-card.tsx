@@ -17,7 +17,7 @@ export const UserProfileCard: React.FC<Props> = ({ profile, onPress }) => {
         Feedback.light();
         onPress?.();
       }}
-      className="bg-card/50 backdrop-blur-sm rounded-2xl p-4 flex-row items-center gap-4 mb-10"
+      className="bg-card/50 backdrop-blur-sm rounded-2xl px-4 flex-row items-center gap-4 mb-8"
     >
       {/* Avatar */}
       <View className="relative">

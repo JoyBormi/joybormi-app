@@ -12,6 +12,8 @@ import {
   Text,
 } from '@/components/ui';
 import { Feedback } from '@/lib/haptics';
+import { useUserStore } from '@/stores';
+import { EUserType } from '@/types/user.type';
 
 import { AuthHeader, LoginFormType, loginSchema } from '@/views/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,6 +27,7 @@ export default function LoginScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const [tab, setTab] = useState('phone');
+  const { setUser, setIsLoggedIn, setAppType } = useUserStore();
   const { control, handleSubmit, setValue } = useForm<LoginFormType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -36,7 +39,22 @@ export default function LoginScreen() {
   });
 
   const onSubmit = (data: LoginFormType) => {
-    console.log('Login:', data);
+    setUser({
+      type: EUserType.USER,
+      username: 'Test User',
+      first_name: '',
+      last_name: '',
+      avatar: '',
+      phone: '+998999999999',
+      email: 'test@gmail.com',
+      tokens: {
+        accessToken: '',
+        refreshToken: '',
+      },
+    });
+    setIsLoggedIn(true);
+    setAppType(EUserType.USER);
+    router.replace('/');
   };
 
   const handleTab = (tab: string) => {
