@@ -2,10 +2,10 @@ import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-import { UserProfile } from './types';
+import { IUser } from 'types/user.type';
 
 interface Props {
-  profile: UserProfile;
+  profile?: IUser;
   onPress?: () => void;
 }
 
@@ -21,7 +21,7 @@ export const UserProfileCard: React.FC<Props> = ({ profile, onPress }) => {
     >
       {/* Avatar */}
       <View className="relative">
-        {profile.avatar ? (
+        {profile?.avatar ? (
           <Image
             source={{ uri: profile.avatar }}
             className="w-16 h-16 rounded-2xl"
@@ -36,10 +36,10 @@ export const UserProfileCard: React.FC<Props> = ({ profile, onPress }) => {
       {/* Info */}
       <View className="flex-1">
         <Text className="text-xl text-foreground font-heading tracking-tight">
-          {profile.name}
+          {profile?.username ?? 'Guest'}
         </Text>
         <Text className="text-sm text-muted-foreground font-body mt-1">
-          {profile.email}
+          {profile?.phone ?? profile?.email ?? 'Guest'}
         </Text>
       </View>
 

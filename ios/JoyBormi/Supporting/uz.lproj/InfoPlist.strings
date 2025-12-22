@@ -1,0 +1,7 @@
+CFBundleDisplayName = "Reservefy";
+NSContactsUsageDescription = "$(CFBundleDisplayName) ilovasiga kontaktlaringizga kirishga ruxsat bering";
+common = "[object Object]";
+major = "[object Object]";
+auth = "[object Object]";
+zod = "[object Object]";
+website = "[object Object]";

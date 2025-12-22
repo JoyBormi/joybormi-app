@@ -1,0 +1,7 @@
+CFBundleDisplayName = "Reservefy";
+NSContactsUsageDescription = "Разрешить $(CFBundleDisplayName) доступ к вашим контактам";
+common = "[object Object]";
+major = "[object Object]";
+auth = "[object Object]";
+zod = "[object Object]";
+website = "[object Object]";

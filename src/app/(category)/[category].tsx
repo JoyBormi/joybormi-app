@@ -34,9 +34,9 @@ export default function CategoryScreen() {
 
   const handleCategoryChange = (newCategory: string) => {
     if (newCategory === 'all') {
-      router.replace('/category/all');
+      router.replace('/(category)/all');
     } else {
-      router.replace(`/category/${newCategory}`);
+      router.replace(`/(category)/${newCategory}`);
     }
   };
 
@@ -55,12 +55,10 @@ export default function CategoryScreen() {
         onBack={() => router.back()}
         onFilterPress={handleFilterPress}
       />
-
       <CategorySelector
         selectedCategory={category || 'all'}
         onCategoryChange={handleCategoryChange}
       />
-
       <ScrollView
         bounces={false}
         contentContainerStyle={{
@@ -74,7 +72,6 @@ export default function CategoryScreen() {
           filters={filters}
         />
       </ScrollView>
-
       <CategoryFilterSheet
         ref={filterSheetRef}
         filters={filters}

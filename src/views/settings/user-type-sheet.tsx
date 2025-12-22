@@ -6,37 +6,37 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { UserType } from './types';
+import { EUserType } from 'types/user.type';
 
 interface UserTypeSheetProps {
-  currentType: UserType;
-  onSelect: (type: UserType) => void;
+  currentType: EUserType;
+  onSelect: (type: EUserType) => void;
   onClose: () => void;
 }
 
 const USER_TYPES: {
-  type: UserType;
+  type: EUserType;
   title: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
   color: string;
 }[] = [
   {
-    type: 'user',
+    type: EUserType.USER,
     title: 'User',
     description: 'Book services and manage appointments',
     icon: Icons.User,
     color: 'text-blue-500',
   },
   {
-    type: 'creator',
+    type: EUserType.CREATOR,
     title: 'Creator',
     description: 'Manage your brand and services',
     icon: Icons.Briefcase,
     color: 'text-purple-500',
   },
   {
-    type: 'worker',
+    type: EUserType.WORKER,
     title: 'Worker',
     description: 'Provide services and manage bookings',
     icon: Icons.Users,
@@ -47,9 +47,9 @@ const USER_TYPES: {
 export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
   ({ currentType, onSelect, onClose }, ref) => {
     const insets = useSafeAreaInsets();
-    const [selectedType, setSelectedType] = useState<UserType>(currentType);
+    const [selectedType, setSelectedType] = useState<EUserType>(currentType);
 
-    const handleSelect = (type: UserType) => {
+    const handleSelect = (type: EUserType) => {
       Feedback.light();
       setSelectedType(type);
     };

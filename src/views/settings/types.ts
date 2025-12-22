@@ -1,12 +1,3 @@
-export type UserType = 'user' | 'creator' | 'worker';
-
-export interface UserProfile {
-  name: string;
-  email: string;
-  avatar?: string;
-  currentType: UserType;
-}
-
 export interface SettingsGroup {
   id: string;
   title?: string;

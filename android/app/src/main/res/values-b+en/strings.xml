@@ -1,0 +1,10 @@
+<resources>
+  <string name="CFBundleDisplayName">"Joy Bormi"</string>
+  <string name="NSContactsUsageDescription">"Allow $(CFBundleDisplayName) to access your contacts"</string>
+  <string name="common">"[object Object]"</string>
+  <string name="major">"[object Object]"</string>
+  <string name="auth">"[object Object]"</string>
+  <string name="website">"[object Object]"</string>
+  <string name="home">"[object Object]"</string>
+  <string name="categories">"[object Object]"</string>
+</resources>

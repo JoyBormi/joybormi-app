@@ -1,0 +1,9 @@
+<resources>
+  <string name="CFBundleDisplayName">"Reservefy"</string>
+  <string name="NSContactsUsageDescription">"Разрешить $(CFBundleDisplayName) доступ к вашим контактам"</string>
+  <string name="common">"[object Object]"</string>
+  <string name="major">"[object Object]"</string>
+  <string name="auth">"[object Object]"</string>
+  <string name="zod">"[object Object]"</string>
+  <string name="website">"[object Object]"</string>
+</resources>

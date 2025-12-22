@@ -1,0 +1,8 @@
+CFBundleDisplayName = "Joy Bormi";
+NSContactsUsageDescription = "Allow $(CFBundleDisplayName) to access your contacts";
+common = "[object Object]";
+major = "[object Object]";
+auth = "[object Object]";
+website = "[object Object]";
+home = "[object Object]";
+categories = "[object Object]";

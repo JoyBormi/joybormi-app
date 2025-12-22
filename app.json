@@ -8,6 +8,7 @@
     "scheme": "joy-bormi-app",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {

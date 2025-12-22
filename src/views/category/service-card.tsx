@@ -74,7 +74,7 @@ const PaginationDot = ({
   return (
     <Animated.View
       style={animatedDotStyle}
-      className="h-1.5 rounded-full bg-foreground border-[0.5px] border-primary mx-0.5"
+      className="h-1.5 rounded-full bg-foreground border-[0.5px] border-border mx-0.5"
     />
   );
 };

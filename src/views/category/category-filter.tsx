@@ -82,7 +82,7 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
     return (
       <CustomBottomSheet
         ref={ref}
-        snapPoints={['75%']}
+        snapPoints={['75%', '95%']}
         index={0}
         enablePanDownToClose
         enableDismissOnClose
