@@ -12,14 +12,14 @@ export function OwnerInfo<T extends FieldValues>({
   control,
 }: OwnerInfoProps<T>) {
   return (
-    <View className="gap-5">
+    <View className="gap-6">
       {/* Header */}
-      <View className="bg-card/40 dark:bg-card/25 p-5 rounded-2xl border border-border/30">
+      <View className="bg-card p-6 rounded-2xl border-border border">
         <View className="flex-row items-center gap-3 mb-2">
-          <View className="w-10 h-10 rounded-xl bg-primary/15 dark:bg-primary/25 items-center justify-center">
-            <Icons.User className="text-primary" size={20} />
+          <View className="w-12 h-12 rounded-xl bg-primary/20 items-center justify-center">
+            <Icons.User className="text-primary" size={22} />
           </View>
-          <Text className="text-lg font-bold text-foreground">
+          <Text className="text-xl font-bold text-foreground">
             Owner Information
           </Text>
         </View>
@@ -36,13 +36,14 @@ export function OwnerInfo<T extends FieldValues>({
           label="First Name"
           required
           className="gap-2"
-          labelClassName="text-sm font-semibold text-foreground"
+          labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => (
             <Input
               placeholder="John"
               value={field.value as string}
               onChangeText={field.onChange}
-              className="h-12 text-base"
+              onBlur={field.onBlur}
+              className="h-14 text-base border-2"
             />
           )}
         />
@@ -53,25 +54,26 @@ export function OwnerInfo<T extends FieldValues>({
           label="Last Name"
           required
           className="gap-2"
-          labelClassName="text-sm font-semibold text-foreground"
+          labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => (
             <Input
               placeholder="Doe"
               value={field.value as string}
               onChangeText={field.onChange}
-              className="h-12 text-base"
+              onBlur={field.onBlur}
+              className="h-14 text-base border-2"
             />
           )}
         />
 
-        <View className="bg-primary/5 dark:bg-primary/10 p-4 rounded-xl border border-primary/20">
+        <View className="bg-primary/10 p-5 rounded-xl border border-primary/30">
           <View className="flex-row items-start gap-3">
-            <Icons.Info className="text-primary mt-0.5" size={20} />
+            <Icons.Info className="text-primary mt-0.5" size={22} />
             <View className="flex-1">
-              <Text className="text-sm font-semibold text-foreground mb-1">
+              <Text className="text-base font-semibold text-foreground mb-2">
                 Why do we need this?
               </Text>
-              <Text className="text-xs text-muted-foreground leading-5">
+              <Text className="text-sm text-muted-foreground leading-5">
                 Owner information is required for account verification and legal
                 compliance. This information will be kept private and secure.
               </Text>

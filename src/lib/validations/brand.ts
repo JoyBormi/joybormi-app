@@ -2,66 +2,72 @@ import { z } from 'zod';
 
 /**
  * Brand Setup Form Validation Schema
- * Supports internationalization through custom error messages
+ * Simple validation without locale - errors will be translated in UI layer
  */
 
 // Step 1: Basic Information
 export const basicInfoSchema = z.object({
   brandName: z
     .string()
-    .min(2, 'brand.validation.name_too_short')
-    .max(100, 'brand.validation.name_too_long')
-    .regex(/^[a-zA-Z0-9\s-_]+$/, 'brand.validation.name_invalid_chars'),
+    .min(1, 'Brand name is required')
+    .min(2, 'Brand name must be at least 2 characters')
+    .max(100, 'Brand name must not exceed 100 characters')
+    .regex(
+      /^[a-zA-Z0-9\s-_]+$/,
+      'Brand name can only contain letters, numbers, hyphens and underscores',
+    ),
   description: z
     .string()
-    .max(500, 'brand.validation.description_too_long')
+    .max(500, 'Description must not exceed 500 characters')
     .optional(),
-  businessCategory: z.string().min(1, 'brand.validation.category_required'),
+  businessCategory: z.string().min(1, 'Business category is required'),
 });
 
 // Step 2: Location Details
 export const locationSchema = z.object({
-  country: z.string().min(2, 'brand.validation.country_required'),
-  state: z.string().min(1, 'brand.validation.state_required'),
+  country: z.string().min(1, 'Country is required'),
+  state: z.string().min(1, 'State/Province is required'),
   city: z.string().optional(),
-  street: z.string().min(3, 'brand.validation.street_required'),
+  street: z
+    .string()
+    .min(1, 'Street address is required')
+    .min(3, 'Street address must be at least 3 characters'),
   detailedAddress: z.string().optional(),
   postalCode: z
     .string()
-    .min(3, 'brand.validation.postal_code_required')
-    .max(20, 'brand.validation.postal_code_invalid'),
+    .min(1, 'Postal code is required')
+    .min(3, 'Postal code must be at least 3 characters')
+    .max(20, 'Postal code must not exceed 20 characters'),
 });
 
 // Step 3: Contact & Legal Information
 export const contactLegalSchema = z.object({
-  email: z
-    .string()
-    .email('brand.validation.email_invalid')
-    .min(1, 'brand.validation.email_required'),
+  email: z.string().min(1, 'Email is required').email('Invalid email format'),
   phone: z
     .string()
-    .min(10, 'brand.validation.phone_invalid')
-    .regex(/^[+]?[\d\s()-]+$/, 'brand.validation.phone_format_invalid'),
+    .min(1, 'Phone number is required')
+    .min(10, 'Phone number must be at least 10 digits')
+    .regex(/^[+]?[\d\s()-]+$/, 'Invalid phone number format'),
   businessRegistrationNumber: z
     .string()
-    .min(5, 'brand.validation.registration_number_required')
-    .max(50, 'brand.validation.registration_number_invalid'),
-  licenseDocument: z
-    .string()
-    .min(1, 'brand.validation.license_required')
-    .optional(), // Will be required when file upload is implemented
+    .min(1, 'Business registration number is required')
+    .min(5, 'Registration number must be at least 5 characters')
+    .max(50, 'Registration number must not exceed 50 characters'),
+  licenseDocument: z.string().optional(),
 });
 
 // Step 4: Owner Information
 export const ownerInfoSchema = z.object({
   ownerFirstName: z
     .string()
-    .min(2, 'brand.validation.first_name_required')
-    .max(50, 'brand.validation.first_name_too_long'),
+    .min(1, 'First name is required')
+    .min(2, 'First name must be at least 2 characters')
+    .max(50, 'First name must not exceed 50 characters'),
   ownerLastName: z
     .string()
-    .min(2, 'brand.validation.last_name_required')
-    .max(50, 'brand.validation.last_name_too_long'),
+    .min(1, 'Last name is required')
+    .min(2, 'Last name must be at least 2 characters')
+    .max(50, 'Last name must not exceed 50 characters'),
 });
 
 // Complete Brand Form Schema

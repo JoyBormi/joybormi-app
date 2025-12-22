@@ -12,14 +12,14 @@ export function BasicInfo<T extends FieldValues>({
   control,
 }: BasicInfoProps<T>) {
   return (
-    <View className="gap-5">
+    <View className="gap-6 flex-1">
       {/* Header */}
-      <View className="bg-card/50 dark:bg-card/25 p-5 rounded-2xl border border-border/30">
+      <View className="bg-card p-6 rounded-2xl border border-border">
         <View className="flex-row items-center gap-3 mb-2">
-          <View className="w-10 h-10 rounded-xl bg-primary/15 dark:bg-primary/25 items-center justify-center">
-            <Icons.FileText className="text-primary" size={20} />
+          <View className="w-12 h-12 rounded-xl bg-primary/20 items-center justify-center">
+            <Icons.FileText className="text-primary" size={22} />
           </View>
-          <Text className="text-lg font-bold text-foreground">
+          <Text className="text-xl font-bold text-foreground">
             Basic Information
           </Text>
         </View>
@@ -29,19 +29,21 @@ export function BasicInfo<T extends FieldValues>({
       </View>
 
       {/* Form Fields */}
-      <View className="gap-6">
+      <View className="gap-5 flex-1">
         <FormField
           control={control}
           name="brandName"
           label="Brand Name"
           required
           className="gap-2"
-          labelClassName="text-sm font-semibold text-foreground"
+          labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => (
             <Input
               placeholder="e.g., Elite Hair Studio"
               value={field.value as string}
               onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              className="h-14 text-base border-2"
             />
           )}
         />
@@ -52,13 +54,15 @@ export function BasicInfo<T extends FieldValues>({
           label="Business Category"
           required
           className="gap-2"
-          labelClassName="text-sm font-semibold text-foreground"
+          labelClassName="text-base font-semibold text-foreground"
           message="Select the primary category that best describes your business"
           render={({ field }) => (
             <Input
               placeholder="e.g., Hair Salon, Barbershop, Spa, Beauty Salon"
               value={field.value as string}
               onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              className="h-14 text-base border-2"
             />
           )}
         />
@@ -66,16 +70,20 @@ export function BasicInfo<T extends FieldValues>({
         <FormField
           control={control}
           name="description"
-          label="Description"
-          labelClassName="text-sm font-semibold text-foreground"
+          label="Description (Optional)"
+          className="gap-2"
+          labelClassName="text-base font-semibold text-foreground"
           message="Briefly describe what makes your brand unique"
           render={({ field }) => (
             <Input
               placeholder="Tell customers about your brand..."
               value={field.value as string}
               onChangeText={field.onChange}
+              onBlur={field.onBlur}
               multiline
               numberOfLines={5}
+              className="min-h-20 text-base border-2 py-3"
+              style={{ textAlignVertical: 'top' }}
             />
           )}
         />

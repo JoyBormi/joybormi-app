@@ -12,14 +12,14 @@ export function LocationDetails<T extends FieldValues>({
   control,
 }: LocationDetailsProps<T>) {
   return (
-    <View className="gap-5">
+    <View className="gap-6">
       {/* Header */}
-      <View className="bg-card/40 dark:bg-card/25 p-5 rounded-2xl border border-border/30">
+      <View className="bg-card p-6 rounded-2xl border-border border">
         <View className="flex-row items-center gap-3 mb-2">
-          <View className="w-10 h-10 rounded-xl bg-primary/15 dark:bg-primary/25 items-center justify-center">
-            <Icons.MapPin className="text-primary" size={20} />
+          <View className="w-12 h-12 rounded-xl bg-primary/20 items-center justify-center">
+            <Icons.MapPin className="text-primary" size={22} />
           </View>
-          <Text className="text-lg font-bold text-foreground">Location</Text>
+          <Text className="text-xl font-bold text-foreground">Location</Text>
         </View>
         <Text className="text-sm text-muted-foreground leading-5">
           Where is your business physically located?
@@ -33,13 +33,14 @@ export function LocationDetails<T extends FieldValues>({
           label="Country"
           required
           className="gap-2"
-          labelClassName="text-sm font-semibold text-foreground"
+          labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => (
             <Input
               placeholder="e.g., United States"
               value={field.value as string}
               onChangeText={field.onChange}
-              className="h-12 text-base"
+              onBlur={field.onBlur}
+              className="h-14 text-base border-2"
             />
           )}
         />
@@ -51,13 +52,14 @@ export function LocationDetails<T extends FieldValues>({
             label="State/Province"
             required
             className="flex-1 gap-2"
-            labelClassName="text-sm font-semibold text-foreground"
+            labelClassName="text-base font-semibold text-foreground"
             render={({ field }) => (
               <Input
                 placeholder="State"
                 value={field.value as string}
                 onChangeText={field.onChange}
-                className="h-12 text-base"
+                onBlur={field.onBlur}
+                className="h-14 text-base border-2"
               />
             )}
           />
@@ -67,13 +69,14 @@ export function LocationDetails<T extends FieldValues>({
             name="city"
             label="City (Optional)"
             className="flex-1 gap-2"
-            labelClassName="text-sm font-semibold text-foreground"
+            labelClassName="text-base font-semibold text-foreground"
             render={({ field }) => (
               <Input
                 placeholder="City"
                 value={field.value as string}
                 onChangeText={field.onChange}
-                className="h-12 text-base"
+                onBlur={field.onBlur}
+                className="h-14 text-base border-2"
               />
             )}
           />
@@ -85,13 +88,14 @@ export function LocationDetails<T extends FieldValues>({
           label="Street Address"
           required
           className="gap-2"
-          labelClassName="text-sm font-semibold text-foreground"
+          labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => (
             <Input
               placeholder="123 Main Street"
               value={field.value as string}
               onChangeText={field.onChange}
-              className="h-12 text-base"
+              onBlur={field.onBlur}
+              className="h-14 text-base border-2"
             />
           )}
         />
@@ -101,14 +105,15 @@ export function LocationDetails<T extends FieldValues>({
           name="detailedAddress"
           label="Detailed Address (Optional)"
           className="gap-2"
-          labelClassName="text-sm font-semibold text-foreground"
+          labelClassName="text-base font-semibold text-foreground"
           message="Apartment, suite, floor, building, etc."
           render={({ field }) => (
             <Input
               placeholder="Suite 200, Floor 3"
               value={field.value as string}
               onChangeText={field.onChange}
-              className="h-12 text-base"
+              onBlur={field.onBlur}
+              className="h-14 text-base border-2"
             />
           )}
         />
@@ -119,14 +124,15 @@ export function LocationDetails<T extends FieldValues>({
           label="Postal Code"
           required
           className="gap-2"
-          labelClassName="text-sm font-semibold text-foreground"
+          labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => (
             <Input
               placeholder="12345"
               value={field.value as string}
               onChangeText={field.onChange}
+              onBlur={field.onBlur}
               keyboardType="number-pad"
-              className="h-12 text-base"
+              className="h-14 text-base border-2"
             />
           )}
         />
