@@ -5,12 +5,10 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Link } from 'expo-router';
 import { MotiView } from 'moti';
 import React, { useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Image, Pressable, TouchableOpacity, View } from 'react-native';
 import { LocationPickerSheet } from './location-picker';
 
 export function Header() {
-  const { t } = useTranslation();
   const { user, location } = useUserStore();
   const sheetRef = useRef<BottomSheetModal>(null);
 

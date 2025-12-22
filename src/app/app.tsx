@@ -55,6 +55,14 @@ export default function App() {
             statusBarAnimation: 'slide',
           }}
         />
+        <Stack.Screen
+          name="(slide-screens)"
+          options={{
+            presentation: 'modal',
+            animation: 'slide_from_bottom',
+            statusBarAnimation: 'slide',
+          }}
+        />
       </Stack>
     </Suspense>
   );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { memo } from 'react';
 import {
   Control,
@@ -14,7 +15,7 @@ import { cn } from '@/lib/utils';
 
 type FormFieldProps<T extends FieldValues> = {
   control: Control<T>;
-  name: Path<T>;
+  name: string;
   label?: string;
   required?: boolean;
   className?: string;
@@ -49,7 +50,7 @@ const FormField = memo(<T extends FieldValues>(props: FormFieldProps<T>) => {
   return (
     <Controller
       control={control}
-      name={name}
+      name={name as Path<T>}
       render={({ field, fieldState, formState }) => (
         <View className={className}>
           {label && (

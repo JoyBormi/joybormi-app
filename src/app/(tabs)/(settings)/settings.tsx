@@ -138,8 +138,8 @@ const SettingsScreen: React.FC = () => {
 
         {/* Shiny Switch User Type Button */}
 
-        {isLoggedIn && appType !== EUserType.GUEST && (
-          <View className="px-4 mb-8">
+        {isLoggedIn && (
+          <View className="mb-8">
             <TouchableOpacity
               activeOpacity={0.85}
               onPress={handleUserTypeSwitch}
@@ -176,7 +176,7 @@ const SettingsScreen: React.FC = () => {
           </View>
         )}
         {/* Settings Groups */}
-        <View className="px-3 gap-6">
+        <View className="gap-6">
           {settings.map((group) => (
             <View key={group.id} className="gap-2">
               {group.title && (

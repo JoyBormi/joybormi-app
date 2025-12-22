@@ -4,14 +4,19 @@ import {
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
   Platform,
-  ScrollView,
+  ScrollViewProps,
   TouchableWithoutFeedback,
 } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 function KeyboardAvoid({
   children,
+  scrollConfig,
   ...props
-}: { children: React.ReactNode } & KeyboardAvoidingViewProps) {
+}: {
+  children: React.ReactNode;
+  scrollConfig?: ScrollViewProps;
+} & KeyboardAvoidingViewProps) {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -24,6 +29,7 @@ function KeyboardAvoid({
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
           className="bg-background"
+          {...scrollConfig}
         >
           {children}
         </ScrollView>

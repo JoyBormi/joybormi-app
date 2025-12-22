@@ -167,6 +167,6 @@ const Icons = {
   LogOut,
 } as const;
 
-export type Icon = keyof typeof Icons;
+export type TIcon = keyof typeof Icons;
 
 export default Icons;

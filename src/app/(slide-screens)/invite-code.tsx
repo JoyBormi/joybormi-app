@@ -43,45 +43,43 @@ export default function InviteCodeScreen() {
 
   return (
     <KeyboardAvoid>
-      <View className="main-area">
-        <View className="pt-20">
-          <AuthHeader
-            title="Enter Invite Code"
-            subtitle="Enter the 6-digit code provided by the creator brand"
+      <View className="main-area pt-40">
+        <AuthHeader
+          title="Enter Invite Code"
+          subtitle="Enter the 6-digit code provided by the creator brand"
+        />
+        {/* Form */}
+        <View className="mt-14 gap-y-6">
+          <FormField
+            control={control}
+            name="code"
+            label="Invite Code"
+            required
+            render={({ field }) => (
+              <Input
+                value={field.value}
+                onChangeText={field.onChange}
+                onBlur={field.onBlur}
+                placeholder="123456"
+                keyboardType="number-pad"
+                returnKeyType="done"
+                maxLength={6}
+                textAlign="center"
+                className="tracking-[6px] text-lg"
+              />
+            )}
           />
-          {/* Form */}
-          <View className="mt-14 gap-y-6">
-            <FormField
-              control={control}
-              name="code"
-              label="Invite Code"
-              required
-              render={({ field }) => (
-                <Input
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  placeholder="123456"
-                  keyboardType="number-pad"
-                  returnKeyType="done"
-                  maxLength={6}
-                  textAlign="center"
-                  className="tracking-[6px] text-lg"
-                />
-              )}
-            />
-          </View>
-
-          {/* Submit */}
-          <Button className="my-10" onPress={handleSubmit(onSubmit)}>
-            <Text>Join as Worker</Text>
-          </Button>
-
-          {/* Footer */}
-          <Text className="text-center text-xs text-muted-foreground">
-            Don’t have a code? Ask the creator to invite you.
-          </Text>
         </View>
+
+        {/* Submit */}
+        <Button className="my-10" onPress={handleSubmit(onSubmit)}>
+          <Text>Join as Worker</Text>
+        </Button>
+
+        {/* Footer */}
+        <Text className="text-center text-xs text-muted-foreground">
+          Don’t have a code? Ask the creator to invite you.
+        </Text>
       </View>
     </KeyboardAvoid>
   );
