@@ -6,10 +6,10 @@ import { useRouter } from 'expo-router';
 import { MotiView } from 'moti';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { View } from 'react-native';
 import Animated, {
+  useAnimatedStyle,
   useSharedValue,
-  withDelay,
-  withRepeat,
   withTiming,
 } from 'react-native-reanimated';
 
@@ -18,46 +18,63 @@ interface Props {
 }
 
 const MAJORS = Object.values(Major);
-
 const AnimatedPressable = Animated.createAnimatedComponent(PressableBounce);
-// const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
+
+const SLIDE_DISTANCE = 12;
 
 export function SearchBar({ className }: Props) {
   const router = useRouter();
   const { t } = useTranslation();
-  const [index, setIndex] = useState(0);
 
+  const [index, setIndex] = useState(0);
   const [search, setSearch] = useState('');
 
-  const trigger = useSharedValue(0);
-
-  const handleSearch = () => {
-    if (search.trim() !== '')
-      router.push({
-        pathname: '/(category)/[category]',
-        params: {
-          category: 'all',
-          query: search,
-        },
-      });
-  };
-
-  useEffect(() => {
-    trigger.value = withRepeat(
-      withDelay(3000, withTiming(trigger.value + 1, { duration: 300 })),
-      -1,
-      false,
-    );
-  }, [trigger]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % MAJORS.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+  // animation values
+  const translateY = useSharedValue(0);
+  const opacity = useSharedValue(1);
 
   const currentType = MAJORS[index];
+
+  const animatedPlaceholderStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+    opacity: opacity.value,
+  }));
+
+  const handleSearch = () => {
+    if (!search.trim()) return;
+
+    router.push({
+      pathname: '/(category)/[category]',
+      params: {
+        category: 'all',
+        query: search,
+      },
+    });
+  };
+
+  // rotate majors with slide animation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // slide out (up)
+      translateY.value = withTiming(-SLIDE_DISTANCE, { duration: 180 });
+      opacity.value = withTiming(0, { duration: 120 });
+
+      setTimeout(() => {
+        // update text
+        setIndex((prev) => (prev + 1) % MAJORS.length);
+
+        // reset below
+        translateY.value = SLIDE_DISTANCE;
+        opacity.value = 0;
+
+        // slide in (from bottom)
+        translateY.value = withTiming(0, { duration: 220 });
+        opacity.value = withTiming(1, { duration: 160 });
+      }, 180);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [opacity, translateY]);
 
   return (
     <MotiView
@@ -67,38 +84,38 @@ export function SearchBar({ className }: Props) {
       className={cn('px-4 mt-10', className)}
     >
       <AnimatedPressable className="flex-row items-center px-4 bg-card/50 rounded-full border border-border">
-        <Input
-          placeholder={t('common.labels.searchFor', {
-            type: t(`major.${currentType}`),
-          })}
-          className="flex-1 border-0 h-auto bg-transparent font-body"
-          returnKeyLabel={t('common.labels.search')}
-          value={search}
-          onChangeText={setSearch}
-          onSubmitEditing={handleSearch}
-          onKeyPress={(e) => {
-            if (e.nativeEvent.key === 'Enter') {
-              handleSearch();
-            }
-          }}
-          keyboardType="default"
-          onBlur={() => setSearch('')}
-          autoCapitalize="none"
-          autoCorrect={false}
-          nativeID="search"
-          returnKeyType="search"
-        />
+        <View className="flex-1 justify-center">
+          {/* Animated placeholder */}
+          {!search && (
+            <Animated.Text
+              pointerEvents="none"
+              style={animatedPlaceholderStyle}
+              className="absolute left-3 text-muted-foreground font-body"
+            >
+              {t('common.labels.searchFor', {
+                type: t(`major.${currentType}`),
+              })}
+            </Animated.Text>
+          )}
+
+          <Input
+            value={search}
+            onChangeText={setSearch}
+            onSubmitEditing={handleSearch}
+            onBlur={() => setSearch('')}
+            className="border-0 h-auto bg-transparent font-body"
+            returnKeyType="search"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+        </View>
+
         <Icons.Search
           onPress={handleSearch}
           size={22}
-          className=" text-muted-foreground"
+          className="text-muted-foreground"
         />
       </AnimatedPressable>
-      {/* <AnimatedBlurView
-        intensity={10}
-        style={[StyleSheet.absoluteFill]}
-        pointerEvents="none"
-      /> */}
     </MotiView>
   );
 }

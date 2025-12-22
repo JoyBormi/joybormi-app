@@ -26,7 +26,7 @@ export function CategoryHeader({
       from={{ opacity: 0, translateY: -10 }}
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ type: 'timing', duration: 300 }}
-      className="px-4 pb-3 bg-background"
+      className="px-4 pb-3 bg-background fixed top-0 left-0 right-0 z-50"
       style={{ paddingTop: insets.top > 0 ? 0 : 12 }}
     >
       <View className="flex-row items-center justify-between">

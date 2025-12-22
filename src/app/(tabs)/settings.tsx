@@ -284,10 +284,7 @@ const SettingsScreen: React.FC = () => {
   }, []);
 
   return (
-    <View
-      className="flex-1 bg-background pt-24"
-      style={{ paddingTop: insets.top }}
-    >
+    <View className="main-area">
       <ScrollView
         className="flex-1"
         contentContainerStyle={{
@@ -296,13 +293,13 @@ const SettingsScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         {/* User Profile Card */}
-        <View className="px-4 mb-6">
+        <View style={{ paddingTop: insets.top + 50 }}>
           <UserProfileCard profile={userProfile} onPress={handleProfilePress} />
         </View>
 
         {/* Shiny Switch User Type Button */}
         {isLoggedIn && (
-          <View className="px-4 mb-6">
+          <View className="px-4 my-8">
             <TouchableOpacity
               activeOpacity={0.85}
               onPress={handleUserTypeSwitch}
@@ -327,7 +324,7 @@ const SettingsScreen: React.FC = () => {
                       Use the app as a User, Worker, or Creator
                     </Text>
 
-                    <View className="mt-3 self-start rounded-full bg-white/20 px-3 py-1">
+                    <View className="mt-3 self-end rounded-full bg-white/20 px-3 py-1">
                       <Text className="text-white text-xs font-medium">
                         Current: {userProfile.currentType}
                       </Text>
@@ -340,7 +337,7 @@ const SettingsScreen: React.FC = () => {
         )}
 
         {/* Settings Groups */}
-        <View className="px-4 gap-6">
+        <View className="px-3 gap-6">
           {settingsGroups.map((group) => (
             <View key={group.id} className="gap-2">
               {group.title && (

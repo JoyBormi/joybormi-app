@@ -1,10 +1,12 @@
 import {
+  CategoryHeader,
+  CategorySelector,
+  ServiceGrid,
+} from '@/views/category';
+import {
   CategoryFilterSheet,
   CategoryFilters,
 } from '@/views/category/category-filter';
-import { CategoryHeader } from '@/views/category/category-header';
-import { CategorySelector } from '@/views/category/category-selector';
-import { ServiceGrid } from '@/views/category/service-grid';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
@@ -32,9 +34,9 @@ export default function CategoryScreen() {
 
   const handleCategoryChange = (newCategory: string) => {
     if (newCategory === 'all') {
-      router.setParams({ category: 'all' });
+      router.replace('/category/all');
     } else {
-      router.setParams({ category: newCategory });
+      router.replace(`/category/${newCategory}`);
     }
   };
 
@@ -47,11 +49,16 @@ export default function CategoryScreen() {
   };
 
   return (
-    <SafeAreaView className="safe-area" edges={['top']}>
+    <SafeAreaView className="safe-area relative" edges={['top']}>
       <CategoryHeader
         category={category || 'all'}
         onBack={() => router.back()}
         onFilterPress={handleFilterPress}
+      />
+
+      <CategorySelector
+        selectedCategory={category || 'all'}
+        onCategoryChange={handleCategoryChange}
       />
 
       <ScrollView
@@ -61,11 +68,6 @@ export default function CategoryScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <CategorySelector
-          selectedCategory={category || 'all'}
-          onCategoryChange={handleCategoryChange}
-        />
-
         <ServiceGrid
           category={category || 'all'}
           searchQuery={query}

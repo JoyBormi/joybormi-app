@@ -33,3 +33,43 @@ export enum Major {
   FinancialConsultant = 'financialConsultant',
   CareerCoach = 'careerCoach',
 }
+
+/**
+ * Optimized Configuration
+ */
+export const EMOJI_MAP: Record<string, string> = {
+  all: '✨',
+  [Major.Barber]: '💇‍♂️',
+  [Major.HairSalon]: '💇‍♀️',
+  [Major.Spa]: '🧖‍♀️',
+  [Major.Dentist]: '🦷',
+  [Major.PersonalTrainer]: '🏋️',
+  [Major.YogaInstructor]: '🧘‍♂️',
+  [Major.TattooArtist]: '🎨',
+  [Major.GeneralDoctor]: '👨‍⚕️',
+  [Major.MassageTherapist]: '💆',
+  [Major.Pediatrician]: '👶',
+  [Major.Dermatologist]: '🧴',
+  [Major.Psychologist]: '🧠',
+  [Major.Physiotherapist]: '🦴',
+  [Major.MusicTeacher]: '🎵',
+  [Major.LanguageTutor]: '🗣️',
+  [Major.Photographer]: '📸',
+  [Major.Videographer]: '🎥',
+  [Major.MakeupArtist]: '💄',
+  [Major.NailTechnician]: '💅',
+  [Major.PetGroomer]: '🐶',
+  [Major.Veterinarian]: '🩺',
+  [Major.AutoMechanic]: '🔧',
+  [Major.DrivingInstructor]: '🚗',
+  [Major.HomeCleaner]: '🧹',
+  [Major.Electrician]: '💡',
+  [Major.Plumber]: '🚰',
+  [Major.Carpenter]: '🪚',
+  [Major.Locksmith]: '🔑',
+  [Major.ApplianceRepair]: '🛠️',
+  [Major.EventPlanner]: '🎉',
+  [Major.LegalAdvisor]: '⚖️',
+  [Major.FinancialConsultant]: '💼',
+  [Major.CareerCoach]: '🧭',
+};

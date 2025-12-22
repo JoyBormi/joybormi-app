@@ -66,7 +66,7 @@ export function CategoryPills({ className }: Props) {
           }}
           className="py-3 mt-4 items-center justify-center bg-card/50 rounded-xl border border-border active:opacity-80"
         >
-          <Text className="font-caption text-sm text-primary">
+          <Text className="font-caption text-sm text-foreground">
             {t('categories.seeAll')}
           </Text>
         </Pressable>
