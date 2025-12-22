@@ -17,7 +17,7 @@ export const UserProfileCard: React.FC<Props> = ({ profile, onPress }) => {
         Feedback.light();
         onPress?.();
       }}
-      className="bg-card/50 backdrop-blur-sm rounded-2xl p-4 flex-row items-center gap-4"
+      className="bg-card/50 backdrop-blur-sm rounded-2xl p-4 flex-row items-center gap-4 mb-10"
     >
       {/* Avatar */}
       <View className="relative">
@@ -35,11 +35,11 @@ export const UserProfileCard: React.FC<Props> = ({ profile, onPress }) => {
 
       {/* Info */}
       <View className="flex-1">
-        <Text className="text-xl text-foreground font-heading tracking-tight">
-          {profile?.username ?? 'Guest'}
+        <Text className="text-foreground font-title tracking-tight">
+          {profile?.username ?? 'Hello, Guest 👋'}
         </Text>
-        <Text className="text-sm text-muted-foreground font-body mt-1">
-          {profile?.phone ?? profile?.email ?? 'Guest'}
+        <Text className="text-muted-foreground font-body mt-1">
+          {profile?.phone ?? profile?.email ?? 'Please login'}
         </Text>
       </View>
 

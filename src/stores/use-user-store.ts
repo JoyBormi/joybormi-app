@@ -12,6 +12,8 @@ export interface UserStoreState {
   setAppType: (appType: EUserType) => void;
   isLoggedIn: boolean;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
+  location: string | null;
+  setLocation: (location: string | null) => void;
 }
 
 export const useUserStore = create<UserStoreState>()(
@@ -19,14 +21,13 @@ export const useUserStore = create<UserStoreState>()(
     (set) => ({
       user: null,
       setUser: (user: IUser | null) => set({ user }),
-      removeUser: () =>
-        set({
-          user: null,
-        }),
+      removeUser: () => set({ user: null }),
       appType: EUserType.GUEST,
       setAppType: (appType: EUserType) => set({ appType }),
       isLoggedIn: false,
       setIsLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
+      location: null,
+      setLocation: (location: string | null) => set({ location }),
     }),
     {
       name: 'user-store',

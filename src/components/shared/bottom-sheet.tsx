@@ -1,7 +1,6 @@
 import { cn } from '@/lib/utils';
 import {
   BottomSheetBackdrop,
-  BottomSheetBackdropProps,
   BottomSheetModal,
   BottomSheetModalProps,
   BottomSheetScrollView,
@@ -11,10 +10,6 @@ import { BottomSheetScrollViewProps } from '@gorhom/bottom-sheet/lib/typescript/
 import { BottomSheetViewProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetView/types';
 import React, { forwardRef } from 'react';
 import { View } from 'react-native';
-
-export type BackdropConfig = Partial<BottomSheetBackdropProps> & {
-  opacity?: number;
-};
 
 export type ScrollConfig = Partial<BottomSheetScrollViewProps> & {
   className?: string;
@@ -29,7 +24,12 @@ interface CustomBottomSheetProps extends Omit<
   'children'
 > {
   scrollEnabled?: boolean;
-  backdropConfig?: BackdropConfig;
+  backdropConfig?: {
+    pressBehavior?: 'none' | 'close' | 'collapse' | number;
+    appearsOnIndex?: number;
+    disappearsOnIndex?: number;
+    enableTouchThrough?: boolean;
+  };
   scrollConfig?: ScrollConfig;
   bottomSheetViewConfig?: BottomSheetViewConfig;
   children: React.ReactNode;
@@ -67,7 +67,6 @@ const CustomBottomSheet = forwardRef<BottomSheetModal, CustomBottomSheetProps>(
             appearsOnIndex={0}
             disappearsOnIndex={-1}
             enableTouchThrough={false}
-            opacity={backdropConfig?.opacity ?? 0.4}
             {...backdropConfig}
           />
         )}

@@ -1,49 +1,43 @@
 import { Text } from '@/components/ui';
-import { useUserLocation } from '@/hooks/common/use-location';
 import Icons from '@/lib/icons';
-import { cn } from '@/lib/utils';
+import { useUserStore } from '@/stores';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Link } from 'expo-router';
 import { MotiView } from 'moti';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, Pressable, TouchableOpacity, View } from 'react-native';
+import { LocationPickerSheet } from './location-picker';
 
-interface Props {
-  user?: {
-    name: string;
-    avatar: string;
-    address: string;
-  };
-
-  className?: string;
-}
-
-export function Header({ user, className }: Props) {
-  const { location, reloadLocation, isLoading } = useUserLocation();
+export function Header() {
   const { t } = useTranslation();
+  const { user, location } = useUserStore();
+  const sheetRef = useRef<BottomSheetModal>(null);
 
   const LocationDisplay = (
     <TouchableOpacity
-      onPress={reloadLocation}
+      onPress={() => sheetRef.current?.present()}
       className="flex-row items-center"
       hitSlop={10}
     >
       <Icons.MapPin size={14} className="text-muted-foreground mr-1" />
       <Text numberOfLines={1} className="font-caption text-muted-foreground">
-        {isLoading ? t('common.labels.searching') : location}
+        {location}
       </Text>
-      <Icons.RefreshCcw
-        size={10}
-        className="text-muted-foreground/80 ml-2 active:animate-spin stroke-1"
-      />
     </TouchableOpacity>
   );
+
+  useEffect(() => {
+    if (!location) {
+      sheetRef.current?.present();
+    }
+  }, [location]);
 
   return (
     <MotiView
       from={{ opacity: 0, translateY: -10 }}
       animate={{ opacity: 1, translateY: 0 }}
-      className={cn('px-4 mt-2', className)}
+      className="px-4 mt-2"
     >
       <View className="flex-row items-start justify-between">
         {user ? (
@@ -55,7 +49,7 @@ export function Header({ user, className }: Props) {
               />
               <View className="ml-4 flex-1">
                 <Text className="font-subtitle text-foreground">
-                  Hello, {user.name}
+                  Hello, {user.username}
                 </Text>
                 <View className="mt-1">{LocationDisplay}</View>
               </View>
@@ -70,21 +64,24 @@ export function Header({ user, className }: Props) {
             <View className="flex-1">
               <View className="flex-row items-center">
                 <Icons.Scissors className="w-8 h-8 text-primary mr-2" />
-                <Text className="font-subtitle text-foreground">Joy Bormi</Text>
+                <Text className="font-subtitle text-foreground">
+                  Hello, Guest 👋
+                </Text>
               </View>
               <View className="mt-1">{LocationDisplay}</View>
             </View>
 
-            <Link href="/(auth)/register" asChild>
+            <Link href="/(auth)/login" asChild>
               <Pressable className="bg-primary px-5 py-2.5 rounded-full">
                 <Text className="font-caption text-primary-foreground">
-                  Register
+                  Login
                 </Text>
               </Pressable>
             </Link>
           </>
         )}
       </View>
+      <LocationPickerSheet ref={sheetRef} />
     </MotiView>
   );
 }

@@ -52,6 +52,7 @@ const SettingsScreen: React.FC = () => {
   const handleProfilePress = useCallback(() => {
     if (!isLoggedIn) {
       router.push('/(auth)/login');
+
       return;
     }
     // TODO: Navigate to profile screen
@@ -104,6 +105,7 @@ const SettingsScreen: React.FC = () => {
         handleThemePress,
         handleLanguagePress,
         handleLogout,
+        isLoggedIn,
       }),
     [
       notificationsEnabled,
@@ -113,6 +115,7 @@ const SettingsScreen: React.FC = () => {
       handleLanguagePress,
       handleLogout,
       i18n,
+      isLoggedIn,
     ],
   );
 
@@ -143,7 +146,7 @@ const SettingsScreen: React.FC = () => {
 
         {/* Shiny Switch User Type Button */}
 
-        {isLoggedIn && user && (
+        {isLoggedIn && appType !== EUserType.GUEST && (
           <View className="px-4 my-8">
             <TouchableOpacity
               activeOpacity={0.85}
@@ -171,7 +174,7 @@ const SettingsScreen: React.FC = () => {
 
                     <View className="mt-3 self-end rounded-full bg-white/20 px-3 py-1">
                       <Text className="text-white text-xs font-medium">
-                        Current: {user.type}
+                        Current: {appType}
                       </Text>
                     </View>
                   </View>

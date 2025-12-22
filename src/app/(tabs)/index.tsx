@@ -19,12 +19,6 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-const SAMPLE_USER = {
-  name: 'Mical Jackson',
-  avatar: 'https://i.pravatar.cc/100',
-  address: '6591 Elgin St. Celina, Delaware 10299',
-};
-
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { onScroll } = useYScroll();
@@ -43,7 +37,7 @@ export default function HomeScreen() {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
       >
-        <Header user={SAMPLE_USER} />
+        <Header />
 
         <SearchBar />
 
