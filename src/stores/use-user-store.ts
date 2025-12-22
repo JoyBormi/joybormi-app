@@ -1,12 +1,12 @@
 // CHecks onboarding visited or not
 import { storage } from '@/lib/mmkv';
-import { EUserType, IUser } from 'types/user.type';
+import { EUserType, IUser } from '@/types/user.type';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 export interface UserStoreState {
-  user: IUser;
-  setUser: (user: IUser) => void;
+  user: IUser | null;
+  setUser: (user: IUser | null) => void;
   removeUser: () => void;
   appType: EUserType;
   setAppType: (appType: EUserType) => void;
@@ -14,32 +14,18 @@ export interface UserStoreState {
   setIsLoggedIn: (isLoggedIn: boolean) => void;
 }
 
-const DEFAULT_USER: IUser = {
-  type: EUserType.USER,
-  username: '',
-  first_name: '',
-  last_name: '',
-  phone: '',
-  email: '',
-  avatar: '',
-  tokens: {
-    accessToken: '',
-    refreshToken: '',
-  },
-};
-
 export const useUserStore = create<UserStoreState>()(
   persist(
     (set) => ({
-      user: DEFAULT_USER,
-      setUser: (user: IUser) => set({ user }),
+      user: null,
+      setUser: (user: IUser | null) => set({ user }),
       removeUser: () =>
         set({
-          user: DEFAULT_USER,
+          user: null,
         }),
       appType: EUserType.GUEST,
       setAppType: (appType: EUserType) => set({ appType }),
-      isLoggedIn: true,
+      isLoggedIn: false,
       setIsLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
     }),
     {

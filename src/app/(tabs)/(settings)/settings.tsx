@@ -2,6 +2,7 @@ import { settingsGroups } from '@/constants/setting-groups';
 import { useColorScheme } from '@/hooks/common';
 import { Feedback } from '@/lib/haptics';
 import { useUserStore } from '@/stores';
+import { EUserType } from '@/types/user.type';
 import {
   ISettingsItem,
   LanguageSheet,
@@ -17,7 +18,6 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { EUserType } from 'types/user.type';
 
 const SettingsScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
@@ -143,42 +143,43 @@ const SettingsScreen: React.FC = () => {
 
         {/* Shiny Switch User Type Button */}
 
-        <View className="px-4 my-8">
-          <TouchableOpacity
-            activeOpacity={0.85}
-            onPress={handleUserTypeSwitch}
-            className="overflow-hidden rounded-2xl"
-          >
-            <LinearGradient
-              colors={[
-                'rgba(168, 85, 247, 0.9)',
-                'rgba(236, 72, 153, 0.9)',
-                'rgba(251, 146, 60, 0.9)',
-              ]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
+        {isLoggedIn && user && (
+          <View className="px-4 my-8">
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={handleUserTypeSwitch}
+              className="overflow-hidden rounded-2xl"
             >
-              <View className="flex-row items-center justify-between p-5">
-                <View className="flex-1 pr-3">
-                  <Text className="text-white font-heading text-lg">
-                    Switch Role
-                  </Text>
-
-                  <Text className="text-white/85 font-body text-sm mt-1">
-                    Use the app as a User, Worker, or Creator
-                  </Text>
-
-                  <View className="mt-3 self-end rounded-full bg-white/20 px-3 py-1">
-                    <Text className="text-white text-xs font-medium">
-                      Current: {user.type}
+              <LinearGradient
+                colors={[
+                  'rgba(168, 85, 247, 0.9)',
+                  'rgba(236, 72, 153, 0.9)',
+                  'rgba(251, 146, 60, 0.9)',
+                ]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <View className="flex-row items-center justify-between p-5">
+                  <View className="flex-1 pr-3">
+                    <Text className="text-white font-heading text-lg">
+                      Switch Role
                     </Text>
+
+                    <Text className="text-white/85 font-body text-sm mt-1">
+                      Use the app as a User, Worker, or Creator
+                    </Text>
+
+                    <View className="mt-3 self-end rounded-full bg-white/20 px-3 py-1">
+                      <Text className="text-white text-xs font-medium">
+                        Current: {user.type}
+                      </Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        )}
         {/* Settings Groups */}
         <View className="px-3 gap-6">
           {settings.map((group) => (

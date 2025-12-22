@@ -2,12 +2,12 @@ import { TabButton } from '@/components/shared/tab-button';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores';
 import { useScrollStore } from '@/stores/use-scroll-store';
+import { EUserType } from '@/types/user.type';
 import { useSegments } from 'expo-router';
 import { TabList, Tabs, TabSlot, TabTrigger } from 'expo-router/ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { EUserType } from 'types/user.type';
 
 const SCREENS_WITHOUT_TAB = ['[date]'];
 

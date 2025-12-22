@@ -1,11 +1,11 @@
 import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
+import { IUser } from '@/types/user.type';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-import { IUser } from 'types/user.type';
 
 interface Props {
-  profile?: IUser;
+  profile: IUser | null;
   onPress?: () => void;
 }
 

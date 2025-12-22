@@ -1,12 +1,16 @@
+import { UserTypeBlockedSheet } from '@/components/shared/block-sheet';
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
-import { cn } from '@/lib/utils';
+import { cn, validateUserTypeSwitch } from '@/lib/utils';
+import { useUserStore } from '@/stores';
+import { EUserType } from '@/types/user.type';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import React, { forwardRef, useState } from 'react';
+import { router } from 'expo-router';
+import React, { forwardRef, useRef, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { EUserType } from 'types/user.type';
+import { UserTypeActionRequiredSheet } from './action-required';
 
 interface UserTypeSheetProps {
   currentType: EUserType;
@@ -47,7 +51,13 @@ const USER_TYPES: {
 export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
   ({ currentType, onSelect, onClose }, ref) => {
     const insets = useSafeAreaInsets();
+    const { user } = useUserStore();
     const [selectedType, setSelectedType] = useState<EUserType>(currentType);
+    const [actionReason, setActionReason] = useState<
+      'NEED_CODE' | 'NEED_BRAND'
+    >('NEED_CODE');
+    const actionSheetRef = useRef<BottomSheetModal>(null);
+    const blockedSheetRef = useRef<BottomSheetModal>(null);
 
     const handleSelect = (type: EUserType) => {
       Feedback.light();
@@ -55,6 +65,23 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
     };
 
     const handleConfirm = () => {
+      const reason = validateUserTypeSwitch(
+        currentType,
+        selectedType,
+        user?.type === EUserType.CREATOR,
+      );
+
+      if (reason === 'NOT_ALLOWED') {
+        blockedSheetRef.current?.present();
+        return;
+      }
+
+      if (reason === 'NEED_CODE' || reason === 'NEED_BRAND') {
+        setActionReason(reason);
+        actionSheetRef.current?.present();
+        return;
+      }
+
       Feedback.success();
       onSelect(selectedType);
       onClose();
@@ -143,6 +170,25 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
             </Text>
           </TouchableOpacity>
         </View>
+        <UserTypeBlockedSheet ref={blockedSheetRef} />
+
+        <UserTypeActionRequiredSheet
+          ref={actionSheetRef}
+          type={actionReason}
+          onPrimary={() => {
+            actionSheetRef.current?.dismiss();
+
+            if (actionReason === 'NEED_CODE') {
+              onClose?.();
+              router.push('/(tabs)/(settings)/(role-change)/invite-code'); // dummy
+            }
+
+            if (actionReason === 'NEED_BRAND') {
+              onClose?.();
+              router.push('/create-brand'); // dummy
+            }
+          }}
+        />
       </CustomBottomSheet>
     );
   },

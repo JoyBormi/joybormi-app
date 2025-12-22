@@ -5,6 +5,12 @@ export enum EUserType {
   CREATOR = 'CREATOR',
 }
 
+export type UserTypeBlockReason =
+  | 'NEED_CODE'
+  | 'NEED_BRAND'
+  | 'NOT_ALLOWED'
+  | null;
+
 export interface IUser {
   type: EUserType;
   username: string;
