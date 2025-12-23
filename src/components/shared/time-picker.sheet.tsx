@@ -33,12 +33,14 @@ export const TimePickerSheet = forwardRef<
   return (
     <CustomBottomSheet
       ref={ref}
+      detached
       index={0}
-      snapPoints={['45%']}
+      bottomInset={insets.bottom}
+      style={{
+        paddingHorizontal: 12,
+      }}
       bottomSheetViewConfig={{
-        style: {
-          paddingBottom: insets.bottom + 20,
-        },
+        className: 'rounded-b-3xl pb-6',
       }}
     >
       <View className="mb-6">
@@ -50,6 +52,7 @@ export const TimePickerSheet = forwardRef<
           value={selectedTime}
           mode="time"
           display="spinner"
+          is24Hour
           onChange={(event, time) => {
             if (time) {
               setSelectedTime(time);

@@ -1,14 +1,19 @@
-import type { Review, Service, Worker, WorkingDay } from '../worker-profile.d';
-
 /**
  * Mock data for Worker Profile
  */
+
+import type {
+  IReview,
+  IService,
+  IWorker,
+  IWorkingDay,
+} from '@/types/worker.type';
 
 export const getMockWorker = (
   userId?: string,
   firstName?: string,
   lastName?: string,
-): Worker => ({
+): IWorker => ({
   id: userId || 'worker-123',
   userId: userId || 'worker-123',
   brandId: 'brand-123',
@@ -25,94 +30,108 @@ export const getMockWorker = (
   phone: '+1 (555) 123-4567',
 });
 
-export const getMockServices = (): Service[] => [
+export const getMockServices = (): IService[] => [
   {
     id: 'service-1',
+    creatorId: 'worker-123',
+    brandId: 'brand-123',
     name: 'Hair Coloring',
     description: 'Professional hair coloring with premium products',
-    duration_mins: 120,
+    durationMins: 120,
     price: '$150',
+    createdAt: new Date().toISOString(),
   },
   {
     id: 'service-2',
+    creatorId: 'worker-123',
+    brandId: 'brand-123',
     name: 'Haircut & Style',
     description: 'Modern haircut with styling',
-    duration_mins: 60,
+    durationMins: 60,
     price: '$80',
+    createdAt: new Date().toISOString(),
   },
   {
     id: 'service-3',
+    creatorId: 'worker-123',
+    brandId: 'brand-123',
     name: 'Balayage Treatment',
     description: 'Natural-looking highlights with balayage technique',
-    duration_mins: 180,
+    durationMins: 180,
     price: '$200',
+    createdAt: new Date().toISOString(),
   },
 ];
 
-export const getMockWorkingDays = (): WorkingDay[] => [
+export const getMockWorkingDays = (): IWorkingDay[] => [
   {
     id: 'wd-1',
-    day_of_week: 1,
-    start_time: '09:00:00',
-    end_time: '17:00:00',
-    breaks: [{ id: 'b-1', start_time: '12:00:00', end_time: '13:00:00' }],
+    scheduleId: 'schedule-123',
+    dayOfWeek: 1,
+    startTime: '09:00:00',
+    endTime: '17:00:00',
+    createdAt: new Date().toISOString(),
   },
   {
     id: 'wd-2',
-    day_of_week: 2,
-    start_time: '09:00:00',
-    end_time: '17:00:00',
-    breaks: [{ id: 'b-2', start_time: '12:00:00', end_time: '13:00:00' }],
+    scheduleId: 'schedule-123',
+    dayOfWeek: 2,
+    startTime: '09:00:00',
+    endTime: '17:00:00',
+    createdAt: new Date().toISOString(),
   },
   {
     id: 'wd-3',
-    day_of_week: 3,
-    start_time: '09:00:00',
-    end_time: '17:00:00',
-    breaks: [{ id: 'b-3', start_time: '12:00:00', end_time: '13:00:00' }],
+    scheduleId: 'schedule-123',
+    dayOfWeek: 3,
+    startTime: '09:00:00',
+    endTime: '17:00:00',
+    createdAt: new Date().toISOString(),
   },
   {
     id: 'wd-4',
-    day_of_week: 4,
-    start_time: '09:00:00',
-    end_time: '17:00:00',
-    breaks: [{ id: 'b-4', start_time: '12:00:00', end_time: '13:00:00' }],
+    scheduleId: 'schedule-123',
+    dayOfWeek: 4,
+    startTime: '09:00:00',
+    endTime: '17:00:00',
+    createdAt: new Date().toISOString(),
   },
   {
     id: 'wd-5',
-    day_of_week: 5,
-    start_time: '09:00:00',
-    end_time: '17:00:00',
-    breaks: [{ id: 'b-5', start_time: '12:00:00', end_time: '13:00:00' }],
+    scheduleId: 'schedule-123',
+    dayOfWeek: 5,
+    startTime: '09:00:00',
+    endTime: '17:00:00',
+    createdAt: new Date().toISOString(),
   },
 ];
 
-export const getMockReviews = (): Review[] => [
+export const getMockReviews = (): IReview[] => [
   {
     id: 'review-1',
-    customer_name: 'Emily Davis',
-    customer_avatar: 'https://i.pravatar.cc/150?img=10',
+    customerName: 'Emily Davis',
+    customerAvatar: 'https://i.pravatar.cc/150?img=10',
     rating: 5,
     comment: 'Amazing service! Sarah is very professional and talented.',
-    created_at: '2024-01-15T10:30:00Z',
-    service_name: 'Hair Coloring',
+    createdAt: '2024-01-15T10:30:00Z',
+    serviceName: 'Hair Coloring',
   },
   {
     id: 'review-2',
-    customer_name: 'Michael Brown',
-    customer_avatar: 'https://i.pravatar.cc/150?img=12',
+    customerName: 'Michael Brown',
+    customerAvatar: 'https://i.pravatar.cc/150?img=12',
     rating: 5,
     comment: 'Best haircut I have ever had. Highly recommend!',
-    created_at: '2024-01-10T14:20:00Z',
-    service_name: 'Haircut & Style',
+    createdAt: '2024-01-10T14:20:00Z',
+    serviceName: 'Haircut & Style',
   },
   {
     id: 'review-3',
-    customer_name: 'Jessica Wilson',
-    customer_avatar: 'https://i.pravatar.cc/150?img=15',
+    customerName: 'Jessica Wilson',
+    customerAvatar: 'https://i.pravatar.cc/150?img=15',
     rating: 4,
     comment: 'Great experience overall. Will definitely come back!',
-    created_at: '2024-01-05T16:45:00Z',
-    service_name: 'Balayage Treatment',
+    createdAt: '2024-01-05T16:45:00Z',
+    serviceName: 'Balayage Treatment',
   },
 ];

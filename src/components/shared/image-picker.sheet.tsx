@@ -51,7 +51,7 @@ export const ImagePickerSheet = forwardRef<
     if (!hasPermission) return;
 
     const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: 'images',
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.8,
@@ -70,7 +70,7 @@ export const ImagePickerSheet = forwardRef<
     if (!hasPermission) return;
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: 'images',
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.8,
@@ -87,12 +87,14 @@ export const ImagePickerSheet = forwardRef<
   return (
     <CustomBottomSheet
       ref={ref}
+      detached
       index={0}
-      snapPoints={['35%']}
+      bottomInset={insets.bottom}
+      style={{
+        paddingHorizontal: 12,
+      }}
       bottomSheetViewConfig={{
-        style: {
-          paddingBottom: insets.bottom + 20,
-        },
+        className: 'rounded-b-3xl pb-6',
       }}
     >
       <View className="mb-6">
