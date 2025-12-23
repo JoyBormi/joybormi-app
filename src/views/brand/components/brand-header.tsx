@@ -11,6 +11,7 @@ interface BrandHeaderProps {
   onBack?: () => void;
   onShare?: () => void;
   onFavorite?: () => void;
+  isOwner?: boolean;
 }
 
 export const BrandHeader: React.FC<BrandHeaderProps> = ({
@@ -18,6 +19,7 @@ export const BrandHeader: React.FC<BrandHeaderProps> = ({
   onBack,
   onShare,
   onFavorite,
+  isOwner = false,
 }) => {
   const insets = useSafeAreaInsets();
 
@@ -31,7 +33,7 @@ export const BrandHeader: React.FC<BrandHeaderProps> = ({
       <View className="relative">
         <Image
           source={{ uri: brand.coverImage }}
-          className="w-full h-48"
+          className="w-full h-56"
           resizeMode="cover"
         />
 
@@ -50,25 +52,22 @@ export const BrandHeader: React.FC<BrandHeaderProps> = ({
             <Icons.ChevronLeft size={24} className="text-foreground" />
           </Pressable>
 
-          <View className="flex-row gap-2">
-            <Pressable
-              onPress={onShare}
-              className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-xl items-center justify-center"
-            >
-              <Icons.Share2 size={20} className="text-foreground" />
-            </Pressable>
+          {onFavorite && (
             <Pressable
               onPress={onFavorite}
               className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-xl items-center justify-center"
             >
-              <Icons.Heart size={20} className="text-foreground" />
+              {isOwner ? (
+                <Icons.Pencil size={20} className="text-foreground" />
+              ) : (
+                <Icons.Heart size={20} className="text-foreground" />
+              )}
             </Pressable>
-          </View>
+          )}
         </View>
       </View>
-
       {/* Brand Info Card */}
-      <View className="px-4 -mt-8">
+      <View className="px-4 -mt-24">
         <View className="bg-card/50 backdrop-blur-xl rounded-3xl p-4 border border-border/50">
           <View className="flex-row items-start gap-3">
             {/* Logo */}

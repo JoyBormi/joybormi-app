@@ -1,18 +1,22 @@
 import { Text } from '@/components/ui';
 import { IBrandPhoto } from '@/types/brand.type';
 import React, { useState } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import { Pressable, ScrollView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PhotoGrid } from '../components/photo-grid';
 
 interface PhotosTabProps {
   photos: IBrandPhoto[];
   onPhotoPress?: (photo: IBrandPhoto, index: number) => void;
+  canEdit?: boolean;
+  onAddPhoto?: () => void;
 }
 
 export const PhotosTab: React.FC<PhotosTabProps> = ({
   photos,
   onPhotoPress,
 }) => {
+  const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   // Get unique categories
@@ -31,7 +35,11 @@ export const PhotosTab: React.FC<PhotosTabProps> = ({
       : photos.filter((p) => p.category === selectedCategory);
 
   return (
-    <View className="flex-1">
+    <ScrollView
+      className="flex-1"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
+    >
       {/* Category Filter */}
       <ScrollView
         horizontal
@@ -63,6 +71,6 @@ export const PhotosTab: React.FC<PhotosTabProps> = ({
 
       {/* Photos Grid */}
       <PhotoGrid photos={filteredPhotos} onPhotoPress={onPhotoPress} />
-    </View>
+    </ScrollView>
   );
 };

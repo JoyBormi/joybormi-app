@@ -1,6 +1,5 @@
 import { Text } from '@/components/ui';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useYScroll } from '@/hooks/common/use-y-scroll';
 import { BrandTabType } from '@/types/brand.type';
 import {
   AboutTab,
@@ -16,21 +15,26 @@ import {
   mockServices,
   mockWorkers,
 } from '@/views/brand';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Platform, ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-const BrandScreen: React.FC = () => {
+/**
+ * Dynamic Brand Detail Page - For clients to view brand details
+ * Route: /(tabs)/(brand)/[id]
+ * This page is read-only for clients to browse and book services
+ */
+const BrandDetailScreen: React.FC = () => {
   const router = useRouter();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const { onScroll } = useYScroll();
   const [activeTab, setActiveTab] = useState<BrandTabType>('home');
 
-  // Mock data - In production, fetch from API based on brand ID
+  // Mock data - In production, fetch from API based on brand ID from params
   const brand = mockBrand;
   const services = mockServices;
   const workers = mockWorkers;
@@ -42,28 +46,28 @@ const BrandScreen: React.FC = () => {
   };
 
   const handleShare = () => {
-    // Implement share functionality
-    console.log('Share brand');
+    console.log('Share brand:', id);
   };
 
   const handleFavorite = () => {
-    // Implement favorite functionality
-    console.log('Toggle favorite');
+    console.log('Toggle favorite:', id);
   };
 
   const handleServicePress = (service: (typeof services)[0]) => {
     console.log('Service pressed:', service.id);
-    // Navigate to service details or booking
+    // Navigate to booking page
+    // router.push(`/booking/${service.id}`);
   };
 
   const handleWorkerPress = (worker: (typeof workers)[0]) => {
     console.log('Worker pressed:', worker.id);
     // Navigate to worker profile
+    // router.push(`/(tabs)/(brand)/worker/${worker.id}`);
   };
 
   const handlePhotoPress = (photo: (typeof photos)[0], index: number) => {
     console.log('Photo pressed:', photo.id, index);
-    // Open photo gallery
+    // Open photo gallery modal
   };
 
   const handleWriteReview = () => {
@@ -77,17 +81,8 @@ const BrandScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
-      <ScrollView
-        onScroll={onScroll}
-        bounces={false}
-        contentContainerStyle={{
-          paddingBottom: insets.bottom + (Platform.OS === 'ios' ? 50 : 90),
-        }}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-        stickyHeaderIndices={[1]}
-      >
+    <SafeAreaView className="safe-area" edges={['bottom']}>
+      <View className="flex-1">
         {/* Brand Header */}
         <BrandHeader
           brand={brand}
@@ -100,31 +95,37 @@ const BrandScreen: React.FC = () => {
         <Tabs
           value={activeTab}
           onValueChange={(value) => setActiveTab(value as BrandTabType)}
-          className="mt-4"
+          className="flex-1"
         >
-          <TabsList className="bg-background/95 backdrop-blur-xl border-b border-border px-4 py-2">
-            <TabsTrigger value="home">
-              <Text>Home</Text>
-            </TabsTrigger>
-            <TabsTrigger value="services">
-              <Text>Services</Text>
-            </TabsTrigger>
-            <TabsTrigger value="workers">
-              <Text>Team</Text>
-            </TabsTrigger>
-            <TabsTrigger value="photos">
-              <Text>Photos</Text>
-            </TabsTrigger>
-            <TabsTrigger value="reviews">
-              <Text>Reviews</Text>
-            </TabsTrigger>
-            <TabsTrigger value="about">
-              <Text>About</Text>
-            </TabsTrigger>
+          <TabsList className="bg-background/95 backdrop-blur-xl border-b border-border my-4">
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerClassName="gap-2"
+            >
+              <TabsTrigger value="home">
+                <Text>Home</Text>
+              </TabsTrigger>
+              <TabsTrigger value="services">
+                <Text>Services</Text>
+              </TabsTrigger>
+              <TabsTrigger value="workers">
+                <Text>Team</Text>
+              </TabsTrigger>
+              <TabsTrigger value="photos">
+                <Text>Photos</Text>
+              </TabsTrigger>
+              <TabsTrigger value="reviews">
+                <Text>Reviews</Text>
+              </TabsTrigger>
+              <TabsTrigger value="about">
+                <Text>About</Text>
+              </TabsTrigger>
+            </ScrollView>
           </TabsList>
 
-          {/* Tab Contents */}
-          <TabsContent value="home" className="mt-4">
+          {/* Tab Contents with proper scrolling */}
+          <TabsContent value="home" className="flex-1">
             <HomeTab
               brand={brand}
               services={services}
@@ -139,22 +140,22 @@ const BrandScreen: React.FC = () => {
             />
           </TabsContent>
 
-          <TabsContent value="services" className="mt-4">
+          <TabsContent value="services" className="flex-1">
             <ServicesTab
               services={services}
               onServicePress={handleServicePress}
             />
           </TabsContent>
 
-          <TabsContent value="workers" className="mt-4">
+          <TabsContent value="workers" className="flex-1">
             <WorkersTab workers={workers} onWorkerPress={handleWorkerPress} />
           </TabsContent>
 
-          <TabsContent value="photos" className="mt-4">
+          <TabsContent value="photos" className="flex-1">
             <PhotosTab photos={photos} onPhotoPress={handlePhotoPress} />
           </TabsContent>
 
-          <TabsContent value="reviews" className="mt-4">
+          <TabsContent value="reviews" className="flex-1">
             <ReviewsTab
               brand={brand}
               reviews={reviews}
@@ -163,13 +164,13 @@ const BrandScreen: React.FC = () => {
             />
           </TabsContent>
 
-          <TabsContent value="about" className="mt-4">
+          <TabsContent value="about" className="flex-1">
             <AboutTab brand={brand} />
           </TabsContent>
         </Tabs>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
 
-export default BrandScreen;
+export default BrandDetailScreen;

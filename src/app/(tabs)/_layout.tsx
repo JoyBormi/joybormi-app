@@ -46,7 +46,7 @@ export default function TabLayout() {
           <TabButton icon="List">{t('common.tabs.reservations')}</TabButton>
         </TabTrigger>
         {/* {(appType === EUserType.CREATOR || appType === EUserType.WORKER) && ( */}
-        <TabTrigger name="brand" href="/(tabs)/(brand)/brand" asChild>
+        <TabTrigger name="brand" href="/(tabs)/(brand)/brand-profile" asChild>
           <TabButton icon="Store">{t('common.tabs.store')}</TabButton>
         </TabTrigger>
         {/* )} */}

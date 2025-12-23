@@ -3,13 +3,17 @@ import Icons from '@/lib/icons';
 import { IBrand } from '@/types/brand.type';
 import { MotiView } from 'moti';
 import React from 'react';
-import { Linking, Pressable, View } from 'react-native';
+import { Linking, Pressable, ScrollView, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface AboutTabProps {
   brand: IBrand;
+  canEdit?: boolean;
+  onEdit?: () => void;
 }
 
 export const AboutTab: React.FC<AboutTabProps> = ({ brand }) => {
+  const insets = useSafeAreaInsets();
   const handleCall = () => {
     Linking.openURL(`tel:${brand.contact.phone}`);
   };
@@ -30,7 +34,11 @@ export const AboutTab: React.FC<AboutTabProps> = ({ brand }) => {
   };
 
   return (
-    <View className="flex-1 px-4">
+    <ScrollView
+      className="flex-1 px-4"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
+    >
       {/* Description */}
       <MotiView
         from={{ opacity: 0, translateY: 10 }}
@@ -171,6 +179,6 @@ export const AboutTab: React.FC<AboutTabProps> = ({ brand }) => {
           ))}
         </View>
       </MotiView>
-    </View>
+    </ScrollView>
   );
 };

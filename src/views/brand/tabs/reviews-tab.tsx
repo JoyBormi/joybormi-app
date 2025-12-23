@@ -3,7 +3,8 @@ import Icons from '@/lib/icons';
 import { IBrand, IBrandReview } from '@/types/brand.type';
 import { MotiView } from 'moti';
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ReviewCard } from '../components/review-card';
 
 interface ReviewsTabProps {
@@ -19,6 +20,7 @@ export const ReviewsTab: React.FC<ReviewsTabProps> = ({
   onHelpful,
   onWriteReview,
 }) => {
+  const insets = useSafeAreaInsets();
   // Calculate rating distribution
   const ratingDistribution = [5, 4, 3, 2, 1].map((rating) => {
     const count = reviews.filter((r) => r.rating === rating).length;
@@ -27,7 +29,11 @@ export const ReviewsTab: React.FC<ReviewsTabProps> = ({
   });
 
   return (
-    <View className="flex-1">
+    <ScrollView
+      className="flex-1"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
+    >
       {/* Rating Summary */}
       <MotiView
         from={{ opacity: 0, translateY: 10 }}
@@ -105,6 +111,6 @@ export const ReviewsTab: React.FC<ReviewsTabProps> = ({
           />
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 };

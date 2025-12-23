@@ -2,17 +2,21 @@ import { Text } from '@/components/ui';
 import { IBrandService } from '@/types/brand.type';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ServiceCard } from '../components/service-card';
 
 interface ServicesTabProps {
   services: IBrandService[];
   onServicePress?: (service: IBrandService) => void;
+  canEdit?: boolean;
+  onAddService?: () => void;
 }
 
 export const ServicesTab: React.FC<ServicesTabProps> = ({
   services,
   onServicePress,
 }) => {
+  const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
   // Get unique categories
@@ -28,7 +32,11 @@ export const ServicesTab: React.FC<ServicesTabProps> = ({
       : services.filter((s) => s.category === selectedCategory);
 
   return (
-    <View className="flex-1">
+    <ScrollView
+      className="flex-1"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
+    >
       {/* Category Filter */}
       <ScrollView
         horizontal
@@ -69,6 +77,6 @@ export const ServicesTab: React.FC<ServicesTabProps> = ({
           />
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 };

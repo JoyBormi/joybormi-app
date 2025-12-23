@@ -1,21 +1,30 @@
 import { Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 import { IBrandWorker } from '@/types/brand.type';
+import { router } from 'expo-router';
 import { MotiView } from 'moti';
 import React from 'react';
-import { Image, Pressable, View } from 'react-native';
+import { Image, Pressable, ScrollView, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface WorkersTabProps {
   workers: IBrandWorker[];
   onWorkerPress?: (worker: IBrandWorker) => void;
+  canEdit?: boolean;
+  onAddWorker?: () => void;
 }
 
 export const WorkersTab: React.FC<WorkersTabProps> = ({
   workers,
   onWorkerPress,
 }) => {
+  const insets = useSafeAreaInsets();
   return (
-    <View className="flex-1 px-4">
+    <ScrollView
+      className="flex-1 px-4"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
+    >
       {workers.map((worker, index) => (
         <MotiView
           key={worker.id}
@@ -24,7 +33,7 @@ export const WorkersTab: React.FC<WorkersTabProps> = ({
           transition={{ type: 'timing', duration: 400, delay: index * 100 }}
         >
           <Pressable
-            onPress={() => onWorkerPress?.(worker)}
+            onPress={() => router.push(`/(professionals)/${worker.id}`)}
             className="bg-card/30 backdrop-blur-sm rounded-2xl p-4 border border-border/50 mb-3"
           >
             <View className="flex-row gap-3">
@@ -102,6 +111,6 @@ export const WorkersTab: React.FC<WorkersTabProps> = ({
           </Pressable>
         </MotiView>
       ))}
-    </View>
+    </ScrollView>
   );
 };

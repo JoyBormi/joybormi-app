@@ -12,6 +12,7 @@ export type UserTypeBlockReason =
   | null;
 
 export interface IUser {
+  id: string;
   type: EUserType;
   username: string;
   first_name: string;

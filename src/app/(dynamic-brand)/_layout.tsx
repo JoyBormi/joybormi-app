@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-export default function ProfessionalsLayout() {
+export default function DynamicBrandLayout() {
   return (
     <Stack
       screenOptions={{
