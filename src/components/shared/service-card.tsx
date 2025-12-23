@@ -22,7 +22,7 @@ export function ServiceCard({
   const router = useRouter();
   return (
     <TouchableOpacity
-      onPress={() => id && router.push(`/professional/${id}`)}
+      onPress={() => id && router.push(`/(dynamic-brand)/team/event/${id}`)}
       className="w-[180px] aspect-[3/4] bg-popover border border-ring/10 relative overflow-hidden rounded-xl mr-4"
     >
       <Image

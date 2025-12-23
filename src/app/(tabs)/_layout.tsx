@@ -2,6 +2,7 @@ import { TabButton } from '@/components/shared/tab-button';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores';
 import { useScrollStore } from '@/stores/use-scroll-store';
+import { EUserType } from '@/types/user.type';
 import { useSegments } from 'expo-router';
 import { TabList, Tabs, TabSlot, TabTrigger } from 'expo-router/ui';
 import React from 'react';
@@ -22,6 +23,11 @@ export default function TabLayout() {
   const segments = useSegments() as string[];
 
   const isTabBarHidden = SCREENS_WITHOUT_TAB.some((s) => segments.includes(s));
+
+  const brandHref =
+    appType === EUserType.CREATOR
+      ? '/(tabs)/(brand)/brand-profile'
+      : '/(tabs)/(brand)/worker-profile';
 
   return (
     <Tabs>
@@ -46,7 +52,7 @@ export default function TabLayout() {
           <TabButton icon="List">{t('common.tabs.reservations')}</TabButton>
         </TabTrigger>
         {/* {(appType === EUserType.CREATOR || appType === EUserType.WORKER) && ( */}
-        <TabTrigger name="brand" href="/(tabs)/(brand)/brand-profile" asChild>
+        <TabTrigger name="brand" href={brandHref} asChild>
           <TabButton icon="Store">{t('common.tabs.store')}</TabButton>
         </TabTrigger>
         {/* )} */}

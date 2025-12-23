@@ -3,8 +3,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Icons from '@/lib/icons';
 import { useUserStore } from '@/stores';
 import { EUserType } from '@/types/user.type';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { MotiView } from 'moti';
+import {
+  MemberAboutTab,
+  MemberReviewsTab,
+  MemberScheduleTab,
+  MemberServicesTab,
+} from '@/views/member';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 import {
@@ -15,27 +20,26 @@ import {
 type WorkerTabType = 'about' | 'services' | 'schedule' | 'reviews';
 
 /**
- * Worker Profile Page - Dynamic route for individual worker profiles
- * Route: /(tabs)/(brand)/worker/[id]
- * - Workers can edit their own profile, services, and schedule
- * - Others can view worker details and book services
+ * Member Profile Page - For workers to manage their own profile
+ * Route: /(tabs)/(brand)/member-profile
+ * - Workers can edit their profile, services, and schedule
+ * - This is the management/edit page (not public view)
  */
 const WorkerProfileScreen: React.FC = () => {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const { user, appType } = useUserStore();
   const [activeTab, setActiveTab] = useState<WorkerTabType>('about');
 
-  // Check if current user is this worker
-  const isOwner = user?.id === id && appType === EUserType.WORKER;
+  // Only workers can access this page
+  const isOwner = appType === EUserType.WORKER;
 
-  // Mock worker data - In production, fetch from API
+  // Mock worker data - In production, fetch from API based on logged-in user
   const worker = {
-    id,
-    userId: id,
+    id: user?.id || 'worker-123',
+    userId: user?.id || 'worker-123',
     brandId: 'brand-123',
-    name: 'Sarah Johnson',
+    name: user?.first_name + ' ' + user?.last_name || 'Sarah Johnson',
     role: 'Senior Stylist',
     avatar: 'https://i.pravatar.cc/150?img=5',
     coverImage: 'https://images.unsplash.com/photo-1560066984-138dadb4c035',
@@ -48,18 +52,107 @@ const WorkerProfileScreen: React.FC = () => {
     phone: '+1 (555) 123-4567',
   };
 
+  // Mock services data
+  const services = [
+    {
+      id: 'service-1',
+      name: 'Hair Coloring',
+      description: 'Professional hair coloring with premium products',
+      duration_mins: 120,
+      price: '$150',
+    },
+    {
+      id: 'service-2',
+      name: 'Haircut & Style',
+      description: 'Modern haircut with styling',
+      duration_mins: 60,
+      price: '$80',
+    },
+  ];
+
+  // Mock schedule data
+  const workingDays = [
+    {
+      id: 'wd-1',
+      day_of_week: 1,
+      start_time: '09:00:00',
+      end_time: '17:00:00',
+      breaks: [{ id: 'b-1', start_time: '12:00:00', end_time: '13:00:00' }],
+    },
+    {
+      id: 'wd-2',
+      day_of_week: 2,
+      start_time: '09:00:00',
+      end_time: '17:00:00',
+      breaks: [{ id: 'b-2', start_time: '12:00:00', end_time: '13:00:00' }],
+    },
+    {
+      id: 'wd-3',
+      day_of_week: 3,
+      start_time: '09:00:00',
+      end_time: '17:00:00',
+      breaks: [{ id: 'b-3', start_time: '12:00:00', end_time: '13:00:00' }],
+    },
+    {
+      id: 'wd-4',
+      day_of_week: 4,
+      start_time: '09:00:00',
+      end_time: '17:00:00',
+      breaks: [{ id: 'b-4', start_time: '12:00:00', end_time: '13:00:00' }],
+    },
+    {
+      id: 'wd-5',
+      day_of_week: 5,
+      start_time: '09:00:00',
+      end_time: '17:00:00',
+      breaks: [{ id: 'b-5', start_time: '12:00:00', end_time: '13:00:00' }],
+    },
+  ];
+
+  // Mock reviews data
+  const reviews = [
+    {
+      id: 'review-1',
+      customer_name: 'Emily Davis',
+      customer_avatar: 'https://i.pravatar.cc/150?img=10',
+      rating: 5,
+      comment: 'Amazing service! Sarah is very professional and talented.',
+      created_at: '2024-01-15T10:30:00Z',
+      service_name: 'Hair Coloring',
+    },
+    {
+      id: 'review-2',
+      customer_name: 'Michael Brown',
+      customer_avatar: 'https://i.pravatar.cc/150?img=12',
+      rating: 5,
+      comment: 'Best haircut I have ever had. Highly recommend!',
+      created_at: '2024-01-10T14:20:00Z',
+      service_name: 'Haircut & Style',
+    },
+  ];
+
   const handleBack = () => {
     router.back();
   };
 
   const handleEdit = () => {
     console.log('Edit worker profile');
-    // Navigate to edit mode
+    // Navigate to edit mode or open edit modal
   };
 
-  const handleBooking = () => {
-    console.log('Book with worker:', id);
-    // Navigate to booking page
+  const handleAddService = () => {
+    console.log('Add new service');
+    // Navigate to service creation page
+  };
+
+  const handleServicePress = (service: (typeof services)[0]) => {
+    console.log('Edit service:', service.id);
+    // Navigate to service edit page
+  };
+
+  const handleEditSchedule = () => {
+    console.log('Edit schedule');
+    // Navigate to schedule editor
   };
 
   return (
@@ -136,14 +229,18 @@ const WorkerProfileScreen: React.FC = () => {
                 </View>
               </View>
 
-              {/* Action Button */}
-              {!isOwner && (
-                <Button onPress={handleBooking} className="mt-4 bg-primary">
-                  <Text className="font-subtitle text-primary-foreground">
-                    Book Appointment
+              {/* Edit Profile Button */}
+              <Button
+                onPress={handleEdit}
+                className="mt-4 bg-primary/10 border border-primary/20"
+              >
+                <View className="flex-row items-center gap-2">
+                  <Icons.Pencil size={18} className="text-primary" />
+                  <Text className="font-subtitle text-primary">
+                    Edit Profile
                   </Text>
-                </Button>
-              )}
+                </View>
+              </Button>
             </View>
           </View>
         </View>
@@ -178,110 +275,65 @@ const WorkerProfileScreen: React.FC = () => {
           {/* About Tab */}
           <TabsContent value="about" className="flex-1">
             <ScrollView
-              className="flex-1 px-4"
+              className="flex-1"
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
             >
-              <MotiView
-                from={{ opacity: 0, translateY: 10 }}
-                animate={{ opacity: 1, translateY: 0 }}
-                transition={{ type: 'timing', duration: 300 }}
-              >
-                {/* Bio */}
-                <View className="mb-4">
-                  <Text className="font-title text-foreground mb-2">Bio</Text>
-                  <Text className="font-body text-muted-foreground leading-6">
-                    {worker.bio}
-                  </Text>
-                </View>
-
-                {/* Specialties */}
-                <View className="mb-4">
-                  <Text className="font-title text-foreground mb-2">
-                    Specialties
-                  </Text>
-                  <View className="flex-row flex-wrap gap-2">
-                    {worker.specialties.map((specialty, index) => (
-                      <View
-                        key={index}
-                        className="bg-muted/50 px-3 py-1.5 rounded-full"
-                      >
-                        <Text className="font-caption text-muted-foreground">
-                          {specialty}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-                </View>
-
-                {/* Contact */}
-                {isOwner && (
-                  <View className="mb-4">
-                    <Text className="font-title text-foreground mb-2">
-                      Contact
-                    </Text>
-                    <View className="gap-3">
-                      <View className="flex-row items-center gap-3">
-                        <Icons.Mail
-                          size={20}
-                          className="text-muted-foreground"
-                        />
-                        <Text className="font-body text-foreground">
-                          {worker.email}
-                        </Text>
-                      </View>
-                      <View className="flex-row items-center gap-3">
-                        <Icons.Phone
-                          size={20}
-                          className="text-muted-foreground"
-                        />
-                        <Text className="font-body text-foreground">
-                          {worker.phone}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                )}
-              </MotiView>
+              <MemberAboutTab
+                member={{
+                  bio: worker.bio,
+                  specialties: worker.specialties,
+                  email: worker.email,
+                  phone: worker.phone,
+                }}
+                isOwner={isOwner}
+              />
             </ScrollView>
           </TabsContent>
 
           {/* Services Tab */}
           <TabsContent value="services" className="flex-1">
             <ScrollView
-              className="flex-1 px-4"
+              className="flex-1"
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
             >
-              <Text className="font-body text-muted-foreground text-center mt-8">
-                Services management coming soon
-              </Text>
+              <MemberServicesTab
+                services={services}
+                isOwner={isOwner}
+                onServicePress={handleServicePress}
+                onAddService={handleAddService}
+              />
             </ScrollView>
           </TabsContent>
 
           {/* Schedule Tab */}
           <TabsContent value="schedule" className="flex-1">
             <ScrollView
-              className="flex-1 px-4"
+              className="flex-1"
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
             >
-              <Text className="font-body text-muted-foreground text-center mt-8">
-                Schedule management coming soon
-              </Text>
+              <MemberScheduleTab
+                workingDays={workingDays}
+                isOwner={isOwner}
+                onEditSchedule={handleEditSchedule}
+              />
             </ScrollView>
           </TabsContent>
 
           {/* Reviews Tab */}
           <TabsContent value="reviews" className="flex-1">
             <ScrollView
-              className="flex-1 px-4"
+              className="flex-1"
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
             >
-              <Text className="font-body text-muted-foreground text-center mt-8">
-                Reviews coming soon
-              </Text>
+              <MemberReviewsTab
+                reviews={reviews}
+                averageRating={worker.rating}
+                totalReviews={worker.reviewCount}
+              />
             </ScrollView>
           </TabsContent>
         </Tabs>

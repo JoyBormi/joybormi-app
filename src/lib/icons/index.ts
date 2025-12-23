@@ -16,6 +16,7 @@ import {
   ChevronRight,
   ChevronUp,
   Clock,
+  Coffee,
   CreditCard,
   Eye,
   EyeClosed,
@@ -31,6 +32,7 @@ import {
   LogOut,
   Mail,
   MapPin,
+  MessageSquare,
   Moon,
   MoonStar,
   Notebook,
@@ -50,6 +52,7 @@ import {
   Store,
   Sun,
   ThumbsUp,
+  Trash2,
   Upload,
   User,
   Users,
@@ -114,6 +117,9 @@ const icons = {
   ThumbsUp,
   Share2,
   Phone,
+  MessageSquare,
+  Coffee,
+  Trash2,
 };
 
 Object.values(icons).forEach(iconWithClassName);
@@ -174,6 +180,9 @@ const Icons = {
   ThumbsUp,
   Share2,
   Phone,
+  MessageSquare,
+  Coffee,
+  Trash2,
 } as const;
 
 export type TIcon = keyof typeof Icons;

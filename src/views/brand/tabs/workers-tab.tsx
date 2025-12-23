@@ -33,7 +33,9 @@ export const WorkersTab: React.FC<WorkersTabProps> = ({
           transition={{ type: 'timing', duration: 400, delay: index * 100 }}
         >
           <Pressable
-            onPress={() => router.push(`/(professionals)/${worker.id}`)}
+            onPress={() =>
+              router.push(`/(dynamic-brand)/team/member/${worker.id}`)
+            }
             className="bg-card/30 backdrop-blur-sm rounded-2xl p-4 border border-border/50 mb-3"
           >
             <View className="flex-row gap-3">

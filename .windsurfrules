@@ -3,3 +3,4 @@ Use Tailwind CSS for all styling. Refer to tailwind.config.js for design tokens,
 Use react-native-reanimated for animations and react-native-gesture-handler for gesture handling, moti for motion, nativewind for styling. Do not use alternative animation or gesture libraries.
 Use the custom design system (fonts, text styles, colors, spacing, and dimensions) defined in tailwind.config.js. Do not hardcode values.
 Use globals.css for global styles only. Component-specific styles must be handled via Tailwind utilities.
+Do not create .md files to explain the task you have done, instead just giving memory is enough.

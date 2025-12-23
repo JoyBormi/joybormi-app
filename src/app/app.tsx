@@ -45,7 +45,7 @@ export default function App() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(website)" />
-        <Stack.Screen name="(professionals)" />
+        <Stack.Screen name="(dynamic-brand)" />
         <Stack.Screen name="+not-found" />
         <Stack.Screen
           name="(auth)"
