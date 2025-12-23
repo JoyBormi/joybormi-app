@@ -34,7 +34,7 @@ export const WorkersTab: React.FC<WorkersTabProps> = ({
         >
           <Pressable
             onPress={() =>
-              router.push(`/(dynamic-brand)/team/member/${worker.id}`)
+              router.push(`/(dynamic-brand)/team/worker/${worker.id}`)
             }
             className="bg-card/30 backdrop-blur-sm rounded-2xl p-4 border border-border/50 mb-3"
           >

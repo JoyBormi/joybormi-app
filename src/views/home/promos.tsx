@@ -1,13 +1,10 @@
-import { Text } from '@/components/ui';
+import { PressableBounce, Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
+import { router } from 'expo-router';
 import { MotiView } from 'moti';
 import React from 'react';
 import { Dimensions, Image, Pressable, ScrollView, View } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  withSpring,
-} from 'react-native-reanimated';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.935;
@@ -63,13 +60,7 @@ const offers = [
   // more offers...
 ];
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 export function PromoOffers({ className }: { className?: string }) {
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: withSpring(0.98) }],
-  }));
-
   return (
     <MotiView
       from={{ opacity: 0, translateY: 20 }}
@@ -108,8 +99,8 @@ export function PromoOffers({ className }: { className?: string }) {
               marginRight: CARD_GAP,
             }}
           >
-            <AnimatedPressable
-              style={animatedStyle}
+            <PressableBounce
+              onPress={() => router.push(`/(dynamic-brand)/brand/${item.id}`)}
               className="bg-popover rounded-xl border border-border overflow-hidden p-2.5 w-full h-[320px] justify-between"
             >
               <Image
@@ -144,7 +135,7 @@ export function PromoOffers({ className }: { className?: string }) {
                   </Pressable>
                 </View>
               </View>
-            </AnimatedPressable>
+            </PressableBounce>
           </MotiView>
         ))}
       </ScrollView>

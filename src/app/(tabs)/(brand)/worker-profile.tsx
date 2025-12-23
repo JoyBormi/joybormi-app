@@ -1,23 +1,14 @@
 import { Button, Text } from '@/components/ui';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Icons from '@/lib/icons';
+import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores';
-import { EUserType } from '@/types/user.type';
-import {
-  MemberAboutTab,
-  MemberReviewsTab,
-  MemberScheduleTab,
-  MemberServicesTab,
-} from '@/views/member';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-
-type WorkerTabType = 'about' | 'services' | 'schedule' | 'reviews';
 
 /**
  * Member Profile Page - For workers to manage their own profile
@@ -28,11 +19,7 @@ type WorkerTabType = 'about' | 'services' | 'schedule' | 'reviews';
 const WorkerProfileScreen: React.FC = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { user, appType } = useUserStore();
-  const [activeTab, setActiveTab] = useState<WorkerTabType>('about');
-
-  // Only workers can access this page
-  const isOwner = appType === EUserType.WORKER;
+  const { user } = useUserStore();
 
   // Mock worker data - In production, fetch from API based on logged-in user
   const worker = {
@@ -157,187 +144,299 @@ const WorkerProfileScreen: React.FC = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
-      <View className="flex-1">
-        {/* Worker Header */}
-        <View className="relative">
-          <Image
-            source={{ uri: worker.coverImage }}
-            className="w-full h-56"
-            resizeMode="cover"
-          />
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
+      >
+        {/* Header with Back Button */}
+        <View
+          className="flex-row items-center justify-between px-6 mb-6"
+          style={{ paddingTop: insets.top + 16 }}
+        >
+          <Text className="font-heading text-xl text-foreground">
+            My Profile
+          </Text>
+        </View>
 
-          {/* Header Actions */}
-          <View
-            className="absolute top-0 left-0 right-0 flex-row items-center justify-between px-4"
-            style={{ paddingTop: insets.top + 8 }}
-          >
-            <Pressable
-              onPress={handleBack}
-              className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-xl items-center justify-center"
-            >
-              <Icons.ChevronLeft size={24} className="text-foreground" />
-            </Pressable>
-
-            {isOwner && (
-              <Pressable
-                onPress={handleEdit}
-                className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-xl items-center justify-center"
-              >
-                <Icons.Pencil size={20} className="text-foreground" />
-              </Pressable>
-            )}
-          </View>
-
-          {/* Worker Info Card */}
-          <View className="px-4 -mt-24">
-            <View className="bg-card/50 backdrop-blur-xl rounded-3xl p-4 border border-border/50">
-              <View className="flex-row items-start gap-3">
-                {/* Avatar */}
-                <View className="relative">
-                  <Image
-                    source={{ uri: worker.avatar }}
-                    className="w-20 h-20 rounded-2xl"
-                  />
-                  <View className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-success items-center justify-center border-2 border-card">
-                    <View className="w-2 h-2 rounded-full bg-white" />
-                  </View>
-                </View>
-
-                {/* Info */}
-                <View className="flex-1">
-                  <Text className="font-title text-foreground">
-                    {worker.name}
-                  </Text>
-                  <Text className="font-caption text-muted-foreground mt-0.5">
-                    {worker.role}
-                  </Text>
-
-                  {/* Rating */}
-                  <View className="flex-row items-center gap-1 mt-2">
-                    <Icons.Star
-                      size={16}
-                      className="text-warning"
-                      fill="#f59e0b"
-                    />
-                    <Text className="font-body text-foreground">
-                      {worker.rating}
-                    </Text>
-                    <Text className="font-caption text-muted-foreground">
-                      ({worker.reviewCount} reviews)
-                    </Text>
-                  </View>
-                </View>
+        {/* Profile Card */}
+        <View className="px-6 mb-8">
+          <View className="bg-card/50 backdrop-blur-xl rounded-3xl p-6 border border-border/50">
+            {/* Avatar and Basic Info */}
+            <View className="items-center mb-6">
+              <View className="relative mb-4">
+                <Image
+                  source={{ uri: worker.avatar }}
+                  className="w-24 h-24 rounded-3xl"
+                />
+                <Pressable
+                  onPress={handleEdit}
+                  className="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-primary items-center justify-center border-2 border-card"
+                >
+                  <Icons.Pencil size={18} className="text-primary-foreground" />
+                </Pressable>
               </View>
 
-              {/* Edit Profile Button */}
-              <Button
-                onPress={handleEdit}
-                className="mt-4 bg-primary/10 border border-primary/20"
-              >
-                <View className="flex-row items-center gap-2">
-                  <Icons.Pencil size={18} className="text-primary" />
-                  <Text className="font-subtitle text-primary">
-                    Edit Profile
+              <Text className="font-heading text-2xl text-foreground mb-1">
+                {worker.name}
+              </Text>
+              <Text className="font-subtitle text-muted-foreground mb-3">
+                {worker.role}
+              </Text>
+
+              {/* Rating Badge */}
+              <View className="flex-row items-center gap-2 bg-warning/10 px-4 py-2 rounded-full">
+                <Icons.Star size={16} className="text-warning" fill="#f59e0b" />
+                <Text className="font-subtitle text-foreground">
+                  {worker.rating}
+                </Text>
+                <Text className="font-caption text-muted-foreground">
+                  • {worker.reviewCount} reviews
+                </Text>
+              </View>
+            </View>
+
+            {/* Quick Stats */}
+            <View className="flex-row gap-3 mb-6">
+              <View className="flex-1 bg-muted/20 rounded-2xl p-4 items-center">
+                <Icons.Briefcase size={20} className="text-primary mb-2" />
+                <Text className="font-heading text-lg text-foreground">
+                  {services.length}
+                </Text>
+                <Text className="font-caption text-muted-foreground">
+                  Services
+                </Text>
+              </View>
+              <View className="flex-1 bg-muted/20 rounded-2xl p-4 items-center">
+                <Icons.Calendar size={20} className="text-success mb-2" />
+                <Text className="font-heading text-lg text-foreground">
+                  {workingDays.length}
+                </Text>
+                <Text className="font-caption text-muted-foreground">
+                  Work Days
+                </Text>
+              </View>
+              <View className="flex-1 bg-muted/20 rounded-2xl p-4 items-center">
+                <Icons.Star size={20} className="text-warning mb-2" />
+                <Text className="font-heading text-lg text-foreground">
+                  {reviews.length}
+                </Text>
+                <Text className="font-caption text-muted-foreground">
+                  Reviews
+                </Text>
+              </View>
+            </View>
+
+            {/* Edit Profile Button */}
+            <Button onPress={handleEdit} className="bg-primary">
+              <View className="flex-row items-center gap-2">
+                <Icons.Pencil size={18} className="text-primary-foreground" />
+                <Text className="font-subtitle text-primary-foreground">
+                  Edit Profile
+                </Text>
+              </View>
+            </Button>
+          </View>
+        </View>
+
+        {/* Quick Actions */}
+        <View className="px-6 mb-8">
+          <Text className="font-title text-lg text-foreground mb-4">
+            Quick Actions
+          </Text>
+          <View className="gap-3">
+            <Pressable
+              onPress={handleAddService}
+              className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50 flex-row items-center justify-between"
+            >
+              <View className="flex-row items-center gap-4">
+                <View className="w-12 h-12 rounded-xl bg-primary/10 items-center justify-center">
+                  <Icons.Plus size={24} className="text-primary" />
+                </View>
+                <View>
+                  <Text className="font-subtitle text-foreground mb-1">
+                    Add New Service
+                  </Text>
+                  <Text className="font-caption text-muted-foreground">
+                    Create a new service offering
                   </Text>
                 </View>
-              </Button>
+              </View>
+              <Icons.ChevronRight size={20} className="text-muted-foreground" />
+            </Pressable>
+
+            <Pressable
+              onPress={handleEditSchedule}
+              className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50 flex-row items-center justify-between"
+            >
+              <View className="flex-row items-center gap-4">
+                <View className="w-12 h-12 rounded-xl bg-success/10 items-center justify-center">
+                  <Icons.Calendar size={24} className="text-success" />
+                </View>
+                <View>
+                  <Text className="font-subtitle text-foreground mb-1">
+                    Manage Schedule
+                  </Text>
+                  <Text className="font-caption text-muted-foreground">
+                    Set your working hours
+                  </Text>
+                </View>
+              </View>
+              <Icons.ChevronRight size={20} className="text-muted-foreground" />
+            </Pressable>
+          </View>
+        </View>
+
+        {/* About Section */}
+        <View className="px-6 mb-8">
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="font-title text-lg text-foreground">About Me</Text>
+            <Pressable onPress={handleEdit}>
+              <Icons.Pencil size={18} className="text-primary" />
+            </Pressable>
+          </View>
+          <View className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50">
+            <Text className="font-body text-muted-foreground leading-6 mb-4">
+              {worker.bio}
+            </Text>
+            <View className="flex-row flex-wrap gap-2">
+              {worker.specialties.map((specialty, index) => (
+                <View
+                  key={index}
+                  className="bg-primary/10 px-3 py-2 rounded-full"
+                >
+                  <Text className="font-caption text-primary">{specialty}</Text>
+                </View>
+              ))}
             </View>
           </View>
         </View>
 
-        {/* Tabs */}
-        <Tabs
-          value={activeTab}
-          onValueChange={(value) => setActiveTab(value as WorkerTabType)}
-          className="flex-1 mt-4"
-        >
-          <TabsList className="bg-background/95 backdrop-blur-xl border-b border-border">
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerClassName="gap-2"
-            >
-              <TabsTrigger value="about">
-                <Text>About</Text>
-              </TabsTrigger>
-              <TabsTrigger value="services">
-                <Text>Services</Text>
-              </TabsTrigger>
-              <TabsTrigger value="schedule">
-                <Text>Schedule</Text>
-              </TabsTrigger>
-              <TabsTrigger value="reviews">
-                <Text>Reviews</Text>
-              </TabsTrigger>
-            </ScrollView>
-          </TabsList>
+        {/* Services Section */}
+        <View className="px-6 mb-8">
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="font-title text-lg text-foreground">
+              My Services ({services.length})
+            </Text>
+            <Pressable onPress={handleAddService}>
+              <Icons.Plus size={20} className="text-primary" />
+            </Pressable>
+          </View>
+          <View className="gap-3">
+            {services.map((service) => (
+              <Pressable
+                key={service.id}
+                onPress={() => handleServicePress(service)}
+                className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50"
+              >
+                <View className="flex-row items-start justify-between mb-3">
+                  <Text className="font-subtitle text-foreground flex-1">
+                    {service.name}
+                  </Text>
+                  <Text className="font-subtitle text-primary">
+                    {service.price}
+                  </Text>
+                </View>
+                <Text className="font-body text-muted-foreground mb-3">
+                  {service.description}
+                </Text>
+                <View className="flex-row items-center gap-2">
+                  <Icons.Clock size={16} className="text-muted-foreground" />
+                  <Text className="font-caption text-muted-foreground">
+                    {service.duration_mins} minutes
+                  </Text>
+                </View>
+              </Pressable>
+            ))}
+          </View>
+        </View>
 
-          {/* About Tab */}
-          <TabsContent value="about" className="flex-1">
-            <ScrollView
-              className="flex-1"
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
-            >
-              <MemberAboutTab
-                member={{
-                  bio: worker.bio,
-                  specialties: worker.specialties,
-                  email: worker.email,
-                  phone: worker.phone,
-                }}
-                isOwner={isOwner}
-              />
-            </ScrollView>
-          </TabsContent>
+        {/* Schedule Overview */}
+        <View className="px-6 mb-8">
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="font-title text-lg text-foreground">
+              Schedule Overview
+            </Text>
+            <Pressable onPress={handleEditSchedule}>
+              <Icons.Calendar size={20} className="text-primary" />
+            </Pressable>
+          </View>
+          <View className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50">
+            <Text className="font-body text-muted-foreground mb-3">
+              Working {workingDays.length} days per week
+            </Text>
+            <View className="flex-row flex-wrap gap-2">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(
+                (day, index) => {
+                  const isWorking = workingDays.some(
+                    (wd) => wd.day_of_week === index,
+                  );
+                  return (
+                    <View
+                      key={day}
+                      className={cn(
+                        'w-12 h-12 rounded-xl items-center justify-center',
+                        isWorking
+                          ? 'bg-success/20 border border-success/30'
+                          : 'bg-muted/20',
+                      )}
+                    >
+                      <Text
+                        className={cn(
+                          'font-caption',
+                          isWorking ? 'text-success' : 'text-muted-foreground',
+                        )}
+                      >
+                        {day}
+                      </Text>
+                    </View>
+                  );
+                },
+              )}
+            </View>
+          </View>
+        </View>
 
-          {/* Services Tab */}
-          <TabsContent value="services" className="flex-1">
-            <ScrollView
-              className="flex-1"
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
-            >
-              <MemberServicesTab
-                services={services}
-                isOwner={isOwner}
-                onServicePress={handleServicePress}
-                onAddService={handleAddService}
-              />
-            </ScrollView>
-          </TabsContent>
-
-          {/* Schedule Tab */}
-          <TabsContent value="schedule" className="flex-1">
-            <ScrollView
-              className="flex-1"
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
-            >
-              <MemberScheduleTab
-                workingDays={workingDays}
-                isOwner={isOwner}
-                onEditSchedule={handleEditSchedule}
-              />
-            </ScrollView>
-          </TabsContent>
-
-          {/* Reviews Tab */}
-          <TabsContent value="reviews" className="flex-1">
-            <ScrollView
-              className="flex-1"
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
-            >
-              <MemberReviewsTab
-                reviews={reviews}
-                averageRating={worker.rating}
-                totalReviews={worker.reviewCount}
-              />
-            </ScrollView>
-          </TabsContent>
-        </Tabs>
-      </View>
+        {/* Reviews Section */}
+        <View className="px-6">
+          <Text className="font-title text-lg text-foreground mb-4">
+            Recent Reviews ({reviews.length})
+          </Text>
+          <View className="gap-3">
+            {reviews.slice(0, 2).map((review) => (
+              <View
+                key={review.id}
+                className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50"
+              >
+                <View className="flex-row items-start gap-3 mb-3">
+                  <Image
+                    source={{ uri: review.customer_avatar }}
+                    className="w-10 h-10 rounded-full"
+                  />
+                  <View className="flex-1">
+                    <Text className="font-subtitle text-foreground mb-1">
+                      {review.customer_name}
+                    </Text>
+                    <View className="flex-row items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Icons.Star
+                          key={star}
+                          size={14}
+                          className="text-warning"
+                          fill={star <= review.rating ? '#f59e0b' : 'none'}
+                        />
+                      ))}
+                    </View>
+                  </View>
+                </View>
+                <Text className="font-body text-muted-foreground">
+                  {review.comment}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
