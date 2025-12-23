@@ -13,6 +13,7 @@ import {
   AddServiceSheet,
   EditProfileSheet,
   EditServiceSheet,
+  ManageScheduleSheet,
   ProfileCard,
   QuickActionsSection,
   ReviewsList,
@@ -41,7 +42,7 @@ const WorkerProfileView: React.FC = () => {
     getMockWorker(user?.id, user?.first_name, user?.last_name),
   );
   const [services, setServices] = useState(getMockServices());
-  const [workingDays] = useState(getMockWorkingDays());
+  const [workingDays, setWorkingDays] = useState(getMockWorkingDays());
   const [reviews] = useState(getMockReviews());
   const [selectedService, setSelectedService] = useState<IService | null>(null);
 
@@ -49,6 +50,7 @@ const WorkerProfileView: React.FC = () => {
   const editProfileSheetRef = useRef<BottomSheetModal>(null);
   const addServiceSheetRef = useRef<BottomSheetModal>(null);
   const editServiceSheetRef = useRef<BottomSheetModal>(null);
+  const manageScheduleSheetRef = useRef<BottomSheetModal>(null);
 
   // Handlers
   const handleEditProfile = () => {
@@ -114,8 +116,12 @@ const WorkerProfileView: React.FC = () => {
   };
 
   const handleEditSchedule = () => {
-    console.warn('Edit schedule - to be implemented');
-    // Navigate to schedule editor or open modal
+    manageScheduleSheetRef.current?.present();
+  };
+
+  const handleSaveSchedule = (newWorkingDays: typeof workingDays) => {
+    setWorkingDays(newWorkingDays);
+    console.warn('Schedule updated:', newWorkingDays);
   };
 
   return (
@@ -184,6 +190,12 @@ const WorkerProfileView: React.FC = () => {
         service={selectedService}
         onSave={handleSaveService}
         onDelete={handleDeleteService}
+      />
+
+      <ManageScheduleSheet
+        ref={manageScheduleSheetRef}
+        workingDays={workingDays}
+        onSave={handleSaveSchedule}
       />
     </SafeAreaView>
   );

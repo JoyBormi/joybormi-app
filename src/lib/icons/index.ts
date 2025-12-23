@@ -9,6 +9,7 @@ import {
   Calendar,
   CalendarDays,
   CalendarPlus,
+  Camera,
   Check,
   CheckCircle,
   ChevronDown,
@@ -25,6 +26,7 @@ import {
   Heart,
   HelpCircle,
   Home,
+  Image,
   Info,
   LayoutGrid,
   List,
@@ -120,6 +122,8 @@ const icons = {
   MessageSquare,
   Coffee,
   Trash2,
+  Camera,
+  Image,
 };
 
 Object.values(icons).forEach(iconWithClassName);
@@ -183,6 +187,8 @@ const Icons = {
   MessageSquare,
   Coffee,
   Trash2,
+  Camera,
+  Image,
 } as const;
 
 export type TIcon = keyof typeof Icons;
