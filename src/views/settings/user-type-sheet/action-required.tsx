@@ -57,7 +57,7 @@ export const UserTypeActionRequiredSheet = forwardRef<BottomSheetModal, Props>(
             <Icon className="w-7 h-7 text-primary" />
           </View>
 
-          <Text className="text-xl font-heading text-center">
+          <Text className="text-foreground font-heading text-center">
             {content.title}
           </Text>
 

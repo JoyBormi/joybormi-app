@@ -35,11 +35,13 @@ import {
   MoonStar,
   Notebook,
   Pencil,
+  Phone,
   Plus,
   RefreshCcw,
   Scissors,
   Search,
   Settings,
+  Share2,
   Shield,
   SlidersHorizontal,
   Sparkles,
@@ -47,6 +49,7 @@ import {
   Stethoscope,
   Store,
   Sun,
+  ThumbsUp,
   Upload,
   User,
   Users,
@@ -108,6 +111,9 @@ const icons = {
   Moon,
   Shield,
   LogOut,
+  ThumbsUp,
+  Share2,
+  Phone,
 };
 
 Object.values(icons).forEach(iconWithClassName);
@@ -165,6 +171,9 @@ const Icons = {
   Moon,
   Shield,
   LogOut,
+  ThumbsUp,
+  Share2,
+  Phone,
 } as const;
 
 export type TIcon = keyof typeof Icons;

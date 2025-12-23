@@ -1,5 +1,5 @@
-import { FormField, FormFieldType } from '@/components/shared/fields';
-import { Text } from '@/components/ui';
+import FormField from '@/components/shared/form-field';
+import { Input, Text } from '@/components/ui';
 import { Control, FieldValues } from 'react-hook-form';
 import { View } from 'react-native';
 
@@ -25,23 +25,16 @@ export function ContactInfo<T extends FieldValues>({
           <FormField
             control={control}
             name="email"
-            fieldType={FormFieldType.INPUT}
-            label={
-              <Text className="font-caption text-foreground font-medium mb-2">
-                Email Address *
-              </Text>
-            }
-            placeholder="your@email.com"
-            keyboard="email-address"
-            capitalize="none"
             required
-            message={
-              <View className="mt-2 bg-primary/10 dark:bg-primary/20 p-3 rounded-xl">
-                <Text className="font-caption text-muted-foreground">
-                  📧 We&apos;ll use this to verify your brand
-                </Text>
-              </View>
-            }
+            render={(field) => (
+              <Input
+                {...field}
+                placeholder="your@email.com"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            )}
+            message="📧 We'll use this to verify your brand"
           />
         </View>
 
@@ -49,21 +42,16 @@ export function ContactInfo<T extends FieldValues>({
           <FormField
             control={control}
             name="phone"
-            fieldType={FormFieldType.INPUT}
-            label={
-              <Text className="font-caption text-foreground font-medium mb-2">
-                Phone Number
-              </Text>
-            }
-            placeholder="+1 (555) 000-0000"
-            keyboard="phone-pad"
-            message={
-              <View className="mt-2 bg-success/10 dark:bg-success/20 p-3 rounded-xl">
-                <Text className="font-caption text-muted-foreground">
-                  📞 Customers will use this to contact you
-                </Text>
-              </View>
-            }
+            required
+            render={(field) => (
+              <Input
+                {...field}
+                placeholder="+1 (555) 000-0000"
+                keyboardType="phone-pad"
+                autoCapitalize="none"
+              />
+            )}
+            message="📞 Customers will use this to contact you"
           />
         </View>
       </View>

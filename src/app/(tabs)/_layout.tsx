@@ -2,7 +2,6 @@ import { TabButton } from '@/components/shared/tab-button';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores';
 import { useScrollStore } from '@/stores/use-scroll-store';
-import { EUserType } from '@/types/user.type';
 import { useSegments } from 'expo-router';
 import { TabList, Tabs, TabSlot, TabTrigger } from 'expo-router/ui';
 import React from 'react';
@@ -46,11 +45,11 @@ export default function TabLayout() {
         <TabTrigger name="reservations" href="/reservations" asChild>
           <TabButton icon="List">{t('common.tabs.reservations')}</TabButton>
         </TabTrigger>
-        {(appType === EUserType.CREATOR || appType === EUserType.WORKER) && (
-          <TabTrigger name="store" href="/(store)/set-up" asChild>
-            <TabButton icon="Store">{t('common.tabs.store')}</TabButton>
-          </TabTrigger>
-        )}
+        {/* {(appType === EUserType.CREATOR || appType === EUserType.WORKER) && ( */}
+        <TabTrigger name="brand" href="/(tabs)/(brand)/brand" asChild>
+          <TabButton icon="Store">{t('common.tabs.store')}</TabButton>
+        </TabTrigger>
+        {/* )} */}
         <TabTrigger name="settings" href="/(tabs)/(settings)/settings" asChild>
           <TabButton icon="Settings">{t('common.tabs.settings')}</TabButton>
         </TabTrigger>

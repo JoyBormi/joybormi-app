@@ -46,7 +46,7 @@ export const LocationPickerSheet = forwardRef<BottomSheetModal>((_, ref) => {
           <View className="w-12 h-12 rounded-full bg-primary/15 items-center justify-center">
             <Icons.MapPin className="w-6 h-6 text-primary" />
           </View>
-          <Text className="text-xl font-heading">Choose your city</Text>
+          <Text className="text-foreground font-heading">Choose your city</Text>
           <Text className="font-caption text-muted-foreground text-center">
             We currently support only these locations
           </Text>
@@ -74,7 +74,7 @@ export const LocationPickerSheet = forwardRef<BottomSheetModal>((_, ref) => {
                     : 'border-border bg-card'
                 }`}
               >
-                <Text className="font-subtitle text-base">{loc}</Text>
+                <Text className="font-subtitle text-foreground">{loc}</Text>
 
                 {selected && (
                   <Icons.CheckCircle className="w-6 h-6 text-primary" />
