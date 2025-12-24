@@ -6,7 +6,7 @@ import {
   MemberReviewsTab,
   MemberScheduleTab,
   MemberServicesTab,
-} from '@/views/member';
+} from '@/views/worker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';

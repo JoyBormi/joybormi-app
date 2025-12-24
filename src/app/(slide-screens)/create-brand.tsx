@@ -11,7 +11,7 @@ import {
   OwnerInfo,
   Review,
   StepIndicator,
-} from '@/views/store/set-up';
+} from '@/views/brand-profile/set-up';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
