@@ -38,6 +38,13 @@
     font-weight: 400;
   }
 
+  .font-base {
+    font-size: 12px;
+    line-height: 18px;
+    font-family: Montserrat-Regular;
+    font-weight: 400;
+  }
+
   .separate-words {
     @apply break-words line-clamp-1 truncate;
   }

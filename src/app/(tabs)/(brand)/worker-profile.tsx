@@ -1,16 +1,18 @@
+import {
+  ManageScheduleSheet,
+  UpsertServiceSheet,
+} from '@/components/shared/brand-worker';
 import { Text } from '@/components/ui';
 import { useUserStore } from '@/stores';
 import type { IService } from '@/types/worker.type';
 import {
   AboutSectionDisplay,
   EditProfileSheet,
-  ManageScheduleSheet,
   ProfileCard,
   QuickActionsSection,
   ReviewsList,
   ScheduleDisplay,
   ServicesList,
-  UpsertServiceSheet,
 } from '@/views/worker-profile/components';
 import {
   getMockReviews,

@@ -103,12 +103,6 @@ export const InviteTeamSheet = forwardRef<
             <Text className="font-heading text-4xl text-foreground tracking-widest">
               {inviteCode.match(/.{1,3}/g)?.join(' ')}
             </Text>
-            <View className="flex-row items-center gap-2 mt-3">
-              <Icons.Copy size={16} className="text-muted-foreground" />
-              <Text className="font-caption text-muted-foreground">
-                Tap to copy
-              </Text>
-            </View>
           </Pressable>
         </View>
       </View>

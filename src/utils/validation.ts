@@ -7,6 +7,20 @@ export const validateEmail = () => {};
 export const validatePassword = () => {};
 export const validatePasswordMatch = () => {};
 
+/**
+ * @description validate form errors and return first error key
+ * @param errors
+ * @returns first error key
+ */
+export const validateFormErrors = <T extends Record<string, any>>(
+  errors: T,
+): any => {
+  const firstError = Object.keys(errors)[0];
+  if (firstError) {
+    return firstError;
+  }
+};
+
 // Utility function to validate phone number
 export const validatePhoneNumber = (
   phone: string,
