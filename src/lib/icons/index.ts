@@ -18,6 +18,7 @@ import {
   ChevronUp,
   Clock,
   Coffee,
+  Copy,
   CreditCard,
   Eye,
   EyeClosed,
@@ -126,6 +127,7 @@ const icons = {
   Camera,
   Image,
   UserPlus,
+  Copy,
 };
 
 Object.values(icons).forEach(iconWithClassName);
@@ -192,6 +194,7 @@ const Icons = {
   Camera,
   Image,
   UserPlus,
+  Copy,
 } as const;
 
 export type TIcon = keyof typeof Icons;

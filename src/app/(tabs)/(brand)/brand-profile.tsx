@@ -1,5 +1,11 @@
-import { ManageScheduleSheet } from '@/components/shared/manage-schedule.sheet';
-import { UpsertServiceSheet } from '@/components/shared/upsert-service.sheet';
+import {
+  InviteTeamSheet,
+  ManageScheduleSheet,
+  UploadBannerSheet,
+  UploadPhotosSheet,
+  UploadProfileImageSheet,
+  UpsertServiceSheet,
+} from '@/components/shared/brand-worker';
 import { useUserStore } from '@/stores';
 import type { IBrandService } from '@/types/brand.type';
 import { EUserType } from '@/types/user.type';
@@ -19,12 +25,8 @@ import {
   BrandReviewsList,
   BrandServicesList,
   BrandTeamList,
-  EditBrandSheet,
-  InviteWorkerSheet,
-  ManagePhotosSheet,
-  type BrandFormData,
-  type InviteWorkerFormData,
 } from '@/views/brand-profile/components';
+import { EditBrandSheet } from '@/views/brand-profile/components/edit-brand.sheet';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
@@ -61,9 +63,11 @@ const BrandProfileScreen: React.FC = () => {
 
   // Bottom sheet refs
   const editBrandSheetRef = useRef<BottomSheetModal>(null);
+  const uploadBannerSheetRef = useRef<BottomSheetModal>(null);
+  const uploadProfileImageSheetRef = useRef<BottomSheetModal>(null);
   const upsertServiceSheetRef = useRef<BottomSheetModal>(null);
-  const inviteWorkerSheetRef = useRef<BottomSheetModal>(null);
-  const managePhotosSheetRef = useRef<BottomSheetModal>(null);
+  const inviteTeamSheetRef = useRef<BottomSheetModal>(null);
+  const uploadPhotosSheetRef = useRef<BottomSheetModal>(null);
   const manageScheduleSheetRef = useRef<BottomSheetModal>(null);
 
   // Handlers
@@ -71,9 +75,27 @@ const BrandProfileScreen: React.FC = () => {
     editBrandSheetRef.current?.present();
   };
 
-  const handleSaveBrand = (data: BrandFormData) => {
-    console.warn('Save brand:', data);
+  const handleSaveBrand = () => {
+    console.warn('Save brand:', brand);
     // TODO: API call to update brand
+  };
+
+  const handleEditBanner = () => {
+    uploadBannerSheetRef.current?.present();
+  };
+
+  const handleUploadBanner = (uri: string) => {
+    console.warn('Upload banner:', uri);
+    // TODO: API call to update banner
+  };
+
+  const handleEditProfileImage = () => {
+    uploadProfileImageSheetRef.current?.present();
+  };
+
+  const handleUploadProfileImage = (uri: string) => {
+    console.warn('Upload profile image:', uri);
+    // TODO: API call to update profile image
   };
 
   const handleAddService = () => {
@@ -132,12 +154,7 @@ const BrandProfileScreen: React.FC = () => {
   };
 
   const handleAddWorker = () => {
-    inviteWorkerSheetRef.current?.present();
-  };
-
-  const handleInviteWorker = (data: InviteWorkerFormData) => {
-    console.warn('Invite worker:', data);
-    // TODO: API call to send invitation
+    inviteTeamSheetRef.current?.present();
   };
 
   const handleWorkerPress = (worker: (typeof workers)[0]) => {
@@ -155,30 +172,31 @@ const BrandProfileScreen: React.FC = () => {
   };
 
   const handleAddPhoto = () => {
-    managePhotosSheetRef.current?.present();
+    uploadPhotosSheetRef.current?.present();
   };
 
   const handlePhotoPress = () => {
-    managePhotosSheetRef.current?.present();
+    uploadPhotosSheetRef.current?.present();
   };
 
-  const handleAddPhotos = (newPhotos: string[]) => {
-    const photosToAdd = newPhotos.map((url, index) => ({
+  const handleUploadPhotos = (
+    newPhotos: { uri: string; category: string }[],
+  ) => {
+    const photosToAdd = newPhotos.map((photo, index) => ({
       id: `photo-${Date.now()}-${index}`,
-      url,
+      url: photo.uri,
       caption: '',
-      category: 'other' as const,
+      category: photo.category as
+        | 'interior'
+        | 'exterior'
+        | 'service'
+        | 'team'
+        | 'other',
       uploadedAt: new Date().toISOString(),
     }));
     setPhotos((prev) => [...prev, ...photosToAdd]);
     console.warn('Photos added:', photosToAdd);
     // TODO: API call to upload photos
-  };
-
-  const handleDeletePhoto = (photoId: string) => {
-    setPhotos((prev) => prev.filter((p) => p.id !== photoId));
-    console.warn('Photo deleted:', photoId);
-    // TODO: API call to delete photo
   };
 
   return (
@@ -195,6 +213,8 @@ const BrandProfileScreen: React.FC = () => {
           workersCount={workers.length}
           photosCount={photos.length}
           canEdit={canEdit}
+          onEditAvatar={handleEditProfileImage}
+          onEditBanner={handleEditBanner}
           onEdit={handleEditBrand}
         />
 
@@ -208,7 +228,7 @@ const BrandProfileScreen: React.FC = () => {
         )}
 
         {/* About Section */}
-        <BrandAbout brand={brand} canEdit={canEdit} onEdit={handleEditBrand} />
+        <BrandAbout brand={brand} canEdit={canEdit} onEdit={handleEditBanner} />
 
         {/* Services Section */}
         <BrandServicesList
@@ -239,10 +259,22 @@ const BrandProfileScreen: React.FC = () => {
       </ScrollView>
 
       {/* Bottom Sheets */}
+
       <EditBrandSheet
         ref={editBrandSheetRef}
         brand={brand}
         onSave={handleSaveBrand}
+      />
+      <UploadBannerSheet
+        ref={uploadBannerSheetRef}
+        currentBanner={brand.coverImage}
+        onUpload={handleUploadBanner}
+      />
+
+      <UploadProfileImageSheet
+        ref={uploadProfileImageSheetRef}
+        currentImage={brand.logo}
+        onUpload={handleUploadProfileImage}
       />
 
       <UpsertServiceSheet
@@ -265,16 +297,15 @@ const BrandProfileScreen: React.FC = () => {
         onDelete={handleDeleteService}
       />
 
-      <InviteWorkerSheet
-        ref={inviteWorkerSheetRef}
-        onInvite={handleInviteWorker}
+      <InviteTeamSheet
+        ref={inviteTeamSheetRef}
+        brandId={brand.id}
+        brandName={brand.name}
       />
 
-      <ManagePhotosSheet
-        ref={managePhotosSheetRef}
-        photos={photos}
-        onAddPhotos={handleAddPhotos}
-        onDeletePhoto={handleDeletePhoto}
+      <UploadPhotosSheet
+        ref={uploadPhotosSheetRef}
+        onUpload={handleUploadPhotos}
       />
 
       <ManageScheduleSheet

@@ -30,7 +30,7 @@ export const ManageScheduleSheet = forwardRef<
   ManageScheduleSheetProps
 >(({ workingDays, onSave }, ref) => {
   const insets = useSafeAreaInsets();
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const [schedule, setSchedule] = useState<IWorkingDay[]>(workingDays);
   const [editingState, setEditingState] = useState<{
     day: number;

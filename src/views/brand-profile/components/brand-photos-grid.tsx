@@ -38,11 +38,11 @@ export const BrandPhotosGrid: React.FC<BrandPhotosGridProps> = ({
           <Pressable
             key={photo.id}
             onPress={() => onPhotoPress?.(photo, index)}
-            className="active:opacity-70"
+            className="active:opacity-70 w-[31%] h-24 aspect-square"
           >
             <Image
               source={{ uri: photo.url }}
-              className="w-[31%] h-24 rounded-xl"
+              className="w-full h-full rounded-xl"
             />
           </Pressable>
         ))}

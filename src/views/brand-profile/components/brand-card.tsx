@@ -1,7 +1,7 @@
 import { Button, Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 import type { IBrand } from '@/types/brand.type';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Image, Pressable, View } from 'react-native';
 
 interface BrandCardProps {
@@ -11,6 +11,8 @@ interface BrandCardProps {
   photosCount: number;
   canEdit: boolean;
   onEdit: () => void;
+  onEditAvatar: () => void;
+  onEditBanner: () => void;
 }
 
 /**
@@ -24,16 +26,23 @@ export const BrandCard: React.FC<BrandCardProps> = ({
   photosCount,
   canEdit,
   onEdit,
+  onEditAvatar,
+  onEditBanner,
 }) => {
   return (
-    <>
-      {/* Cover Image */}
-      {brand.coverImage && (
-        <Image
-          source={{ uri: brand.coverImage }}
-          className="w-full h-60 mb-4"
-        />
-      )}
+    <Fragment>
+      <View className="relative h-60 mb-4">
+        {/* Cover Image */}
+        {brand.coverImage && (
+          <Image source={{ uri: brand.coverImage }} className="w-full h-full" />
+        )}
+        <Pressable
+          onPress={onEditBanner}
+          className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-primary/60 items-center justify-center border border-card shadow-lg"
+        >
+          <Icons.Pencil size={16} className="text-primary-foreground" />
+        </Pressable>
+      </View>
 
       <View className="main-area">
         <View className="bg-card/50 backdrop-blur-xl px-6 pb-6">
@@ -46,15 +55,15 @@ export const BrandCard: React.FC<BrandCardProps> = ({
               />
               {canEdit && (
                 <Pressable
-                  onPress={onEdit}
-                  className="absolute -bottom-2 -right-2 w-12 h-12 rounded-full bg-primary items-center justify-center border-4 border-card shadow-lg"
+                  onPress={onEditAvatar}
+                  className="absolute -bottom-2 -right-2 w-12 h-12 rounded-full bg-primary/60 items-center justify-center border-2 border-card shadow-lg"
                 >
                   <Icons.Pencil size={20} className="text-primary-foreground" />
                 </Pressable>
               )}
             </View>
 
-            <Text className="font-heading text-2xl text-foreground mb-1">
+            <Text className="font-title text-center text-foreground mb-1">
               {brand.name}
             </Text>
             <Text className="font-subtitle text-muted-foreground mb-3">
@@ -113,6 +122,6 @@ export const BrandCard: React.FC<BrandCardProps> = ({
           )}
         </View>
       </View>
-    </>
+    </Fragment>
   );
 };
