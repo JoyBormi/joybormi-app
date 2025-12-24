@@ -3,7 +3,8 @@ import { Button, Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 import type { IWorker } from '@/types/worker.type';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import React, { useRef, useState } from 'react';
+import { router } from 'expo-router';
+import React, { Fragment, useRef, useState } from 'react';
 import { Image, Pressable, View } from 'react-native';
 
 interface ProfileCardProps {
@@ -27,18 +28,42 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
 }) => {
   const imagePickerRef = useRef<BottomSheetModal>(null);
   const [avatarUri, setAvatarUri] = useState(worker.avatar);
+  const [isAvatarPicker, setIsAvatarPicker] = useState(false);
+  const [bannerUri, setBannerUri] = useState(worker.coverImage);
 
   const handleEditProfile = () => {
+    setIsAvatarPicker(true);
     imagePickerRef.current?.present();
   };
 
-  const handleImageChange = (uri: string) => {
-    setAvatarUri(uri);
+  const handleEditBanner = () => {
+    setIsAvatarPicker(false);
+    imagePickerRef.current?.present();
+  };
+
+  const handleImageChange = (uri: string, type: 'avatar' | 'banner') => {
+    if (type === 'avatar') {
+      setAvatarUri(uri);
+    } else {
+      setBannerUri(uri);
+    }
   };
 
   return (
-    <View className="px-6 mb-8">
-      <View className="bg-card/50 backdrop-blur-xl rounded-3xl p-6 border border-border/50">
+    <Fragment>
+      <View className="relative h-60 mb-4">
+        {/* Cover Image */}
+        {bannerUri && (
+          <Image source={{ uri: bannerUri }} className="w-full h-full" />
+        )}
+        <Pressable
+          onPress={handleEditBanner}
+          className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-primary/60 items-center justify-center border border-card shadow-lg"
+        >
+          <Icons.Pencil size={16} className="text-primary-foreground" />
+        </Pressable>
+      </View>
+      <View className="px-6 mb-8 -mt-16">
         {/* Avatar and Basic Info */}
         <View className="items-center mb-6">
           <View className="relative mb-4">
@@ -101,7 +126,12 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
         </View>
 
         {/* Edit Profile Button */}
-        <Button onPress={onEdit} className="bg-primary">
+        <Button
+          onPress={() =>
+            router.push('/(slide-screens)/(worker)/edit-worker-profile')
+          }
+          className="bg-primary"
+        >
           <View className="flex-row items-center gap-2">
             <Icons.Pencil size={18} className="text-primary-foreground" />
             <Text className="font-subtitle text-primary-foreground">
@@ -109,12 +139,17 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
             </Text>
           </View>
         </Button>
+
+        <ImagePickerSheet
+          ref={imagePickerRef}
+          onChange={(uri) =>
+            handleImageChange(uri, isAvatarPicker ? 'avatar' : 'banner')
+          }
+          title={
+            isAvatarPicker ? 'Change Profile Photo' : 'Change Banner Photo'
+          }
+        />
       </View>
-      <ImagePickerSheet
-        ref={imagePickerRef}
-        onChange={handleImageChange}
-        title="Change Profile Photo"
-      />
-    </View>
+    </Fragment>
   );
 };

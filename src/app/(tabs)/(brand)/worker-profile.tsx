@@ -2,7 +2,6 @@ import {
   ManageScheduleSheet,
   UpsertServiceSheet,
 } from '@/components/shared/brand-worker';
-import { Text } from '@/components/ui';
 import { useUserStore } from '@/stores';
 import type { IService } from '@/types/worker.type';
 import {
@@ -24,7 +23,7 @@ import {
 } from '@/views/worker-profile/utils/helpers';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { useRef, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -137,16 +136,6 @@ const WorkerProfileScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
       >
-        {/* Header */}
-        <View
-          className="flex-row items-center justify-between px-6 mb-6"
-          style={{ paddingTop: insets.top + 16 }}
-        >
-          <Text className="font-heading text-xl text-foreground">
-            My Profile
-          </Text>
-        </View>
-
         {/* Profile Card */}
         <ProfileCard
           worker={worker}

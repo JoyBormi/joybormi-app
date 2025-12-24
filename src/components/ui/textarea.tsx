@@ -20,7 +20,7 @@ const Textarea = React.forwardRef<
       <TextInput
         ref={ref}
         className={cn(
-          'web:flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 font-base lg:text-sm native:text-lg native:leading-[1.25] text-foreground web:ring-offset-background web:placeholder:text-muted-foreground web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
+          'web:flex h-10 native:h-12 min-h-[100px] web:w-full rounded-md border border-input focus:border-border bg-background px-3 web:py-2 lg:text-body native:text-caption native:leading-[1.25] text-foreground placeholder:font-regular placeholder:text-muted-foreground web:ring-offset-background file:border-0 file:bg-transparent file:font-medium web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
           props.editable === false && 'opacity-50 web:cursor-not-allowed',
           className,
         )}
