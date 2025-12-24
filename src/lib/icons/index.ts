@@ -57,6 +57,7 @@ import {
   Trash2,
   Upload,
   User,
+  UserPlus,
   Users,
   X,
 } from 'lucide-react-native';
@@ -124,6 +125,7 @@ const icons = {
   Trash2,
   Camera,
   Image,
+  UserPlus,
 };
 
 Object.values(icons).forEach(iconWithClassName);
@@ -189,6 +191,7 @@ const Icons = {
   Trash2,
   Camera,
   Image,
+  UserPlus,
 } as const;
 
 export type TIcon = keyof typeof Icons;

@@ -1,25 +1,24 @@
-import { Text } from '@/components/ui';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUserStore } from '@/stores';
-import { BrandTabType } from '@/types/brand.type';
 import { EUserType } from '@/types/user.type';
 import {
-  AboutTab,
-  BrandHeader,
-  HomeTab,
-  PhotosTab,
-  ReviewsTab,
-  ServicesTab,
-  WorkersTab,
   mockBrand,
   mockPhotos,
   mockReviews,
   mockServices,
   mockWorkers,
 } from '@/views/brand';
+import {
+  BrandAbout,
+  BrandCard,
+  BrandPhotosGrid,
+  BrandQuickActions,
+  BrandReviewsList,
+  BrandServicesList,
+  BrandTeamList,
+} from '@/views/brand-profile/components';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import React from 'react';
+import { ScrollView } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -34,12 +33,10 @@ const BrandProfileScreen: React.FC = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { appType } = useUserStore();
-  const [activeTab, setActiveTab] = useState<BrandTabType>('home');
 
   // Check if user is creator or worker
   const isCreator = appType === EUserType.CREATOR;
-  const isWorker = appType === EUserType.WORKER;
-  const canEdit = isCreator || isWorker;
+  const canEdit = isCreator;
 
   // Mock data - In production, fetch from API based on user's brand
   const brand = mockBrand;
@@ -48,175 +45,102 @@ const BrandProfileScreen: React.FC = () => {
   const photos = mockPhotos;
   const reviews = mockReviews;
 
-  const handleBack = () => {
-    router.back();
-  };
-
-  const handleEdit = () => {
-    // Navigate to edit brand page
-    console.log('Edit brand');
-    // router.push('/brand/edit');
-  };
-
-  const handleShare = () => {
-    // Implement share functionality
-    console.log('Share brand');
-  };
-
-  const handleServicePress = (service: (typeof services)[0]) => {
-    console.log('Service pressed:', service.id);
-    if (canEdit) {
-      // Navigate to edit service
-      // router.push(`/service/edit/${service.id}`);
-    }
+  // Handlers
+  const handleEditBrand = () => {
+    console.warn('Edit brand');
+    // TODO: Open edit brand sheet
   };
 
   const handleAddService = () => {
-    console.log('Add new service');
-    // router.push('/service/create');
+    console.warn('Add new service');
+    // TODO: Open add service sheet
   };
 
-  const handleWorkerPress = (worker: (typeof workers)[0]) => {
-    console.log('Worker pressed:', worker.id);
-    if (isCreator) {
-      // Navigate to manage worker
-      // router.push(`/worker/manage/${worker.id}`);
-    }
+  const handleServicePress = (service: (typeof services)[0]) => {
+    console.warn('Service pressed:', service.id);
+    // TODO: Open edit service sheet
   };
 
   const handleAddWorker = () => {
-    console.log('Add new worker');
-    // router.push('/worker/invite');
+    console.warn('Add new worker');
+    // TODO: Open invite worker sheet
   };
 
-  const handlePhotoPress = (photo: (typeof photos)[0], index: number) => {
-    console.log('Photo pressed:', photo.id, index);
-    if (canEdit) {
-      // Open photo management
-    }
+  const handleWorkerPress = (worker: (typeof workers)[0]) => {
+    router.push(`/(dynamic-brand)/team/worker/${worker.id}`);
+  };
+
+  const handleManageHours = () => {
+    console.warn('Manage hours');
+    // TODO: Open schedule management sheet
   };
 
   const handleAddPhoto = () => {
-    console.log('Add new photo');
-    // Open image picker
+    console.warn('Add photo');
+    // TODO: Open image picker
   };
 
-  const handleWriteReview = () => {
-    console.log('Write review');
-    // Navigate to review form
-  };
-
-  const handleHelpful = (reviewId: string) => {
-    console.log('Mark helpful:', reviewId);
-    // Update helpful count
+  const handlePhotoPress = (photo: (typeof photos)[0], index: number) => {
+    console.warn('Photo pressed:', photo.id, index);
+    // TODO: Open photo viewer
   };
 
   return (
-    <SafeAreaView className="safe-area" edges={['bottom']}>
-      <View className="flex-1">
-        {/* Brand Header */}
-        <BrandHeader
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
+      >
+        {/* Brand Profile Card */}
+        <BrandCard
           brand={brand}
-          onBack={handleBack}
-          onShare={handleShare}
-          onFavorite={canEdit ? handleEdit : undefined}
-          isOwner={canEdit}
+          servicesCount={services.length}
+          workersCount={workers.length}
+          photosCount={photos.length}
+          canEdit={canEdit}
+          onEdit={handleEditBrand}
         />
 
-        {/* Tab Navigation */}
-        <Tabs
-          value={activeTab}
-          onValueChange={(value) => setActiveTab(value as BrandTabType)}
-          className="flex-1"
-        >
-          <TabsList className="bg-background/95 backdrop-blur-xl border-b border-border my-4">
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerClassName="gap-2"
-            >
-              <TabsTrigger value="home">
-                <Text>Home</Text>
-              </TabsTrigger>
-              <TabsTrigger value="services">
-                <Text>Services</Text>
-              </TabsTrigger>
-              <TabsTrigger value="workers">
-                <Text>Team</Text>
-              </TabsTrigger>
-              <TabsTrigger value="photos">
-                <Text>Photos</Text>
-              </TabsTrigger>
-              <TabsTrigger value="reviews">
-                <Text>Reviews</Text>
-              </TabsTrigger>
-              <TabsTrigger value="about">
-                <Text>About</Text>
-              </TabsTrigger>
-            </ScrollView>
-          </TabsList>
+        {/* Quick Actions */}
+        {canEdit && (
+          <BrandQuickActions
+            onAddService={handleAddService}
+            onAddWorker={handleAddWorker}
+            onManageHours={handleManageHours}
+          />
+        )}
 
-          {/* Tab Contents with proper scrolling */}
-          <TabsContent value="home" className="flex-1">
-            <HomeTab
-              brand={brand}
-              services={services}
-              workers={workers}
-              photos={photos}
-              onServicePress={handleServicePress}
-              onWorkerPress={handleWorkerPress}
-              onPhotoPress={handlePhotoPress}
-              onViewAllServices={() => setActiveTab('services')}
-              onViewAllWorkers={() => setActiveTab('workers')}
-              onViewAllPhotos={() => setActiveTab('photos')}
-              canEdit={canEdit}
-              onAddService={handleAddService}
-              onAddWorker={handleAddWorker}
-              onAddPhoto={handleAddPhoto}
-            />
-          </TabsContent>
+        {/* About Section */}
+        <BrandAbout brand={brand} canEdit={canEdit} onEdit={handleEditBrand} />
 
-          <TabsContent value="services" className="flex-1">
-            <ServicesTab
-              services={services}
-              onServicePress={handleServicePress}
-              canEdit={canEdit}
-              onAddService={handleAddService}
-            />
-          </TabsContent>
+        {/* Services Section */}
+        <BrandServicesList
+          services={services}
+          canEdit={canEdit}
+          onAddService={handleAddService}
+          onServicePress={handleServicePress}
+        />
 
-          <TabsContent value="workers" className="flex-1">
-            <WorkersTab
-              workers={workers}
-              onWorkerPress={handleWorkerPress}
-              canEdit={isCreator}
-              onAddWorker={handleAddWorker}
-            />
-          </TabsContent>
+        {/* Team Section */}
+        <BrandTeamList
+          workers={workers}
+          canEdit={canEdit}
+          onAddWorker={handleAddWorker}
+          onWorkerPress={handleWorkerPress}
+        />
 
-          <TabsContent value="photos" className="flex-1">
-            <PhotosTab
-              photos={photos}
-              onPhotoPress={handlePhotoPress}
-              canEdit={canEdit}
-              onAddPhoto={handleAddPhoto}
-            />
-          </TabsContent>
+        {/* Photos Section */}
+        <BrandPhotosGrid
+          photos={photos}
+          canEdit={canEdit}
+          onAddPhoto={handleAddPhoto}
+          onPhotoPress={handlePhotoPress}
+        />
 
-          <TabsContent value="reviews" className="flex-1">
-            <ReviewsTab
-              brand={brand}
-              reviews={reviews}
-              onHelpful={handleHelpful}
-              onWriteReview={handleWriteReview}
-            />
-          </TabsContent>
-
-          <TabsContent value="about" className="flex-1">
-            <AboutTab brand={brand} canEdit={canEdit} onEdit={handleEdit} />
-          </TabsContent>
-        </Tabs>
-      </View>
+        {/* Reviews Section */}
+        <BrandReviewsList reviews={reviews} maxDisplay={2} />
+      </ScrollView>
     </SafeAreaView>
   );
 };

@@ -167,9 +167,9 @@ const WorkerDetailScreen: React.FC = () => {
           </View>
 
           {/* Worker Info Card */}
-          <View className="px-4 -mt-24">
+          <View className="px-4 -mt-16">
             <View className="bg-card/50 backdrop-blur-xl rounded-3xl p-4 border border-border/50">
-              <View className="flex-row items-start gap-3">
+              <View className="flex justify-center items-center gap-3">
                 {/* Avatar */}
                 <View className="relative">
                   <Image
@@ -182,33 +182,23 @@ const WorkerDetailScreen: React.FC = () => {
                 </View>
 
                 {/* Info */}
-                <View className="flex-1">
+
+                <View className="flex-row items-center justify-center gap-1">
                   <Text className="font-title text-foreground">
                     {worker.name}
                   </Text>
-                  <Text className="font-caption text-muted-foreground mt-0.5">
+                  <View className="size-1 rounded-full bg-muted" />
+                  <Text className="font-caption text-muted-foreground">
                     {worker.role}
                   </Text>
-
-                  {/* Rating */}
-                  <View className="flex-row items-center gap-1 mt-2">
-                    <Icons.Star
-                      size={16}
-                      className="text-warning"
-                      fill="#f59e0b"
-                    />
-                    <Text className="font-body text-foreground">
-                      {worker.rating}
-                    </Text>
-                    <Text className="font-caption text-muted-foreground">
-                      ({worker.reviewCount} reviews)
-                    </Text>
-                  </View>
                 </View>
               </View>
 
               {/* Book Appointment Button */}
-              <Button onPress={handleBooking} className="mt-4 bg-primary">
+              <Button
+                className="mt-2 bg-primary"
+                onPress={() => setActiveTab('services')}
+              >
                 <Text className="font-subtitle text-primary-foreground">
                   Book Appointment
                 </Text>
@@ -223,7 +213,7 @@ const WorkerDetailScreen: React.FC = () => {
           onValueChange={(value) => setActiveTab(value as WorkerTabType)}
           className="flex-1 mt-4"
         >
-          <TabsList className="bg-background/95 backdrop-blur-xl border-b border-border">
+          <TabsList className="bg-background/95 backdrop-blur-xl border-b border-border mb-4">
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
