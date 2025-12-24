@@ -4,7 +4,10 @@ import { Button, Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import type { IWorkingDay } from '@/types/worker.type';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import {
+  BottomSheetModal,
+  useBottomSheetTimingConfigs,
+} from '@gorhom/bottom-sheet';
 import React, { forwardRef, Fragment, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
@@ -17,7 +20,7 @@ interface ManageScheduleSheetProps {
 }
 
 // Start week from Monday (ISO standard)
-const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
+const DAY_ORDER = [0, 1, 2, 3, 4, 5, 6]; // Mon-Sun
 
 export const ManageScheduleSheet = forwardRef<
   BottomSheetModal,
@@ -29,34 +32,25 @@ export const ManageScheduleSheet = forwardRef<
   const [editingState, setEditingState] = useState<{
     day: number;
     field: 'start' | 'end';
+    breakId?: string; // For editing break times
   } | null>(null);
 
   const timePickerRef = useRef<BottomSheetModal>(null);
 
-  // --- Strict 24h Helpers ---
-  const formatTime24h = (time: string) => {
+  const animationConfigs = useBottomSheetTimingConfigs({
+    duration: 150,
+  });
+
+  // Format time to HH:mm
+  const formatTime = (time: string) => {
     if (!time) return '--:--';
     const parts = time.split(':');
     return `${parts[0]}:${parts[1]}`;
   };
 
-  const timeToDate = (time: string): Date => {
-    const [hours, minutes] = time.split(':');
-    const date = new Date();
-    date.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
-    return date;
-  };
-
-  const dateToTimeStr = (date: Date): string => {
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}:00`;
-  };
-
   // --- Actions ---
   const toggleDay = (dayOfWeek: number) => {
     setSchedule((prev) => {
-      // Use findIndex and explicit comparison to avoid 0/falsy issues
       const index = prev.findIndex((wd) => wd.dayOfWeek === dayOfWeek);
       if (index !== -1) {
         return prev.filter((wd) => wd.dayOfWeek !== dayOfWeek);
@@ -67,29 +61,85 @@ export const ManageScheduleSheet = forwardRef<
           id: `new-${dayOfWeek}-${Date.now()}`,
           scheduleId: 'sched-1',
           dayOfWeek,
-          startTime: '09:00:00',
-          endTime: '18:00:00',
+          startTime: '09:00',
+          endTime: '18:00',
+          breaks: [],
           createdAt: new Date().toISOString(),
         },
       ];
     });
   };
 
-  const openTimePicker = (dayOfWeek: number, field: 'start' | 'end') => {
-    setEditingState({ day: dayOfWeek, field });
+  const openTimePicker = (
+    dayOfWeek: number,
+    field: 'start' | 'end',
+    breakId?: string,
+  ) => {
+    setEditingState({ day: dayOfWeek, field, breakId });
     timePickerRef.current?.present();
   };
 
-  const handleTimeChange = (date: Date) => {
+  const handleTimeChange = (time: string) => {
     if (!editingState) return;
-    const newTime = dateToTimeStr(date);
+
+    setSchedule((prev) =>
+      prev.map((wd) => {
+        if (wd.dayOfWeek !== editingState.day) return wd;
+
+        // Editing break time
+        if (editingState.breakId) {
+          return {
+            ...wd,
+            breaks: (wd.breaks || []).map((b) =>
+              b.id === editingState.breakId
+                ? {
+                    ...b,
+                    [editingState.field === 'start' ? 'startTime' : 'endTime']:
+                      time,
+                  }
+                : b,
+            ),
+          };
+        }
+
+        // Editing working day time
+        return {
+          ...wd,
+          [editingState.field === 'start' ? 'startTime' : 'endTime']: time,
+        };
+      }),
+    );
+  };
+
+  const addBreak = (dayOfWeek: number) => {
     setSchedule((prev) =>
       prev.map((wd) =>
-        wd.dayOfWeek === editingState.day
+        wd.dayOfWeek === dayOfWeek
           ? {
               ...wd,
-              [editingState.field === 'start' ? 'startTime' : 'endTime']:
-                newTime,
+              breaks: [
+                ...(wd.breaks || []),
+                {
+                  id: `break-${Date.now()}`,
+                  workingDayId: wd.id,
+                  startTime: '12:00',
+                  endTime: '13:00',
+                  createdAt: new Date().toISOString(),
+                },
+              ],
+            }
+          : wd,
+      ),
+    );
+  };
+
+  const removeBreak = (dayOfWeek: number, breakId: string) => {
+    setSchedule((prev) =>
+      prev.map((wd) =>
+        wd.dayOfWeek === dayOfWeek
+          ? {
+              ...wd,
+              breaks: (wd.breaks || []).filter((b) => b.id !== breakId),
             }
           : wd,
       ),
@@ -97,9 +147,20 @@ export const ManageScheduleSheet = forwardRef<
   };
 
   const activeWorkingDayValue = useMemo(() => {
-    if (!editingState) return '09:00:00';
+    if (!editingState) return '09:00';
     const day = schedule.find((s) => s.dayOfWeek === editingState.day);
-    return editingState.field === 'start' ? day?.startTime : day?.endTime;
+    if (!day) return '09:00';
+
+    // Editing break time
+    if (editingState.breakId) {
+      const breakItem = day.breaks?.find((b) => b.id === editingState.breakId);
+      return editingState.field === 'start'
+        ? breakItem?.startTime || '12:00'
+        : breakItem?.endTime || '13:00';
+    }
+
+    // Editing working day time
+    return editingState.field === 'start' ? day.startTime : day.endTime;
   }, [editingState, schedule]);
 
   return (
@@ -107,8 +168,9 @@ export const ManageScheduleSheet = forwardRef<
       <CustomBottomSheet
         ref={ref}
         index={0}
-        snapPoints={['90%', '99%']}
         scrollEnabled
+        snapPoints={['90%', '99%']}
+        animationConfigs={animationConfigs}
         scrollConfig={{
           contentContainerStyle: {
             paddingBottom: insets.bottom + 120,
@@ -179,18 +241,74 @@ export const ManageScheduleSheet = forwardRef<
                 </View>
 
                 {isActive && config && (
-                  <View className="flex-row items-center gap-2 mt-4 pt-4 border-t border-border/50">
-                    <TimeButton
-                      label={'Start'}
-                      value={formatTime24h(config.startTime)}
-                      onPress={() => openTimePicker(dayValue, 'start')}
-                    />
-                    <View className="h-[1px] w-3 bg-border" />
-                    <TimeButton
-                      label={'End'}
-                      value={formatTime24h(config.endTime)}
-                      onPress={() => openTimePicker(dayValue, 'end')}
-                    />
+                  <View className="mt-4 pt-4 border-t border-border/50">
+                    {/* Working Hours */}
+                    <View className="flex-row items-center gap-2 mb-3">
+                      <TimeButton
+                        label="Open"
+                        value={formatTime(config.startTime)}
+                        onPress={() => openTimePicker(dayValue, 'start')}
+                      />
+                      <View className="h-[1px] w-3 bg-border" />
+                      <TimeButton
+                        label="Close"
+                        value={formatTime(config.endTime)}
+                        onPress={() => openTimePicker(dayValue, 'end')}
+                      />
+                    </View>
+
+                    {/* Breaks */}
+                    {config.breaks && config.breaks.length > 0 && (
+                      <View className="gap-2 mb-2">
+                        {config.breaks.map((breakItem, idx) => (
+                          <View
+                            key={breakItem.id}
+                            className="flex-row items-center gap-2 bg-muted/10 rounded-xl p-2"
+                          >
+                            <Icons.Coffee
+                              size={14}
+                              className="text-muted-foreground"
+                            />
+                            <TimeButton
+                              label="Break Start"
+                              value={formatTime(breakItem.startTime)}
+                              onPress={() =>
+                                openTimePicker(dayValue, 'start', breakItem.id)
+                              }
+                              compact
+                            />
+                            <View className="h-[1px] w-2 bg-border" />
+                            <TimeButton
+                              label="Break End"
+                              value={formatTime(breakItem.endTime)}
+                              onPress={() =>
+                                openTimePicker(dayValue, 'end', breakItem.id)
+                              }
+                              compact
+                            />
+                            <Pressable
+                              onPress={() =>
+                                removeBreak(dayValue, breakItem.id)
+                              }
+                              className="ml-auto p-1"
+                            >
+                              <Icons.X size={16} className="text-destructive" />
+                            </Pressable>
+                          </View>
+                        ))}
+                      </View>
+                    )}
+
+                    {/* Add Break Button */}
+                    <Pressable
+                      onPress={() => addBreak(dayValue)}
+                      className="flex-row items-center gap-2 bg-muted/5 border border-dashed border-border/50 rounded-xl p-3"
+                    >
+                      <Icons.Plus size={16} className="text-muted-foreground" />
+                      <Text className="text-xs text-muted-foreground font-medium">
+                        Add Break
+                      </Text>
+                    </Pressable>
                   </View>
                 )}
               </View>
@@ -207,7 +325,9 @@ export const ManageScheduleSheet = forwardRef<
             size="lg"
             onPress={() => {
               onSave(schedule);
-              (ref as any)?.current?.dismiss();
+              if (ref && 'current' in ref) {
+                ref.current?.dismiss();
+              }
             }}
             className="rounded-2xl shadow-xl shadow-primary/30"
           >
@@ -220,7 +340,7 @@ export const ManageScheduleSheet = forwardRef<
 
       <TimePickerSheet
         ref={timePickerRef}
-        value={timeToDate(activeWorkingDayValue || '09:00:00')}
+        value={activeWorkingDayValue || '09:00'}
         onChange={handleTimeChange}
         title={
           editingState
@@ -236,24 +356,42 @@ const TimeButton = ({
   label,
   value,
   onPress,
+  compact,
 }: {
   label: string;
   value: string;
   onPress: () => void;
+  compact?: boolean;
 }) => (
   <Pressable
     onPress={onPress}
-    className="flex-1 bg-muted/20 active:bg-muted/40 rounded-2xl p-3 flex-row items-center justify-between border border-border/10"
+    className={cn(
+      'flex-1 bg-muted/20 active:bg-muted/40 rounded-xl flex-row items-center justify-between border border-border/10',
+      compact ? 'p-2' : 'p-3 rounded-2xl',
+    )}
   >
     <View>
-      <Text className="text-[10px] uppercase tracking-tighter text-muted-foreground font-bold mb-0.5">
+      <Text
+        className={cn(
+          'uppercase tracking-tighter text-muted-foreground font-bold mb-0.5',
+          compact ? 'text-[8px]' : 'text-[10px]',
+        )}
+      >
         {label}
       </Text>
-      <Text className="text-xl font-medium text-foreground tracking-tight">
+      <Text
+        className={cn(
+          'font-medium text-foreground tracking-tight',
+          compact ? 'text-sm' : 'text-xl',
+        )}
+      >
         {value}
       </Text>
     </View>
-    <Icons.ChevronDown size={14} className="text-muted-foreground/60" />
+    <Icons.ChevronDown
+      size={compact ? 12 : 14}
+      className="text-muted-foreground/60"
+    />
   </Pressable>
 );
 

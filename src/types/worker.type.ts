@@ -33,17 +33,29 @@ export interface IService {
 export interface IWorkingDay {
   id: string;
   scheduleId: string;
-  dayOfWeek: number;
-  startTime: string;
-  endTime: string;
+  dayOfWeek: number; // 0-6 (Monday=1, Sunday=0)
+  startTime: string; // HH:MM:SS
+  endTime: string; // HH:MM:SS
+  breaks?: IWorkingDayBreak[]; // Optional breaks
   createdAt: string;
 }
 
 export interface IWorkingDayBreak {
   id: string;
   workingDayId: string;
-  startTime: string;
-  endTime: string;
+  startTime: string; // HH:MM:SS
+  endTime: string; // HH:MM:SS
+  createdAt: string;
+}
+
+export interface ISpecialDayOff {
+  id: string;
+  scheduleId: string;
+  year: number;
+  month: number; // 1-12
+  day: number; // 1-31
+  startTime: string; // HH:MM:SS (for partial day off)
+  endTime: string; // HH:MM:SS
   createdAt: string;
 }
 

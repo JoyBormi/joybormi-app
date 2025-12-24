@@ -3,7 +3,9 @@ import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import type { IWorkingDay } from '@/types/worker.type';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
+import { LocaleConfig } from 'react-native-calendars';
 
 interface ScheduleDisplayProps {
   workingDays: IWorkingDay[];
@@ -18,6 +20,8 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
   workingDays,
   onEditSchedule,
 }) => {
+  const { i18n } = useTranslation();
+  const days = LocaleConfig.locales[i18n.language]?.dayNamesShort ?? [];
   return (
     <View className="px-6 mb-8">
       <View className="flex-row items-center justify-between mb-4">
@@ -33,33 +37,33 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
           Working {workingDays.length} days per week
         </Text>
         <View className="flex-row flex-wrap gap-2">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(
-            (day, index) => {
-              const isWorking = workingDays.some(
-                (wd) => wd.dayOfWeek === index,
-              );
-              return (
-                <View
-                  key={day}
+          {days.map((day: string, index: number) => {
+            const isWorking = workingDays.some((wd) => {
+              const uiIndex = wd.dayOfWeek % 7;
+              return uiIndex === index;
+            });
+
+            return (
+              <View
+                key={day}
+                className={cn(
+                  'w-12 h-12 rounded-xl items-center justify-center',
+                  isWorking
+                    ? 'bg-success/20 border border-success/30'
+                    : 'bg-muted/20',
+                )}
+              >
+                <Text
                   className={cn(
-                    'w-12 h-12 rounded-xl items-center justify-center',
-                    isWorking
-                      ? 'bg-success/20 border border-success/30'
-                      : 'bg-muted/20',
+                    'font-caption',
+                    isWorking ? 'text-success' : 'text-muted-foreground',
                   )}
                 >
-                  <Text
-                    className={cn(
-                      'font-caption',
-                      isWorking ? 'text-success' : 'text-muted-foreground',
-                    )}
-                  >
-                    {day}
-                  </Text>
-                </View>
-              );
-            },
-          )}
+                  {day}
+                </Text>
+              </View>
+            );
+          })}
         </View>
       </View>
     </View>

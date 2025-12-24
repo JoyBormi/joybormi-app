@@ -32,15 +32,15 @@ LocaleConfig.locales['en'] = {
     'Dec',
   ],
   dayNames: [
-    'Sunday',
     'Monday',
     'Tuesday',
     'Wednesday',
     'Thursday',
     'Friday',
     'Saturday',
+    'Sunday',
   ],
-  dayNamesShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  dayNamesShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
 };
 
 LocaleConfig.locales['ru'] = {
@@ -73,15 +73,15 @@ LocaleConfig.locales['ru'] = {
     'Дек',
   ],
   dayNames: [
-    'Воскресенье',
     'Понедельник',
     'Вторник',
     'Среда',
     'Четверг',
     'Пятница',
     'Суббота',
+    'Воскресенье',
   ],
-  dayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+  dayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
 };
 
 LocaleConfig.locales['uz'] = {
@@ -114,15 +114,15 @@ LocaleConfig.locales['uz'] = {
     'Dek',
   ],
   dayNames: [
-    'Yakshanba',
     'Dushanba',
     'Seshanba',
     'Chorshanba',
     'Payshanba',
     'Juma',
     'Shanba',
+    'Yakshanba',
   ],
-  dayNamesShort: ['Yak', 'Du', 'Se', 'Cho', 'Pay', 'Ju', 'Sha'],
+  dayNamesShort: ['Du', 'Se', 'Cho', 'Pay', 'Ju', 'Sha', 'Yak'],
 };
 
 export const setCalendarLocale = (lang: Locale) => {
