@@ -53,6 +53,7 @@ export default function App() {
             presentation: 'modal',
             animation: 'slide_from_bottom',
             statusBarAnimation: 'slide',
+            keyboardHandlingEnabled: true,
           }}
         />
         <Stack.Screen
@@ -61,6 +62,7 @@ export default function App() {
             presentation: 'modal',
             animation: 'slide_from_bottom',
             statusBarAnimation: 'slide',
+            keyboardHandlingEnabled: true,
           }}
         />
       </Stack>

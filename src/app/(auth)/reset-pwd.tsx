@@ -41,9 +41,7 @@ export default function ResetPwdScreen() {
               label={t('auth.password')}
               render={({ field }) => (
                 <PasswordInput
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
+                  {...field}
                   placeholder={t('auth.newPasswordPlaceholder')}
                   returnKeyType="next"
                 />
@@ -57,9 +55,7 @@ export default function ResetPwdScreen() {
               label={t('auth.confirmPassword')}
               render={({ field }) => (
                 <PasswordInput
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
+                  {...field}
                   placeholder={t('auth.confirmPasswordPlaceholder')}
                   returnKeyType="done"
                 />

@@ -41,7 +41,7 @@ export default function LoginScreen() {
   const onSubmit = (data: LoginFormType) => {
     setUser({
       id: 'test',
-      type: EUserType.USER,
+      type: EUserType.CREATOR,
       username: 'Test User',
       first_name: '',
       last_name: '',
@@ -54,7 +54,7 @@ export default function LoginScreen() {
       },
     });
     setIsLoggedIn(true);
-    setAppType(EUserType.USER);
+    setAppType(EUserType.CREATOR);
     router.replace('/');
   };
 
@@ -88,9 +88,7 @@ export default function LoginScreen() {
                 required
                 render={({ field }) => (
                   <Input
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
+                    {...field}
                     placeholder={t('auth.emailPlaceholder')}
                     keyboardType="email-address"
                     returnKeyType="next"
@@ -105,9 +103,7 @@ export default function LoginScreen() {
                 required
                 render={({ field }) => (
                   <PasswordInput
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
+                    {...field}
                     placeholder={t('auth.passwordPlaceholder')}
                     secureTextEntry
                     returnKeyType="done"
@@ -123,9 +119,7 @@ export default function LoginScreen() {
                 required
                 render={({ field }) => (
                   <PhoneInput
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
+                    {...field}
                     placeholder={t('auth.phonePlaceholder')}
                     returnKeyType="next"
                     defaultCountry="UZ"
@@ -140,9 +134,7 @@ export default function LoginScreen() {
                 required
                 render={({ field }) => (
                   <PasswordInput
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
+                    {...field}
                     placeholder={t('auth.passwordPlaceholder')}
                     secureTextEntry
                     returnKeyType="done"

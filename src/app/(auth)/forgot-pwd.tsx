@@ -144,9 +144,7 @@ export default function ForgotPwdScreen() {
                     <Input
                       placeholder={t('auth.codePlaceholder')}
                       returnKeyType="done"
-                      value={field.value}
-                      onChangeText={field.onChange}
-                      onBlur={field.onBlur}
+                      {...field}
                     />
                   )}
                   className="mt-6"
@@ -180,9 +178,7 @@ export default function ForgotPwdScreen() {
                     <Input
                       placeholder={t('auth.codePlaceholder')}
                       returnKeyType="done"
-                      value={field.value}
-                      onChangeText={field.onChange}
-                      onBlur={field.onBlur}
+                      {...field}
                     />
                   )}
                   className="mt-6"

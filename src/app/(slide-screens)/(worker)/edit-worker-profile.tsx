@@ -17,7 +17,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface EditProfileScreenProps {
   worker: IWorker;
-  onSave: (data: WorkerProfileFormData) => void;
 }
 
 /**
@@ -41,7 +40,6 @@ const EditProfileScreen = ({
     email: 'sarah.j@example.com',
     phone: '+1 (555) 123-4567',
   },
-  onSave,
 }: EditProfileScreenProps) => {
   const insets = useSafeAreaInsets();
   const blockedSheetRef = useRef<BlockedSheetRef>(null);
@@ -58,6 +56,8 @@ const EditProfileScreen = ({
       coverImage: worker.coverImage,
     },
   });
+
+  const isFormDirty = form.formState.isDirty;
 
   //   useEffect(() => {
   //     form.reset({
@@ -78,7 +78,7 @@ const EditProfileScreen = ({
 
   return (
     <KeyboardAvoid
-      className="main-area"
+      className="bg-background px-4"
       scrollConfig={{ showsVerticalScrollIndicator: false }}
     >
       <Header
@@ -86,7 +86,7 @@ const EditProfileScreen = ({
         subtitle="Update your profile information"
         className="mb-10"
         onGoBack={() => {
-          if (form.formState.isDirty) {
+          if (isFormDirty) {
             blockedSheetRef.current?.show();
           } else {
             router.back();
@@ -100,13 +100,7 @@ const EditProfileScreen = ({
         label="Full Name"
         required
         render={({ field }) => (
-          <Input
-            placeholder="Enter your full name"
-            {...field}
-            onChangeText={field.onChange}
-            value={field.value}
-            onBlur={field.onBlur}
-          />
+          <Input placeholder="Enter your full name" {...field} />
         )}
       />
 
@@ -117,13 +111,7 @@ const EditProfileScreen = ({
         required
         className="mt-4"
         render={({ field }) => (
-          <Input
-            placeholder="e.g. Senior Stylist"
-            {...field}
-            onChangeText={field.onChange}
-            value={field.value}
-            onBlur={field.onBlur}
-          />
+          <Input placeholder="e.g. Senior Stylist" {...field} />
         )}
       />
 
@@ -134,13 +122,7 @@ const EditProfileScreen = ({
         required
         className="mt-4 min-h-[120px]"
         render={({ field }) => (
-          <Textarea
-            placeholder="Tell us about yourself"
-            {...field}
-            onChangeText={field.onChange}
-            value={field.value}
-            onBlur={field.onBlur}
-          />
+          <Textarea placeholder="Tell us about yourself" {...field} />
         )}
       />
 
@@ -156,9 +138,6 @@ const EditProfileScreen = ({
             keyboardType="email-address"
             autoCapitalize="none"
             {...field}
-            onChangeText={field.onChange}
-            value={field.value}
-            onBlur={field.onBlur}
           />
         )}
       />
@@ -174,9 +153,6 @@ const EditProfileScreen = ({
             placeholder="+1 (555) 123-4567"
             keyboardType="phone-pad"
             {...field}
-            onChangeText={field.onChange}
-            value={field.value}
-            onBlur={field.onBlur}
           />
         )}
       />
@@ -185,6 +161,7 @@ const EditProfileScreen = ({
         onPress={handleSubmit}
         className="bg-primary mt-6 w-2/5 self-end"
         style={{ marginBottom: insets.bottom + 50 }}
+        disabled={!isFormDirty}
         size="action"
       >
         <Text className="font-subtitle text-primary-foreground">

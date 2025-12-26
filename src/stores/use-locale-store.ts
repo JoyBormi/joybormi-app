@@ -93,7 +93,7 @@ const LOCALE_DATA: Record<Locale, LocaleData> = {
       'Суббота',
       'Воскресенье',
     ],
-    dayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+    dayNamesShort: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
   },
   uz: {
     monthNames: [
@@ -180,7 +180,7 @@ interface LocaleStore {
 }
 
 export const useLocaleStore = create<LocaleStore>((set, get) => ({
-  currentLocale: 'en',
+  currentLocale: 'ru',
 
   getLocaleData: () => {
     const { currentLocale } = get();

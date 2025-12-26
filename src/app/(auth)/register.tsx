@@ -96,9 +96,7 @@ export default function RegisterScreen() {
                 label={t('auth.username')}
                 render={({ field }) => (
                   <Input
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
+                    {...field}
                     placeholder={t('auth.usernamePlaceholder')}
                     returnKeyType="next"
                   />
@@ -111,9 +109,7 @@ export default function RegisterScreen() {
                 label={t('auth.email')}
                 render={({ field }) => (
                   <Input
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
+                    {...field}
                     placeholder={t('auth.emailPlaceholder')}
                     returnKeyType="next"
                   />
@@ -126,9 +122,7 @@ export default function RegisterScreen() {
                 label={t('auth.password')}
                 render={({ field }) => (
                   <PasswordInput
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
+                    {...field}
                     placeholder={t('auth.passwordPlaceholder')}
                     returnKeyType="next"
                   />
@@ -141,9 +135,7 @@ export default function RegisterScreen() {
                 label={t('auth.confirmPassword')}
                 render={({ field }) => (
                   <Input
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
+                    {...field}
                     placeholder={t('auth.confirmPasswordPlaceholder')}
                     returnKeyType="done"
                   />
@@ -158,9 +150,7 @@ export default function RegisterScreen() {
                 label={t('auth.username')}
                 render={({ field }) => (
                   <Input
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
+                    {...field}
                     placeholder={t('auth.usernamePlaceholder')}
                     returnKeyType="next"
                   />
@@ -173,9 +163,7 @@ export default function RegisterScreen() {
                 label={t('auth.phone')}
                 render={({ field }) => (
                   <Input
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
+                    {...field}
                     placeholder={t('auth.phonePlaceholder')}
                     returnKeyType="next"
                   />
@@ -188,9 +176,7 @@ export default function RegisterScreen() {
                 label={t('auth.password')}
                 render={({ field }) => (
                   <PasswordInput
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
+                    {...field}
                     placeholder={t('auth.passwordPlaceholder')}
                     returnKeyType="next"
                   />
@@ -203,9 +189,7 @@ export default function RegisterScreen() {
                 label={t('auth.confirmPassword')}
                 render={({ field }) => (
                   <Input
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
+                    {...field}
                     placeholder={t('auth.confirmPasswordPlaceholder')}
                     returnKeyType="done"
                   />

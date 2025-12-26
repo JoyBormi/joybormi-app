@@ -107,7 +107,7 @@ export const BlockedSheet = forwardRef<BlockedSheetRef, BlockedSheetProps>(
               <Icons.Ban className="w-7 h-7 text-red-500" />
             </View>
 
-            <Text className="text-xl font-heading text-center mb-1">
+            <Text className="text-foreground font-heading text-center mb-1">
               {title}
             </Text>
 

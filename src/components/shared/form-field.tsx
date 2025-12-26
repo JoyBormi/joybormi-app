@@ -29,6 +29,23 @@ type FormFieldProps<T extends FieldValues> = {
     formState: any;
   }) => React.ReactNode;
 };
+/**
+ *
+ * @param inputProps
+ * @returns
+ */
+const adaptRNInput = <T extends FieldValues>(
+  inputProps: ControllerRenderProps<T, Path<T>>,
+) => {
+  return {
+    onChangeText: inputProps.onChange,
+    value: inputProps.value,
+    onBlur: inputProps.onBlur,
+    onChange: undefined as any,
+    name: inputProps.name,
+    ref: inputProps.ref,
+  };
+};
 
 /**
  * Cross-platform version of shadcn/ui FormField for React Native + Expo
@@ -68,7 +85,7 @@ const FormField = memo(<T extends FieldValues>(props: FormFieldProps<T>) => {
           {loading ? (
             <View className="py-2 h-10 w-full rounded-md border border-input bg-muted animate-pulse" />
           ) : (
-            render({ field, fieldState, formState })
+            render({ field: adaptRNInput(field), fieldState, formState })
           )}
 
           {message && (

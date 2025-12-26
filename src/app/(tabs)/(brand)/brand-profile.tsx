@@ -26,7 +26,6 @@ import {
   BrandServicesList,
   BrandTeamList,
 } from '@/views/brand-profile/components';
-import { EditBrandSheet } from '@/views/brand-profile/components/edit-brand.sheet';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
@@ -62,7 +61,6 @@ const BrandProfileScreen: React.FC = () => {
   );
 
   // Bottom sheet refs
-  const editBrandSheetRef = useRef<BottomSheetModal>(null);
   const uploadBannerSheetRef = useRef<BottomSheetModal>(null);
   const uploadProfileImageSheetRef = useRef<BottomSheetModal>(null);
   const upsertServiceSheetRef = useRef<BottomSheetModal>(null);
@@ -72,7 +70,7 @@ const BrandProfileScreen: React.FC = () => {
 
   // Handlers
   const handleEditBrand = () => {
-    editBrandSheetRef.current?.present();
+    router.push('/(slide-screens)/(brand)/edit-brand-profile');
   };
 
   const handleSaveBrand = () => {
@@ -259,12 +257,6 @@ const BrandProfileScreen: React.FC = () => {
       </ScrollView>
 
       {/* Bottom Sheets */}
-
-      <EditBrandSheet
-        ref={editBrandSheetRef}
-        brand={brand}
-        onSave={handleSaveBrand}
-      />
       <UploadBannerSheet
         ref={uploadBannerSheetRef}
         currentBanner={brand.coverImage}
