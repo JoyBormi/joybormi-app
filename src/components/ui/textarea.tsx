@@ -4,7 +4,9 @@ import { TextInput, type TextInputProps } from 'react-native';
 
 const Textarea = React.forwardRef<
   React.ComponentRef<typeof TextInput>,
-  TextInputProps
+  Omit<TextInputProps, 'value'> & {
+    value: string | string[] | undefined;
+  }
 >(
   (
     {
@@ -12,6 +14,7 @@ const Textarea = React.forwardRef<
       multiline = true,
       numberOfLines = 4,
       placeholderClassName,
+      value,
       ...props
     },
     ref,
@@ -28,6 +31,7 @@ const Textarea = React.forwardRef<
         multiline={multiline}
         numberOfLines={numberOfLines}
         textAlignVertical="top"
+        value={value ? value?.toString() : ''}
         {...props}
       />
     );

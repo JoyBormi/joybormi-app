@@ -10,8 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
-import { useLanguage } from '@/hooks/common';
-import { LocaleConfig } from 'react-native-calendars';
+import { useLocaleData } from '@/hooks/common/use-locale-data';
 
 /* dayjs setup */
 extend(localeData);
@@ -34,16 +33,10 @@ interface IStackHeaderProps {
 
 export const StackHeader: React.FC<IStackHeaderProps> = ({ options }) => {
   const { t } = useTranslation();
-  const { currentLanguage } = useLanguage();
+  const { dayNamesShort, getMonthName } = useLocaleData();
+  const enMonthNames = useLocaleData('en').monthNames;
 
   const calendarRef = options.calendarRef;
-
-  /* ---- LocaleConfig is the ONLY locale source ---- */
-  const calendarLocale =
-    LocaleConfig.locales[currentLanguage] ?? LocaleConfig.locales.en;
-
-  /* weekdays from LocaleConfig */
-  const weekdays = calendarLocale.dayNamesShort;
 
   // fallback in-case options is undefined
   const date = new Date();
@@ -55,13 +48,13 @@ export const StackHeader: React.FC<IStackHeaderProps> = ({ options }) => {
 
   const monthIndexFromTitle =
     typeof options.title === 'string'
-      ? LocaleConfig.locales.en.monthNames.indexOf(options.title)
+      ? enMonthNames.indexOf(options.title)
       : -1;
 
   const monthIndex =
     monthIndexFromTitle >= 0 ? monthIndexFromTitle : monthIndexFallback;
 
-  const title = calendarLocale.monthNames[monthIndex];
+  const title = getMonthName(monthIndex);
 
   return (
     <View className="bg-background border-b border-border">
@@ -90,7 +83,7 @@ export const StackHeader: React.FC<IStackHeaderProps> = ({ options }) => {
       </SafeAreaView>
 
       <View className="flex-row justify-between py-2 px-8 gap-1">
-        {weekdays.map((day: string) => (
+        {dayNamesShort.map((day: string) => (
           <Text
             key={day}
             className="text-caption capitalize text-muted-foreground"

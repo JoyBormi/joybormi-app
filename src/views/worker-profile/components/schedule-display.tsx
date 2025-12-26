@@ -1,11 +1,10 @@
 import { Text } from '@/components/ui';
+import { useLocaleData } from '@/hooks/common/use-locale-data';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import type { IWorkingDay } from '@/types/worker.type';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
-import { LocaleConfig } from 'react-native-calendars';
 
 interface ScheduleDisplayProps {
   workingDays: IWorkingDay[];
@@ -20,8 +19,7 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
   workingDays,
   onEditSchedule,
 }) => {
-  const { i18n } = useTranslation();
-  const days = LocaleConfig.locales[i18n.language]?.dayNamesShort ?? [];
+  const { dayNamesShort } = useLocaleData();
   return (
     <View className="px-6 mb-8">
       <View className="flex-row items-center justify-between mb-4">
@@ -37,7 +35,7 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
           Working {workingDays.length} days per week
         </Text>
         <View className="flex-row flex-wrap gap-2">
-          {days.map((day: string, index: number) => {
+          {dayNamesShort.map((day: string, index: number) => {
             const isWorking = workingDays.some((wd) => {
               const uiIndex = wd.dayOfWeek % 7;
               return uiIndex === index;

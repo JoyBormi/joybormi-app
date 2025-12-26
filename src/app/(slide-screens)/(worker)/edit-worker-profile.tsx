@@ -1,4 +1,4 @@
-import { BlockedSheet } from '@/components/shared/block-sheet';
+import { BlockedSheet, BlockedSheetRef } from '@/components/shared/block-sheet';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
@@ -9,7 +9,6 @@ import {
   WorkerProfileFormData,
   workerProfileSchema,
 } from '@/views/worker-profile/utils';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
 import React, { useRef } from 'react';
@@ -45,7 +44,7 @@ const EditProfileScreen = ({
   onSave,
 }: EditProfileScreenProps) => {
   const insets = useSafeAreaInsets();
-  const blockedSheetRef = useRef<BottomSheetModal>(null);
+  const blockedSheetRef = useRef<BlockedSheetRef>(null);
   const form = useForm<WorkerProfileFormData>({
     resolver: zodResolver(workerProfileSchema),
     defaultValues: {
@@ -74,9 +73,8 @@ const EditProfileScreen = ({
   //   }, [worker, form]);
 
   const handleSubmit = form.handleSubmit((data) => {
-    onSave(data);
+    console.log(`STRINGIFIED 👉:`, JSON.stringify(data, null, 2));
   });
-  console.log(form.formState.isDirty);
 
   return (
     <KeyboardAvoid
@@ -88,10 +86,10 @@ const EditProfileScreen = ({
         subtitle="Update your profile information"
         className="mb-10"
         onGoBack={() => {
-          blockedSheetRef.current?.present();
           if (form.formState.isDirty) {
+            blockedSheetRef.current?.show();
           } else {
-            // router.back();
+            router.back();
           }
         }}
       />
@@ -106,7 +104,7 @@ const EditProfileScreen = ({
             placeholder="Enter your full name"
             {...field}
             onChangeText={field.onChange}
-            value={field.value as string}
+            value={field.value}
             onBlur={field.onBlur}
           />
         )}
@@ -123,7 +121,7 @@ const EditProfileScreen = ({
             placeholder="e.g. Senior Stylist"
             {...field}
             onChangeText={field.onChange}
-            value={field.value as string}
+            value={field.value}
             onBlur={field.onBlur}
           />
         )}
@@ -140,7 +138,7 @@ const EditProfileScreen = ({
             placeholder="Tell us about yourself"
             {...field}
             onChangeText={field.onChange}
-            value={field.value as string}
+            value={field.value}
             onBlur={field.onBlur}
           />
         )}
@@ -159,7 +157,7 @@ const EditProfileScreen = ({
             autoCapitalize="none"
             {...field}
             onChangeText={field.onChange}
-            value={field.value as string}
+            value={field.value}
             onBlur={field.onBlur}
           />
         )}
@@ -177,7 +175,7 @@ const EditProfileScreen = ({
             keyboardType="phone-pad"
             {...field}
             onChangeText={field.onChange}
-            value={field.value as string}
+            value={field.value}
             onBlur={field.onBlur}
           />
         )}
@@ -196,7 +194,7 @@ const EditProfileScreen = ({
       <BlockedSheet
         ref={blockedSheetRef}
         onCancel={() => router.back()}
-        onConfirm={() => blockedSheetRef.current?.dismiss()}
+        onConfirm={() => blockedSheetRef.current?.hide()}
       />
     </KeyboardAvoid>
   );

@@ -1,130 +1,32 @@
-// calendar.locale.ts
+/**
+ * This file syncs react-native-calendars LocaleConfig with our Zustand locale store.
+ * The Zustand store (useLocaleStore) is the single source of truth for locale data.
+ * This file ensures react-native-calendars stays in sync.
+ */
 import { Locale } from 'i18n.config';
 import { LocaleConfig } from 'react-native-calendars';
 
-LocaleConfig.locales['en'] = {
-  monthNames: [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ],
-  monthNamesShort: [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ],
-  dayNames: [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ],
-  dayNamesShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-};
+import { useLocaleStore } from '@/stores/use-locale-store';
 
-LocaleConfig.locales['ru'] = {
-  monthNames: [
-    'Январь',
-    'Февраль',
-    'Март',
-    'Апрель',
-    'Май',
-    'Июнь',
-    'Июль',
-    'Август',
-    'Сентябрь',
-    'Октябрь',
-    'Ноябрь',
-    'Декабрь',
-  ],
-  monthNamesShort: [
-    'Янв',
-    'Фев',
-    'Мар',
-    'Апр',
-    'Май',
-    'Июн',
-    'Июл',
-    'Авг',
-    'Сен',
-    'Окт',
-    'Ноя',
-    'Дек',
-  ],
-  dayNames: [
-    'Понедельник',
-    'Вторник',
-    'Среда',
-    'Четверг',
-    'Пятница',
-    'Суббота',
-    'Воскресенье',
-  ],
-  dayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
-};
+/**
+ * Initialize LocaleConfig with data from the Zustand store
+ */
+function initializeLocaleConfig() {
+  const locales: Locale[] = ['en', 'ru', 'uz'];
 
-LocaleConfig.locales['uz'] = {
-  monthNames: [
-    'Yanvar',
-    'Fevral',
-    'Mart',
-    'Aprel',
-    'May',
-    'Iyun',
-    'Iyul',
-    'Avgust',
-    'Sentyabr',
-    'Oktyabr',
-    'Noyabr',
-    'Dekabr',
-  ],
-  monthNamesShort: [
-    'Yan',
-    'Fev',
-    'Mar',
-    'Apr',
-    'May',
-    'Iyn',
-    'Iyl',
-    'Avg',
-    'Sen',
-    'Okt',
-    'Noy',
-    'Dek',
-  ],
-  dayNames: [
-    'Dushanba',
-    'Seshanba',
-    'Chorshanba',
-    'Payshanba',
-    'Juma',
-    'Shanba',
-    'Yakshanba',
-  ],
-  dayNamesShort: ['Du', 'Se', 'Cho', 'Pay', 'Ju', 'Sha', 'Yak'],
-};
+  locales.forEach((locale) => {
+    const data = useLocaleStore.getState().getLocaleDataFor(locale);
+    LocaleConfig.locales[locale] = data;
+  });
+}
 
+// Initialize on module load
+initializeLocaleConfig();
+
+/**
+ * Set the calendar locale and sync with Zustand store
+ */
 export const setCalendarLocale = (lang: Locale) => {
   LocaleConfig.defaultLocale = lang;
+  useLocaleStore.getState().setLocale(lang);
 };

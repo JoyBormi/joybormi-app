@@ -1,12 +1,11 @@
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import Icons from '@/lib/icons';
-import {
-  BottomSheetModal,
-  useBottomSheetTimingConfigs,
-} from '@gorhom/bottom-sheet';
-import React, { forwardRef } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
+import { Animated, Easing, Modal, Pressable, Text, View } from 'react-native';
 import { Button } from '../ui';
 
 interface BlockedSheetProps {
@@ -14,71 +13,136 @@ interface BlockedSheetProps {
   subtitle?: string;
   confirmText?: string;
   cancelText?: string;
+  allowBackdropPress?: boolean;
   onConfirm?: () => void;
   onCancel?: () => void;
 }
 
-export const BlockedSheet = forwardRef<BottomSheetModal, BlockedSheetProps>(
-  (props, ref) => {
-    const {
+export interface BlockedSheetRef {
+  show: () => void;
+  hide: () => void;
+}
+
+export const BlockedSheet = forwardRef<BlockedSheetRef, BlockedSheetProps>(
+  (
+    {
       title = 'Hey, be careful!',
       subtitle = 'Your action may have negative consequences',
       confirmText = 'Got it',
       cancelText = 'Anyways, just close',
+      allowBackdropPress = false,
       onConfirm,
       onCancel,
-    } = props;
-    const insets = useSafeAreaInsets();
+    },
+    ref,
+  ) => {
+    const [visible, setVisible] = useState(false);
 
-    const animationConfigs = useBottomSheetTimingConfigs({
-      duration: 150,
-    });
+    const opacity = useRef(new Animated.Value(0)).current;
+    const scale = useRef(new Animated.Value(0.96)).current;
+
+    const show = () => {
+      setVisible(true);
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 120,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+        Animated.timing(scale, {
+          toValue: 1,
+          duration: 120,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+      ]).start();
+    };
+
+    const hide = () => {
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 100,
+          easing: Easing.in(Easing.cubic),
+          useNativeDriver: true,
+        }),
+        Animated.timing(scale, {
+          toValue: 0.96,
+          duration: 100,
+          easing: Easing.in(Easing.cubic),
+          useNativeDriver: true,
+        }),
+      ]).start(() => setVisible(false));
+    };
+
+    useImperativeHandle(ref, () => ({ show, hide }));
+
+    if (!visible) return null;
 
     return (
-      <CustomBottomSheet
-        ref={ref}
-        index={0}
-        detached
-        fullWindow
-        bottomInset={insets.bottom}
-        animationConfigs={animationConfigs}
-        style={{
-          paddingHorizontal: 12,
-        }}
-        bottomSheetViewConfig={{
-          className: 'rounded-b-3xl',
-        }}
+      <Modal
+        visible={visible}
+        transparent
+        animationType="none"
+        statusBarTranslucent
       >
-        <View className="items-center px-6 pb-8 gap-4">
-          <View className="w-14 h-14 rounded-full bg-red-500/15 items-center justify-center">
-            <Icons.Ban className="w-7 h-7 text-red-500" />
-          </View>
-
-          <Text className="text-xl font-heading text-center">{title}</Text>
-
-          <Text className="text-muted-foreground text-center">{subtitle}</Text>
-          <Button
-            onPress={() => {
-              if (ref) {
-                'current' in ref && ref.current?.dismiss();
-              }
+        <Pressable
+          onPress={() => {
+            if (allowBackdropPress) {
+              hide();
               onCancel?.();
+            }
+          }}
+          className="flex-1 bg-black/30 items-center justify-center px-6"
+        >
+          <Animated.View
+            style={{
+              opacity,
+              transform: [{ scale }],
             }}
-            variant="outline"
-            size="action"
-            className="mt-4 border-destructive px-4"
+            className="bg-card rounded-3xl w-full max-w-md items-center px-6 pt-8 pb-10"
           >
-            <Text className="font-subtitle text-destructive">{cancelText}</Text>
-          </Button>
+            <View className="w-14 h-14 rounded-full bg-red-500/15 items-center justify-center mb-3">
+              <Icons.Ban className="w-7 h-7 text-red-500" />
+            </View>
 
-          <TouchableOpacity
-            onPress={onConfirm}
-            className="bg-primary px-16 py-3 rounded-xl"
-          >
-            <Text className="font-subtitle">{confirmText}</Text>
-          </TouchableOpacity>
-        </View>
-      </CustomBottomSheet>
+            <Text className="text-xl font-heading text-center mb-1">
+              {title}
+            </Text>
+
+            <Text className="text-muted-foreground text-center mb-4">
+              {subtitle}
+            </Text>
+
+            <Button
+              onPress={() => {
+                hide();
+                onCancel?.();
+              }}
+              variant="outline"
+              size="action"
+              className="mt-2 border-destructive px-8"
+            >
+              <Text className="font-subtitle text-destructive">
+                {cancelText}
+              </Text>
+            </Button>
+
+            <Pressable
+              onPress={() => {
+                hide();
+                onConfirm?.();
+              }}
+              className="bg-primary w-full py-4 mt-3 rounded-xl items-center"
+            >
+              <Text className="font-subtitle text-primary-foreground">
+                {confirmText}
+              </Text>
+            </Pressable>
+          </Animated.View>
+        </Pressable>
+      </Modal>
     );
   },
 );

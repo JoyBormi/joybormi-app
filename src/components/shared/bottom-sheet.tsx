@@ -10,7 +10,6 @@ import { BottomSheetScrollViewProps } from '@gorhom/bottom-sheet/lib/typescript/
 import { BottomSheetViewProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetView/types';
 import React, { forwardRef } from 'react';
 import { View } from 'react-native';
-import { FullWindowOverlay } from 'react-native-screens';
 
 export type ScrollConfig = Partial<BottomSheetScrollViewProps> & {
   className?: string;
@@ -25,7 +24,6 @@ interface CustomBottomSheetProps extends Omit<
   'children'
 > {
   scrollEnabled?: boolean;
-  fullWindow?: boolean;
   backdropConfig?: {
     pressBehavior?: 'none' | 'close' | 'collapse' | number;
     appearsOnIndex?: number;
@@ -50,7 +48,6 @@ const CustomBottomSheet = forwardRef<BottomSheetModal, CustomBottomSheetProps>(
   (
     {
       scrollEnabled = false,
-      fullWindow = false,
       backdropConfig,
       scrollConfig,
       bottomSheetViewConfig,
@@ -92,18 +89,6 @@ const CustomBottomSheet = forwardRef<BottomSheetModal, CustomBottomSheetProps>(
           >
             {children}
           </BottomSheetScrollView>
-        ) : fullWindow ? (
-          <FullWindowOverlay>
-            <BottomSheetView
-              {...bottomSheetViewConfig}
-              className={cn(
-                'bg-card backdrop-blur-xl px-6 flex-1',
-                bottomSheetViewConfig?.className,
-              )}
-            >
-              {children}
-            </BottomSheetView>
-          </FullWindowOverlay>
         ) : (
           <BottomSheetView
             {...bottomSheetViewConfig}

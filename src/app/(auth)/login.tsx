@@ -41,7 +41,7 @@ export default function LoginScreen() {
   const onSubmit = (data: LoginFormType) => {
     setUser({
       id: 'test',
-      type: EUserType.WORKER,
+      type: EUserType.USER,
       username: 'Test User',
       first_name: '',
       last_name: '',
@@ -54,7 +54,7 @@ export default function LoginScreen() {
       },
     });
     setIsLoggedIn(true);
-    setAppType(EUserType.WORKER);
+    setAppType(EUserType.USER);
     router.replace('/');
   };
 

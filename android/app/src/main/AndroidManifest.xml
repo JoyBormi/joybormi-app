@@ -28,6 +28,7 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="joy-bormi-app"/>
+        <data android:scheme="exp+joybormi"/>
       </intent-filter>
     </activity>
   </application>

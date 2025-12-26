@@ -15,7 +15,7 @@ import React, {
   useState,
 } from 'react';
 import { View } from 'react-native';
-import { CalendarList, DateData, LocaleConfig } from 'react-native-calendars';
+import { CalendarList, DateData } from 'react-native-calendars';
 
 const initialDate = dayjs().format('YYYY-MM-DD');
 
@@ -86,10 +86,9 @@ const MonthScreen = () => {
     [router],
   );
 
-  // Locale updates
+  // Locale updates - setCalendarLocale now syncs with Zustand store
   useEffect(() => {
     setCalendarLocale(currentLanguage as Locale);
-    LocaleConfig.defaultLocale = currentLanguage;
     setRenderVersion((prev) => prev + 1);
   }, [currentLanguage]);
 

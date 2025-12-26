@@ -1,6 +1,7 @@
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { TimePickerSheet } from '@/components/shared/time-picker.sheet';
 import { Button, Text } from '@/components/ui';
+import { useLocaleData } from '@/hooks/common/use-locale-data';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import type { IWorkingDay } from '@/types/worker.type';
@@ -9,9 +10,7 @@ import {
   useBottomSheetTimingConfigs,
 } from '@gorhom/bottom-sheet';
 import React, { forwardRef, Fragment, useMemo, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
-import { LocaleConfig } from 'react-native-calendars';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface ManageScheduleSheetProps {
@@ -30,7 +29,7 @@ export const ManageScheduleSheet = forwardRef<
   ManageScheduleSheetProps
 >(({ workingDays, onSave }, ref) => {
   const insets = useSafeAreaInsets();
-  const { i18n } = useTranslation();
+  const { dayNames } = useLocaleData();
   const [schedule, setSchedule] = useState<IWorkingDay[]>(workingDays);
   const [editingState, setEditingState] = useState<{
     day: number;
@@ -191,8 +190,7 @@ export const ManageScheduleSheet = forwardRef<
           {DAY_ORDER.map((dayValue, localeIndex) => {
             const config = schedule.find((wd) => wd.dayOfWeek === dayValue);
             const isActive = !!config;
-            const label =
-              LocaleConfig.locales[i18n.language].dayNames[localeIndex];
+            const label = dayNames[localeIndex];
 
             return (
               <View
@@ -348,9 +346,7 @@ export const ManageScheduleSheet = forwardRef<
         title={
           editingState
             ? `${editingState.field === 'start' ? 'Open' : 'Close'} - ${
-                LocaleConfig.locales[i18n.language].dayNames[
-                  DAY_ORDER.indexOf(editingState.day)
-                ]
+                dayNames[DAY_ORDER.indexOf(editingState.day)]
               }`
             : ''
         }
