@@ -5,6 +5,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { PortalHost } from '@rn-primitives/portal';
 import React, { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { GlobalAlert } from './alert';
 import { I18nProvider } from './intl';
 import { QueryProvider } from './query';
 import { ThemeProvider } from './theme';
@@ -25,6 +26,7 @@ const RootProvider = ({ children }: { children: React.ReactNode }) => {
               {children}
               <PortalHost />
               <OfflineModal />
+              <GlobalAlert />
             </BottomSheetModalProvider>
           </GestureHandlerRootView>
         </QueryProvider>

@@ -19,14 +19,35 @@
       "forgotPassword": "Забыли пароль?",
       "back": "Назад",
       "submit": "Отправить",
-      "send": "Отправить"
+      "send": "Отправить",
+      "cancel": "Отмена",
+      "loading": "Загрузка...",
+      "ok": "Хорошо",
+      "backToLogin": "Вернуться к входу"
     },
     "tabs": {
       "home": "Главная",
       "profile": "Профиль",
       "calendar": "Календарь",
       "reservations": "Бронирования",
-      "settings": "Настройки"
+      "settings": "Настройки",
+      "store": "Магазин"
+    },
+    "labels": {
+      "search": "Поиск",
+      "searchFor": "Поиск {{type}}",
+      "searching": "Поиск...",
+      "today": "Сегодня"
+    },
+    "error": {
+      "title": "О, нет!",
+      "subtitle": "Что-то пошло не так",
+      "unauthorized": "Не авторизован",
+      "unauthorizedSubtitle": "Извините, у вас нет доступа к этой странице",
+      "sessionExpired": "Сеанс истёк",
+      "sessionExpiredSubtitle": "Ваш сеанс истёк. Пожалуйста, войдите снова, чтобы продолжить.",
+      "accountSuspended": "Аккаунт заблокирован",
+      "accountSuspendedSubtitle": "Ваш аккаунт был заблокирован. Пожалуйста, свяжитесь со службой поддержки для получения дополнительной информации."
     }
   },
   "major": {

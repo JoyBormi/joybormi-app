@@ -3,6 +3,7 @@ import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import {
   Button,
   Input,
+  OtpInput,
   PhoneInput,
   Tabs,
   TabsContent,
@@ -194,11 +195,7 @@ export default function ForgotPwdScreen() {
                   name="code"
                   label={t('auth.verificationCode')}
                   render={({ field }) => (
-                    <Input
-                      placeholder={t('auth.codePlaceholder')}
-                      returnKeyType="done"
-                      {...field}
-                    />
+                    <OtpInput length={6} {...field} disabled={isVerifying} />
                   )}
                   className="mt-6"
                   required
@@ -228,10 +225,11 @@ export default function ForgotPwdScreen() {
                   name="code"
                   label={t('auth.verificationCode')}
                   render={({ field }) => (
-                    <Input
-                      placeholder={t('auth.codePlaceholder')}
-                      returnKeyType="done"
-                      {...field}
+                    <OtpInput
+                      length={6}
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      disabled={isVerifying}
                     />
                   )}
                   className="mt-6"

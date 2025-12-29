@@ -7,41 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09373AB4813E42A48A360A7C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F12D59FD407C4B9B8526006D /* InfoPlist.strings */; };
+		094DDB03FCDD4877A9226B91 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6E9427E57F1A4239AE2AD9B4 /* InfoPlist.strings */; };
+		0C51C662022848E1AD7E20A7 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A19DF795E34642ABA93F5766 /* Montserrat-Bold.ttf */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		3E676D127A1F64A1A2AE8FB7 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9D48F771E2BBD1B9D603F966 /* PrivacyInfo.xcprivacy */; };
-		5108D0951AF94FAEA12F8D76 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 64770EBF7317418884FADD40 /* InfoPlist.strings */; };
-		6F470CC0C90C44228F445B91 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C0447F267384721BADC3E76 /* Montserrat-Bold.ttf */; };
-		7687CDF2FDF838396D2743AC /* libPods-JoyBormi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 18031E016F5D99B1AB749A77 /* libPods-JoyBormi.a */; };
-		7987B9D5E3E7233E9D437672 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C48B62D5C789BB09DD26C571 /* ExpoModulesProvider.swift */; };
-		970EF62819B045D28A468CD1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F40B043E8164409E808B4C6F /* InfoPlist.strings */; };
-		AEEA3A42A15540E691DEC0C4 /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 950F84A0FDB542ECB33C210B /* Montserrat-Medium.ttf */; };
+		6238B50B54314AB48C7C8F4D /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E25D741E643E49F88D901535 /* Montserrat-Regular.ttf */; };
+		884EEF7F55CB44A3AD29EB8D /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A3B687ED4274550904C333A /* Montserrat-Medium.ttf */; };
+		8ECDB2FA47E35F02FBB54915 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 947D52FED53D714661A0836B /* PrivacyInfo.xcprivacy */; };
+		97AAE11461F10A696E8A0B3E /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A5B11D7D5664CEA5C66779 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		E7E0838FE4CA4855AC565574 /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 17C1E7C6436942C8B753B2F1 /* Montserrat-Regular.ttf */; };
+		D5196CF7E22D2547D6DACE9A /* libPods-JoyBormi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01B3CECC45254E9EE76C4FA9 /* libPods-JoyBormi.a */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
-		FF10493CCB4E4AC494CA8BDD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 95D914DE7731480898095C87 /* InfoPlist.strings */; };
+		FE26A89604A1438BB619FE9C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A38AD115C7C7481AB9CACE6B /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		01B3CECC45254E9EE76C4FA9 /* libPods-JoyBormi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JoyBormi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* JoyBormi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JoyBormi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = JoyBormi/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = JoyBormi/Info.plist; sourceTree = "<group>"; };
-		17C1E7C6436942C8B753B2F1 /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Regular.ttf"; path = "../src/assets/fonts/Montserrat-Regular.ttf"; sourceTree = "<group>"; };
-		18031E016F5D99B1AB749A77 /* libPods-JoyBormi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JoyBormi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1C0447F267384721BADC3E76 /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Bold.ttf"; path = "../src/assets/fonts/Montserrat-Bold.ttf"; sourceTree = "<group>"; };
-		64770EBF7317418884FADD40 /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		72847A525FCB1C290134C8E9 /* Pods-JoyBormi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JoyBormi.debug.xcconfig"; path = "Target Support Files/Pods-JoyBormi/Pods-JoyBormi.debug.xcconfig"; sourceTree = "<group>"; };
-		950F84A0FDB542ECB33C210B /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Medium.ttf"; path = "../src/assets/fonts/Montserrat-Medium.ttf"; sourceTree = "<group>"; };
-		95D914DE7731480898095C87 /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = uz.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		9D48F771E2BBD1B9D603F966 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = JoyBormi/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		4A3B687ED4274550904C333A /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Medium.ttf"; path = "../src/assets/fonts/Montserrat-Medium.ttf"; sourceTree = "<group>"; };
+		6E9427E57F1A4239AE2AD9B4 /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		947D52FED53D714661A0836B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = JoyBormi/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A19DF795E34642ABA93F5766 /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Bold.ttf"; path = "../src/assets/fonts/Montserrat-Bold.ttf"; sourceTree = "<group>"; };
+		A38AD115C7C7481AB9CACE6B /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = uz.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = JoyBormi/SplashScreen.storyboard; sourceTree = "<group>"; };
-		B8D61E6F8E1719D2C2E102F4 /* Pods-JoyBormi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JoyBormi.release.xcconfig"; path = "Target Support Files/Pods-JoyBormi/Pods-JoyBormi.release.xcconfig"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C48B62D5C789BB09DD26C571 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-JoyBormi/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		C8FBAD08555CB67F6332B4A8 /* Pods-JoyBormi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JoyBormi.debug.xcconfig"; path = "Target Support Files/Pods-JoyBormi/Pods-JoyBormi.debug.xcconfig"; sourceTree = "<group>"; };
+		C9F5E65AE8F9DF840076BCC4 /* Pods-JoyBormi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JoyBormi.release.xcconfig"; path = "Target Support Files/Pods-JoyBormi/Pods-JoyBormi.release.xcconfig"; sourceTree = "<group>"; };
+		E25D741E643E49F88D901535 /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Regular.ttf"; path = "../src/assets/fonts/Montserrat-Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = JoyBormi/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* JoyBormi-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "JoyBormi-Bridging-Header.h"; path = "JoyBormi/JoyBormi-Bridging-Header.h"; sourceTree = "<group>"; };
-		F40B043E8164409E808B4C6F /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F12D59FD407C4B9B8526006D /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F9A5B11D7D5664CEA5C66779 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-JoyBormi/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,7 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7687CDF2FDF838396D2743AC /* libPods-JoyBormi.a in Frameworks */,
+				D5196CF7E22D2547D6DACE9A /* libPods-JoyBormi.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,15 +65,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				9D48F771E2BBD1B9D603F966 /* PrivacyInfo.xcprivacy */,
-			);
-			name = JoyBormi;
-			sourceTree = "<group>";
-		};
-		1BDBE6F5296E623063922184 /* JoyBormi */ = {
-			isa = PBXGroup;
-			children = (
-				C48B62D5C789BB09DD26C571 /* ExpoModulesProvider.swift */,
+				947D52FED53D714661A0836B /* PrivacyInfo.xcprivacy */,
 			);
 			name = JoyBormi;
 			sourceTree = "<group>";
@@ -82,46 +74,26 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				18031E016F5D99B1AB749A77 /* libPods-JoyBormi.a */,
+				01B3CECC45254E9EE76C4FA9 /* libPods-JoyBormi.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		2D796FBFCAD76B394417A571 /* Pods */ = {
+		387EAF7A9EBF46C5BAB7BA2E /* en.lproj */ = {
 			isa = PBXGroup;
 			children = (
-				72847A525FCB1C290134C8E9 /* Pods-JoyBormi.debug.xcconfig */,
-				B8D61E6F8E1719D2C2E102F4 /* Pods-JoyBormi.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		33D110AE32D844A19196CBB8 /* ru.lproj */ = {
-			isa = PBXGroup;
-			children = (
-				F40B043E8164409E808B4C6F /* InfoPlist.strings */,
-			);
-			name = ru.lproj;
-			path = "";
-			sourceTree = "<group>";
-		};
-		36FC84AEA71349D3B1BAFACF /* en.lproj */ = {
-			isa = PBXGroup;
-			children = (
-				64770EBF7317418884FADD40 /* InfoPlist.strings */,
+				6E9427E57F1A4239AE2AD9B4 /* InfoPlist.strings */,
 			);
 			name = en.lproj;
 			path = "";
 			sourceTree = "<group>";
 		};
-		744442E27D574033B63B6195 /* uz.lproj */ = {
+		3DCADEC508E383951C66BA18 /* JoyBormi */ = {
 			isa = PBXGroup;
 			children = (
-				95D914DE7731480898095C87 /* InfoPlist.strings */,
+				F9A5B11D7D5664CEA5C66779 /* ExpoModulesProvider.swift */,
 			);
-			name = uz.lproj;
-			path = "";
+			name = JoyBormi;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -138,9 +110,9 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				B99FEC56A91F4DDD88482811 /* Resources */,
-				2D796FBFCAD76B394417A571 /* Pods */,
-				925FA5E69E8F07FD5F90FA64 /* ExpoModulesProviders */,
+				D263E1B224164FFD91F1E1A9 /* Resources */,
+				BBCF060403344D0504C7D6CE /* Pods */,
+				E5C6ECA93D87F4A2AD5663D5 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -155,22 +127,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		925FA5E69E8F07FD5F90FA64 /* ExpoModulesProviders */ = {
+		B7F4C8E4AF234ADFB6717A2F /* ru.lproj */ = {
 			isa = PBXGroup;
 			children = (
-				1BDBE6F5296E623063922184 /* JoyBormi */,
+				F12D59FD407C4B9B8526006D /* InfoPlist.strings */,
 			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
-		B99FEC56A91F4DDD88482811 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				17C1E7C6436942C8B753B2F1 /* Montserrat-Regular.ttf */,
-				950F84A0FDB542ECB33C210B /* Montserrat-Medium.ttf */,
-				1C0447F267384721BADC3E76 /* Montserrat-Bold.ttf */,
-			);
-			name = Resources;
+			name = ru.lproj;
 			path = "";
 			sourceTree = "<group>";
 		};
@@ -178,12 +140,50 @@
 			isa = PBXGroup;
 			children = (
 				BB2F792C24A3F905000567C9 /* Expo.plist */,
-				36FC84AEA71349D3B1BAFACF /* en.lproj */,
-				33D110AE32D844A19196CBB8 /* ru.lproj */,
-				744442E27D574033B63B6195 /* uz.lproj */,
+				387EAF7A9EBF46C5BAB7BA2E /* en.lproj */,
+				B7F4C8E4AF234ADFB6717A2F /* ru.lproj */,
+				D3380FA471AC4CE885EE7B01 /* uz.lproj */,
 			);
 			name = Supporting;
 			path = JoyBormi/Supporting;
+			sourceTree = "<group>";
+		};
+		BBCF060403344D0504C7D6CE /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C8FBAD08555CB67F6332B4A8 /* Pods-JoyBormi.debug.xcconfig */,
+				C9F5E65AE8F9DF840076BCC4 /* Pods-JoyBormi.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		D263E1B224164FFD91F1E1A9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E25D741E643E49F88D901535 /* Montserrat-Regular.ttf */,
+				4A3B687ED4274550904C333A /* Montserrat-Medium.ttf */,
+				A19DF795E34642ABA93F5766 /* Montserrat-Bold.ttf */,
+			);
+			name = Resources;
+			path = "";
+			sourceTree = "<group>";
+		};
+		D3380FA471AC4CE885EE7B01 /* uz.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				A38AD115C7C7481AB9CACE6B /* InfoPlist.strings */,
+			);
+			name = uz.lproj;
+			path = "";
+			sourceTree = "<group>";
+		};
+		E5C6ECA93D87F4A2AD5663D5 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				3DCADEC508E383951C66BA18 /* JoyBormi */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -194,13 +194,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "JoyBormi" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				DE575AD6F6B029CCACC51EB5 /* [Expo] Configure project */,
+				F0E04AAF86F45784ECF5DBE6 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				31572716E5AE6DEEA5C678F0 /* [CP] Embed Pods Frameworks */,
+				F665C36377381F88109F01BD /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -250,13 +250,13 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				5108D0951AF94FAEA12F8D76 /* InfoPlist.strings in Resources */,
-				970EF62819B045D28A468CD1 /* InfoPlist.strings in Resources */,
-				FF10493CCB4E4AC494CA8BDD /* InfoPlist.strings in Resources */,
-				E7E0838FE4CA4855AC565574 /* Montserrat-Regular.ttf in Resources */,
-				AEEA3A42A15540E691DEC0C4 /* Montserrat-Medium.ttf in Resources */,
-				6F470CC0C90C44228F445B91 /* Montserrat-Bold.ttf in Resources */,
-				3E676D127A1F64A1A2AE8FB7 /* PrivacyInfo.xcprivacy in Resources */,
+				094DDB03FCDD4877A9226B91 /* InfoPlist.strings in Resources */,
+				09373AB4813E42A48A360A7C /* InfoPlist.strings in Resources */,
+				FE26A89604A1438BB619FE9C /* InfoPlist.strings in Resources */,
+				6238B50B54314AB48C7C8F4D /* Montserrat-Regular.ttf in Resources */,
+				884EEF7F55CB44A3AD29EB8D /* Montserrat-Medium.ttf in Resources */,
+				0C51C662022848E1AD7E20A7 /* Montserrat-Bold.ttf in Resources */,
+				8ECDB2FA47E35F02FBB54915 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,28 +302,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		31572716E5AE6DEEA5C678F0 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-JoyBormi/Pods-JoyBormi-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JoyBormi/Pods-JoyBormi-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -364,7 +342,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JoyBormi/Pods-JoyBormi-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DE575AD6F6B029CCACC51EB5 /* [Expo] Configure project */ = {
+		F0E04AAF86F45784ECF5DBE6 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -388,6 +366,28 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-JoyBormi/expo-configure-project.sh\"\n";
 		};
+		F665C36377381F88109F01BD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JoyBormi/Pods-JoyBormi-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JoyBormi/Pods-JoyBormi-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -396,7 +396,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				7987B9D5E3E7233E9D437672 /* ExpoModulesProvider.swift in Sources */,
+				97AAE11461F10A696E8A0B3E /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -405,7 +405,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 72847A525FCB1C290134C8E9 /* Pods-JoyBormi.debug.xcconfig */;
+			baseConfigurationReference = C8FBAD08555CB67F6332B4A8 /* Pods-JoyBormi.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -442,7 +442,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B8D61E6F8E1719D2C2E102F4 /* Pods-JoyBormi.release.xcconfig */;
+			baseConfigurationReference = C9F5E65AE8F9DF840076BCC4 /* Pods-JoyBormi.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

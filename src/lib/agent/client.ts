@@ -27,13 +27,16 @@ const createAgentClient = (): AxiosInstance => {
       // Add auth token if available
       const token = storage.getItem('auth_token');
       if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers.Authorization = String(token);
       }
-
+      // Add language if available
+      const lang = storage.getItem('language');
+      if (lang) {
+        config.headers['x-language'] = lang;
+      }
       return config;
     },
     (error) => {
-      console.error('[API Request Error]', error);
       return Promise.reject(error);
     },
   );

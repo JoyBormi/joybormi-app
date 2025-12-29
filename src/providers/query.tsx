@@ -1,7 +1,8 @@
 import { useError } from '@/hooks/common/use-error';
 import { ApiError } from '@/lib/agent';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useRef } from 'react';
+import { queryClient } from '@/lib/tanstack-query';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 /**
  * Determines if an error should be retried
@@ -36,75 +37,53 @@ const shouldRetry = (failureCount: number, error: unknown): boolean => {
 
 export const QueryProvider = ({ children }: { children: React.ReactNode }) => {
   const { errorHandler } = useError();
-  const queryClientRef = useRef<QueryClient | null>(null);
 
-  if (!queryClientRef.current) {
-    /**
-     * Global QueryClient configuration with centralized error and success handling
-     * All queries and mutations inherit these defaults
-     */
-    const queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          // Stale time: 5 minutes - data is considered fresh for this duration
-          staleTime: 5 * 60 * 1000,
+  // Configure query client with error handlers after hooks are initialized
+  useEffect(() => {
+    // Configure QueryCache to handle all query errors globally
+    // This catches errors from useMe and other queries (e.g., 401 session expired)
+    const queryCache = queryClient.getQueryCache();
+    const mutationCache = queryClient.getMutationCache();
 
-          // Cache time: 10 minutes - unused data stays in cache
-          gcTime: 10 * 60 * 1000,
+    // Set error handlers
+    queryCache.config.onError = errorHandler;
+    mutationCache.config.onError = errorHandler;
 
-          // Retry failed requests with smart retry logic
-          retry: shouldRetry,
-          retryDelay: (attemptIndex) =>
-            Math.min(1000 * 2 ** attemptIndex, 30000),
-
-          // Refetch on window focus (managed by focusManager)
-          refetchOnWindowFocus: true,
-
-          // Refetch on reconnect (managed by onlineManager)
-          refetchOnReconnect: true,
-
-          // Don't refetch on mount if data is fresh
-          refetchOnMount: false,
-
-          // Network mode: online-first, fallback to cache when offline
-          networkMode: 'online',
-        },
-        mutations: {
-          // Smart retry logic - don't retry client errors
-          retry: shouldRetry,
-          retryDelay: (attemptIndex) =>
-            Math.min(1000 * 2 ** attemptIndex, 10000),
-
-          // Network mode: online-only for mutations
-          networkMode: 'online',
-
-          // Global mutation error handler
-          onError: (error) => errorHandler(error),
-
-          // Global mutation success handler (optional, can be overridden)
-          onSuccess: (data: unknown) => {
-            if (__DEV__) {
-              // eslint-disable-next-line no-console
-              console.info(
-                `Mutation Success ✅:`,
-                JSON.stringify(
-                  {
-                    hasData: !!data,
-                  },
-                  null,
-                  2,
-                ),
-              );
-            }
-          },
+    // Configure default options with retry logic
+    queryClient.setDefaultOptions({
+      queries: {
+        retry: shouldRetry,
+        retryDelay: (attemptIndex: number) =>
+          Math.min(1000 * 2 ** attemptIndex, 30000),
+      },
+      mutations: {
+        retry: shouldRetry,
+        retryDelay: (attemptIndex: number) =>
+          Math.min(1000 * 2 ** attemptIndex, 10000),
+        onSuccess: (data: unknown) => {
+          if (__DEV__) {
+            // eslint-disable-next-line no-console
+            console.info(
+              `Mutation Success ✅:`,
+              JSON.stringify({ hasData: !!data }, null, 2),
+            );
+          }
         },
       },
     });
-    queryClientRef.current = queryClient;
-  }
+
+    // Cleanup: reset to no-op on unmount
+    return () => {
+      queryCache.config.onError = () => {
+        // no-op
+      };
+      mutationCache.config.onError = () => {
+        // no-op
+      };
+    };
+  }, [errorHandler]);
+
   return (
-    <QueryClientProvider client={queryClientRef.current}>
-      {children}
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };

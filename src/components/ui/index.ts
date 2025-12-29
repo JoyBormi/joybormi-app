@@ -3,6 +3,7 @@ export * from './button';
 export * from './input';
 export * from './label';
 export * from './number-input';
+export * from './otp-input';
 export * from './phone-number';
 export * from './pressable-bounce';
 export * from './pwd-input';

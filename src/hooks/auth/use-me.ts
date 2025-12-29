@@ -1,4 +1,3 @@
-import { ApiResponse } from '@/lib/agent';
 import { agent } from '@/lib/agent/client';
 import { queryKeys } from '@/lib/tanstack-query/query-keys';
 import { IUser } from '@/types/user.type';
@@ -7,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 /**
  * Backend /auth/me response format
  */
-interface MeResponse {
+export interface MeResponse {
   session: {
     id: string;
     userId: string;
@@ -26,9 +25,8 @@ interface UseMeOptions {
  * Backend returns { session, user }
  */
 export async function getMeApi(): Promise<MeResponse> {
-  const response = await agent.get<ApiResponse<MeResponse>>('/auth/me');
-  // Unwrap ApiResponse to get { session, user }
-  return response.data;
+  const response = await agent.get<MeResponse>('/auth/me');
+  return response;
 }
 
 /**
@@ -48,5 +46,15 @@ export function useMe({ enabled = true }: UseMeOptions = {}) {
     gcTime: 30 * 60 * 1000, // 30 minutes
     // Refetch on window focus to check session validity
     refetchOnWindowFocus: true,
+    // Don't retry on 401 errors (unauthorized)
+    retry: (failureCount, error: Error) => {
+      // Don't retry on 401 (unauthorized) or 403 (forbidden)
+      const apiError = error as { status?: number };
+      if (apiError?.status === 401 || apiError?.status === 403) {
+        return false;
+      }
+      // Retry up to 2 times for other errors
+      return failureCount < 2;
+    },
   });
 }

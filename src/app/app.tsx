@@ -6,6 +6,7 @@ import { ActivityIndicator, Platform } from 'react-native';
 import MontserratBold from '@/assets/fonts/Montserrat-Bold.ttf';
 import MontserratMedium from '@/assets/fonts/Montserrat-Medium.ttf';
 import MontserratRegular from '@/assets/fonts/Montserrat-Regular.ttf';
+import { useSessionMonitor } from '@/hooks/auth';
 import { useColorScheme } from '@/hooks/common/use-color-scheme';
 
 export const unstable_settings = {
@@ -24,6 +25,9 @@ export default function App() {
   });
 
   const { colorScheme } = useColorScheme();
+
+  // Session monitor to refresh session before it expires
+  useSessionMonitor();
 
   // Apply color scheme to document for web
   useEffect(() => {

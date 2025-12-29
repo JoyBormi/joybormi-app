@@ -90,7 +90,9 @@ export default function ResetPwdScreen() {
           disabled={isPending}
         >
           <Text>
-            {isPending ? t('common.loading') : t('auth.resetPwd.submit')}
+            {isPending
+              ? t('common.buttons.loading')
+              : t('auth.resetPwd.submit')}
           </Text>
         </Button>
       </View>

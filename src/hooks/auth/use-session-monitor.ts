@@ -1,3 +1,4 @@
+import { useUserStore } from '@/stores';
 import { useEffect, useRef } from 'react';
 import { useMe } from './use-me';
 import { useRefreshSession } from './use-refresh-session';
@@ -7,15 +8,20 @@ import { useRefreshSession } from './use-refresh-session';
  * Automatically refreshes the session before it expires
  *
  * @example
- * // In your root component or auth provider
  * useSessionMonitor();
  */
 export function useSessionMonitor() {
-  const { data: meData, isSuccess } = useMe();
+  const { isLoggedIn } = useUserStore();
   const { mutate: refreshSession } = useRefreshSession();
+  const { data: meData, isSuccess, isError } = useMe({ enabled: isLoggedIn });
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    // Only run session monitor for logged-in users
+    if (!isLoggedIn) {
+      return;
+    }
+
     // Clear any existing timer
     if (refreshTimerRef.current) {
       clearTimeout(refreshTimerRef.current);
@@ -23,7 +29,7 @@ export function useSessionMonitor() {
     }
 
     // Only set up refresh if we have session data
-    if (!isSuccess || !meData?.session) {
+    if (!isSuccess || isError || !meData?.session) {
       return;
     }
 
@@ -63,5 +69,5 @@ export function useSessionMonitor() {
         refreshTimerRef.current = null;
       }
     };
-  }, [isSuccess, meData, refreshSession]);
+  }, [isLoggedIn, isSuccess, isError, meData, refreshSession]);
 }

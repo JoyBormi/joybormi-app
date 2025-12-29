@@ -95,7 +95,7 @@ export default function LoginScreen() {
                 render={({ field }) => (
                   <Input
                     {...field}
-                    placeholder={t('auth.emailPlaceholder')}
+                    placeholder="main@joybormiz.uz"
                     keyboardType="email-address"
                     returnKeyType="next"
                     autoCapitalize="none"
@@ -127,7 +127,7 @@ export default function LoginScreen() {
                 render={({ field }) => (
                   <PhoneInput
                     {...field}
-                    placeholder={t('auth.phonePlaceholder')}
+                    placeholder="+998 97 123 45 67"
                     returnKeyType="next"
                     defaultCountry="UZ"
                   />
