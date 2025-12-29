@@ -1,3 +1,5 @@
+import { PASSWORD_REGEX, PHONE_REGEX } from '@/lib/utils';
+import { required } from '@/utils/zod-intl';
 import { z } from 'zod';
 
 export const loginSchema = z.object({
@@ -60,53 +62,61 @@ export const resetPwdSchema = z
 
 export type ResetPwdFormType = z.infer<typeof resetPwdSchema>;
 
-const usernameSchema = z
-  .string()
-  .min(3)
-  .max(20)
-  .refine((data) => data.match(/^[a-zA-Z0-9_]+$/), {
-    params: {
-      customCode: 'custom.required',
-    },
-  });
+const usernameSchema = required(
+  z.string().refine((v) => /^[a-zA-Z0-9_]+$/.test(v), {
+    params: { customCode: 'custom.username_invalid' },
+  }),
+);
 
-const phoneSchema = z
-  .string()
-  .refine((data) => data.match(/^\+?[1-9]\d{1,14}$/), {
-    params: {
-      customCode: 'custom.required',
-    },
-  });
+const emailSchema = z.email();
+const phoneSchema = required(
+  z.string().refine((v) => PHONE_REGEX.test(v), {
+    params: { customCode: 'custom.phone_invalid' },
+  }),
+);
 
-export const registerEmailSchema = z
+const passwordSchema = required(
+  z.string().refine((v) => PASSWORD_REGEX.test(v), {
+    params: { customCode: 'custom.password_invalid' },
+  }),
+);
+
+const confirmPasswordSchema = required(z.string());
+
+export const registerUserSchema = z
   .object({
+    method: z.enum(['email', 'phone']),
+    identifier: z.string(),
     username: usernameSchema,
-    email: z.email(),
-    password: z.string().min(6),
-    confirmPassword: z.string(),
+    password: passwordSchema,
+    confirmPassword: confirmPasswordSchema,
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
-
-    params: {
-      customCode: 'custom.required',
-    },
-  });
-
-export const registerPhoneSchema = z
-  .object({
-    username: usernameSchema,
-    phone: phoneSchema,
-    password: z.string().min(6),
-    confirmPassword: z.string(),
+    params: { customCode: 'custom.password_not_match' },
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ['confirmPassword'],
+  .superRefine((data, ctx) => {
+    if (data.method === 'email') {
+      const result = emailSchema.safeParse(data.identifier);
+      if (!result.success) {
+        ctx.addIssue({
+          path: ['identifier'],
+          code: 'custom',
+          params: { customCode: 'custom.email_invalid' },
+        });
+      }
+    }
 
-    params: {
-      customCode: 'custom.required',
-    },
+    if (data.method === 'phone') {
+      const result = phoneSchema.safeParse(data.identifier);
+      if (!result.success) {
+        ctx.addIssue({
+          path: ['identifier'],
+          code: 'custom',
+          params: { customCode: 'custom.phone_invalid' },
+        });
+      }
+    }
   });
 
-export type RegisterEmailFormType = z.infer<typeof registerEmailSchema>;
-export type RegisterPhoneFormType = z.infer<typeof registerPhoneSchema>;
+export type RegisterUserFormType = z.infer<typeof registerUserSchema>;

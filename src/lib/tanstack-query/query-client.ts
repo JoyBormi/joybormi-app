@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { Alert } from 'react-native';
+import { ApiError } from '../agent';
 
 /**
  * Global QueryClient configuration with centralized error and success handling
@@ -39,16 +40,19 @@ export const queryClient = new QueryClient({
       networkMode: 'online',
 
       // Global mutation error handler
-      onError: (error: any) => {
-        const errorMessage =
-          error?.response?.data?.message ||
-          error?.message ||
-          'An error occurred';
+      /**
+       *
+       * @param error  {"error": {"code": 90001, "message": "User already exists. Use another email.", "status": 400, "timestamp": "2025-12-29T03:42:53.629Z"}, "status": 400, "url": "/auth/signup"}
+       */
+      onError: (error) => {
+        if (error instanceof ApiError) {
+          console.error(`Mutation Error 👉:`, JSON.stringify(error, null, 2));
 
-        console.error(`Mutation Error 👉:`, JSON.stringify(error, null, 2));
-
-        // Show user-friendly error alert
-        Alert.alert('Error', errorMessage, [{ text: 'OK', style: 'default' }]);
+          // Show user-friendly error alert
+          Alert.alert('Error', error.message, [
+            { text: 'OK', style: 'default' },
+          ]);
+        }
       },
 
       // Global mutation success handler (optional, can be overridden)

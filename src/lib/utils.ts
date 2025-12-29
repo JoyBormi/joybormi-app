@@ -8,7 +8,8 @@ export function cn(...inputs: ClassValue[]) {
 
 export const PHONE_REGEX = /^\+?[1-9]\d{1,14}$/;
 export const USERNAME_REGEX = /^[a-zA-Z0-9_]+$/;
-export const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+export const PASSWORD_REGEX =
+  /^(?=.*[A-Za-z]|\d)[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{6,8}$/;
 
 export function validateUserTypeSwitch(
   from: EUserType,

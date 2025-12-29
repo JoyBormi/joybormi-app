@@ -6,8 +6,8 @@
 export const appConfig = {
   // API Configuration
   api: {
-    baseUrl: process.env.EXPO_PUBLIC_API_URL || 'https://api.joybormi.com',
-    timeout: 30000, // 30 seconds
+    baseURL: process.env.EXPO_PUBLIC_API_ENDPOINT || 'https://api.joybormi.com',
+    timeout: Number(process.env.EXPO_PUBLIC_API_TIMEOUT) || 30000, // 30 seconds
   },
 
   // App Information

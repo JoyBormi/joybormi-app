@@ -10,14 +10,13 @@ import {
   TabsTrigger,
   Text,
 } from '@/components/ui';
+import { useRegister } from '@/hooks/auth';
 import { Feedback } from '@/lib/haptics';
 
 import {
   AuthHeader,
-  RegisterEmailFormType,
-  RegisterPhoneFormType,
-  registerEmailSchema,
-  registerPhoneSchema,
+  RegisterUserFormType,
+  registerUserSchema,
 } from '@/views/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
@@ -32,43 +31,39 @@ export default function RegisterScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const [tab, setTab] = useState<RegisterMethod>('phone');
+  const { mutateAsync: register, isPending: isRegisterPending } = useRegister();
 
-  const {
-    control: emailControl,
-    handleSubmit: handleEmailSubmit,
-    formState: { isSubmitting: isEmailSubmitting },
-  } = useForm<RegisterEmailFormType>({
-    resolver: zodResolver(registerEmailSchema),
+  const form = useForm<RegisterUserFormType>({
+    resolver: zodResolver(registerUserSchema),
     defaultValues: {
+      method: 'phone',
       username: '',
-      email: '',
+      identifier: '',
       password: '',
       confirmPassword: '',
     },
   });
 
-  const {
-    control: phoneControl,
-    handleSubmit: handlePhoneSubmit,
-    formState: { isSubmitting: isPhoneSubmitting },
-  } = useForm<RegisterPhoneFormType>({
-    resolver: zodResolver(registerPhoneSchema),
-    defaultValues: {
-      username: '',
-      phone: '',
-      password: '',
-      confirmPassword: '',
-    },
-  });
-
-  const handleRegisterWithEmail = async (data: RegisterEmailFormType) => {
-    // TODO: Implement email registration logic
-    router.replace('/(auth)/success?type=register');
+  const handleRegister = async (data: RegisterUserFormType) => {
+    try {
+      const payload = {
+        method: data.method,
+        identifier: data.identifier,
+        password: data.password,
+        username: data.username,
+      };
+      const response = await register(payload);
+      console.log(response);
+      router.replace('/(auth)/success?type=register');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleRegisterWithPhone = async (data: RegisterPhoneFormType) => {
-    // TODO: Implement phone registration logic
-    router.replace('/(auth)/success?type=register');
+  const handleChangeTab = (tab: RegisterMethod) => {
+    form.reset();
+    setTab(tab);
+    form.setValue('method', tab as 'email' | 'phone');
   };
 
   return (
@@ -80,7 +75,11 @@ export default function RegisterScreen() {
             subtitle={t('auth.register.subtitle')}
           />
 
-          <Tabs value={tab} onValueChange={setTab} className="w-full mt-10">
+          <Tabs
+            value={tab}
+            onValueChange={handleChangeTab}
+            className="w-full mt-10"
+          >
             <TabsList>
               <TabsTrigger value="phone">
                 <Text>{t('auth.register.phoneTab')}</Text>
@@ -91,7 +90,7 @@ export default function RegisterScreen() {
             </TabsList>
             <TabsContent value="email" className="gap-y-6 mt-6">
               <FormField
-                control={emailControl}
+                control={form.control}
                 name="username"
                 label={t('auth.username')}
                 render={({ field }) => (
@@ -104,20 +103,22 @@ export default function RegisterScreen() {
                 required
               />
               <FormField
-                control={emailControl}
-                name="email"
+                control={form.control}
+                name="identifier"
                 label={t('auth.email')}
                 render={({ field }) => (
                   <Input
                     {...field}
                     placeholder={t('auth.emailPlaceholder')}
                     returnKeyType="next"
+                    autoCapitalize="none"
+                    keyboardType="email-address"
                   />
                 )}
                 required
               />
               <FormField
-                control={emailControl}
+                control={form.control}
                 name="password"
                 label={t('auth.password')}
                 render={({ field }) => (
@@ -130,11 +131,11 @@ export default function RegisterScreen() {
                 required
               />
               <FormField
-                control={emailControl}
+                control={form.control}
                 name="confirmPassword"
                 label={t('auth.confirmPassword')}
                 render={({ field }) => (
-                  <Input
+                  <PasswordInput
                     {...field}
                     placeholder={t('auth.confirmPasswordPlaceholder')}
                     returnKeyType="done"
@@ -145,7 +146,7 @@ export default function RegisterScreen() {
             </TabsContent>
             <TabsContent value="phone" className="gap-y-6 mt-6">
               <FormField
-                control={phoneControl}
+                control={form.control}
                 name="username"
                 label={t('auth.username')}
                 render={({ field }) => (
@@ -158,8 +159,8 @@ export default function RegisterScreen() {
                 required
               />
               <FormField
-                control={phoneControl}
-                name="phone"
+                control={form.control}
+                name="identifier"
                 label={t('auth.phone')}
                 render={({ field }) => (
                   <Input
@@ -171,7 +172,7 @@ export default function RegisterScreen() {
                 required
               />
               <FormField
-                control={phoneControl}
+                control={form.control}
                 name="password"
                 label={t('auth.password')}
                 render={({ field }) => (
@@ -184,7 +185,7 @@ export default function RegisterScreen() {
                 required
               />
               <FormField
-                control={phoneControl}
+                control={form.control}
                 name="confirmPassword"
                 label={t('auth.confirmPassword')}
                 render={({ field }) => (
@@ -202,12 +203,8 @@ export default function RegisterScreen() {
 
         <View className="mt-10">
           <Button
-            onPress={
-              tab === 'email'
-                ? handleEmailSubmit(handleRegisterWithEmail)
-                : handlePhoneSubmit(handleRegisterWithPhone)
-            }
-            disabled={tab === 'email' ? isEmailSubmitting : isPhoneSubmitting}
+            onPress={form.handleSubmit(handleRegister)}
+            disabled={isRegisterPending || form.formState.isSubmitting}
           >
             <Text>{t('auth.register.submit')}</Text>
           </Button>

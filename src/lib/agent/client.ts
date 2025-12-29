@@ -5,19 +5,16 @@
 
 import { appConfig } from '@/config/app.config';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
-import {
-  ApiError,
-  ApiErrorResponse,
-  ApiResponse,
-  PaginatedApiResponse,
-} from './types';
+import { storage } from '../mmkv';
+import { ApiError, ApiPaginatedApiResponse, ApiResponse } from './types';
 
 /**
  * Create axios instance with default configuration
  */
 const createAgentClient = (): AxiosInstance => {
+  console.log(`LOGGING 👀:`, appConfig.api.baseURL);
   const client = axios.create({
-    baseURL: appConfig.api.baseUrl,
+    baseURL: appConfig.api.baseURL,
     timeout: appConfig.api.timeout,
     headers: {
       'Content-Type': 'application/json',
@@ -29,10 +26,10 @@ const createAgentClient = (): AxiosInstance => {
     (config) => {
       // Add auth token if available
       // TODO: Get token from secure storage
-      // const token = SecureStore.getItem('auth_token');
-      // if (token) {
-      //   config.headers.Authorization = `Bearer ${token}`;
-      // }
+      const token = storage.getItem('auth_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
 
       console.warn('[API Request]', {
         method: config.method?.toUpperCase(),
@@ -50,38 +47,44 @@ const createAgentClient = (): AxiosInstance => {
 
   // Response interceptor - Transform responses and handle errors
   client.interceptors.response.use(
-    (response) => {
-      console.warn('[API Response]', {
-        status: response.status,
-        url: response.config.url,
-        data: response.data,
-      });
+    (res) => res,
+    (error: AxiosError<any>) => {
+      const data = error.response?.data;
 
-      return response;
-    },
-    (error: AxiosError<ApiErrorResponse>) => {
-      console.error('[API Response Error]', {
-        status: error.response?.status,
-        url: error.config?.url,
-        error: error.response?.data,
-      });
-
-      // Transform axios error to ApiError
-      if (error.response?.data) {
-        return Promise.reject(new ApiError(error.response.data));
+      // Case 1: { error: {...} }
+      if (data?.error) {
+        throw new ApiError({
+          error: data.error,
+          status: error.response?.status ?? data.error.status,
+          url: error.config?.url ?? '',
+        });
       }
 
-      // Network or timeout error
-      const networkError: ApiErrorResponse = {
-        success: false,
-        error: {
-          message: error.message || 'Network error occurred',
-          code: 'NETWORK_ERROR',
-          statusCode: 0,
-        },
-      };
+      // Case 2: { code, message, status, timestamp }
+      if (data?.code && data?.message) {
+        throw new ApiError({
+          error: {
+            code: data.code,
+            message: data.message,
+            status: data.status ?? error.response?.status ?? 0,
+            timestamp: data.timestamp ?? new Date().toISOString(),
+          },
+          status: error.response?.status ?? 0,
+          url: error.config?.url ?? '',
+        });
+      }
 
-      return Promise.reject(new ApiError(networkError));
+      // True network error
+      throw new ApiError({
+        error: {
+          code: 0,
+          message: 'Network error',
+          status: 0,
+          timestamp: new Date().toISOString(),
+        },
+        status: 0,
+        url: error.config?.url ?? '',
+      });
     },
   );
 
@@ -113,9 +116,9 @@ export const agent = {
   getPaginated: <T = unknown>(
     url: string,
     config?: AxiosRequestConfig,
-  ): Promise<PaginatedApiResponse<T>> => {
+  ): Promise<ApiPaginatedApiResponse<T>> => {
     return agentClass
-      .get<PaginatedApiResponse<T>>(url, config)
+      .get<ApiPaginatedApiResponse<T>>(url, config)
       .then((res) => res.data);
   },
 

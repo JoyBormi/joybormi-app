@@ -1,4 +1,4 @@
-import { uzLocale } from '@/utils/uz.zod';
+import { enLocale, ruLocale, uzLocale } from '@/utils/zod-intl';
 import { i18n, initI18n, type Locale } from 'i18n.config';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
@@ -7,25 +7,23 @@ import { z } from 'zod/v4';
 function applyZodLocale(lng: string) {
   const base = lng.split('-')[0] as Locale;
 
+  const localeSwitcher = (locale: Locale) => {
+    switch (locale) {
+      case 'uz':
+        return uzLocale();
+      case 'en':
+        return enLocale();
+      default:
+        return ruLocale();
+    }
+  };
+
   try {
-    if (base === 'uz') {
-      z.config({ localeError: uzLocale() });
-      return;
-    }
-
-    if (z.locales?.[base]) {
-      z.config(z.locales[base]());
-      return;
-    }
-
-    if (z.locales?.en) {
-      z.config(z.locales.en());
-      return;
-    }
-
-    z.config({ localeError: undefined });
+    z.config({
+      customError: localeSwitcher(base),
+    });
   } catch {
-    // never crash the app because of locale config
+    // never crash
   }
 }
 

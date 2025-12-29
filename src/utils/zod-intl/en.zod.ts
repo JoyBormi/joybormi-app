@@ -1,0 +1,24 @@
+import { z } from 'zod/v4';
+
+export const enLocale = (): z.ZodErrorMap => {
+  return (issue) => {
+    if (issue.code === 'custom') {
+      switch (issue.params?.customCode) {
+        case 'custom.required':
+          return 'This field is required';
+        case 'custom.phone_invalid':
+          return 'Invalid phone number format';
+        case 'custom.email_invalid':
+          return 'Invalid email address format';
+        case 'custom.password_not_match':
+          return 'Passwords do not match';
+        case 'custom.username_invalid':
+          return 'Invalid username format';
+        case 'custom.password_invalid':
+          return 'Invalid password format';
+      }
+    }
+
+    return undefined; // let locale / default handle others
+  };
+};

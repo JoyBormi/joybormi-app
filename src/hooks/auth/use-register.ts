@@ -1,4 +1,5 @@
 import { agent } from '@/lib/agent/client';
+import { storage } from '@/lib/mmkv';
 import { queryKeys } from '@/lib/tanstack-query/query-keys';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AuthResponse, RegisterCredentials } from './types';
@@ -9,11 +10,8 @@ import { AuthResponse, RegisterCredentials } from './types';
 export async function registerApi(
   credentials: RegisterCredentials,
 ): Promise<AuthResponse> {
-  const response = await agent.post<AuthResponse>(
-    '/auth/register',
-    credentials,
-  );
-  return response.data;
+  const { data } = await agent.post<AuthResponse>('/auth/signup', credentials);
+  return data;
 }
 
 /**
@@ -36,8 +34,9 @@ export function useRegister() {
     mutationFn: registerApi,
 
     onSuccess: (data) => {
+      console.log(`🚀 ~ data:`, data);
       // Store auth token (you should use secure storage like expo-secure-store)
-      // SecureStore.setItemAsync('auth_token', data.token);
+      storage.setItem('auth_token', data.token);
 
       // Update auth cache with user data
       // Query key pattern: [...queryKeys.auth.me, { role: data.user.role }]
@@ -50,11 +49,6 @@ export function useRegister() {
       queryClient.invalidateQueries();
 
       console.warn('[Register Success]', data.user);
-    },
-
-    onError: (error) => {
-      console.error('[Register Error]', error.message);
-      // Global error handler will show alert
     },
   });
 }

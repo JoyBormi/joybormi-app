@@ -81,18 +81,21 @@ export const uzLocale = (): z.ZodErrorMap => {
   return (issue) => {
     switch (issue.code) {
       case 'custom':
-        switch (issue.message) {
-          case 'required':
-            return {
-              message: `Bu maydon majburiy`,
-            };
+        switch (issue.params?.customCode) {
+          case 'custom.required':
+            return { message: 'Iltimos, bu maydonni to‘ldiring' };
 
-          case 'phone_invalid':
-            return {
-              message: `Telefon raqam noto‘g‘ri formatda`,
-            };
+          case 'custom.phone_invalid':
+            return { message: 'Telefon raqam noto‘g‘ri formatda' };
+
+          case 'custom.email_invalid':
+            return { message: 'Elektron pochta manzili noto‘g‘ri formatda' };
+
+          case 'custom.password_not_match':
+            return { message: 'Parollar mos emas' };
+
           default:
-            return;
+            return { message: 'Noto‘g‘ri qiymat' };
         }
       case 'invalid_type':
         return {

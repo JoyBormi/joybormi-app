@@ -3,19 +3,19 @@
  */
 
 export interface LoginCredentials {
-  email: string;
+  method: 'email' | 'phone';
+  identifier: string;
   password: string;
 }
 
 export interface RegisterCredentials {
-  email: string;
+  method: 'email' | 'phone';
+  identifier: string;
   password: string;
-  name: string;
-  phone?: string;
-  role: 'user' | 'worker' | 'creator';
+  username: string;
 }
 
-export interface AuthResponse {
+export type AuthResponse = {
   user: {
     id: string;
     email: string;
@@ -25,11 +25,4 @@ export interface AuthResponse {
     avatar?: string;
   };
   token: string;
-  refreshToken: string;
-}
-
-export interface AuthError {
-  message: string;
-  code?: string;
-  field?: string;
-}
+};

@@ -1,83 +1,49 @@
-/**
- * Global API response and error types
- */
-
-/**
- * Standard API success response wrapper
- */
-export interface ApiResponse<T = unknown> {
-  success: true;
+export interface ApiResponse<T> {
+  code: number;
+  message: string;
   data: T;
-  message?: string;
-  meta?: {
-    timestamp: string;
-    requestId?: string;
-  };
 }
 
-/**
- * Paginated API response
- */
-export interface PaginatedApiResponse<T = unknown> {
-  success: true;
-  data: T[];
+export interface ApiPaginatedApiResponse<T> {
+  code: number;
+  message: string;
+  data: T;
   pagination: {
-    page: number;
-    limit: number;
     total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
-  message?: string;
-  meta?: {
-    timestamp: string;
-    requestId?: string;
+    limit: number;
+    offset: number;
+    page: number;
+    pages: number;
   };
 }
 
-/**
- * Standard API error response
- */
 export interface ApiErrorResponse {
-  success: false;
   error: {
+    code: number;
     message: string;
-    code: string;
-    statusCode: number;
-    field?: string;
-    details?: Record<string, unknown>;
-  };
-  meta?: {
+    status: number;
     timestamp: string;
-    requestId?: string;
   };
-}
-
-/**
- * Pagination parameters for API requests
- */
-export interface PaginationParams {
-  page?: number;
-  limit?: number;
+  status: number;
+  url: string;
 }
 
 /**
  * API Error class for better error handling
  */
 export class ApiError extends Error {
-  public readonly statusCode: number;
-  public readonly code: string;
-  public readonly field?: string;
-  public readonly details?: Record<string, unknown>;
+  public readonly status: number;
+  public readonly code: number;
+  public readonly timestamp: string;
+  public readonly message: string;
 
   constructor(response: ApiErrorResponse) {
     super(response.error.message);
     this.name = 'ApiError';
-    this.statusCode = response.error.statusCode;
+    this.status = response.status;
     this.code = response.error.code;
-    this.field = response.error.field;
-    this.details = response.error.details;
+    this.timestamp = response.error.timestamp;
+    this.message = response.error.message;
 
     // Maintains proper stack trace for where our error was thrown (only available on V8)
     if (Error.captureStackTrace) {
