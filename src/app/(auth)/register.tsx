@@ -30,8 +30,9 @@ import { View } from 'react-native';
 type RegisterMethod = 'email' | 'phone' | string;
 
 export default function RegisterScreen() {
-  const { t } = useTranslation();
   const router = useRouter();
+  const { t } = useTranslation();
+
   const [tab, setTab] = useState<RegisterMethod>('phone');
   const { mutateAsync: register, isPending: isRegisterPending } = useRegister();
 
@@ -68,162 +69,168 @@ export default function RegisterScreen() {
   };
 
   return (
-    <KeyboardAvoid>
-      <View className="main-area">
-        <View className="pt-20">
-          <AuthHeader
-            title={t('auth.register.title')}
-            subtitle={t('auth.register.subtitle')}
-          />
+    <KeyboardAvoid className="main-area">
+      <View className="pt-20">
+        <AuthHeader
+          title={t('auth.register.title')}
+          subtitle={t('auth.register.subtitle')}
+        />
 
-          <Tabs
-            value={tab}
-            onValueChange={handleChangeTab}
-            className="w-full mt-10"
-          >
-            <TabsList>
-              <TabsTrigger value="phone">
-                <Text>{t('auth.register.phoneTab')}</Text>
-              </TabsTrigger>
-              <TabsTrigger value="email">
-                <Text>{t('auth.register.emailTab')}</Text>
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="phone" className="gap-y-6 mt-6">
-              <FormField
-                control={form.control}
-                name="username"
-                label={t('auth.username')}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    placeholder={t('auth.usernamePlaceholder')}
-                    returnKeyType="next"
-                  />
-                )}
-                required
-              />
-              <FormField
-                control={form.control}
-                name="identifier"
-                label={t('auth.phone')}
-                render={({ field }) => (
-                  <PhoneInput
-                    {...field}
-                    placeholder={t('auth.phonePlaceholder')}
-                    returnKeyType="next"
-                  />
-                )}
-                required
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                label={t('auth.password')}
-                render={({ field }) => (
-                  <PasswordInput
-                    {...field}
-                    placeholder={t('auth.passwordPlaceholder')}
-                    returnKeyType="next"
-                  />
-                )}
-                required
-              />
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                label={t('auth.confirmPassword')}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    placeholder={t('auth.confirmPasswordPlaceholder')}
-                    returnKeyType="done"
-                  />
-                )}
-                required
-              />
-            </TabsContent>
-            <TabsContent value="email" className="gap-y-6 mt-6">
-              <FormField
-                control={form.control}
-                name="username"
-                label={t('auth.username')}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    placeholder={t('auth.usernamePlaceholder')}
-                    returnKeyType="next"
-                  />
-                )}
-                required
-              />
-              <FormField
-                control={form.control}
-                name="identifier"
-                label={t('auth.email')}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    placeholder={t('auth.emailPlaceholder')}
-                    returnKeyType="next"
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                  />
-                )}
-                required
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                label={t('auth.password')}
-                render={({ field }) => (
-                  <PasswordInput
-                    {...field}
-                    placeholder={t('auth.passwordPlaceholder')}
-                    returnKeyType="next"
-                  />
-                )}
-                required
-              />
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                label={t('auth.confirmPassword')}
-                render={({ field }) => (
-                  <PasswordInput
-                    {...field}
-                    placeholder={t('auth.confirmPasswordPlaceholder')}
-                    returnKeyType="done"
-                  />
-                )}
-                required
-              />
-            </TabsContent>
-          </Tabs>
-        </View>
+        <Tabs
+          value={tab}
+          onValueChange={handleChangeTab}
+          className="w-full mt-10"
+        >
+          <TabsList>
+            <TabsTrigger value="phone">
+              <Text>{t('auth.register.phoneTab')}</Text>
+            </TabsTrigger>
+            <TabsTrigger value="email">
+              <Text>{t('auth.register.emailTab')}</Text>
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="phone" className="gap-y-6 mt-6">
+            <FormField
+              control={form.control}
+              name="username"
+              label={t('auth.username')}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder={t('auth.usernamePlaceholder')}
+                  returnKeyType="next"
+                  onSubmitEditing={() => form.setFocus('identifier')}
+                />
+              )}
+              required
+            />
+            <FormField
+              control={form.control}
+              name="identifier"
+              label={t('auth.phone')}
+              render={({ field }) => (
+                <PhoneInput
+                  {...field}
+                  placeholder={t('auth.phonePlaceholder')}
+                  returnKeyType="next"
+                  onSubmitEditing={() => form.setFocus('password')}
+                />
+              )}
+              required
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              label={t('auth.password')}
+              render={({ field }) => (
+                <PasswordInput
+                  {...field}
+                  placeholder={t('auth.passwordPlaceholder')}
+                  returnKeyType="next"
+                  onSubmitEditing={() => form.setFocus('confirmPassword')}
+                />
+              )}
+              required
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              label={t('auth.confirmPassword')}
+              render={({ field }) => (
+                <PasswordInput
+                  {...field}
+                  placeholder={t('auth.confirmPasswordPlaceholder')}
+                  returnKeyType="done"
+                  onSubmitEditing={form.handleSubmit(handleRegister)}
+                />
+              )}
+              required
+            />
+          </TabsContent>
+          <TabsContent value="email" className="gap-y-6 mt-6">
+            <FormField
+              control={form.control}
+              name="username"
+              label={t('auth.username')}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder={t('auth.usernamePlaceholder')}
+                  returnKeyType="next"
+                  onSubmitEditing={() => form.setFocus('identifier')}
+                />
+              )}
+              required
+            />
+            <FormField
+              control={form.control}
+              name="identifier"
+              label={t('auth.email')}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder={t('auth.emailPlaceholder')}
+                  returnKeyType="next"
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  onSubmitEditing={() => form.setFocus('password')}
+                />
+              )}
+              required
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              label={t('auth.password')}
+              render={({ field }) => (
+                <PasswordInput
+                  {...field}
+                  placeholder={t('auth.passwordPlaceholder')}
+                  returnKeyType="next"
+                  onSubmitEditing={() => form.setFocus('confirmPassword')}
+                />
+              )}
+              required
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              label={t('auth.confirmPassword')}
+              render={({ field }) => (
+                <PasswordInput
+                  {...field}
+                  placeholder={t('auth.confirmPasswordPlaceholder')}
+                  returnKeyType="done"
+                  onSubmitEditing={form.handleSubmit(handleRegister)}
+                />
+              )}
+              required
+            />
+          </TabsContent>
+        </Tabs>
+      </View>
 
-        <View className="mt-10">
+      <View className="mt-10">
+        <Button
+          onPress={form.handleSubmit(handleRegister)}
+          disabled={isRegisterPending || form.formState.isSubmitting}
+        >
+          <Text>{t('auth.register.submit')}</Text>
+        </Button>
+
+        <View className="flex-row justify-center items-center mt-4 pb-20">
+          <Text className="text-sm text-muted-foreground">
+            {t('auth.register.alreadyHaveAccount')}
+          </Text>
           <Button
-            onPress={form.handleSubmit(handleRegister)}
-            disabled={isRegisterPending || form.formState.isSubmitting}
+            variant="link"
+            onPress={() => {
+              Feedback.soft();
+              router.dismissTo('/(auth)/login');
+            }}
           >
-            <Text>{t('auth.register.submit')}</Text>
+            <Text className="text-primary">{t('auth.register.login')}</Text>
           </Button>
-
-          <View className="flex-row justify-center items-center mt-4 pb-20">
-            <Text className="text-sm text-muted-foreground">
-              {t('auth.register.alreadyHaveAccount')}
-            </Text>
-            <Button
-              variant="link"
-              onPress={() => {
-                Feedback.soft();
-                router.dismissTo('/(auth)/login');
-              }}
-            >
-              <Text className="text-primary">{t('auth.register.login')}</Text>
-            </Button>
-          </View>
         </View>
       </View>
     </KeyboardAvoid>

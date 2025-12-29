@@ -28,7 +28,7 @@ const PhoneInput = React.forwardRef<
       formatter.current.reset();
       let formatted = formatter.current.input(text);
       if (!isTherePlus) {
-        formatted = `+${formatted}`;
+        formatted = `+998 ${formatted}`;
       }
 
       if (onChangeText) {
@@ -47,7 +47,7 @@ const PhoneInput = React.forwardRef<
         )}
         value={value}
         onChangeText={handleTextChange}
-        placeholder="+1 (555) 000-0000"
+        placeholder="+(99) 123 45 67"
         {...props}
       />
     );

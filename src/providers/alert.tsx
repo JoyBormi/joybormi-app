@@ -88,7 +88,7 @@ export function GlobalAlert() {
                 onPress={handleConfirm}
                 className="flex-1 h-12 items-center justify-center rounded-2xl bg-purple-500/70 active:bg-purple-700 shadow-sm"
               >
-                <Text className="text-sm font-medium text-white">
+                <Text className="text-sm font-semibold text-white">
                   {options.confirmLabel || 'Confirm'}
                 </Text>
               </Pressable>

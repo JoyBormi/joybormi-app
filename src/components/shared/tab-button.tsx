@@ -1,6 +1,6 @@
 import { useColorScheme } from '@/hooks/common/use-color-scheme';
 import { Feedback } from '@/lib/haptics';
-import Icons, { Icon } from '@/lib/icons';
+import Icons, { TIcon } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { useScrollStore } from '@/stores/use-scroll-store';
 
@@ -15,7 +15,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 type Props = TabTriggerSlotProps & {
-  icon: Icon;
+  icon: TIcon;
 };
 
 export function TabButton({ isFocused, icon, children, ...props }: Props) {
@@ -67,7 +67,7 @@ export function TabButton({ isFocused, icon, children, ...props }: Props) {
     useScrollStore.setState({ isScrollingDown: false });
   }, []);
 
-  const Icon = Icons[icon];
+  const IconComponent = Icons[icon];
 
   return (
     <Animated.View
@@ -80,9 +80,10 @@ export function TabButton({ isFocused, icon, children, ...props }: Props) {
         {...props}
         className="flex-row items-center gap-2 px-3"
         onPressIn={handlePressIn}
+        hitSlop={12}
       >
         <Animated.View style={iconAnim}>
-          <Icon
+          <IconComponent
             className={cn(
               'w-3 h-3 shrink-0',
               isFocused

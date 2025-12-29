@@ -21,7 +21,8 @@ function KeyboardAvoid({
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 55 : 0}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+      enabled={true}
       {...props}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -29,7 +30,9 @@ function KeyboardAvoid({
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
+          showsVerticalScrollIndicator={false}
           className="bg-background"
+          decelerationRate="fast"
           {...scrollConfig}
         >
           {children}

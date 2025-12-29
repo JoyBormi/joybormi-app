@@ -27,7 +27,7 @@ export default function LoginScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const [tab, setTab] = useState('phone');
-  const { control, handleSubmit, setValue, clearErrors } =
+  const { control, handleSubmit, setValue, clearErrors, setFocus } =
     useForm<LoginFormType>({
       resolver: zodResolver(loginSchema),
       defaultValues: {
@@ -70,127 +70,127 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoid>
-      <View className="main-area">
-        <View className="pt-20">
-          <AuthHeader
-            title={t('auth.login.title')}
-            subtitle={t('auth.login.subtitle')}
-          />
-          <Tabs value={tab} onValueChange={handleTab} className="w-full mt-10">
-            <TabsList>
-              <TabsTrigger value="phone">
-                <Text>{t('auth.register.phoneTab')}</Text>
-              </TabsTrigger>
-              <TabsTrigger value="email">
-                <Text>{t('auth.register.emailTab')}</Text>
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="email" className="gap-y-6 mt-10">
-              <FormField
-                control={control}
-                name="email"
-                label={t('auth.email')}
-                required
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    placeholder="main@joybormiz.uz"
-                    keyboardType="email-address"
-                    returnKeyType="next"
-                    autoCapitalize="none"
-                  />
-                )}
-              />
+    <KeyboardAvoid className="main-area">
+      <View className="pt-20">
+        <AuthHeader
+          title={t('auth.login.title')}
+          subtitle={t('auth.login.subtitle')}
+        />
+        <Tabs value={tab} onValueChange={handleTab} className="w-full mt-10">
+          <TabsList>
+            <TabsTrigger value="phone">
+              <Text>{t('auth.register.phoneTab')}</Text>
+            </TabsTrigger>
+            <TabsTrigger value="email">
+              <Text>{t('auth.register.emailTab')}</Text>
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="email" className="gap-y-6 mt-10">
+            <FormField
+              control={control}
+              name="email"
+              label={t('auth.email')}
+              required
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="main@joybormiz.uz"
+                  keyboardType="email-address"
+                  returnKeyType="next"
+                  autoCapitalize="none"
+                  onSubmitEditing={() => setFocus('password')}
+                />
+              )}
+            />
 
-              <FormField
-                control={control}
-                name="password"
-                label={t('auth.password')}
-                required
-                render={({ field }) => (
-                  <PasswordInput
-                    {...field}
-                    placeholder={t('auth.passwordPlaceholder')}
-                    secureTextEntry
-                    returnKeyType="done"
-                  />
-                )}
-              />
-            </TabsContent>
-            <TabsContent value="phone" className="gap-y-6 mt-10">
-              <FormField
-                control={control}
-                name="phone"
-                label={t('auth.phone')}
-                required
-                render={({ field }) => (
-                  <PhoneInput
-                    {...field}
-                    placeholder="+998 97 123 45 67"
-                    returnKeyType="next"
-                    defaultCountry="UZ"
-                  />
-                )}
-              />
+            <FormField
+              control={control}
+              name="password"
+              label={t('auth.password')}
+              required
+              render={({ field }) => (
+                <PasswordInput
+                  {...field}
+                  placeholder={t('auth.passwordPlaceholder')}
+                  secureTextEntry
+                  returnKeyType="done"
+                  onSubmitEditing={handleSubmit(onSubmit)}
+                />
+              )}
+            />
+          </TabsContent>
+          <TabsContent value="phone" className="gap-y-6 mt-10">
+            <FormField
+              control={control}
+              name="phone"
+              label={t('auth.phone')}
+              required
+              render={({ field }) => (
+                <PhoneInput
+                  {...field}
+                  placeholder="+998 97 123 45 67"
+                  returnKeyType="next"
+                  defaultCountry="UZ"
+                  onSubmitEditing={() => setFocus('password')}
+                />
+              )}
+            />
 
-              <FormField
-                control={control}
-                name="password"
-                label={t('auth.password')}
-                required
-                render={({ field }) => (
-                  <PasswordInput
-                    {...field}
-                    placeholder={t('auth.passwordPlaceholder')}
-                    secureTextEntry
-                    returnKeyType="done"
-                  />
-                )}
-              />
-            </TabsContent>
-          </Tabs>
-        </View>
+            <FormField
+              control={control}
+              name="password"
+              label={t('auth.password')}
+              required
+              render={({ field }) => (
+                <PasswordInput
+                  {...field}
+                  placeholder={t('auth.passwordPlaceholder')}
+                  secureTextEntry
+                  returnKeyType="done"
+                  onSubmitEditing={handleSubmit(onSubmit)}
+                />
+              )}
+            />
+          </TabsContent>
+        </Tabs>
+      </View>
 
+      <Button
+        className="my-10"
+        onPress={handleSubmit(onSubmit)}
+        disabled={isPending}
+      >
+        <Text>
+          {isPending ? t('common.buttons.loading') : t('common.buttons.login')}
+        </Text>
+      </Button>
+
+      <View className="flex flex-row justify-center items-center">
+        <Text className="text-sm text-muted-foreground text-center">
+          {t('auth.login.noAccount')}
+        </Text>
         <Button
-          className="my-10"
-          onPress={handleSubmit(onSubmit)}
-          disabled={isPending}
+          variant="link"
+          onPress={() => {
+            Feedback.medium();
+            router.push('/(auth)/register');
+          }}
         >
-          <Text>
-            {isPending
-              ? t('common.buttons.loading')
-              : t('common.buttons.login')}
-          </Text>
+          <Text className="font-primary">{t('auth.login.register')}</Text>
         </Button>
+      </View>
 
-        <View className="flex flex-row justify-center items-center">
-          <Text className="text-sm text-muted-foreground text-center">
-            {t('auth.login.noAccount')}
+      <View className="justify-center items-center mt-4">
+        <TouchableOpacity
+          onPress={() => {
+            Feedback.soft();
+            router.push('/(auth)/forgot-pwd');
+          }}
+        >
+          <Text className="font-primary underline text-sm">
+            {t('auth.login.forgotPassword')}
           </Text>
-          <Button
-            variant="link"
-            onPress={() => {
-              Feedback.medium();
-              router.push('/(auth)/register');
-            }}
-          >
-            <Text className="font-primary">{t('auth.login.register')}</Text>
-          </Button>
-        </View>
-
-        <View className="justify-center items-center mt-4">
-          <TouchableOpacity
-            onPress={() => {
-              Feedback.soft();
-              router.push('/(auth)/forgot-pwd');
-            }}
-          >
-            <Text className="font-primary underline text-sm">
-              {t('auth.login.forgotPassword')}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
       </View>
     </KeyboardAvoid>
   );

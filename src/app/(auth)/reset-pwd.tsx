@@ -46,56 +46,53 @@ export default function ResetPwdScreen() {
   };
 
   return (
-    <KeyboardAvoid>
-      <View className="main-area">
-        <View className="pt-20">
-          <AuthHeader
-            title={t('auth.resetPwd.title')}
-            subtitle={t('auth.resetPwd.subtitle')}
+    <KeyboardAvoid className="main-area">
+      <View className="pt-20">
+        <AuthHeader
+          title={t('auth.resetPwd.title')}
+          subtitle={t('auth.resetPwd.subtitle')}
+        />
+        <View className="gap-y-6 mt-10">
+          <FormField
+            control={control}
+            name="password"
+            label={t('auth.password')}
+            render={({ field }) => (
+              <PasswordInput
+                {...field}
+                placeholder={t('auth.newPasswordPlaceholder')}
+                returnKeyType="next"
+              />
+            )}
+            required
           />
-          <View className="gap-y-6 mt-10">
-            <FormField
-              control={control}
-              name="password"
-              label={t('auth.password')}
-              render={({ field }) => (
-                <PasswordInput
-                  {...field}
-                  placeholder={t('auth.newPasswordPlaceholder')}
-                  returnKeyType="next"
-                />
-              )}
-              required
-            />
 
-            <FormField
-              control={control}
-              name="confirmPassword"
-              label={t('auth.confirmPassword')}
-              render={({ field }) => (
-                <PasswordInput
-                  {...field}
-                  placeholder={t('auth.confirmPasswordPlaceholder')}
-                  returnKeyType="done"
-                />
-              )}
-              required
-            />
-          </View>
+          <FormField
+            control={control}
+            name="confirmPassword"
+            label={t('auth.confirmPassword')}
+            render={({ field }) => (
+              <PasswordInput
+                {...field}
+                placeholder={t('auth.confirmPasswordPlaceholder')}
+                returnKeyType="done"
+                onSubmitEditing={handleSubmit(handleResetPassword)}
+              />
+            )}
+            required
+          />
         </View>
-
-        <Button
-          className="my-10"
-          onPress={handleSubmit(handleResetPassword)}
-          disabled={isPending}
-        >
-          <Text>
-            {isPending
-              ? t('common.buttons.loading')
-              : t('auth.resetPwd.submit')}
-          </Text>
-        </Button>
       </View>
+
+      <Button
+        className="my-10"
+        onPress={handleSubmit(handleResetPassword)}
+        disabled={isPending}
+      >
+        <Text>
+          {isPending ? t('common.buttons.loading') : t('auth.resetPwd.submit')}
+        </Text>
+      </Button>
     </KeyboardAvoid>
   );
 }
