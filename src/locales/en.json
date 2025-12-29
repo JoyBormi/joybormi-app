@@ -21,7 +21,9 @@
       "submit": "Submit",
       "send": "Send",
       "cancel": "Cancel",
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "ok": "Okay",
+      "backToLogin": "Back to Login"
     },
     "tabs": {
       "home": "Home",
@@ -36,6 +38,12 @@
       "searchFor": "Search for {{type}}",
       "searching": "Searching...",
       "today": "Today"
+    },
+    "error": {
+      "title": "Oh, no!",
+      "subtitle": "Something went wrong",
+      "unauthorized": "Unauthorized",
+      "unauthorizedSubtitle": "Sorry, you are not authorized to access this page"
     }
   },
   "major": {

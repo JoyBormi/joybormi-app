@@ -44,6 +44,7 @@ export class ApiError extends Error {
   public readonly code: number;
   public readonly timestamp: string;
   public readonly message: string;
+  public readonly url: string;
 
   constructor(response: ApiErrorResponse) {
     super(response.error.message);
@@ -52,6 +53,7 @@ export class ApiError extends Error {
     this.code = response.error.code;
     this.timestamp = response.error.timestamp;
     this.message = response.error.message;
+    this.url = response.url;
 
     // Maintains proper stack trace for where our error was thrown (only available on V8)
     if (Error.captureStackTrace) {
@@ -69,6 +71,7 @@ export class ApiError extends Error {
       code: this.code,
       status: this.status,
       timestamp: this.timestamp,
+      url: this.url,
     };
   }
 }

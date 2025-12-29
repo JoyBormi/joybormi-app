@@ -42,7 +42,7 @@ export function Header() {
           <>
             <View className="flex-row items-center flex-1">
               <Image
-                source={{ uri: user.avatar }}
+                source={{ uri: user.image ?? '' }}
                 className="w-12 h-12 rounded-full border border-border"
               />
               <View className="ml-4 flex-1">

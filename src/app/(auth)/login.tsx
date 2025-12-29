@@ -55,7 +55,6 @@ export default function LoginScreen() {
       identifier,
       password: data.password,
     };
-    console.log(`STRINGIFIED 👉:`, JSON.stringify(credentials, null, 2));
     login(credentials, {
       onSuccess: (data) => {
         // Navigate to home after successful login

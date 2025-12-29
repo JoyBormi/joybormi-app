@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Axios API client with interceptors for request/response handling
  * Handles authentication, error transformation, and logging
@@ -29,12 +30,6 @@ const createAgentClient = (): AxiosInstance => {
         config.headers.Authorization = `Bearer ${token}`;
       }
 
-      console.warn('[API Request]', {
-        method: config.method?.toUpperCase(),
-        url: config.url,
-        params: config.params,
-      });
-
       return config;
     },
     (error) => {
@@ -46,10 +41,6 @@ const createAgentClient = (): AxiosInstance => {
   // Response interceptor - Transform responses and handle errors
   client.interceptors.response.use(
     (res) => {
-      console.warn('[API Response]', {
-        status: res.status,
-        url: res.config.url,
-      });
       return res;
     },
     (error: AxiosError<any>) => {
@@ -76,13 +67,6 @@ const createAgentClient = (): AxiosInstance => {
             url: error.config?.url ?? '',
           });
 
-          console.error('[API Error]', {
-            url: error.config?.url,
-            status: response.status,
-            code: data.code,
-            message: data.message,
-          });
-
           throw apiError;
         }
 
@@ -96,12 +80,6 @@ const createAgentClient = (): AxiosInstance => {
           },
           status: response.status,
           url: error.config?.url ?? '',
-        });
-
-        console.error('[API Error - Fallback]', {
-          url: error.config?.url,
-          status: response.status,
-          message: fallbackError.message,
         });
 
         throw fallbackError;
@@ -119,15 +97,9 @@ const createAgentClient = (): AxiosInstance => {
         url: error.config?.url ?? '',
       });
 
-      console.error('[Network Error]', {
-        url: error.config?.url,
-        message: networkError.message,
-      });
-
       throw networkError;
     },
   );
-
   return client;
 };
 

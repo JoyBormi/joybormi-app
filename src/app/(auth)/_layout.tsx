@@ -1,11 +1,12 @@
+import { GlobalAlert } from '@/providers/alert';
 import { Stack } from 'expo-router';
+import { Fragment } from 'react';
 
 export default function AuthLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    />
+    <Fragment>
+      <Stack screenOptions={{ headerShown: false }} />
+      <GlobalAlert />
+    </Fragment>
   );
 }

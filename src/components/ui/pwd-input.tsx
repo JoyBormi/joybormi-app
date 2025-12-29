@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 
-import { Input } from '@/components/ui/input';
 import Icons from '@/lib/icons';
 import { TextInputProps, TouchableOpacity, View } from 'react-native';
+import { Input } from './input';
 
 export function PasswordInput(props: TextInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <View className="relative">
-      <Input secureTextEntry={!showPassword} {...props} />
+      <Input value={props.value} secureTextEntry={!showPassword} {...props} />
       <TouchableOpacity
         className="absolute right-3 top-0 bottom-0 justify-center"
         onPress={() => setShowPassword(!showPassword)}
