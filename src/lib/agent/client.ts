@@ -24,7 +24,6 @@ const createAgentClient = (): AxiosInstance => {
   client.interceptors.request.use(
     (config) => {
       // Add auth token if available
-      // TODO: Get token from secure storage
       const token = storage.getItem('auth_token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;

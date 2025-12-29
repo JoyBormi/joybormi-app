@@ -1,3 +1,4 @@
+import { OfflineModal } from '@/components/shared';
 import { setupFocusManager } from '@/lib/tanstack-query/focus-manager';
 import { setupOnlineManager } from '@/lib/tanstack-query/online-manager';
 import { queryClient } from '@/lib/tanstack-query/query-client';
@@ -24,6 +25,7 @@ const RootProvider = ({ children }: { children: React.ReactNode }) => {
             <BottomSheetModalProvider>
               {children}
               <PortalHost />
+              <OfflineModal />
             </BottomSheetModalProvider>
           </GestureHandlerRootView>
         </QueryClientProvider>

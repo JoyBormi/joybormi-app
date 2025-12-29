@@ -55,9 +55,5 @@ export function useForgotPassword() {
         expiresAt: data.expiresAt,
       });
     },
-
-    onError: (error) => {
-      console.error('[Forgot Password Error]', error);
-    },
   });
 }

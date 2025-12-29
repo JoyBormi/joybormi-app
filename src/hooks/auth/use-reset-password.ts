@@ -55,9 +55,5 @@ export function useResetPassword() {
         message: data.message,
       });
     },
-
-    onError: (error) => {
-      console.error('[Reset Password Error]', error);
-    },
   });
 }

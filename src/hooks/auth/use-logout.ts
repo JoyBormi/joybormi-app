@@ -8,14 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
  * Logout API call
  */
 export async function logoutApi(): Promise<void> {
-  const token = storage.getItem('auth_token');
-  if (token) {
-    await agent.post<void>(
-      '/auth/logout',
-      {},
-      { headers: { Authorization: `Bearer ${token}` } },
-    );
-  }
+  await agent.post<void>('/auth/logout');
 }
 
 /**

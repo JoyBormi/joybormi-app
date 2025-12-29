@@ -56,9 +56,5 @@ export function useVerifyResetCode() {
         message: data.message,
       });
     },
-
-    onError: (error) => {
-      console.error('[Verify Reset Code Error]', error);
-    },
   });
 }

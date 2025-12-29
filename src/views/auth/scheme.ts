@@ -63,7 +63,7 @@ export const resetPwdSchema = z
 export type ResetPwdFormType = z.infer<typeof resetPwdSchema>;
 
 const usernameSchema = required(
-  z.string().refine((v) => /^[a-zA-Z0-9_]+$/.test(v), {
+  z.string().refine((v) => /^[a-zA-Z0-9_ ]+$/.test(v), {
     params: { customCode: 'custom.username_invalid' },
   }),
 );

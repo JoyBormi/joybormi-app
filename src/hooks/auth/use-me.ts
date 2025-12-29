@@ -1,6 +1,5 @@
 import { ApiResponse } from '@/lib/agent';
 import { agent } from '@/lib/agent/client';
-import { storage } from '@/lib/mmkv';
 import { queryKeys } from '@/lib/tanstack-query/query-keys';
 import { IUser } from '@/types/user.type';
 import { useQuery } from '@tanstack/react-query';
@@ -27,12 +26,7 @@ interface UseMeOptions {
  * Backend returns { session, user }
  */
 export async function getMeApi(): Promise<MeResponse> {
-  const token = storage.getItem('auth_token');
-  const response = await agent.get<ApiResponse<MeResponse>>('/auth/me', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await agent.get<ApiResponse<MeResponse>>('/auth/me');
   // Unwrap ApiResponse to get { session, user }
   return response.data;
 }
