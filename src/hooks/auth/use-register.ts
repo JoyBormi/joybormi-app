@@ -1,18 +1,17 @@
+import { ApiResponse } from '@/lib/agent';
 import { agent } from '@/lib/agent/client';
 import { storage } from '@/lib/mmkv';
-import { queryKeys } from '@/lib/tanstack-query/query-keys';
+import { useUserStore } from '@/stores';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AuthResponse, RegisterCredentials } from './types';
 
 /**
  * Register API call
  */
-export async function registerApi(
+const registerApi = async (
   credentials: RegisterCredentials,
-): Promise<AuthResponse> {
-  const { data } = await agent.post<AuthResponse>('/auth/signup', credentials);
-  return data;
-}
+): Promise<ApiResponse<AuthResponse>> =>
+  await agent.post<ApiResponse<AuthResponse>>('/auth/signup', credentials);
 
 /**
  * Register mutation hook
@@ -29,26 +28,29 @@ export async function registerApi(
  */
 export function useRegister() {
   const queryClient = useQueryClient();
+  const { setAppType, setIsLoggedIn, setUser } = useUserStore();
 
-  return useMutation<AuthResponse, Error, RegisterCredentials>({
+  return useMutation<ApiResponse<AuthResponse>, Error, RegisterCredentials>({
     mutationFn: registerApi,
 
-    onSuccess: (data) => {
-      console.log(`🚀 ~ data:`, data);
-      // Store auth token (you should use secure storage like expo-secure-store)
+    onSuccess: (response) => {
+      // Unwrap the data from ApiResponse
+      const data = response.data;
+      console.warn('[Register Success]', {
+        userId: data.user.id,
+        username: data.user.username,
+      });
+
+      // Store auth token in MMKV storage
       storage.setItem('auth_token', data.token);
 
-      // Update auth cache with user data
-      // Query key pattern: [...queryKeys.auth.me, { role: data.user.role }]
-      queryClient.setQueryData(
-        [...queryKeys.auth.me, { role: data.user.role }],
-        data.user,
-      );
+      // Update user store
+      setUser(data.user);
+      setAppType(data.user.role);
+      setIsLoggedIn(true);
 
       // Invalidate all queries to refetch with new auth context
       queryClient.invalidateQueries();
-
-      console.warn('[Register Success]', data.user);
     },
   });
 }

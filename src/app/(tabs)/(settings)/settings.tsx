@@ -55,7 +55,7 @@ const SettingsScreen: React.FC = () => {
 
       return;
     }
-    // TODO: Navigate to profile screen
+    router.push('/(slide-screens)/(user)/edit-profile');
   }, [isLoggedIn]);
 
   const handleLogout = useCallback(() => {

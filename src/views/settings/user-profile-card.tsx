@@ -21,9 +21,9 @@ export const UserProfileCard: React.FC<Props> = ({ profile, onPress }) => {
     >
       {/* Avatar */}
       <View className="relative">
-        {profile?.avatar ? (
+        {profile?.image ? (
           <Image
-            source={{ uri: profile.avatar }}
+            source={{ uri: profile.image }}
             className="w-16 h-16 rounded-2xl"
           />
         ) : (

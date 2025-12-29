@@ -1,4 +1,4 @@
-import { PASSWORD_REGEX, PHONE_REGEX } from '@/lib/utils';
+import { normalizePhone, PASSWORD_REGEX, PHONE_REGEX } from '@/lib/utils';
 import { required } from '@/utils/zod-intl';
 import { z } from 'zod';
 
@@ -70,7 +70,7 @@ const usernameSchema = required(
 
 const emailSchema = z.email();
 const phoneSchema = required(
-  z.string().refine((v) => PHONE_REGEX.test(v), {
+  z.string().refine((v) => PHONE_REGEX.test(normalizePhone(v)), {
     params: { customCode: 'custom.phone_invalid' },
   }),
 );

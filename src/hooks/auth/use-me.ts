@@ -1,44 +1,58 @@
-import { agent } from '@/lib/agent';
+import { ApiResponse } from '@/lib/agent';
+import { agent } from '@/lib/agent/client';
+import { storage } from '@/lib/mmkv';
 import { queryKeys } from '@/lib/tanstack-query/query-keys';
+import { IUser } from '@/types/user.type';
 import { useQuery } from '@tanstack/react-query';
-import { AuthResponse } from './types';
 
-type UserRole = 'guest' | 'user' | 'worker' | 'creator';
+/**
+ * Backend /auth/me response format
+ */
+interface MeResponse {
+  session: {
+    id: string;
+    userId: string;
+    expiresAt: string;
+    token: string;
+  };
+  user: IUser;
+}
 
 interface UseMeOptions {
-  role: UserRole;
-  token: string | null;
   enabled?: boolean;
 }
 
 /**
  * Get current user API call
+ * Backend returns { session, user }
  */
-export async function getMeApi(token: string): Promise<AuthResponse['user']> {
-  const response = await agent.get<AuthResponse['user']>('/auth/me');
+export async function getMeApi(): Promise<MeResponse> {
+  const token = storage.getItem('auth_token');
+  const response = await agent.get<ApiResponse<MeResponse>>('/auth/me', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  // Unwrap ApiResponse to get { session, user }
   return response.data;
 }
 
 /**
  * Get current user query hook
- * Fetches authenticated user data
+ * Fetches authenticated user data and session info
  *
  * @example
- * const { data: user, isLoading, error } = useMe({
- *   role: 'user',
- *   token: authToken
- * });
+ * const { data, isLoading, error } = useMe({ enabled: true });
+ * data = { session: {...}, user: {...} }
  */
-export function useMe({ role, token, enabled = true }: UseMeOptions) {
-  return useQuery<AuthResponse['user'], Error>({
-    // Query key pattern: [...queryKeys.auth.me, { role }]
-    queryKey: [...queryKeys.auth.me, { role }],
-    queryFn: () => {
-      if (!token) throw new Error('No auth token');
-      return getMeApi(token);
-    },
-    enabled: enabled && !!token,
+export function useMe({ enabled = true }: UseMeOptions = {}) {
+  return useQuery<MeResponse, Error>({
+    queryKey: queryKeys.auth.me,
+    queryFn: getMeApi,
+    enabled,
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 30 * 60 * 1000, // 30 minutes
+    // Refetch on window focus to check session validity
+    refetchOnWindowFocus: true,
   });
 }

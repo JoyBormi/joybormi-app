@@ -1,19 +1,26 @@
+/**
+ * Standard API success response format
+ * Matches backend ApiResponse interface
+ */
 export interface ApiResponse<T> {
-  code: number;
-  message: string;
+  message?: string; // Optional success message (e.g., "Success")
   data: T;
 }
 
+/**
+ * Paginated API response format
+ * Matches backend PaginatedResponse interface
+ */
 export interface ApiPaginatedApiResponse<T> {
-  code: number;
-  message: string;
-  data: T;
+  message?: string; // Optional success message
+  data: T[];
   pagination: {
-    total: number;
-    limit: number;
-    offset: number;
     page: number;
-    pages: number;
+    pageSize: number;
+    totalItems: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
   };
 }
 
@@ -30,6 +37,7 @@ export interface ApiErrorResponse {
 
 /**
  * API Error class for better error handling
+ * Matches backend ErrorResponse format
  */
 export class ApiError extends Error {
   public readonly status: number;
@@ -49,5 +57,18 @@ export class ApiError extends Error {
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, ApiError);
     }
+  }
+
+  /**
+   * Custom JSON serialization for proper logging
+   */
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      code: this.code,
+      status: this.status,
+      timestamp: this.timestamp,
+    };
   }
 }

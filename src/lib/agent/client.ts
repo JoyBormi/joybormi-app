@@ -6,13 +6,12 @@
 import { appConfig } from '@/config/app.config';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import { storage } from '../mmkv';
-import { ApiError, ApiPaginatedApiResponse, ApiResponse } from './types';
+import { ApiError, ApiPaginatedApiResponse } from './types';
 
 /**
  * Create axios instance with default configuration
  */
 const createAgentClient = (): AxiosInstance => {
-  console.log(`LOGGING 👀:`, appConfig.api.baseURL);
   const client = axios.create({
     baseURL: appConfig.api.baseURL,
     timeout: appConfig.api.timeout,
@@ -47,44 +46,86 @@ const createAgentClient = (): AxiosInstance => {
 
   // Response interceptor - Transform responses and handle errors
   client.interceptors.response.use(
-    (res) => res,
+    (res) => {
+      console.warn('[API Response]', {
+        status: res.status,
+        url: res.config.url,
+      });
+      return res;
+    },
     (error: AxiosError<any>) => {
-      const data = error.response?.data;
-
-      // Case 1: { error: {...} }
-      if (data?.error) {
-        throw new ApiError({
-          error: data.error,
-          status: error.response?.status ?? data.error.status,
-          url: error.config?.url ?? '',
-        });
+      // If someone already threw ApiError, just pass it through
+      if (error instanceof ApiError) {
+        throw error;
       }
 
-      // Case 2: { code, message, status, timestamp }
-      if (data?.code && data?.message) {
-        throw new ApiError({
-          error: {
+      const response = error.response;
+      const data = response?.data;
+
+      // Server responded with something
+      if (response) {
+        // Backend sends flat error format: { code, message, status, timestamp }
+        if (data?.code && data?.message) {
+          const apiError = new ApiError({
+            error: {
+              code: data.code,
+              message: data.message,
+              status: data.status ?? response.status,
+              timestamp: data.timestamp ?? new Date().toISOString(),
+            },
+            status: response.status,
+            url: error.config?.url ?? '',
+          });
+
+          console.error('[API Error]', {
+            url: error.config?.url,
+            status: response.status,
             code: data.code,
             message: data.message,
-            status: data.status ?? error.response?.status ?? 0,
-            timestamp: data.timestamp ?? new Date().toISOString(),
+          });
+
+          throw apiError;
+        }
+
+        // Fallback: use HTTP status text
+        const fallbackError = new ApiError({
+          error: {
+            code: response.status,
+            message: response.statusText || 'Request failed',
+            status: response.status,
+            timestamp: new Date().toISOString(),
           },
-          status: error.response?.status ?? 0,
+          status: response.status,
           url: error.config?.url ?? '',
         });
+
+        console.error('[API Error - Fallback]', {
+          url: error.config?.url,
+          status: response.status,
+          message: fallbackError.message,
+        });
+
+        throw fallbackError;
       }
 
-      // True network error
-      throw new ApiError({
+      // No response at all => true network error
+      const networkError = new ApiError({
         error: {
           code: 0,
-          message: 'Network error',
+          message: 'Network error - Please check your connection',
           status: 0,
           timestamp: new Date().toISOString(),
         },
         status: 0,
         url: error.config?.url ?? '',
       });
+
+      console.error('[Network Error]', {
+        url: error.config?.url,
+        message: networkError.message,
+      });
+
+      throw networkError;
     },
   );
 
@@ -103,12 +144,8 @@ export const agent = {
   /**
    * GET request
    */
-  get: <T = unknown>(
-    url: string,
-    config?: AxiosRequestConfig,
-  ): Promise<ApiResponse<T>> => {
-    return agentClass.get<ApiResponse<T>>(url, config).then((res) => res.data);
-  },
+  get: <T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> =>
+    agentClass.get<T>(url, config).then((res) => res.data),
 
   /**
    * GET request with pagination
@@ -116,11 +153,10 @@ export const agent = {
   getPaginated: <T = unknown>(
     url: string,
     config?: AxiosRequestConfig,
-  ): Promise<ApiPaginatedApiResponse<T>> => {
-    return agentClass
+  ): Promise<ApiPaginatedApiResponse<T>> =>
+    agentClass
       .get<ApiPaginatedApiResponse<T>>(url, config)
-      .then((res) => res.data);
-  },
+      .then((res) => res.data),
 
   /**
    * POST request
@@ -129,11 +165,8 @@ export const agent = {
     url: string,
     data?: D,
     config?: AxiosRequestConfig,
-  ): Promise<ApiResponse<T>> => {
-    return agentClass
-      .post<ApiResponse<T>>(url, data, config)
-      .then((res) => res.data);
-  },
+  ): Promise<T> =>
+    agentClass.post<T>(url, data, config).then((res) => res.data),
 
   /**
    * PUT request
@@ -142,11 +175,7 @@ export const agent = {
     url: string,
     data?: D,
     config?: AxiosRequestConfig,
-  ): Promise<ApiResponse<T>> => {
-    return agentClass
-      .put<ApiResponse<T>>(url, data, config)
-      .then((res) => res.data);
-  },
+  ): Promise<T> => agentClass.put<T>(url, data, config).then((res) => res.data),
 
   /**
    * PATCH request
@@ -155,21 +184,12 @@ export const agent = {
     url: string,
     data?: D,
     config?: AxiosRequestConfig,
-  ): Promise<ApiResponse<T>> => {
-    return agentClass
-      .patch<ApiResponse<T>>(url, data, config)
-      .then((res) => res.data);
-  },
+  ): Promise<T> =>
+    agentClass.patch<T>(url, data, config).then((res) => res.data),
 
   /**
    * DELETE request
    */
-  delete: <T = unknown>(
-    url: string,
-    config?: AxiosRequestConfig,
-  ): Promise<ApiResponse<T>> => {
-    return agentClass
-      .delete<ApiResponse<T>>(url, config)
-      .then((res) => res.data);
-  },
+  delete: <T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> =>
+    agentClass.delete<T>(url, config).then((res) => res.data),
 };

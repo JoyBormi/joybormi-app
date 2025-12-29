@@ -59,11 +59,11 @@ export default function SuccessScreen() {
         <Button
           onPress={() => {
             Feedback.soft();
-            router.dismissTo('/(auth)/login');
+            router.dismissTo('/(tabs)');
           }}
           className="w-full"
         >
-          <Text>{t('auth.success.backToLogin')}</Text>
+          <Text>{t('auth.success.enterApp')}</Text>
         </Button>
       </MotiView>
     </View>

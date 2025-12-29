@@ -10,6 +10,7 @@ import {
   TabsTrigger,
   Text,
 } from '@/components/ui';
+import { useForgotPassword, useVerifyResetCode } from '@/hooks/auth';
 import { Feedback } from '@/lib/haptics';
 import {
   AuthHeader,
@@ -32,6 +33,7 @@ interface ForgotPwdState {
   emailCodeSent: boolean;
   phoneCodeSent: boolean;
   isResending: boolean;
+  resetToken: string | null;
 }
 
 export default function ForgotPwdScreen() {
@@ -42,7 +44,11 @@ export default function ForgotPwdScreen() {
     emailCodeSent: false,
     phoneCodeSent: false,
     isResending: false,
+    resetToken: null,
   });
+
+  const { mutate: sendCode, isPending: isSending } = useForgotPassword();
+  const { mutate: verifyCode, isPending: isVerifying } = useVerifyResetCode();
 
   const emailForm = useForm<ForgotPwdEmailFormType>({
     resolver: zodResolver(
@@ -74,25 +80,72 @@ export default function ForgotPwdScreen() {
   const handleSendCode = async (
     data: ForgotPwdEmailFormType | ForgotPwdPhoneFormType,
   ) => {
-    // TODO: Implement send code logic based on tab type
-    setState((prev) => ({
-      ...prev,
-      [state.tab === 'email' ? 'emailCodeSent' : 'phoneCodeSent']: true,
-    }));
+    const identifier = state.tab === 'email' ? data.email : data.phone;
+    if (!identifier) return;
+
+    sendCode(
+      {
+        method: state.tab,
+        identifier,
+      },
+      {
+        onSuccess: () => {
+          setState((prev) => ({
+            ...prev,
+            [state.tab === 'email' ? 'emailCodeSent' : 'phoneCodeSent']: true,
+          }));
+        },
+      },
+    );
   };
 
   const handleResendCode = async () => {
+    const data =
+      state.tab === 'email' ? emailForm.getValues() : phoneForm.getValues();
+    const identifier = state.tab === 'email' ? data.email : data.phone;
+    if (!identifier) return;
+
     setState((prev) => ({ ...prev, isResending: true }));
-    // TODO: Implement resend code logic based on tab type
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-    setState((prev) => ({ ...prev, isResending: false }));
+    sendCode(
+      {
+        method: state.tab,
+        identifier,
+      },
+      {
+        onSuccess: () => {
+          setState((prev) => ({ ...prev, isResending: false }));
+        },
+        onError: () => {
+          setState((prev) => ({ ...prev, isResending: false }));
+        },
+      },
+    );
   };
 
   const handleVerifyCode = async (
     data: ForgotPwdEmailFormType | ForgotPwdPhoneFormType,
   ) => {
-    // TODO: Implement verify code logic based on tab type
-    router.replace('/(auth)/reset-pwd');
+    const identifier = state.tab === 'email' ? data.email : data.phone;
+    const code = data.code;
+    if (!identifier || !code) return;
+
+    verifyCode(
+      {
+        method: state.tab,
+        identifier,
+        code,
+      },
+      {
+        onSuccess: (response) => {
+          // Store reset token and navigate to reset password screen
+          setState((prev) => ({ ...prev, resetToken: response.resetToken }));
+          router.push({
+            pathname: '/(auth)/reset-pwd',
+            params: { resetToken: response.resetToken },
+          });
+        },
+      },
+    );
   };
 
   const handleTabChange = (value: string) => {
@@ -193,8 +246,11 @@ export default function ForgotPwdScreen() {
           <Button
             className="my-10"
             onPress={activeForm.handleSubmit(handleSendCode)}
+            disabled={isSending}
           >
-            <Text>{t('auth.forgotPwd.sendCode')}</Text>
+            <Text>
+              {isSending ? t('common.loading') : t('auth.forgotPwd.sendCode')}
+            </Text>
           </Button>
         ) : (
           <>
@@ -202,7 +258,7 @@ export default function ForgotPwdScreen() {
               variant="outline"
               className="mt-5"
               onPress={handleResendCode}
-              disabled={state.isResending || isCodeValid}
+              disabled={state.isResending || isCodeValid || isSending}
             >
               <Text>
                 {state.isResending
@@ -213,9 +269,11 @@ export default function ForgotPwdScreen() {
             <Button
               className="my-5"
               onPress={activeForm.handleSubmit(handleVerifyCode)}
-              disabled={!isCodeValid}
+              disabled={!isCodeValid || isVerifying}
             >
-              <Text>{t('auth.forgotPwd.verify')}</Text>
+              <Text>
+                {isVerifying ? t('common.loading') : t('auth.forgotPwd.verify')}
+              </Text>
             </Button>
           </>
         )}

@@ -11,9 +11,8 @@ import {
   TabsTrigger,
   Text,
 } from '@/components/ui';
+import { useLogin } from '@/hooks/auth/use-login';
 import { Feedback } from '@/lib/haptics';
-import { useUserStore } from '@/stores';
-import { EUserType } from '@/types/user.type';
 
 import { AuthHeader, LoginFormType, loginSchema } from '@/views/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,7 +26,6 @@ export default function LoginScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const [tab, setTab] = useState('phone');
-  const { setUser, setIsLoggedIn, setAppType } = useUserStore();
   const { control, handleSubmit, setValue } = useForm<LoginFormType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -38,24 +36,29 @@ export default function LoginScreen() {
     },
   });
 
+  const { mutate: login, isPending } = useLogin();
   const onSubmit = (data: LoginFormType) => {
-    setUser({
-      id: 'test',
-      type: EUserType.CREATOR,
-      username: 'Test User',
-      first_name: '',
-      last_name: '',
-      avatar: '',
-      phone: '+998999999999',
-      email: 'test@gmail.com',
-      tokens: {
-        accessToken: '',
-        refreshToken: '',
+    // Map form data to API format
+    const identifier = data.method === 'email' ? data.email : data.phone;
+
+    // Ensure identifier is not empty
+    if (!identifier) {
+      console.error('[Login] Missing identifier');
+      return;
+    }
+
+    const credentials = {
+      method: data.method,
+      identifier,
+      password: data.password,
+    };
+
+    login(credentials, {
+      onSuccess: (data) => {
+        // Navigate to home after successful login
+        router.replace('/');
       },
     });
-    setIsLoggedIn(true);
-    setAppType(EUserType.CREATOR);
-    router.replace('/');
   };
 
   const handleTab = (tab: string) => {
@@ -92,6 +95,7 @@ export default function LoginScreen() {
                     placeholder={t('auth.emailPlaceholder')}
                     keyboardType="email-address"
                     returnKeyType="next"
+                    autoCapitalize="none"
                   />
                 )}
               />
@@ -145,8 +149,14 @@ export default function LoginScreen() {
           </Tabs>
         </View>
 
-        <Button className="my-10" onPress={handleSubmit(onSubmit)}>
-          <Text>{t('common.buttons.login')}</Text>
+        <Button
+          className="my-10"
+          onPress={handleSubmit(onSubmit)}
+          disabled={isPending}
+        >
+          <Text>
+            {isPending ? t('common.loading') : t('common.buttons.login')}
+          </Text>
         </Button>
 
         <View className="flex flex-row justify-center items-center">

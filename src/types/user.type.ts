@@ -5,6 +5,12 @@ export enum EUserType {
   CREATOR = 'CREATOR',
 }
 
+export enum EUserStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  SUSPENDED = 'SUSPENDED',
+}
+
 export type UserTypeBlockReason =
   | 'NEED_CODE'
   | 'NEED_BRAND'
@@ -13,15 +19,25 @@ export type UserTypeBlockReason =
 
 export interface IUser {
   id: string;
-  type: EUserType;
   username: string;
-  first_name: string;
-  last_name: string;
-  phone: string;
-  email: string;
-  avatar: string;
-  tokens: {
-    accessToken: string;
-    refreshToken: string;
-  };
+  email: string | null;
+  phone: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  image: string | null;
+  coverImage: string | null;
+  role: EUserType;
+  status: EUserStatus;
+  emailVerified: boolean;
+  phoneNumberVerified: boolean;
+  language: string | null;
+  country: string | null;
+  state: string | null;
+  city: string | null;
+  street: string | null;
+  postalCode: string | null;
+  detailedAddress: string | null;
+  preferredLocation: string | null;
+  createdAt: string;
+  updatedAt: string;
 }

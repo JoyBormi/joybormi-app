@@ -3,7 +3,12 @@
  */
 
 export * from './types';
+export * from './use-forgot-password';
 export * from './use-login';
-export * from './use-register';
 export * from './use-logout';
 export * from './use-me';
+export * from './use-refresh-session';
+export * from './use-register';
+export * from './use-reset-password';
+export * from './use-session-monitor';
+export * from './use-verify-reset-code';

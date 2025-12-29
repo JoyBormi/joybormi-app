@@ -1,9 +1,10 @@
 import FormField from '@/components/shared/form-field';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Button, PasswordInput, Text } from '@/components/ui';
+import { useResetPassword } from '@/hooks/auth';
 import { AuthHeader, ResetPwdFormType, resetPwdSchema } from '@/views/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +13,8 @@ import { View } from 'react-native';
 export default function ResetPwdScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const params = useLocalSearchParams<{ resetToken?: string }>();
+  const { mutate: resetPassword, isPending } = useResetPassword();
 
   const { control, handleSubmit } = useForm<ResetPwdFormType>({
     resolver: zodResolver(resetPwdSchema),
@@ -22,8 +25,24 @@ export default function ResetPwdScreen() {
   });
 
   const handleResetPassword = async (data: ResetPwdFormType) => {
-    // TODO: Implement reset password logic
-    router.replace('/(auth)/success?type=reset-pwd');
+    const resetToken = params.resetToken;
+    if (!resetToken) {
+      console.error('[Reset Password] No reset token provided');
+      return;
+    }
+
+    resetPassword(
+      {
+        resetToken,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+      },
+      {
+        onSuccess: () => {
+          router.replace('/(auth)/login');
+        },
+      },
+    );
   };
 
   return (
@@ -65,8 +84,14 @@ export default function ResetPwdScreen() {
           </View>
         </View>
 
-        <Button className="my-10" onPress={handleSubmit(handleResetPassword)}>
-          <Text>{t('auth.resetPwd.submit')}</Text>
+        <Button
+          className="my-10"
+          onPress={handleSubmit(handleResetPassword)}
+          disabled={isPending}
+        >
+          <Text>
+            {isPending ? t('common.loading') : t('auth.resetPwd.submit')}
+          </Text>
         </Button>
       </View>
     </KeyboardAvoid>

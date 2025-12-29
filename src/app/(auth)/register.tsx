@@ -4,6 +4,7 @@ import {
   Button,
   Input,
   PasswordInput,
+  PhoneInput,
   Tabs,
   TabsContent,
   TabsList,
@@ -45,19 +46,15 @@ export default function RegisterScreen() {
   });
 
   const handleRegister = async (data: RegisterUserFormType) => {
-    try {
-      const payload = {
-        method: data.method,
-        identifier: data.identifier,
-        password: data.password,
-        username: data.username,
-      };
-      const response = await register(payload);
-      console.log(response);
+    const payload = {
+      method: data.method,
+      identifier: data.identifier,
+      password: data.password,
+      username: data.username,
+    };
+    await register(payload).then(() => {
       router.replace('/(auth)/success?type=register');
-    } catch (error) {
-      console.log(error);
-    }
+    });
   };
 
   const handleChangeTab = (tab: RegisterMethod) => {
@@ -88,6 +85,60 @@ export default function RegisterScreen() {
                 <Text>{t('auth.register.emailTab')}</Text>
               </TabsTrigger>
             </TabsList>
+            <TabsContent value="phone" className="gap-y-6 mt-6">
+              <FormField
+                control={form.control}
+                name="username"
+                label={t('auth.username')}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder={t('auth.usernamePlaceholder')}
+                    returnKeyType="next"
+                  />
+                )}
+                required
+              />
+              <FormField
+                control={form.control}
+                name="identifier"
+                label={t('auth.phone')}
+                render={({ field }) => (
+                  <PhoneInput
+                    {...field}
+                    placeholder={t('auth.phonePlaceholder')}
+                    returnKeyType="next"
+                  />
+                )}
+                required
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                label={t('auth.password')}
+                render={({ field }) => (
+                  <PasswordInput
+                    {...field}
+                    placeholder={t('auth.passwordPlaceholder')}
+                    returnKeyType="next"
+                  />
+                )}
+                required
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                label={t('auth.confirmPassword')}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder={t('auth.confirmPasswordPlaceholder')}
+                    returnKeyType="done"
+                  />
+                )}
+                required
+              />
+            </TabsContent>
             <TabsContent value="email" className="gap-y-6 mt-6">
               <FormField
                 control={form.control}
@@ -136,60 +187,6 @@ export default function RegisterScreen() {
                 label={t('auth.confirmPassword')}
                 render={({ field }) => (
                   <PasswordInput
-                    {...field}
-                    placeholder={t('auth.confirmPasswordPlaceholder')}
-                    returnKeyType="done"
-                  />
-                )}
-                required
-              />
-            </TabsContent>
-            <TabsContent value="phone" className="gap-y-6 mt-6">
-              <FormField
-                control={form.control}
-                name="username"
-                label={t('auth.username')}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    placeholder={t('auth.usernamePlaceholder')}
-                    returnKeyType="next"
-                  />
-                )}
-                required
-              />
-              <FormField
-                control={form.control}
-                name="identifier"
-                label={t('auth.phone')}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    placeholder={t('auth.phonePlaceholder')}
-                    returnKeyType="next"
-                  />
-                )}
-                required
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                label={t('auth.password')}
-                render={({ field }) => (
-                  <PasswordInput
-                    {...field}
-                    placeholder={t('auth.passwordPlaceholder')}
-                    returnKeyType="next"
-                  />
-                )}
-                required
-              />
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                label={t('auth.confirmPassword')}
-                render={({ field }) => (
-                  <Input
                     {...field}
                     placeholder={t('auth.confirmPasswordPlaceholder')}
                     returnKeyType="done"

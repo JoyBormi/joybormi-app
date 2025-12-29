@@ -2,6 +2,8 @@
  * Auth feature types
  */
 
+import { IUser } from '@/types/user.type';
+
 export interface LoginCredentials {
   method: 'email' | 'phone';
   identifier: string;
@@ -15,14 +17,7 @@ export interface RegisterCredentials {
   username: string;
 }
 
-export type AuthResponse = {
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    role: 'guest' | 'user' | 'worker' | 'creator';
-    phone?: string;
-    avatar?: string;
-  };
+export interface AuthResponse {
   token: string;
-};
+  user: IUser;
+}
