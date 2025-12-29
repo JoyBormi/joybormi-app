@@ -1,8 +1,8 @@
 import { settingsGroups } from '@/constants/setting-groups';
+import { useLogout } from '@/hooks/auth';
 import { useColorScheme } from '@/hooks/common';
 import { Feedback } from '@/lib/haptics';
 import { useUserStore } from '@/stores';
-import { EUserType } from '@/types/user.type';
 import {
   ISettingsItem,
   LanguageSheet,
@@ -23,8 +23,7 @@ const SettingsScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const { i18n } = useTranslation();
   const { isDarkColorScheme } = useColorScheme();
-  const { user, appType, isLoggedIn, setIsLoggedIn, setAppType, setUser } =
-    useUserStore();
+  const { user, appType, isLoggedIn } = useUserStore();
 
   const userTypeSheetRef = useRef<BottomSheetModal>(null);
   const themeSheetRef = useRef<BottomSheetModal>(null);
@@ -32,6 +31,8 @@ const SettingsScreen: React.FC = () => {
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
+
+  const { mutateAsync: logout } = useLogout();
 
   const handleUserTypeSwitch = useCallback(() => {
     if (!isLoggedIn) {
@@ -77,15 +78,13 @@ const SettingsScreen: React.FC = () => {
           style: 'destructive',
           onPress: () => {
             Feedback.medium();
-            setIsLoggedIn(false);
-            setAppType(EUserType.GUEST);
-            setUser(null);
+            logout();
           },
         },
       ],
       { cancelable: true },
     );
-  }, [isLoggedIn, setIsLoggedIn, setAppType, setUser]);
+  }, [isLoggedIn, logout]);
 
   const settings = useMemo(
     () =>

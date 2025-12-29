@@ -13,6 +13,7 @@ import {
 } from '@/components/ui';
 import { useRegister } from '@/hooks/auth';
 import { Feedback } from '@/lib/haptics';
+import { normalizePhone } from '@/lib/utils';
 
 import {
   AuthHeader,
@@ -48,7 +49,10 @@ export default function RegisterScreen() {
   const handleRegister = async (data: RegisterUserFormType) => {
     const payload = {
       method: data.method,
-      identifier: data.identifier,
+      identifier:
+        data.method === 'email'
+          ? data.identifier
+          : normalizePhone(data.identifier),
       password: data.password,
       username: data.username,
     };

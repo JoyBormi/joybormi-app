@@ -13,6 +13,7 @@ import {
 } from '@/components/ui';
 import { useLogin } from '@/hooks/auth/use-login';
 import { Feedback } from '@/lib/haptics';
+import { normalizePhone } from '@/lib/utils';
 
 import { AuthHeader, LoginFormType, loginSchema } from '@/views/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,20 +27,22 @@ export default function LoginScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const [tab, setTab] = useState('phone');
-  const { control, handleSubmit, setValue } = useForm<LoginFormType>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      method: 'phone',
-      email: '',
-      phone: '',
-      password: '',
-    },
-  });
+  const { control, handleSubmit, setValue, clearErrors } =
+    useForm<LoginFormType>({
+      resolver: zodResolver(loginSchema),
+      defaultValues: {
+        method: 'phone',
+        email: '',
+        phone: '',
+        password: '',
+      },
+    });
 
   const { mutate: login, isPending } = useLogin();
   const onSubmit = (data: LoginFormType) => {
     // Map form data to API format
-    const identifier = data.method === 'email' ? data.email : data.phone;
+    const identifier =
+      data.method === 'email' ? data.email : normalizePhone(data.phone ?? '');
 
     // Ensure identifier is not empty
     if (!identifier) {
@@ -52,7 +55,7 @@ export default function LoginScreen() {
       identifier,
       password: data.password,
     };
-
+    console.log(`STRINGIFIED 👉:`, JSON.stringify(credentials, null, 2));
     login(credentials, {
       onSuccess: (data) => {
         // Navigate to home after successful login
@@ -63,6 +66,7 @@ export default function LoginScreen() {
 
   const handleTab = (tab: string) => {
     setValue('method', tab as 'email' | 'phone');
+    clearErrors();
     setTab(tab);
   };
 
@@ -155,7 +159,9 @@ export default function LoginScreen() {
           disabled={isPending}
         >
           <Text>
-            {isPending ? t('common.loading') : t('common.buttons.login')}
+            {isPending
+              ? t('common.buttons.loading')
+              : t('common.buttons.login')}
           </Text>
         </Button>
 

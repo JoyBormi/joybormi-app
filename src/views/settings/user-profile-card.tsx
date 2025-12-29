@@ -1,6 +1,7 @@
 import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
 import { IUser } from '@/types/user.type';
+import { formatPhoneNumber } from '@/utils/helpers';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
@@ -39,7 +40,9 @@ export const UserProfileCard: React.FC<Props> = ({ profile, onPress }) => {
           {profile?.username ?? 'Hello, Guest 👋'}
         </Text>
         <Text className="text-muted-foreground font-body mt-1">
-          {profile?.phone ?? profile?.email ?? 'Please login'}
+          {formatPhoneNumber(profile?.phone ?? '') ??
+            profile?.email ??
+            'Please login'}
         </Text>
       </View>
 

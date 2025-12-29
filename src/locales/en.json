@@ -20,7 +20,8 @@
       "back": "Back",
       "submit": "Submit",
       "send": "Send",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "loading": "Loading..."
     },
     "tabs": {
       "home": "Home",

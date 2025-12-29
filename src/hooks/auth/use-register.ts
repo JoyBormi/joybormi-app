@@ -1,4 +1,3 @@
-import { ApiResponse } from '@/lib/agent';
 import { agent } from '@/lib/agent/client';
 import { storage } from '@/lib/mmkv';
 import { useUserStore } from '@/stores';
@@ -10,8 +9,8 @@ import { AuthResponse, RegisterCredentials } from './types';
  */
 const registerApi = async (
   credentials: RegisterCredentials,
-): Promise<ApiResponse<AuthResponse>> =>
-  await agent.post<ApiResponse<AuthResponse>>('/auth/signup', credentials);
+): Promise<AuthResponse> =>
+  await agent.post<AuthResponse>('/auth/signup', credentials);
 
 /**
  * Register mutation hook
@@ -30,23 +29,16 @@ export function useRegister() {
   const queryClient = useQueryClient();
   const { setAppType, setIsLoggedIn, setUser } = useUserStore();
 
-  return useMutation<ApiResponse<AuthResponse>, Error, RegisterCredentials>({
+  return useMutation<AuthResponse, Error, RegisterCredentials>({
     mutationFn: registerApi,
 
     onSuccess: (response) => {
-      // Unwrap the data from ApiResponse
-      const data = response.data;
-      console.warn('[Register Success]', {
-        userId: data.user.id,
-        username: data.user.username,
-      });
-
       // Store auth token in MMKV storage
-      storage.setItem('auth_token', data.token);
+      storage.setItem('auth_token', response.token);
 
       // Update user store
-      setUser(data.user);
-      setAppType(data.user.role);
+      setUser(response.user);
+      setAppType(response.user.role);
       setIsLoggedIn(true);
 
       // Invalidate all queries to refetch with new auth context

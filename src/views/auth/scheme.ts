@@ -2,13 +2,36 @@ import { normalizePhone, PASSWORD_REGEX, PHONE_REGEX } from '@/lib/utils';
 import { required } from '@/utils/zod-intl';
 import { z } from 'zod';
 
-export const loginSchema = z.object({
-  method: z.enum(['email', 'phone']),
-  email: z.string().optional(),
-  phone: z.string().optional(),
-  password: z.string().min(6),
-});
+export const loginSchema = z
+  .object({
+    method: z.enum(['email', 'phone']),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    password: z.string().min(6),
+  })
+  .superRefine((data, ctx) => {
+    if (data.method === 'email') {
+      const result = emailSchema.safeParse(data.email);
+      if (!result.success) {
+        ctx.addIssue({
+          path: ['email'],
+          code: 'custom',
+          params: { customCode: 'custom.email_invalid' },
+        });
+      }
+    }
 
+    if (data.method === 'phone') {
+      const result = phoneSchema.safeParse(data.phone);
+      if (!result.success) {
+        ctx.addIssue({
+          path: ['phone'],
+          code: 'custom',
+          params: { customCode: 'custom.phone_invalid' },
+        });
+      }
+    }
+  });
 export type LoginFormType = z.infer<typeof loginSchema>;
 
 export const forgotPwdEmailSchema = z.object({
