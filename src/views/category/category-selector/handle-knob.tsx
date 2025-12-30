@@ -70,7 +70,7 @@ export function DraggableKnob({
 
   return (
     <GestureDetector gesture={panGesture}>
-      <View className="items-center py-3 bg-transparent">
+      <View className="items-center py-1 bg-transparent">
         <View className="w-12 h-1.5 rounded-full bg-muted-foreground/40" />
       </View>
     </GestureDetector>

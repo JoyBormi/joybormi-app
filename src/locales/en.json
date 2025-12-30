@@ -23,6 +23,8 @@
       "cancel": "Cancel",
       "loading": "Loading...",
       "ok": "Okay",
+      "save": "Save",
+      "saving": "Saving...",
       "backToLogin": "Back to Login"
     },
     "tabs": {
@@ -255,5 +257,53 @@
     "all": "All Categories",
     "noServices": "No Services Found",
     "noServicesDescription": "There are no services available in this category at the moment."
+  },
+  "settings": {
+    "profile": {
+      "edit": {
+        "title": "Edit Profile",
+        "subtitle": "Update your personal information",
+        "basicInfo": "Basic Information",
+        "contactInfo": "Contact Information",
+        "address": "Address",
+        "preferences": "Preferences"
+      },
+
+      "username": "Username",
+      "usernamePlaceholder": "Enter your username",
+
+      "firstName": "First name",
+      "firstNamePlaceholder": "Enter your first name",
+
+      "lastName": "Last name",
+      "lastNamePlaceholder": "Enter your last name",
+
+      "email": "Email address",
+      "emailPlaceholder": "Enter your email",
+
+      "phone": "Phone number",
+      "phonePlaceholder": "Enter your phone number",
+
+      "street": "Street address",
+      "streetPlaceholder": "Enter your street",
+
+      "detailedAddress": "Apartment, suite, etc.",
+      "detailedAddressPlaceholder": "Apartment, suite, floor, etc.",
+
+      "city": "City",
+      "cityPlaceholder": "Enter your city",
+
+      "state": "State / Province",
+      "statePlaceholder": "Enter your state or province",
+
+      "postalCode": "Postal code",
+      "postalCodePlaceholder": "Enter your postal code",
+
+      "country": "Country",
+      "countryPlaceholder": "Enter your country",
+
+      "preferredLocation": "Preferred location",
+      "preferredLocationPlaceholder": "Enter your preferred location"
+    }
   }
 }

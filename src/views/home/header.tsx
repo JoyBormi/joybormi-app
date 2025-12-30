@@ -37,7 +37,7 @@ export function Header() {
       animate={{ opacity: 1, translateY: 0 }}
       className="px-4 mt-2"
     >
-      <View className="flex-row items-start justify-between">
+      <View className="flex-row items-start justify-between gap-4">
         {user ? (
           <>
             <View className="flex-row items-center flex-1">
@@ -46,8 +46,12 @@ export function Header() {
                 className="w-12 h-12 rounded-full border border-border"
               />
               <View className="ml-4 flex-1">
-                <Text className="font-subtitle text-foreground">
-                  Hello, {user.username}
+                <Text
+                  className="font-subtitle text-foreground"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  Hi, {user.username}
                 </Text>
                 <View className="mt-1">{LocationDisplay}</View>
               </View>

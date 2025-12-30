@@ -1,3 +1,4 @@
+import { Feedback } from '@/lib/haptics';
 import {
   CategoryFooter,
   CategorySelector,
@@ -75,6 +76,8 @@ export default function CategoryScreen() {
         onFilterPress={handleFilterPress}
         onChangeText={(text) => setFilters({ ...filters, search: text })}
         onSubmitEditing={() => {
+          if (!filters.search.trim()) return;
+          Feedback.light();
           router.push({
             pathname: '/(category)/[category]',
             params: {

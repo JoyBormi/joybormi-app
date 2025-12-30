@@ -35,17 +35,8 @@ export function OwnerInfo<T extends FieldValues>({
           name="ownerFirstName"
           label="First Name"
           required
-          className="gap-2"
           labelClassName="text-base font-semibold text-foreground"
-          render={({ field }) => (
-            <Input
-              placeholder="John"
-              value={field.value as string}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              className="h-14 text-base border-2"
-            />
-          )}
+          render={({ field }) => <Input placeholder="John" {...field} />}
         />
 
         <FormField
@@ -53,17 +44,8 @@ export function OwnerInfo<T extends FieldValues>({
           name="ownerLastName"
           label="Last Name"
           required
-          className="gap-2"
           labelClassName="text-base font-semibold text-foreground"
-          render={({ field }) => (
-            <Input
-              placeholder="Doe"
-              value={field.value as string}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              className="h-14 text-base border-2"
-            />
-          )}
+          render={({ field }) => <Input placeholder="Doe" {...field} />}
         />
 
         <View className="bg-primary/10 p-5 rounded-xl border border-primary/30">

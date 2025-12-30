@@ -36,10 +36,18 @@ export const UserProfileCard: React.FC<Props> = ({ profile, onPress }) => {
 
       {/* Info */}
       <View className="flex-1">
-        <Text className="text-foreground font-title tracking-tight">
+        <Text
+          className="text-foreground font-title tracking-tight"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
           {profile?.username ?? 'Hello, Guest 👋'}
         </Text>
-        <Text className="text-muted-foreground font-body mt-1">
+        <Text
+          className="text-muted-foreground font-body mt-1"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
           {formatPhoneNumber(profile?.phone ?? '') ??
             profile?.email ??
             'Please login'}

@@ -1,5 +1,6 @@
 import { Input, PressableBounce } from '@/components/ui';
 import { useKeyboardHeight } from '@/hooks/common';
+import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { BlurView } from 'expo-blur';
@@ -42,7 +43,7 @@ export const CategoryFooter = memo(function CategoryFooter({
         <View className="flex-row items-center justify-between gap-2">
           {!focused && (
             <BlurView
-              intensity={focused ? 90 : 50}
+              intensity={focused ? 90 : 30}
               tint="light"
               className={cn(
                 'overflow-hidden rounded-full',
@@ -52,10 +53,16 @@ export const CategoryFooter = memo(function CategoryFooter({
               )}
             >
               <PressableBounce
-                onPress={() => router.back()}
+                onPress={() => {
+                  Feedback.light();
+                  router.back();
+                }}
                 hitSlop={24}
-                onLongPress={() => router.replace('/(tabs)')}
-                className="p-2 items-center justify-center rounded-full border border-border active:opacity-60"
+                onLongPress={() => {
+                  Feedback.medium();
+                  router.replace('/(tabs)');
+                }}
+                className="p-3 items-center justify-center rounded-full border border-border active:opacity-60"
               >
                 <Icons.ChevronLeft size={24} className="text-foreground" />
               </PressableBounce>
@@ -63,7 +70,7 @@ export const CategoryFooter = memo(function CategoryFooter({
           )}
 
           <BlurView
-            intensity={focused ? 90 : 50}
+            intensity={focused ? 90 : 30}
             tint="light"
             className={cn(
               'overflow-hidden rounded-full',
@@ -89,21 +96,25 @@ export const CategoryFooter = memo(function CategoryFooter({
 
           {!focused && onFilterPress && (
             <BlurView
-              intensity={focused ? 90 : 50}
+              intensity={focused ? 90 : 30}
               tint="light"
               className={cn(
-                'w-11 overflow-hidden rounded-full items-center',
+                'overflow-hidden rounded-full items-center',
                 focused
                   ? 'bg-foreground/40 shadow-xl'
                   : 'bg-foreground/20 shadow-md',
               )}
             >
               <PressableBounce
-                onPress={onFilterPress}
-                className="p-2 items-center border rounded-full border-border justify-center active:opacity-60"
+                hitSlop={24}
+                onPress={() => {
+                  Feedback.light();
+                  onFilterPress();
+                }}
+                className="p-3 items-center border rounded-full border-border justify-center active:opacity-60"
               >
                 <Icons.SlidersHorizontal
-                  size={22}
+                  size={24}
                   className="text-foreground"
                 />
               </PressableBounce>
@@ -114,3 +125,5 @@ export const CategoryFooter = memo(function CategoryFooter({
     </AnimatePresence>
   );
 });
+
+CategoryFooter.displayName = 'CategoryFooter';

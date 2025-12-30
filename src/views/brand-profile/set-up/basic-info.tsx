@@ -1,5 +1,5 @@
 import FormField from '@/components/shared/form-field';
-import { Input, Text } from '@/components/ui';
+import { Input, Text, Textarea } from '@/components/ui';
 import Icons from '@/lib/icons';
 import { Control, FieldValues } from 'react-hook-form';
 import { View } from 'react-native';
@@ -35,16 +35,9 @@ export function BasicInfo<T extends FieldValues>({
           name="brandName"
           label="Brand Name"
           required
-          className="gap-2"
           labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => (
-            <Input
-              placeholder="e.g., Elite Hair Studio"
-              value={field.value as string}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              className="h-14 text-base border-2"
-            />
+            <Input placeholder="e.g., Elite Hair Studio" {...field} />
           )}
         />
 
@@ -53,16 +46,12 @@ export function BasicInfo<T extends FieldValues>({
           name="businessCategory"
           label="Business Category"
           required
-          className="gap-2"
           labelClassName="text-base font-semibold text-foreground"
           message="Select the primary category that best describes your business"
           render={({ field }) => (
             <Input
               placeholder="e.g., Hair Salon, Barbershop, Spa, Beauty Salon"
-              value={field.value as string}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              className="h-14 text-base border-2"
+              {...field}
             />
           )}
         />
@@ -71,19 +60,13 @@ export function BasicInfo<T extends FieldValues>({
           control={control}
           name="description"
           label="Description (Optional)"
-          className="gap-2"
+          className="min-h-[100px]"
           labelClassName="text-base font-semibold text-foreground"
           message="Briefly describe what makes your brand unique"
           render={({ field }) => (
-            <Input
+            <Textarea
               placeholder="Tell customers about your brand..."
-              value={field.value as string}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              multiline
-              numberOfLines={5}
-              className="min-h-20 text-base border-2 py-3"
-              style={{ textAlignVertical: 'top' }}
+              {...field}
             />
           )}
         />

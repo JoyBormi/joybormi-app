@@ -17,6 +17,11 @@ export type UserTypeBlockReason =
   | 'NOT_ALLOWED'
   | null;
 
+export enum EUserMethod {
+  EMAIL = 'EMAIL',
+  PHONE = 'PHONE',
+}
+
 export interface IUser {
   id: string;
   username: string;
@@ -30,6 +35,7 @@ export interface IUser {
   status: EUserStatus;
   emailVerified: boolean;
   phoneNumberVerified: boolean;
+  userMethod: EUserMethod;
   language: string | null;
   country: string | null;
   state: string | null;

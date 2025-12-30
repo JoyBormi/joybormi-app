@@ -1,5 +1,5 @@
 import FormField from '@/components/shared/form-field';
-import { Input, Text } from '@/components/ui';
+import { Input, PhoneInput, Text } from '@/components/ui';
 import { Control, FieldValues } from 'react-hook-form';
 import { View } from 'react-native';
 
@@ -26,12 +26,12 @@ export function ContactInfo<T extends FieldValues>({
             control={control}
             name="email"
             required
-            render={(field) => (
+            render={({ field }) => (
               <Input
-                {...field}
                 placeholder="your@email.com"
                 keyboardType="email-address"
                 autoCapitalize="none"
+                {...field}
               />
             )}
             message="📧 We'll use this to verify your brand"
@@ -43,14 +43,7 @@ export function ContactInfo<T extends FieldValues>({
             control={control}
             name="phone"
             required
-            render={(field) => (
-              <Input
-                {...field}
-                placeholder="+1 (555) 000-0000"
-                keyboardType="phone-pad"
-                autoCapitalize="none"
-              />
-            )}
+            render={({ field }) => <PhoneInput {...field} />}
             message="📞 Customers will use this to contact you"
           />
         </View>

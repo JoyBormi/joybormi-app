@@ -1,4 +1,5 @@
 import { agent } from '@/lib/agent/client';
+import { queryKeys } from '@/lib/tanstack-query';
 import { useUserStore } from '@/stores';
 import { IUser } from '@/types/user.type';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -30,10 +31,10 @@ export interface UpdateProfilePayload {
 export async function updateProfileApi(
   payload: UpdateProfilePayload,
 ): Promise<IUser> {
-  const response = await agent.patch<IUser>('/user/profile', payload);
+  const response = await agent.put<IUser>('/user/profile', payload);
   // agent.patch returns ApiResponse<IUser> = { message?, data: IUser }
   // So we need to unwrap .data to get the actual IUser
-  return response.data;
+  return response;
 }
 
 /**
@@ -56,21 +57,13 @@ export function useUpdateProfile() {
     mutationFn: updateProfileApi,
 
     onSuccess: (updatedUser) => {
-      console.warn('[Profile Update Success]', {
-        userId: updatedUser.id,
-        username: updatedUser.username,
-      });
-
       // Update user store with new data
       setUser(updatedUser);
 
       // Invalidate all queries to refetch with new user context
-      queryClient.invalidateQueries();
-    },
-
-    onError: (error) => {
-      console.error('[Profile Update Error]', error);
-      // Global error handler will show alert
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.auth.me,
+      });
     },
   });
 }

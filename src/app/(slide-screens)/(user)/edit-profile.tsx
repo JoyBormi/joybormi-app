@@ -5,6 +5,7 @@ import { Header } from '@/components/shared/header';
 import { Button, Input, PhoneInput, Text } from '@/components/ui';
 import { useUpdateProfile } from '@/hooks/user/use-update-profile';
 import { useUserStore } from '@/stores';
+import { EUserMethod } from '@/types/user.type';
 import { ProfileFormData, profileSchema } from '@/views/user/profile-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
@@ -76,8 +77,8 @@ const EditProfileScreen = () => {
       }}
     >
       <Header
-        title={t('profile.edit.title')}
-        subtitle={t('profile.edit.subtitle')}
+        title={t('settings.profile.edit.title')}
+        subtitle={t('settings.profile.edit.subtitle')}
         className="mb-4"
         onGoBack={() => {
           if (isFormDirty) {
@@ -91,16 +92,21 @@ const EditProfileScreen = () => {
       {/* Basic Information */}
       <View className="gap-4">
         <Text className="font-title text-lg text-foreground">
-          {t('profile.edit.basicInfo')}
+          {t('settings.profile.edit.basicInfo')}
         </Text>
 
         <FormField
           required
           control={form.control}
           name="username"
-          label={t('profile.username')}
+          label={t('settings.profile.username')}
           render={({ field }) => (
-            <Input {...field} placeholder={t('profile.usernamePlaceholder')} />
+            <Input
+              {...field}
+              placeholder={t('settings.profile.usernamePlaceholder')}
+              returnKeyType="next"
+              onSubmitEditing={() => form.setFocus('firstName')}
+            />
           )}
         />
 
@@ -108,13 +114,15 @@ const EditProfileScreen = () => {
           <FormField
             control={form.control}
             name="firstName"
-            label={t('profile.firstName')}
+            label={t('settings.profile.firstName')}
             className="flex-1"
             render={({ field }) => (
               <Input
                 {...field}
                 value={field.value ?? ''}
-                placeholder={t('profile.firstNamePlaceholder')}
+                placeholder={t('settings.profile.firstNamePlaceholder')}
+                returnKeyType="next"
+                onSubmitEditing={() => form.setFocus('lastName')}
               />
             )}
           />
@@ -122,13 +130,15 @@ const EditProfileScreen = () => {
           <FormField
             control={form.control}
             name="lastName"
-            label={t('profile.lastName')}
+            label={t('settings.profile.lastName')}
             className="flex-1"
             render={({ field }) => (
               <Input
                 {...field}
                 value={field.value ?? ''}
-                placeholder={t('profile.lastNamePlaceholder')}
+                placeholder={t('settings.profile.lastNamePlaceholder')}
+                returnKeyType="next"
+                onSubmitEditing={() => form.setFocus('email')}
               />
             )}
           />
@@ -138,20 +148,23 @@ const EditProfileScreen = () => {
       {/* Contact Information */}
       <View className="gap-4 pt-2">
         <Text className="font-title text-lg text-foreground">
-          {t('profile.edit.contactInfo')}
+          {t('settings.profile.edit.contactInfo')}
         </Text>
 
         <FormField
           control={form.control}
           name="email"
-          label={t('profile.email')}
+          label={t('settings.profile.email')}
           render={({ field }) => (
             <Input
               {...field}
+              editable={user?.userMethod === EUserMethod.EMAIL}
               value={field.value ?? ''}
-              placeholder={t('profile.emailPlaceholder')}
+              placeholder={t('settings.profile.emailPlaceholder')}
               keyboardType="email-address"
               autoCapitalize="none"
+              returnKeyType="next"
+              onSubmitEditing={() => form.setFocus('phone')}
             />
           )}
         />
@@ -159,12 +172,15 @@ const EditProfileScreen = () => {
         <FormField
           control={form.control}
           name="phone"
-          label={t('profile.phone')}
+          label={t('settings.profile.phone')}
           render={({ field }) => (
             <PhoneInput
               {...field}
+              editable={user?.userMethod === EUserMethod.PHONE}
+              placeholder={t('settings.profile.phonePlaceholder')}
               value={field.value ?? ''}
-              placeholder={t('profile.phonePlaceholder')}
+              returnKeyType="next"
+              onSubmitEditing={() => form.setFocus('street')}
             />
           )}
         />
@@ -173,18 +189,20 @@ const EditProfileScreen = () => {
       {/* Address */}
       <View className="gap-4 pt-2">
         <Text className="font-title text-lg text-foreground">
-          {t('profile.edit.address')}
+          {t('settings.profile.edit.address')}
         </Text>
 
         <FormField
           control={form.control}
           name="street"
-          label={t('profile.street')}
+          label={t('settings.profile.street')}
           render={({ field }) => (
             <Input
               {...field}
               value={field.value ?? ''}
-              placeholder={t('profile.streetPlaceholder')}
+              placeholder={t('settings.profile.streetPlaceholder')}
+              returnKeyType="next"
+              onSubmitEditing={() => form.setFocus('detailedAddress')}
             />
           )}
         />
@@ -192,12 +210,14 @@ const EditProfileScreen = () => {
         <FormField
           control={form.control}
           name="detailedAddress"
-          label={t('profile.detailedAddress')}
+          label={t('settings.profile.detailedAddress')}
           render={({ field }) => (
             <Input
               {...field}
               value={field.value ?? ''}
-              placeholder={t('profile.detailedAddressPlaceholder')}
+              placeholder={t('settings.profile.detailedAddressPlaceholder')}
+              returnKeyType="next"
+              onSubmitEditing={() => form.setFocus('city')}
             />
           )}
         />
@@ -206,13 +226,15 @@ const EditProfileScreen = () => {
           <FormField
             control={form.control}
             name="city"
-            label={t('profile.city')}
+            label={t('settings.profile.city')}
             className="flex-1"
             render={({ field }) => (
               <Input
                 {...field}
                 value={field.value ?? ''}
-                placeholder={t('profile.cityPlaceholder')}
+                placeholder={t('settings.profile.cityPlaceholder')}
+                returnKeyType="next"
+                onSubmitEditing={() => form.setFocus('state')}
               />
             )}
           />
@@ -220,13 +242,15 @@ const EditProfileScreen = () => {
           <FormField
             control={form.control}
             name="state"
-            label={t('profile.state')}
+            label={t('settings.profile.state')}
             className="flex-1"
             render={({ field }) => (
               <Input
                 {...field}
                 value={field.value ?? ''}
-                placeholder={t('profile.statePlaceholder')}
+                placeholder={t('settings.profile.statePlaceholder')}
+                returnKeyType="next"
+                onSubmitEditing={() => form.setFocus('postalCode')}
               />
             )}
           />
@@ -236,13 +260,15 @@ const EditProfileScreen = () => {
           <FormField
             control={form.control}
             name="postalCode"
-            label={t('profile.postalCode')}
+            label={t('settings.profile.postalCode')}
             className="flex-1"
             render={({ field }) => (
               <Input
                 {...field}
                 value={field.value ?? ''}
-                placeholder={t('profile.postalCodePlaceholder')}
+                placeholder={t('settings.profile.postalCodePlaceholder')}
+                returnKeyType="next"
+                onSubmitEditing={() => form.setFocus('country')}
               />
             )}
           />
@@ -250,13 +276,15 @@ const EditProfileScreen = () => {
           <FormField
             control={form.control}
             name="country"
-            label={t('profile.country')}
+            label={t('settings.profile.country')}
             className="flex-1"
             render={({ field }) => (
               <Input
                 {...field}
                 value={field.value ?? ''}
-                placeholder={t('profile.countryPlaceholder')}
+                placeholder={t('settings.profile.countryPlaceholder')}
+                returnKeyType="next"
+                onSubmitEditing={() => form.setFocus('preferredLocation')}
               />
             )}
           />
@@ -266,18 +294,20 @@ const EditProfileScreen = () => {
       {/* Preferences */}
       <View className="gap-4 pt-2">
         <Text className="font-title text-lg text-foreground">
-          {t('profile.edit.preferences')}
+          {t('settings.profile.edit.preferences')}
         </Text>
 
         <FormField
           control={form.control}
           name="preferredLocation"
-          label={t('profile.preferredLocation')}
+          label={t('settings.profile.preferredLocation')}
           render={({ field }) => (
             <Input
               {...field}
               value={field.value ?? ''}
-              placeholder={t('profile.preferredLocationPlaceholder')}
+              placeholder={t('settings.profile.preferredLocationPlaceholder')}
+              returnKeyType="done"
+              onSubmitEditing={() => form.handleSubmit(handleSave)}
             />
           )}
         />
@@ -291,7 +321,7 @@ const EditProfileScreen = () => {
           size="action"
         >
           <Text>
-            {isPending ? t('common.saving') : t('common.buttons.saveChanges')}
+            {isPending ? t('common.buttons.saving') : t('common.buttons.save')}
           </Text>
         </Button>
       </View>

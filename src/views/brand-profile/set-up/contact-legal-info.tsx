@@ -35,18 +35,14 @@ export function ContactLegalInfo<T extends FieldValues>({
           name="email"
           label="Business Email"
           required
-          className="gap-2"
           labelClassName="text-base font-semibold text-foreground"
           message="This will be used for account verification and customer inquiries"
           render={({ field }) => (
             <Input
               placeholder="business@example.com"
-              value={field.value as string}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
               keyboardType="email-address"
               autoCapitalize="none"
-              className="h-14 text-base border-2"
+              {...field}
             />
           )}
         />
@@ -56,18 +52,9 @@ export function ContactLegalInfo<T extends FieldValues>({
           name="phone"
           label="Business Phone"
           required
-          className="gap-2"
           labelClassName="text-base font-semibold text-foreground"
           message="Customers will use this to contact you"
-          render={({ field }) => (
-            <PhoneInput
-              placeholder="+1 (555) 000-0000"
-              value={field.value as string}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              className="h-14 text-base border-2"
-            />
-          )}
+          render={({ field }) => <PhoneInput {...field} />}
         />
 
         <View className="h-px bg-border my-2" />
@@ -77,17 +64,10 @@ export function ContactLegalInfo<T extends FieldValues>({
           name="businessRegistrationNumber"
           label="Business Registration Number"
           required
-          className="gap-2"
           labelClassName="text-base font-semibold text-foreground"
           message="Your official business registration or tax ID number"
           render={({ field }) => (
-            <Input
-              placeholder="e.g., 123-45-6789"
-              value={field.value as string}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              className="h-14 text-base border-2"
-            />
+            <Input placeholder="e.g., 123-45-6789" {...field} />
           )}
         />
 
@@ -95,7 +75,6 @@ export function ContactLegalInfo<T extends FieldValues>({
           control={control}
           name="licenseDocument"
           label="Business License (Optional)"
-          className="gap-2"
           labelClassName="text-base font-semibold text-foreground"
           message="Upload your business license or operating permit"
           render={({ field }) => (

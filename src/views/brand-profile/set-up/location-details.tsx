@@ -35,13 +35,7 @@ export function LocationDetails<T extends FieldValues>({
           className="gap-2"
           labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => (
-            <Input
-              placeholder="e.g., United States"
-              value={field.value as string}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              className="h-14 text-base border-2"
-            />
+            <Input placeholder="e.g., United States" {...field} />
           )}
         />
 
@@ -53,15 +47,7 @@ export function LocationDetails<T extends FieldValues>({
             required
             className="flex-1 gap-2"
             labelClassName="text-base font-semibold text-foreground"
-            render={({ field }) => (
-              <Input
-                placeholder="State"
-                value={field.value as string}
-                onChangeText={field.onChange}
-                onBlur={field.onBlur}
-                className="h-14 text-base border-2"
-              />
-            )}
+            render={({ field }) => <Input placeholder="State" {...field} />}
           />
 
           <FormField
@@ -70,15 +56,7 @@ export function LocationDetails<T extends FieldValues>({
             label="City (Optional)"
             className="flex-1 gap-2"
             labelClassName="text-base font-semibold text-foreground"
-            render={({ field }) => (
-              <Input
-                placeholder="City"
-                value={field.value as string}
-                onChangeText={field.onChange}
-                onBlur={field.onBlur}
-                className="h-14 text-base border-2"
-              />
-            )}
+            render={({ field }) => <Input placeholder="City" {...field} />}
           />
         </View>
 
@@ -90,13 +68,7 @@ export function LocationDetails<T extends FieldValues>({
           className="gap-2"
           labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => (
-            <Input
-              placeholder="123 Main Street"
-              value={field.value as string}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              className="h-14 text-base border-2"
-            />
+            <Input placeholder="123 Main Street" {...field} />
           )}
         />
 
@@ -108,13 +80,7 @@ export function LocationDetails<T extends FieldValues>({
           labelClassName="text-base font-semibold text-foreground"
           message="Apartment, suite, floor, building, etc."
           render={({ field }) => (
-            <Input
-              placeholder="Suite 200, Floor 3"
-              value={field.value as string}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              className="h-14 text-base border-2"
-            />
+            <Input placeholder="Suite 200, Floor 3" {...field} />
           )}
         />
 
@@ -125,16 +91,7 @@ export function LocationDetails<T extends FieldValues>({
           required
           className="gap-2"
           labelClassName="text-base font-semibold text-foreground"
-          render={({ field }) => (
-            <Input
-              placeholder="12345"
-              value={field.value as string}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              keyboardType="number-pad"
-              className="h-14 text-base border-2"
-            />
-          )}
+          render={({ field }) => <Input placeholder="12345" {...field} />}
         />
       </View>
     </View>
