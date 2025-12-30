@@ -33,7 +33,6 @@ export function LocationDetails<T extends FieldValues>({
           label="Country"
           required
           className="gap-2"
-          labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => (
             <Input placeholder="e.g., United States" {...field} />
           )}
@@ -46,7 +45,6 @@ export function LocationDetails<T extends FieldValues>({
             label="State/Province"
             required
             className="flex-1 gap-2"
-            labelClassName="text-base font-semibold text-foreground"
             render={({ field }) => <Input placeholder="State" {...field} />}
           />
 
@@ -55,7 +53,6 @@ export function LocationDetails<T extends FieldValues>({
             name="city"
             label="City (Optional)"
             className="flex-1 gap-2"
-            labelClassName="text-base font-semibold text-foreground"
             render={({ field }) => <Input placeholder="City" {...field} />}
           />
         </View>
@@ -66,7 +63,6 @@ export function LocationDetails<T extends FieldValues>({
           label="Street Address"
           required
           className="gap-2"
-          labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => (
             <Input placeholder="123 Main Street" {...field} />
           )}
@@ -77,7 +73,6 @@ export function LocationDetails<T extends FieldValues>({
           name="detailedAddress"
           label="Detailed Address (Optional)"
           className="gap-2"
-          labelClassName="text-base font-semibold text-foreground"
           message="Apartment, suite, floor, building, etc."
           render={({ field }) => (
             <Input placeholder="Suite 200, Floor 3" {...field} />
@@ -90,7 +85,6 @@ export function LocationDetails<T extends FieldValues>({
           label="Postal Code"
           required
           className="gap-2"
-          labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => <Input placeholder="12345" {...field} />}
         />
       </View>

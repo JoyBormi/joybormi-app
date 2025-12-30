@@ -1,196 +1,191 @@
-import Icons from '@/lib/icons';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { PressableBounce, Text } from '@/components/ui';
+import { Feedback } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
-import * as SelectPrimitive from '@rn-primitives/select';
-import * as React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import { FlashList } from '@shopify/flash-list';
+import { BlurView } from 'expo-blur';
+import { ChevronDown, X } from 'lucide-react-native';
+import React, { Fragment, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Modal, Platform, Pressable, View } from 'react-native';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  ZoomIn,
+  ZoomOut,
+} from 'react-native-reanimated';
 
-type Option = SelectPrimitive.Option;
+export type SelectValue = string | number;
 
-const Select = SelectPrimitive.Root;
+interface Option {
+  label: string;
+  value: SelectValue;
+}
 
-const SelectGroup = SelectPrimitive.Group;
+type SelectProps = {
+  options: Option[];
+  placeholder?: string;
+  title?: string;
+} & (
+  | {
+      multi: true;
+      value: SelectValue[];
+      onChangeText: (value: SelectValue[]) => void;
+    }
+  | {
+      multi?: false;
+      value: SelectValue | undefined;
+      onChangeText: (value: SelectValue) => void;
+    }
+);
 
-const SelectValue = SelectPrimitive.Value;
+export function Select({
+  options,
+  value,
+  onChangeText,
+  placeholder = 'Select...',
+  multi = false,
+  title,
+}: SelectProps) {
+  const { t } = useTranslation();
+  const [visible, setVisible] = useState(false);
 
-const SelectTrigger = React.forwardRef<
-  SelectPrimitive.TriggerRef,
-  SelectPrimitive.TriggerProps
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      'flex flex-row h-10 native:h-12 items-center text-sm justify-between rounded-md border border-input bg-background px-3 py-2 web:ring-offset-background text-muted-foreground web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2 [&>span]:line-clamp-1',
-      props.disabled && 'web:cursor-not-allowed opacity-50',
-      className,
-    )}
-    {...props}
-  >
-    <>{children}</>
-    <Icons.ChevronDown
-      size={16}
-      aria-hidden={true}
-      className="text-foreground opacity-50"
-    />
-  </SelectPrimitive.Trigger>
-));
-SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
+  const displayLabel = useMemo(() => {
+    if (multi && Array.isArray(value)) {
+      return value.length > 0 ? `${value.length} selected` : placeholder;
+    }
+    const selected = options.find((opt) => opt.value === value);
+    return selected ? selected.label : placeholder;
+  }, [value, options, multi, placeholder]);
 
-/**
- * Platform: WEB ONLY
- */
-const SelectScrollUpButton = ({
-  className,
-  ...props
-}: SelectPrimitive.ScrollUpButtonProps) => {
-  if (Platform.OS !== 'web') {
-    return null;
-  }
-  return (
-    <SelectPrimitive.ScrollUpButton
-      className={cn(
-        'flex web:cursor-default items-center justify-center py-1',
-        className,
-      )}
-      {...props}
-    >
-      <Icons.ChevronUp size={14} className="text-foreground" />
-    </SelectPrimitive.ScrollUpButton>
-  );
-};
-
-/**
- * Platform: WEB ONLY
- */
-const SelectScrollDownButton = ({
-  className,
-  ...props
-}: SelectPrimitive.ScrollDownButtonProps) => {
-  if (Platform.OS !== 'web') {
-    return null;
-  }
-  return (
-    <SelectPrimitive.ScrollDownButton
-      className={cn(
-        'flex web:cursor-default items-center justify-center py-1',
-        className,
-      )}
-      {...props}
-    >
-      <Icons.ChevronDown size={14} className="text-foreground" />
-    </SelectPrimitive.ScrollDownButton>
-  );
-};
-
-const SelectContent = React.forwardRef<
-  SelectPrimitive.ContentRef,
-  SelectPrimitive.ContentProps & { portalHost?: string }
->(({ className, children, position = 'popper', portalHost, ...props }, ref) => {
-  const { open } = SelectPrimitive.useRootContext();
+  const toggleOption = (itemValue: SelectValue) => {
+    Feedback.selection();
+    if (multi) {
+      const currentValues = Array.isArray(value) ? value : [];
+      const newValue = currentValues.includes(itemValue)
+        ? currentValues.filter((v) => v !== itemValue)
+        : [...currentValues, itemValue];
+      onChangeText?.(newValue as any);
+    } else {
+      onChangeText?.(itemValue as any);
+      setVisible(false);
+    }
+  };
 
   return (
-    <SelectPrimitive.Portal hostName={portalHost}>
-      <SelectPrimitive.Overlay
-        style={Platform.OS !== 'web' ? StyleSheet.absoluteFill : undefined}
+    <Fragment>
+      <Pressable
+        onPress={() => setVisible(true)}
+        className="flex-row items-center justify-between gap-4 px-3 h-12 rounded-md border border-input bg-muted/20 active:bg-muted/30 focus:border-input focus:bg-muted/30"
       >
-        <Animated.View className="z-50" entering={FadeIn} exiting={FadeOut}>
-          <SelectPrimitive.Content
-            ref={ref}
-            className={cn(
-              'relative z-50 max-h-96 min-w-[8rem] rounded-md border border-border bg-popover shadow-md shadow-foreground/10 py-2 px-1 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-              position === 'popper' &&
-                'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
-              open
-                ? 'web:zoom-in-95 web:animate-in web:fade-in-0'
-                : 'web:zoom-out-95 web:animate-out web:fade-out-0',
-              className,
-            )}
-            position={position}
-            {...props}
+        <Text
+          className={cn(
+            'text-base capitalize  native:leading-[1.25]  ',
+            value !== undefined
+              ? 'text-foreground lg:text-body native:text-caption font-medium '
+              : ' font-regular text-muted-foreground',
+          )}
+        >
+          {displayLabel}
+        </Text>
+        <ChevronDown size={18} className="text-muted-foreground shrink-0" />
+      </Pressable>
+
+      <Modal
+        transparent
+        visible={visible}
+        animationType="none"
+        statusBarTranslucent
+      >
+        <View className="flex-1 justify-center items-center px-6">
+          {/* Backdrop */}
+          <Animated.View
+            entering={FadeIn.duration(120)}
+            exiting={FadeOut.duration(150)}
+            className="absolute inset-0 bg-foreground/20"
           >
-            <SelectScrollUpButton />
-            <SelectPrimitive.Viewport
-              className={cn(
-                'p-1',
-                position === 'popper' &&
-                  'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]',
-              )}
+            <Pressable className="flex-1" onPress={() => setVisible(false)} />
+          </Animated.View>
+
+          {/* Modal Container */}
+          <Animated.View
+            entering={ZoomIn.duration(250)}
+            exiting={ZoomOut.duration(200)}
+            className="w-full max-w-sm max-h-[60%] min-h-[400px] overflow-hidden rounded-[32px] border border-border shadow-2xl bg-background"
+          >
+            <BlurView
+              intensity={Platform.OS === 'ios' ? 40 : 80}
+              tint="default"
+              className={cn('flex-1 relative', multi ? 'pb-16' : 'pb-1')}
             >
-              {children}
-            </SelectPrimitive.Viewport>
-            <SelectScrollDownButton />
-          </SelectPrimitive.Content>
-        </Animated.View>
-      </SelectPrimitive.Overlay>
-    </SelectPrimitive.Portal>
+              {/* Header */}
+              <View className="flex-row items-center justify-between px-6 py-5 border-b border-border/50">
+                <Text className="text-lg font-semibold text-foreground">
+                  {title || placeholder}
+                </Text>
+                <Pressable
+                  onPress={() => setVisible(false)}
+                  className="p-2 rounded-full bg-secondary active:bg-secondary/80"
+                >
+                  <X size={16} className="text-foreground" />
+                </Pressable>
+              </View>
+
+              {/* List: Uses flex-1 to ensure it fills available space */}
+              <View className="flex-1">
+                <FlashList
+                  data={options}
+                  contentContainerStyle={{ padding: 16 }}
+                  keyExtractor={(item) => item.value.toString()}
+                  showsVerticalScrollIndicator={false}
+                  extraData={value}
+                  renderItem={({ item }) => {
+                    const isSelected = multi
+                      ? Array.isArray(value) && value.includes(item.value)
+                      : value === item.value;
+
+                    return (
+                      <PressableBounce
+                        onPress={() => toggleOption(item.value)}
+                        className={cn(
+                          'flex-1 p-4 mb-2 rounded-2xl border',
+                          isSelected
+                            ? 'bg-primary/40 border-primary/20'
+                            : 'bg-secondary/30 border-transparent active:bg-secondary/40',
+                        )}
+                      >
+                        <Text
+                          className={cn(
+                            'text-base capitalize w-full',
+                            isSelected
+                              ? 'font-semibold text-primary-foreground'
+                              : 'text-foreground',
+                          )}
+                        >
+                          {item.label}
+                        </Text>
+                      </PressableBounce>
+                    );
+                  }}
+                />
+              </View>
+
+              {multi && (
+                <View className="p-4 pt-2 absolute bottom-2 left-0 right-0 w-fit">
+                  <Pressable
+                    onPress={() => setVisible(false)}
+                    className="w-full bg-primary py-4 rounded-2xl items-center active:opacity-90"
+                  >
+                    <Text className="text-primary-foreground font-semibold">
+                      {t('common.buttons.done')}
+                    </Text>
+                  </Pressable>
+                </View>
+              )}
+            </BlurView>
+          </Animated.View>
+        </View>
+      </Modal>
+    </Fragment>
   );
-});
-SelectContent.displayName = SelectPrimitive.Content.displayName;
-
-const SelectLabel = React.forwardRef<
-  SelectPrimitive.LabelRef,
-  SelectPrimitive.LabelProps
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.Label
-    ref={ref}
-    className={cn(
-      'py-1.5 native:pb-2 pl-8 native:pl-10 pr-2 text-popover-foreground text-sm native:text-base font-semibold',
-      className,
-    )}
-    {...props}
-  />
-));
-SelectLabel.displayName = SelectPrimitive.Label.displayName;
-
-const SelectItem = React.forwardRef<
-  SelectPrimitive.ItemRef,
-  SelectPrimitive.ItemProps
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Item
-    ref={ref}
-    className={cn(
-      'relative web:group flex flex-row w-full web:cursor-default web:select-none items-center rounded-sm py-1.5 native:py-2 pl-8 native:pl-10 pr-2 web:hover:bg-accent/50 active:bg-accent web:outline-none web:focus:bg-accent',
-      props.disabled && 'web:pointer-events-none opacity-50',
-      className,
-    )}
-    {...props}
-  >
-    <View className="absolute left-2 native:left-3.5 flex h-3.5 native:pt-px w-3.5 items-center justify-center">
-      <SelectPrimitive.ItemIndicator>
-        <Icons.Check
-          size={16}
-          strokeWidth={3}
-          className="text-popover-foreground"
-        />
-      </SelectPrimitive.ItemIndicator>
-    </View>
-    <SelectPrimitive.ItemText className="text-sm text-popover-foreground native:text-base web:group-focus:text-accent-foreground" />
-  </SelectPrimitive.Item>
-));
-SelectItem.displayName = SelectPrimitive.Item.displayName;
-
-const SelectSeparator = React.forwardRef<
-  SelectPrimitive.SeparatorRef,
-  SelectPrimitive.SeparatorProps
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.Separator
-    ref={ref}
-    className={cn('-mx-1 my-1 h-px bg-muted', className)}
-    {...props}
-  />
-));
-SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
-
-export {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectScrollDownButton,
-  SelectScrollUpButton,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-  type Option,
-};
+}

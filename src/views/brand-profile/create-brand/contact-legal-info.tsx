@@ -2,7 +2,7 @@ import FormField from '@/components/shared/form-field';
 import { Input, PhoneInput, Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 import { Control, FieldValues } from 'react-hook-form';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 interface ContactLegalInfoProps<T extends FieldValues> {
   control: Control<T>;
@@ -33,9 +33,7 @@ export function ContactLegalInfo<T extends FieldValues>({
         <FormField
           control={control}
           name="email"
-          label="Business Email"
-          required
-          labelClassName="text-base font-semibold text-foreground"
+          label="Business Email (Optional)"
           message="This will be used for account verification and customer inquiries"
           render={({ field }) => (
             <Input
@@ -52,45 +50,8 @@ export function ContactLegalInfo<T extends FieldValues>({
           name="phone"
           label="Business Phone"
           required
-          labelClassName="text-base font-semibold text-foreground"
           message="Customers will use this to contact you"
           render={({ field }) => <PhoneInput {...field} />}
-        />
-
-        <View className="h-px bg-border my-2" />
-
-        <FormField
-          control={control}
-          name="businessRegistrationNumber"
-          label="Business Registration Number"
-          required
-          labelClassName="text-base font-semibold text-foreground"
-          message="Your official business registration or tax ID number"
-          render={({ field }) => (
-            <Input placeholder="e.g., 123-45-6789" {...field} />
-          )}
-        />
-
-        <FormField
-          control={control}
-          name="licenseDocument"
-          label="Business License (Optional)"
-          labelClassName="text-base font-semibold text-foreground"
-          message="Upload your business license or operating permit"
-          render={({ field }) => (
-            <Pressable className="h-40 rounded-xl border-2 border-dashed border-border bg-muted/30 items-center justify-center">
-              <Icons.Upload className="text-muted-foreground mb-3" size={36} />
-              <Text className="text-base font-medium text-foreground mb-1">
-                Upload Document
-              </Text>
-              <Text className="text-sm text-muted-foreground">
-                PDF, JPG, or PNG (Max 5MB)
-              </Text>
-              <Text className="text-xs text-muted-foreground mt-2">
-                Coming soon - You can add this later from settings
-              </Text>
-            </Pressable>
-          )}
         />
       </View>
     </View>

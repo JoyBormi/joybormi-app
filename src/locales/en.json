@@ -258,6 +258,36 @@
     "noServices": "No Services Found",
     "noServicesDescription": "There are no services available in this category at the moment."
   },
+  "brand": {
+    "setup": {
+      "title": "Brand Setup",
+      "subtitle": "Complete all steps to register your brand",
+      "steps": {
+        "basicInfo": "Basic Info",
+        "location": "Location",
+        "contactLegal": "Contact & Legal",
+        "ownerInfo": "Owner Info",
+        "review": "Review"
+      },
+      "buttons": {
+        "next": "Next",
+        "submit": "Submit"
+      },
+      "saveDraft": {
+        "title": "Save Draft?",
+        "message": "Do you want to save your progress?",
+        "save": "Save",
+        "discard": "Discard"
+      },
+      "success": {
+        "title": "Success!",
+        "message": "Your brand has been created successfully. You can now manage your brand profile."
+      },
+      "error": {
+        "message": "Failed to create brand. Please try again."
+      }
+    }
+  },
   "settings": {
     "profile": {
       "edit": {

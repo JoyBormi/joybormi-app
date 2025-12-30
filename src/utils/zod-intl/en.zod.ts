@@ -16,6 +16,8 @@ export const enLocale = (): z.ZodErrorMap => {
           return 'Invalid username format';
         case 'custom.password_invalid':
           return 'Invalid password format';
+        case 'custom.working_fields_limit':
+          return 'You can select up to 3 working fields';
       }
     }
 

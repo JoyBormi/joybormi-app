@@ -24,7 +24,9 @@ type FormFieldProps<T extends FieldValues> = {
   messageClassName?: string;
   loading?: boolean;
   render: (params: {
-    field: ControllerRenderProps<T, FieldPath<T>>;
+    field: ControllerRenderProps<T, FieldPath<T>> & {
+      onChangeText: (value: string) => void;
+    };
     fieldState: { error?: { message?: string } };
     formState: any;
   }) => React.ReactNode;
@@ -72,7 +74,7 @@ const FormField = memo(<T extends FieldValues>(props: FormFieldProps<T>) => {
           {label && (
             <Text
               className={cn(
-                'mb-1 text-base font-medium text-foreground',
+                'mb-1.5 text-base font-semibold text-foreground',
                 labelClassName,
               )}
             >

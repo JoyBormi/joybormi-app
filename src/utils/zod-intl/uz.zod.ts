@@ -94,6 +94,9 @@ export const uzLocale = (): z.ZodErrorMap => {
           case 'custom.password_not_match':
             return { message: 'Parollar mos emas' };
 
+          case 'custom.working_fields_limit':
+            return { message: 'Iltimos, faqat 3 ta tanlang' };
+
           default:
             return { message: 'Noto‘g‘ri qiymat' };
         }

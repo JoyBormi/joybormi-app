@@ -35,7 +35,6 @@ export function OwnerInfo<T extends FieldValues>({
           name="ownerFirstName"
           label="First Name"
           required
-          labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => <Input placeholder="John" {...field} />}
         />
 
@@ -44,7 +43,6 @@ export function OwnerInfo<T extends FieldValues>({
           name="ownerLastName"
           label="Last Name"
           required
-          labelClassName="text-base font-semibold text-foreground"
           render={({ field }) => <Input placeholder="Doe" {...field} />}
         />
 

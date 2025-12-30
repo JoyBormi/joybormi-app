@@ -6,3 +6,5 @@ auth = "[object Object]";
 website = "[object Object]";
 home = "[object Object]";
 categories = "[object Object]";
+brand = "[object Object]";
+settings = "[object Object]";
