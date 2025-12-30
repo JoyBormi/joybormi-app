@@ -18,7 +18,7 @@ export const createBrandSchema = z.object({
   businessNumber: required(z.string()),
   businessCertUrl: required(z.url()),
 
-  businessCategory: required(z.enum(Major)),
+  businessCategory: required(z.string()),
 
   ownerFirstName: required(z.string()),
   ownerLastName: required(z.string()),

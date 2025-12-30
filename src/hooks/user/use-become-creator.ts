@@ -10,7 +10,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
  */
 export const becomeCreatorApi = async (
   payload: TCreateBrandInput,
-): Promise<string> => await agent.put<string>('/user/become-creator', payload);
+): Promise<string> => await agent.post<string>('/user/become-creator', payload);
 
 /**
  * Become creator mutation hook

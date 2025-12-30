@@ -213,13 +213,6 @@ const CreateBrand: React.FC = () => {
           ],
         );
       },
-      onError: (error) => {
-        Feedback.heavy();
-        Alert.alert(
-          t('common.error.title'),
-          error.message || t('brand.setup.error.message'),
-        );
-      },
     });
   };
 
