@@ -18,7 +18,6 @@ interface Props {
 }
 
 const MAJORS = Object.values(Major);
-const AnimatedPressable = Animated.createAnimatedComponent(PressableBounce);
 
 const SLIDE_DISTANCE = 12;
 
@@ -83,7 +82,7 @@ export function SearchBar({ className }: Props) {
       transition={{ type: 'timing', duration: 500 }}
       className={cn('px-4 mt-10', className)}
     >
-      <AnimatedPressable className="flex-row items-center px-4 bg-card/50 rounded-full border border-border">
+      <PressableBounce className="flex-row items-center px-4 bg-card/50 rounded-full border border-border">
         <View className="flex-1 justify-center">
           {/* Animated placeholder */}
           {!search && (
@@ -103,7 +102,7 @@ export function SearchBar({ className }: Props) {
             onChangeText={setSearch}
             onSubmitEditing={handleSearch}
             onBlur={() => setSearch('')}
-            className="border-0 h-auto bg-transparent font-body"
+            className="border-0 h-auto bg-transparent focus:bg-transparent font-body"
             returnKeyType="search"
             autoCapitalize="none"
             autoCorrect={false}
@@ -115,7 +114,7 @@ export function SearchBar({ className }: Props) {
           size={22}
           className="text-muted-foreground"
         />
-      </AnimatedPressable>
+      </PressableBounce>
     </MotiView>
   );
 }

@@ -1,4 +1,3 @@
-import { useYScroll } from '@/hooks/common';
 import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
@@ -43,7 +42,6 @@ export const ReservationList = ({
   onRefresh,
 }: Props) => {
   const insets = useSafeAreaInsets();
-  const { onScroll } = useYScroll();
 
   // Group reservations by date
   const sections = useMemo(() => {
@@ -236,7 +234,6 @@ export const ReservationList = ({
 
       <SectionList
         scrollEventThrottle={16}
-        onScroll={onScroll}
         sections={sections}
         keyExtractor={(item) => item.uuid}
         renderItem={({ item, index }) => (

@@ -1,6 +1,7 @@
 import {
   AlertCircle,
   ArrowLeft,
+  ArrowRight,
   Asterisk,
   Ban,
   Bell,
@@ -69,6 +70,7 @@ const icons = {
   Home,
   Search,
   Calendar,
+  ArrowRight,
   CalendarDays,
   CalendarPlus,
   Notebook,
@@ -160,6 +162,7 @@ const Icons = {
   Search,
   Settings,
   Sun,
+  ArrowRight,
   Upload,
   User,
   Users,

@@ -2,7 +2,6 @@ import { useColorScheme } from '@/hooks/common/use-color-scheme';
 import { Feedback } from '@/lib/haptics';
 import Icons, { TIcon } from '@/lib/icons';
 import { cn } from '@/lib/utils';
-import { useScrollStore } from '@/stores/use-scroll-store';
 
 import { TabTriggerSlotProps } from 'expo-router/ui';
 import React, { useCallback } from 'react';
@@ -64,7 +63,6 @@ export function TabButton({ isFocused, icon, children, ...props }: Props) {
 
   const handlePressIn = useCallback(() => {
     Feedback.selection();
-    useScrollStore.setState({ isScrollingDown: false });
   }, []);
 
   const IconComponent = Icons[icon];

@@ -1,5 +1,5 @@
 import {
-  CategoryHeader,
+  CategoryFooter,
   CategorySelector,
   ServiceGrid,
 } from '@/views/category';
@@ -10,7 +10,8 @@ import {
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
-import { Platform, ScrollView } from 'react-native';
+import { Platform } from 'react-native';
+import Animated from 'react-native-reanimated';
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -21,8 +22,9 @@ export default function CategoryScreen() {
     category: string;
     query?: string;
   }>();
-  const insets = useSafeAreaInsets();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+
   const filterSheetRef = useRef<BottomSheetModal>(null);
   const [filters, setFilters] = useState<CategoryFilters>({
     search: query || '',
@@ -50,17 +52,13 @@ export default function CategoryScreen() {
 
   return (
     <SafeAreaView className="safe-area relative" edges={['top']}>
-      <CategoryHeader
-        category={category || 'all'}
-        onBack={() => router.back()}
-        onFilterPress={handleFilterPress}
-      />
       <CategorySelector
         selectedCategory={category || 'all'}
         onCategoryChange={handleCategoryChange}
       />
-      <ScrollView
+      <Animated.ScrollView
         bounces={false}
+        scrollEventThrottle={16}
         contentContainerStyle={{
           paddingBottom: insets.bottom + (Platform.OS === 'ios' ? 50 : 90),
         }}
@@ -71,7 +69,21 @@ export default function CategoryScreen() {
           searchQuery={query}
           filters={filters}
         />
-      </ScrollView>
+      </Animated.ScrollView>
+      <CategoryFooter
+        value={filters.search}
+        onFilterPress={handleFilterPress}
+        onChangeText={(text) => setFilters({ ...filters, search: text })}
+        onSubmitEditing={() => {
+          router.push({
+            pathname: '/(category)/[category]',
+            params: {
+              category: category || 'all',
+              query: filters.search,
+            },
+          });
+        }}
+      />
       <CategoryFilterSheet
         ref={filterSheetRef}
         filters={filters}

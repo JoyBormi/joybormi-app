@@ -1,4 +1,5 @@
 import Icons from '@/lib/icons';
+import { router } from 'expo-router';
 import { MotiView } from 'moti';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
@@ -33,6 +34,8 @@ export function CategoryHeader({
         {/* Back Button */}
         <Pressable
           onPress={onBack}
+          hitSlop={20}
+          onLongPress={() => router.replace('/(tabs)')}
           className="w-10 h-10 items-center justify-center active:opacity-60"
         >
           <Icons.ChevronLeft size={24} className="text-foreground" />

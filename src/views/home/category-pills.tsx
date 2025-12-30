@@ -1,3 +1,4 @@
+import { PressableBounce } from '@/components/ui';
 import { Major } from '@/constants/enum';
 import { Feedback } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
@@ -6,6 +7,7 @@ import { MotiView } from 'moti';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
+
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 const emojiMap = ['💇‍♂️', '🧖‍♀️', '🦷', '🏋️', '🧘‍♂️', '🎨', '👨‍⚕️', '🧪'];
@@ -41,7 +43,7 @@ export function CategoryPills({ className }: Props) {
               className="aspect-square items-center justify-center bg-card/50 rounded-xl border border-border active:opacity-80"
             >
               <Animated.View
-                entering={FadeIn.delay(150 + index * 100)}
+                entering={FadeIn.delay(100 + index * 100)}
                 className="items-center"
               >
                 <Text className="text-2xl mb-2">{category.emoji}</Text>
@@ -59,17 +61,17 @@ export function CategoryPills({ className }: Props) {
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ delay: 750 }}
       >
-        <Pressable
+        <PressableBounce
           onPress={() => {
             Feedback.medium();
             router.push('/(category)/all');
           }}
-          className="py-3 mt-4 items-center justify-center bg-card/50 rounded-xl border border-border active:opacity-80"
+          className="py-2.5 mt-4 items-center justify-center bg-card/50 rounded-xl border border-border active:opacity-80"
         >
-          <Text className="font-caption text-sm text-foreground">
+          <Text className="font-medium text-lg text-foreground">
             {t('categories.seeAll')}
           </Text>
-        </Pressable>
+        </PressableBounce>
       </MotiView>
     </View>
   );

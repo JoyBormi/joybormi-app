@@ -11,7 +11,6 @@ import {
   mostPopularBrands,
 } from '@/views/home';
 
-import { useYScroll } from '@/hooks/common/use-y-scroll';
 import { useTranslation } from 'react-i18next';
 import { Platform, ScrollView } from 'react-native';
 import {
@@ -21,14 +20,12 @@ import {
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const { onScroll } = useYScroll();
 
   const { t } = useTranslation();
 
   return (
     <SafeAreaView className="safe-area" edges={['top']}>
       <ScrollView
-        onScroll={onScroll}
         bounces={false}
         contentContainerStyle={{
           paddingBottom: insets.bottom + (Platform.OS === 'ios' ? 50 : 90),

@@ -1,7 +1,7 @@
 import { TabButton } from '@/components/shared/tab-button';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores';
-import { useScrollStore } from '@/stores/use-scroll-store';
+
 import { EUserType } from '@/types/user.type';
 import { useSegments } from 'expo-router';
 import { TabList, Tabs, TabSlot, TabTrigger } from 'expo-router/ui';
@@ -18,8 +18,6 @@ export default function TabLayout() {
 
   const { appType } = useUserStore();
 
-  const { isScrollingDown } = useScrollStore();
-
   const segments = useSegments() as string[];
 
   const isTabBarHidden = SCREENS_WITHOUT_TAB.some((s) => segments.includes(s));
@@ -34,8 +32,7 @@ export default function TabLayout() {
       <TabSlot />
       <TabList
         className={cn(
-          'absolute self-center flex-row justify-evenly rounded-full transition-all duration-300 drop-shadow-2xl backdrop-blur-3xl',
-          isScrollingDown ? 'bg-foreground/10' : 'bg-foreground/30',
+          'absolute self-center flex-row justify-evenly bg-foreground/30 rounded-full transition-all duration-300 drop-shadow-2xl backdrop-blur-3xl',
           isTabBarHidden
             ? 'opacity-0 pointer-events-none translate-y-6'
             : 'opacity-100 pointer-events-auto translate-y-0',
