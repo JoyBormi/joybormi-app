@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -14,13 +14,17 @@ import { Button, Input, PhoneInput, Text } from '@/components/ui';
 import { useUpdateProfile } from '@/hooks/user/use-update-profile';
 import { useUserStore } from '@/stores';
 import { EUserMethod } from '@/types/user.type';
+import { emptyLocalEmail } from '@/utils/helpers';
 import { ProfileFormData, profileSchema } from '@/views/user/profile-schema';
 
 const EditProfileScreen = () => {
   const { t } = useTranslation();
+  const { user } = useUserStore();
   const insets = useSafeAreaInsets();
   const blockedSheetRef = useRef<BlockedSheetRef>(null);
-  const { user } = useUserStore();
+
+  const [identifier, setIdentifier] = useState<string>('');
+
   const { mutate: updateProfile, isPending } = useUpdateProfile();
 
   // Form state
@@ -158,9 +162,9 @@ const EditProfileScreen = () => {
           label={t('settings.profile.email')}
           render={({ field }) => (
             <Input
-              {...field}
-              editable={user?.userMethod === EUserMethod.EMAIL}
-              value={field.value ?? ''}
+              value={emptyLocalEmail(field.value ?? '')}
+              onChangeText={field.onChangeText}
+              editable={user?.userMethod === EUserMethod.PHONE}
               placeholder={t('settings.profile.emailPlaceholder')}
               keyboardType="email-address"
               autoCapitalize="none"
@@ -177,7 +181,7 @@ const EditProfileScreen = () => {
           render={({ field }) => (
             <PhoneInput
               {...field}
-              editable={user?.userMethod === EUserMethod.PHONE}
+              editable={user?.userMethod === EUserMethod.EMAIL}
               placeholder={t('settings.profile.phonePlaceholder')}
               value={field.value ?? ''}
               returnKeyType="next"

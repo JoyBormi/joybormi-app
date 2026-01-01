@@ -1,4 +1,4 @@
-import { Control, FieldValues } from 'react-hook-form';
+import { Control, FieldValues, Path, UseFormSetFocus } from 'react-hook-form';
 import { View } from 'react-native';
 
 import FormField from '@/components/shared/form-field';
@@ -15,13 +15,15 @@ import Icons from '@/lib/icons';
 
 interface BasicInfoProps<T extends FieldValues> {
   control: Control<T>;
+  setFocus: UseFormSetFocus<T>;
 }
 
 export function BasicInfo<T extends FieldValues>({
   control,
+  setFocus,
 }: BasicInfoProps<T>) {
   return (
-    <View className="gap-6 flex-1">
+    <View className="gap-6">
       {/* Header */}
       <View className="bg-card p-6 rounded-2xl border border-border">
         <View className="flex-row items-center gap-3 mb-2">
@@ -46,7 +48,12 @@ export function BasicInfo<T extends FieldValues>({
           required
           message="The name customers will see"
           render={({ field }) => (
-            <Input placeholder="e.g., Elite Hair Studio" {...field} />
+            <Input
+              {...field}
+              placeholder="e.g., Elite Hair Studio"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus('businessName' as Path<T>)}
+            />
           )}
         />
 
@@ -57,7 +64,12 @@ export function BasicInfo<T extends FieldValues>({
           required
           message="Official registered business name"
           render={({ field }) => (
-            <Input placeholder="e.g., Elite Hair Studio LLC" {...field} />
+            <Input
+              {...field}
+              placeholder="e.g., Elite Hair Studio LLC"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus('businessNumber' as Path<T>)}
+            />
           )}
         />
 
@@ -68,7 +80,11 @@ export function BasicInfo<T extends FieldValues>({
           required
           message="Your official business registration or tax ID"
           render={({ field }) => (
-            <Input placeholder="e.g., 123-45-6789" {...field} />
+            <Input
+              {...field}
+              placeholder="e.g., 123-45-6789"
+              returnKeyType="next"
+            />
           )}
         />
 
@@ -103,14 +119,14 @@ export function BasicInfo<T extends FieldValues>({
         <FormField
           control={control}
           name="description"
-          label="Description (Optional)"
+          label="Description"
+          className="min-h-[120px]"
           message="Briefly describe what makes your brand unique"
           render={({ field }) => (
             <Textarea
               placeholder="Tell customers about your brand..."
               multiline
               numberOfLines={6}
-              className="min-h-[120px]"
               textAlignVertical="top"
               scrollEnabled={false}
               {...field}

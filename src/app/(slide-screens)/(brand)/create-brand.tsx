@@ -58,7 +58,9 @@ const CreateBrand: React.FC = () => {
     trigger,
     setValue,
     getValues,
+    setFocus,
     formState: { errors, isValid, isDirty },
+    reset,
   } = useForm<TCreateBrandInput>({
     resolver: zodResolver(createBrandSchema),
     mode: 'onChange',
@@ -67,7 +69,7 @@ const CreateBrand: React.FC = () => {
       businessName: '',
       businessNumber: '',
       businessCertUrl: '',
-      businessCategory: undefined,
+      businessCategory: '',
       ownerFirstName: user?.firstName || '',
       ownerLastName: user?.lastName || '',
       email: user?.email || '',
@@ -174,7 +176,11 @@ const CreateBrand: React.FC = () => {
         alert({
           title: t('brand.setup.success.title'),
           subtitle: t('brand.setup.success.message'),
-          onConfirm: () => router.replace('/(tabs)/(brand)/brand-profile'),
+          onConfirm: () => {
+            router.replace('/(tabs)/(brand)/brand-profile');
+            clearDraft();
+            reset();
+          },
         });
       },
     });
@@ -183,17 +189,17 @@ const CreateBrand: React.FC = () => {
   const renderCurrentStep = useMemo(() => {
     switch (currentStep) {
       case 0:
-        return <BasicInfo control={control} />;
+        return <BasicInfo control={control} setFocus={setFocus} />;
       case 1:
-        return <LocationDetails control={control} />;
+        return <LocationDetails control={control} setFocus={setFocus} />;
       case 2:
-        return <ContactsInfo control={control} />;
+        return <ContactsInfo control={control} setFocus={setFocus} />;
       case 3:
         return <Review control={control} />;
       default:
         return null;
     }
-  }, [currentStep, control]);
+  }, [currentStep, control, setFocus]);
 
   // Check if current step is valid
   const isCurrentStepValid = () => {
@@ -256,25 +262,23 @@ const CreateBrand: React.FC = () => {
       </View>
 
       {/* Step Indicator */}
-      <View className="mb-8">
-        <StepIndicator
-          currentStep={currentStep}
-          totalSteps={STEPS.length}
-          steps={STEPS}
-        />
-      </View>
+      <StepIndicator
+        currentStep={currentStep}
+        totalSteps={STEPS.length}
+        steps={STEPS}
+      />
 
       {/* Current Step Content */}
-      <View className="flex-1 mb-6">{renderCurrentStep}</View>
+      <View className="flex-1">{renderCurrentStep}</View>
 
       {/* Navigation Buttons */}
-      <View className="flex-row gap-4 mt-8 pt-6 border-t border-border/50">
+      <View className="flex-row gap-4 mt-14 pt-6 border-t border-border/50">
         {currentStep > 0 && (
           <Button
             variant="outline"
             onPress={handleBack}
             disabled={isSubmitting}
-            className="flex-1 h-12 rounded-2xl"
+            size="action"
           >
             <Text className="font-semibold text-foreground">
               {t('common.buttons.back')}
@@ -285,7 +289,8 @@ const CreateBrand: React.FC = () => {
           <Button
             onPress={handleNext}
             disabled={!isCurrentStepValid() || isSubmitting}
-            className="flex-1 h-12 rounded-2xl"
+            size="action"
+            className="flex-1"
           >
             <Text className="font-semibold text-primary-foreground">Next</Text>
           </Button>
@@ -293,7 +298,7 @@ const CreateBrand: React.FC = () => {
           <Button
             onPress={handleSubmit(onSubmit)}
             disabled={!isValid || isSubmitting}
-            className="flex-1 h-12 rounded-2xl"
+            size="action"
           >
             <Text className="font-semibold text-primary-foreground">
               {isSubmitting ? 'Loading...' : 'Submit'}

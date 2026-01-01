@@ -55,7 +55,19 @@ export function Review<T extends FieldValues>({ control }: ReviewProps<T>) {
           </View>
           <View className="p-4">
             <InfoRow label="Brand Name" value={formData.brandName} />
-            <InfoRow label="Category" value={formData.businessCategory} />
+            <InfoRow
+              label="Business Legal Name"
+              value={formData.businessName}
+            />
+            <InfoRow label="Business Number" value={formData.businessNumber} />
+            <InfoRow
+              label="Business Certificate URL"
+              value={formData.businessCertUrl}
+            />
+            <InfoRow
+              label="Business Category"
+              value={formData.businessCategory}
+            />
             <InfoRow label="Description" value={formData.description} />
           </View>
         </View>

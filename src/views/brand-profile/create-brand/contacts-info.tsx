@@ -1,4 +1,4 @@
-import { Control, FieldValues } from 'react-hook-form';
+import { Control, FieldValues, Path, UseFormSetFocus } from 'react-hook-form';
 import { View } from 'react-native';
 
 import FormField from '@/components/shared/form-field';
@@ -7,10 +7,12 @@ import Icons from '@/lib/icons';
 
 interface ContactsInfoProps<T extends FieldValues> {
   control: Control<T>;
+  setFocus: UseFormSetFocus<T>;
 }
 
 export function ContactsInfo<T extends FieldValues>({
   control,
+  setFocus,
 }: ContactsInfoProps<T>) {
   return (
     <View className="gap-6 flex-1">
@@ -50,6 +52,8 @@ export function ContactsInfo<T extends FieldValues>({
             <Input
               placeholder="business@example.com"
               keyboardType="email-address"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus('phone' as Path<T>)}
               autoCapitalize="none"
               {...field}
             />
@@ -62,7 +66,13 @@ export function ContactsInfo<T extends FieldValues>({
           label="Business Phone"
           required
           message="Customers will use this to contact you"
-          render={({ field }) => <PhoneInput {...field} />}
+          render={({ field }) => (
+            <PhoneInput
+              {...field}
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus('ownerFirstName' as Path<T>)}
+            />
+          )}
         />
 
         {/* Divider */}
@@ -83,7 +93,14 @@ export function ContactsInfo<T extends FieldValues>({
           name="ownerFirstName"
           label="First Name"
           required
-          render={({ field }) => <Input placeholder="John" {...field} />}
+          render={({ field }) => (
+            <Input
+              placeholder="John"
+              {...field}
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus('ownerLastName' as Path<T>)}
+            />
+          )}
         />
 
         <FormField
@@ -91,7 +108,9 @@ export function ContactsInfo<T extends FieldValues>({
           name="ownerLastName"
           label="Last Name"
           required
-          render={({ field }) => <Input placeholder="Doe" {...field} />}
+          render={({ field }) => (
+            <Input placeholder="Doe" {...field} returnKeyType="done" />
+          )}
         />
 
         <View className="bg-primary/10 p-5 rounded-xl border border-primary/30">

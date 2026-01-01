@@ -1,4 +1,4 @@
-import { Control, FieldValues } from 'react-hook-form';
+import { Control, FieldValues, Path, UseFormSetFocus } from 'react-hook-form';
 import { View } from 'react-native';
 
 import FormField from '@/components/shared/form-field';
@@ -7,10 +7,12 @@ import Icons from '@/lib/icons';
 
 interface LocationDetailsProps<T extends FieldValues> {
   control: Control<T>;
+  setFocus: UseFormSetFocus<T>;
 }
 
 export function LocationDetails<T extends FieldValues>({
   control,
+  setFocus,
 }: LocationDetailsProps<T>) {
   return (
     <View className="gap-6">
@@ -35,7 +37,12 @@ export function LocationDetails<T extends FieldValues>({
           required
           className="gap-2"
           render={({ field }) => (
-            <Input placeholder="e.g., United States" {...field} />
+            <Input
+              placeholder="e.g., United States"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus('state' as Path<T>)}
+              {...field}
+            />
           )}
         />
 
@@ -46,7 +53,14 @@ export function LocationDetails<T extends FieldValues>({
             label="State/Province"
             required
             className="flex-1 gap-2"
-            render={({ field }) => <Input placeholder="State" {...field} />}
+            render={({ field }) => (
+              <Input
+                placeholder="State"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus('city' as Path<T>)}
+                {...field}
+              />
+            )}
           />
 
           <FormField
@@ -54,7 +68,14 @@ export function LocationDetails<T extends FieldValues>({
             name="city"
             label="City (Optional)"
             className="flex-1 gap-2"
-            render={({ field }) => <Input placeholder="City" {...field} />}
+            render={({ field }) => (
+              <Input
+                placeholder="City"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus('street' as Path<T>)}
+                {...field}
+              />
+            )}
           />
         </View>
 
@@ -65,7 +86,12 @@ export function LocationDetails<T extends FieldValues>({
           required
           className="gap-2"
           render={({ field }) => (
-            <Input placeholder="123 Main Street" {...field} />
+            <Input
+              placeholder="123 Main Street"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus('detailedAddress' as Path<T>)}
+              {...field}
+            />
           )}
         />
 
@@ -76,7 +102,12 @@ export function LocationDetails<T extends FieldValues>({
           className="gap-2"
           message="Apartment, suite, floor, building, etc."
           render={({ field }) => (
-            <Input placeholder="Suite 200, Floor 3" {...field} />
+            <Input
+              placeholder="Suite 200, Floor 3"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus('postalCode' as Path<T>)}
+              {...field}
+            />
           )}
         />
 
@@ -86,7 +117,9 @@ export function LocationDetails<T extends FieldValues>({
           label="Postal Code"
           required
           className="gap-2"
-          render={({ field }) => <Input placeholder="12345" {...field} />}
+          render={({ field }) => (
+            <Input placeholder="12345" returnKeyType="done" {...field} />
+          )}
         />
       </View>
     </View>

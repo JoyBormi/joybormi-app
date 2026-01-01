@@ -2,6 +2,8 @@ import dayjs from 'dayjs';
 import * as parsePhoneNumber from 'libphonenumber-js';
 import { CountryCode } from 'libphonenumber-js';
 
+import { LOCAL_EMAIL } from '@/constants/global.constants';
+
 export const getDate = (offset = 0) => {
   const date = new Date();
   date.setDate(date.getDate() + offset);
@@ -28,4 +30,10 @@ export const formatPhoneNumber = (
   }
 
   return parsed.formatInternational(); // "+998 93 455 25 65"
+};
+
+export const emptyLocalEmail = (email: string) => {
+  const isEmailLOcal = email.endsWith(LOCAL_EMAIL);
+
+  return isEmailLOcal ? '' : email;
 };
