@@ -1,5 +1,4 @@
 // theme.config.ts
-import { StatusBarStyle } from 'expo-status-bar';
 import { vars } from 'nativewind';
 
 export type ThemeName = 'light' | 'dark';
@@ -21,111 +20,80 @@ export type ThemeHex = Record<
   }
 >;
 
-// TODO: add the colors
-
 // 1. Raw HSL values (no rgb(...) wrapper)
 export const THEME_COLORS: ThemeColorMap = {
   light: vars({
     '--background': '40 20% 97%',
     '--foreground': '240 10% 10%',
-
     '--card': '45 25% 96%',
     '--card-foreground': '240 8% 20%',
-
-    '--popover': '45 20% 94%',
-    '--popover-foreground': '240 8% 20%',
-
-    '--primary': '265 60% 85%',
-    '--primary-foreground': '265 60% 25%',
-
-    '--secondary': '220 10% 94%',
+    '--primary': '280 30% 80%',
+    '--primary-foreground': '0 0% 100%',
+    '--secondary': '260 10% 94%',
     '--secondary-foreground': '240 10% 25%',
-
-    '--muted': '220 12% 90%',
-    '--muted-foreground': '220 8% 35%',
-
-    '--accent': '220 8% 96%',
+    '--muted': '260 12% 90%',
+    '--muted-foreground': '260 10% 30%',
+    '--accent': '270 8% 96%',
     '--accent-foreground': '240 10% 25%',
-
     '--destructive': '0 85% 72%',
     '--destructive-foreground': '0 0% 100%',
-
-    '--border': '240 8% 85%',
-    '--input': '240 8% 93%',
-    '--ring': '265 60% 75%',
+    '--border': '260 8% 82%',
+    '--input': '260 8% 93%',
+    '--ring': '280 30% 70%',
     '--success': '140 50% 45%',
     '--warning': '40 90% 55%',
   }),
   dark: vars({
     '--background': '240 6% 10%',
     '--foreground': '0 0% 95%',
-
     '--card': '240 8% 14%',
     '--card-foreground': '0 0% 90%',
-
-    '--popover': '240 8% 13%',
-    '--popover-foreground': '0 0% 90%',
-
-    '--primary': '265 60% 75%',
+    '--primary': '280 30% 72%',
     '--primary-foreground': '0 0% 10%',
-
-    '--secondary': '220 8% 20%',
+    '--secondary': '260 8% 20%',
     '--secondary-foreground': '0 0% 95%',
-
-    '--muted': '220 10% 24%',
-    '--muted-foreground': '220 6% 65%',
-
-    '--accent': '220 6% 22%',
+    '--muted': '260 10% 24%',
+    '--muted-foreground': '260 8% 65%',
+    '--accent': '270 6% 22%',
     '--accent-foreground': '0 0% 95%',
-
     '--destructive': '0 72% 60%',
     '--destructive-foreground': '0 0% 100%',
-
-    '--border': '240 6% 22%',
-    '--input': '240 6% 18%',
-    '--ring': '265 60% 60%',
+    '--border': '260 6% 22%',
+    '--input': '260 6% 18%',
+    '--ring': '280 30% 62%',
     '--success': '140 45% 40%',
     '--warning': '40 85% 50%',
   }),
 };
 
 // 2. Status bar styles
-export const STATUSBAR_COLORS: Record<
-  ThemeName,
-  { style: StatusBarStyle; background: string }
-> = {
-  light: {
-    style: 'dark',
-    background: '#f7f5ec',
-  },
-  dark: {
-    style: 'light',
-    background: '#1c1c1f',
-  },
+export const STATUSBAR_COLORS = {
+  light: { style: 'dark', background: '#f7f6f2' },
+  dark: { style: 'light', background: '#1c1c1f' },
 };
 
-//3. HEX Theme Colors
+// 3. HEX Theme Colors
 export const THEMES_HEX: ThemeHex = {
   light: {
     dark: false,
     colors: {
-      primary: '#d9c2f0', // hsl(265 60% 85%)
-      background: '#f5f5f5', // hsl(40 20% 97%)
-      card: '#f9f5e8', // hsl(42 30% 95%)
-      text: '#1c1c1f', // hsl(240 10% 10%)
-      border: '#d6d7e3', // hsl(240 8% 85%)
-      notification: '#f39191', // hsl(0 85% 72%)
+      primary: '#dbc9eb',
+      background: '#f7f6f2',
+      card: '#f9f5e8',
+      text: '#1c1c1f',
+      border: '#ddd5e2',
+      notification: '#f39191',
     },
   },
   dark: {
     dark: true,
     colors: {
-      primary: '#bf99e6', // hsl(265 60% 75%)
-      background: '#1c1c1f', // hsl(240 6% 10%)
-      card: '#292931', // hsl(240 8% 17%)
-      text: '#f2f2f2', // hsl(0 0% 95%)
-      border: '#38383f', // hsl(240 6% 25%)
-      notification: '#db5757', // hsl(0 72% 60%)
+      primary: '#c1a8db',
+      background: '#1c1c1f',
+      card: '#292931',
+      text: '#f2f2f2',
+      border: '#38383f',
+      notification: '#db5757',
     },
   },
 };

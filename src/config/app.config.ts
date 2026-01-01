@@ -24,7 +24,7 @@ const getApiBaseUrl = (): string => {
     url = process.env.EXPO_PUBLIC_API_ENDPOINT;
   } else if (__DEV__) {
     // Development default - your local IP
-    url = 'http://192.168.0.141:4000';
+    url = 'http://192.168.200.141:4000';
   } else {
     // Production default
     url = 'https://api.joybormi.uz';

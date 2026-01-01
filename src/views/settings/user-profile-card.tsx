@@ -1,6 +1,6 @@
 import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
-import { IUser } from '@/types/user.type';
+import { EUserMethod, IUser } from '@/types/user.type';
 import { formatPhoneNumber } from '@/utils/helpers';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
@@ -48,9 +48,9 @@ export const UserProfileCard: React.FC<Props> = ({ profile, onPress }) => {
           numberOfLines={1}
           ellipsizeMode="tail"
         >
-          {formatPhoneNumber(profile?.phone ?? '') ??
-            profile?.email ??
-            'Please login'}
+          {profile?.userMethod === EUserMethod.PHONE
+            ? formatPhoneNumber(profile?.phone ?? '')
+            : (profile?.email ?? 'Please login')}
         </Text>
       </View>
 

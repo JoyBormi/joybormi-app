@@ -213,7 +213,7 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
             >
               {service.name}
             </Text>
-            <View className="flex-row items-center bg-popover-foreground px-2 py-1 rounded-md">
+            <View className="flex-row items-center bg-card-foreground px-2 py-1 rounded-md">
               <Icons.Star
                 size={12}
                 className="text-amber-500 fill-amber-500 mr-1"

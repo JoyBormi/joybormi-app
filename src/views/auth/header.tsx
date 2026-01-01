@@ -32,7 +32,7 @@ export function AuthHeader({
             className="p-2 w-fit aspect-square rounded-full !pl-0"
             variant="ghost"
           >
-            <Icons.ArrowLeft size={20} className="text-popover-foreground" />
+            <Icons.ArrowLeft size={20} className="text-card-foreground" />
           </Button>
         )}
         <View className="flex flex-col items-start gap-y-1 mt-5">

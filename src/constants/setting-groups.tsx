@@ -10,6 +10,7 @@ export const settingsGroups = ({
   handleThemePress,
   handleLanguagePress,
   handleLogout,
+  handleDeleteAccount,
   isLoggedIn,
 }: {
   notificationsEnabled: boolean;
@@ -19,6 +20,7 @@ export const settingsGroups = ({
   handleThemePress: () => void;
   handleLanguagePress: () => void;
   handleLogout: () => void;
+  handleDeleteAccount: () => void;
   isLoggedIn: boolean;
 }) => {
   return [
@@ -29,6 +31,16 @@ export const settingsGroups = ({
             title: 'Account',
             items: [
               {
+                id: 'profile',
+                type: 'navigation',
+                title: 'Profile',
+                subtitle: 'Your account information',
+                icon: Icons.User,
+                iconColor: 'text-primary',
+                iconBgColor: 'bg-primary/10',
+                href: '/(tabs)/(settings)/profile',
+              },
+              {
                 id: 'likes',
                 type: 'navigation',
                 title: 'Liked Items',
@@ -36,7 +48,7 @@ export const settingsGroups = ({
                 icon: Icons.Heart,
                 iconColor: 'text-red-500',
                 iconBgColor: 'bg-red-500/10',
-                href: '/profile/likes',
+                href: '/(tabs)/(settings)/profile/likes',
               },
               {
                 id: 'reviews',
@@ -46,7 +58,7 @@ export const settingsGroups = ({
                 icon: Icons.Star,
                 iconColor: 'text-yellow-500',
                 iconBgColor: 'bg-yellow-500/10',
-                href: '/profile/reviews',
+                href: '/(tabs)/(settings)/profile/reviews',
               },
               {
                 id: 'security',
@@ -56,7 +68,7 @@ export const settingsGroups = ({
                 icon: Icons.Lock,
                 iconColor: 'text-green-500',
                 iconBgColor: 'bg-green-500/10',
-                href: '/settings/security',
+                href: '/(tabs)/(settings)/security',
               },
               {
                 id: 'payment',
@@ -66,7 +78,7 @@ export const settingsGroups = ({
                 icon: Icons.CreditCard,
                 iconColor: 'text-purple-500',
                 iconBgColor: 'bg-purple-500/10',
-                href: '/settings/payment',
+                href: '/(tabs)/(settings)/payment',
               },
             ],
           },
@@ -140,7 +152,7 @@ export const settingsGroups = ({
           icon: Icons.HelpCircle,
           iconColor: 'text-teal-500',
           iconBgColor: 'bg-teal-500/10',
-          href: '/support',
+          href: '/(tabs)/(settings)/help',
         },
         {
           id: 'terms',
@@ -149,7 +161,7 @@ export const settingsGroups = ({
           icon: Icons.FileText,
           iconColor: 'text-gray-500',
           iconBgColor: 'bg-gray-500/10',
-          href: '/legal/terms',
+          href: '/(tabs)/(settings)/legal/terms',
         },
         {
           id: 'privacy',
@@ -158,7 +170,7 @@ export const settingsGroups = ({
           icon: Icons.Shield,
           iconColor: 'text-gray-500',
           iconBgColor: 'bg-gray-500/10',
-          href: '/legal/privacy',
+          href: '/(tabs)/(settings)/legal/privacy',
         },
         {
           id: 'version',
@@ -185,6 +197,20 @@ export const settingsGroups = ({
                 iconBgColor: 'bg-destructive/10',
                 destructive: true,
                 onPress: handleLogout,
+              },
+            ],
+          },
+          {
+            id: 'delete-account',
+            items: [
+              {
+                id: 'delete-account-button',
+                type: 'action',
+                title: 'Delete Account',
+                iconColor: 'text-destructive',
+                iconBgColor: 'bg-destructive/10',
+                withdraw: true,
+                onPress: handleDeleteAccount,
               },
             ],
           },

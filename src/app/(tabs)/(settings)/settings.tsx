@@ -1,5 +1,5 @@
 import { settingsGroups } from '@/constants/setting-groups';
-import { useLogout } from '@/hooks/auth';
+import { useLogout, useWithdraw } from '@/hooks/auth';
 import { useColorScheme } from '@/hooks/common';
 import { Feedback } from '@/lib/haptics';
 import { useUserStore } from '@/stores';
@@ -33,6 +33,7 @@ const SettingsScreen: React.FC = () => {
   const [emailNotifications, setEmailNotifications] = useState(true);
 
   const { mutateAsync: logout } = useLogout();
+  const { mutateAsync: withdraw } = useWithdraw();
 
   const handleUserTypeSwitch = useCallback(() => {
     if (!isLoggedIn) {
@@ -86,6 +87,33 @@ const SettingsScreen: React.FC = () => {
     );
   }, [isLoggedIn, logout]);
 
+  const handleDeleteAccount = useCallback(() => {
+    if (!isLoggedIn) {
+      router.push('/(auth)/login');
+      return;
+    }
+    Alert.alert(
+      'Delete Account',
+      'Are you sure you want to delete your account?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          onPress: () => Feedback.light(),
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            Feedback.medium();
+            withdraw();
+          },
+        },
+      ],
+      { cancelable: true },
+    );
+  }, [isLoggedIn, withdraw]);
+
   const settings = useMemo(
     () =>
       settingsGroups({
@@ -96,6 +124,7 @@ const SettingsScreen: React.FC = () => {
         handleThemePress,
         handleLanguagePress,
         handleLogout,
+        handleDeleteAccount,
         isLoggedIn,
       }),
     [
@@ -105,6 +134,7 @@ const SettingsScreen: React.FC = () => {
       handleThemePress,
       handleLanguagePress,
       handleLogout,
+      handleDeleteAccount,
       i18n,
       isLoggedIn,
     ],

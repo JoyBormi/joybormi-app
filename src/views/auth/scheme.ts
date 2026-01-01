@@ -2,6 +2,28 @@ import { normalizePhone, PASSWORD_REGEX, PHONE_REGEX } from '@/lib/utils';
 import { required } from '@/utils/zod-intl';
 import { z } from 'zod';
 
+const usernameSchema = required(
+  z.string().refine((v) => /^[a-zA-Z0-9_ ]+$/.test(v), {
+    params: { customCode: 'custom.username_invalid' },
+  }),
+);
+
+const emailSchema = z.email();
+const phoneSchema = required(
+  z.string().refine((v) => PHONE_REGEX.test(normalizePhone(v)), {
+    params: { customCode: 'custom.phone_invalid' },
+  }),
+);
+
+const passwordSchema = required(
+  z.string().refine((v) => PASSWORD_REGEX.test(v), {
+    params: { customCode: 'custom.password_invalid' },
+  }),
+);
+
+const confirmPasswordSchema = required(z.string());
+
+// Login schema
 export const loginSchema = z
   .object({
     method: z.enum(['email', 'phone']),
@@ -10,7 +32,13 @@ export const loginSchema = z
     password: z.string().min(6),
   })
   .superRefine((data, ctx) => {
-    if (data.method === 'email') {
+    if (data.method === 'email' && !data.email) {
+      ctx.addIssue({
+        path: ['email'],
+        code: 'custom',
+        params: { customCode: 'custom.required' },
+      });
+    } else if (data.method === 'email' && data.email) {
       const result = emailSchema.safeParse(data.email);
       if (!result.success) {
         ctx.addIssue({
@@ -34,6 +62,7 @@ export const loginSchema = z
   });
 export type LoginFormType = z.infer<typeof loginSchema>;
 
+// Forgot password schema
 export const forgotPwdEmailSchema = z.object({
   email: z.email(),
   code: z.string().optional(),
@@ -84,27 +113,6 @@ export const resetPwdSchema = z
   });
 
 export type ResetPwdFormType = z.infer<typeof resetPwdSchema>;
-
-const usernameSchema = required(
-  z.string().refine((v) => /^[a-zA-Z0-9_ ]+$/.test(v), {
-    params: { customCode: 'custom.username_invalid' },
-  }),
-);
-
-const emailSchema = z.email();
-const phoneSchema = required(
-  z.string().refine((v) => PHONE_REGEX.test(normalizePhone(v)), {
-    params: { customCode: 'custom.phone_invalid' },
-  }),
-);
-
-const passwordSchema = required(
-  z.string().refine((v) => PASSWORD_REGEX.test(v), {
-    params: { customCode: 'custom.password_invalid' },
-  }),
-);
-
-const confirmPasswordSchema = required(z.string());
 
 export const registerUserSchema = z
   .object({

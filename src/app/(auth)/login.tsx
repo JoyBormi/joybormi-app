@@ -27,7 +27,7 @@ export default function LoginScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const [tab, setTab] = useState('phone');
-  const { control, handleSubmit, setValue, clearErrors, setFocus } =
+  const { control, reset, handleSubmit, setValue, clearErrors, setFocus } =
     useForm<LoginFormType>({
       resolver: zodResolver(loginSchema),
       defaultValues: {
@@ -64,9 +64,10 @@ export default function LoginScreen() {
   };
 
   const handleTab = (tab: string) => {
-    setValue('method', tab as 'email' | 'phone');
-    clearErrors();
     setTab(tab);
+    clearErrors();
+    reset();
+    setValue('method', tab as 'email' | 'phone');
   };
 
   return (
@@ -94,7 +95,7 @@ export default function LoginScreen() {
               render={({ field }) => (
                 <Input
                   {...field}
-                  placeholder="main@joybormiz.uz"
+                  placeholder={t('auth.emailPlaceholder')}
                   keyboardType="email-address"
                   returnKeyType="next"
                   autoCapitalize="none"
@@ -128,7 +129,7 @@ export default function LoginScreen() {
               render={({ field }) => (
                 <PhoneInput
                   {...field}
-                  placeholder="+998 97 123 45 67"
+                  placeholder={t('auth.phonePlaceholder')}
                   returnKeyType="next"
                   defaultCountry="UZ"
                   onSubmitEditing={() => setFocus('password')}

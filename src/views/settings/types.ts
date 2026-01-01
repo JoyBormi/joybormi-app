@@ -23,6 +23,7 @@ export interface ISettingsItem {
   value?: string | boolean;
   badge?: string | number;
   destructive?: boolean;
+  withdraw?: boolean;
   onPress?: () => void;
   href?: string;
 }

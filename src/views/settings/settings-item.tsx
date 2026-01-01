@@ -23,10 +23,11 @@ export const SettingsItem: React.FC<Props> = ({
   const content = (
     <View
       className={cn(
-        'flex-row items-center gap-3 px-1.5 py-2.5 bg-card/50 backdrop-blur-sm',
+        'flex-row items-center gap-3 px-3 py-2.5 bg-card/50 backdrop-blur-sm',
         isFirst && 'rounded-t-2xl',
         isLast && 'rounded-b-2xl',
         !isLast && 'border-b border-border/10',
+        item.withdraw && 'bg-transparent',
       )}
     >
       {/* Icon */}
@@ -49,6 +50,7 @@ export const SettingsItem: React.FC<Props> = ({
           className={cn(
             'text-base font-subtitle',
             item.destructive ? 'text-destructive' : 'text-foreground',
+            item.withdraw ? 'font-caption text-center' : '',
           )}
         >
           {item.title}
