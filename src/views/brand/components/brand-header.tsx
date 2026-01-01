@@ -1,10 +1,11 @@
-import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
-import { IBrand } from '@/types/brand.type';
 import { MotiView } from 'moti';
 import React from 'react';
 import { Image, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { Text } from '@/components/ui';
+import Icons from '@/lib/icons';
+import { IBrand } from '@/types/brand.type';
 
 interface BrandHeaderProps {
   brand: IBrand;

@@ -1,9 +1,10 @@
-import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
-import { IBrandReview } from '@/types/brand.type';
 import { MotiView } from 'moti';
 import React from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
+
+import { Text } from '@/components/ui';
+import Icons from '@/lib/icons';
+import { IBrandReview } from '@/types/brand.type';
 
 interface ReviewCardProps {
   review: IBrandReview;

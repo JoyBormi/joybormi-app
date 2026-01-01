@@ -1,8 +1,10 @@
-import { Text } from '@/components/ui';
-import { IBrandPhoto } from '@/types/brand.type';
 import React, { useState } from 'react';
 import { Pressable, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { Text } from '@/components/ui';
+import { IBrandPhoto } from '@/types/brand.type';
+
 import { PhotoGrid } from '../components/photo-grid';
 
 interface PhotosTabProps {

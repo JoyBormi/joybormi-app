@@ -1,11 +1,11 @@
-import { Button, Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 import { useNavigation } from 'expo-router';
-
-import { Feedback } from '@/lib/haptics';
-import { cn } from '@/lib/utils';
 import { AnimatePresence, MotiView } from 'moti';
 import { View } from 'react-native';
+
+import { Button, Text } from '@/components/ui';
+import { Feedback } from '@/lib/haptics';
+import Icons from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 export function Header({
   title = 'Log in',

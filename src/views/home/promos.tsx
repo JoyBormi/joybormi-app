@@ -1,10 +1,11 @@
-import { PressableBounce, Text } from '@/components/ui';
-import Icons from '@/lib/icons';
-import { cn } from '@/lib/utils';
 import { router } from 'expo-router';
 import { MotiView } from 'moti';
 import React from 'react';
 import { Dimensions, Image, Pressable, ScrollView, View } from 'react-native';
+
+import { PressableBounce, Text } from '@/components/ui';
+import Icons from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.935;

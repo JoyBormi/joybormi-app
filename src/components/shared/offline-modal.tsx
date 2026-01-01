@@ -1,4 +1,3 @@
-import { Text } from '@/components/ui';
 import { BlurView } from 'expo-blur';
 import * as Network from 'expo-network';
 import { WifiOff, X } from 'lucide-react-native';
@@ -11,6 +10,8 @@ import Animated, {
   SlideInDown,
   SlideOutDown,
 } from 'react-native-reanimated';
+
+import { Text } from '@/components/ui';
 
 export function OfflineModal() {
   const { t } = useTranslation();

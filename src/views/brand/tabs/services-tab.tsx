@@ -1,8 +1,10 @@
-import { Text } from '@/components/ui';
-import { IBrandService } from '@/types/brand.type';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { Text } from '@/components/ui';
+import { IBrandService } from '@/types/brand.type';
+
 import { ServiceCard } from '../components/service-card';
 
 interface ServicesTabProps {

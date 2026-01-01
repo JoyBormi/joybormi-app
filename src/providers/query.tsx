@@ -1,8 +1,9 @@
+import { QueryClientProvider } from '@tanstack/react-query';
+import { useEffect } from 'react';
+
 import { useError } from '@/hooks/common/use-error';
 import { ApiError } from '@/lib/agent';
 import { queryClient } from '@/lib/tanstack-query';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { useEffect } from 'react';
 
 /**
  * Determines if an error should be retried

@@ -1,8 +1,9 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { agent } from '@/lib/agent/client';
 import { queryKeys } from '@/lib/tanstack-query';
 import { useUserStore } from '@/stores';
 import { IUser } from '@/types/user.type';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 /**
  * Update profile request payload

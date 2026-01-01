@@ -1,6 +1,8 @@
+import { z } from 'zod';
+
 import { Major } from '@/constants/enum';
 import { required } from '@/utils/zod-intl';
-import { z } from 'zod';
+
 import { normalizePhone, PHONE_REGEX } from '../utils';
 
 // Keep this in sync with your Prisma enum BrandCategory

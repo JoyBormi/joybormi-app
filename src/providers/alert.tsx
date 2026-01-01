@@ -1,5 +1,3 @@
-import { Text } from '@/components/ui';
-import { useAlertStore } from '@/stores/use-alert-store';
 import { BlurView } from 'expo-blur';
 import { AlertCircle } from 'lucide-react-native';
 import React from 'react';
@@ -10,6 +8,9 @@ import Animated, {
   ZoomIn,
   ZoomOut,
 } from 'react-native-reanimated';
+
+import { Text } from '@/components/ui';
+import { useAlertStore } from '@/stores/use-alert-store';
 
 export function GlobalAlert() {
   const { visible, options, hideAlert } = useAlertStore();

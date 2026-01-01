@@ -1,19 +1,22 @@
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
-import FormField from '@/components/shared/form-field';
-import KeyboardAvoid from '@/components/shared/keyboard-avoid';
-import { Button, Text } from '@/components/ui';
-import { Input } from '@/components/ui/input';
-import type { IWorker } from '@/types/worker.type';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { forwardRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import CustomBottomSheet from '@/components/shared/bottom-sheet';
+import FormField from '@/components/shared/form-field';
+import KeyboardAvoid from '@/components/shared/keyboard-avoid';
+import { Button, Text } from '@/components/ui';
+import { Input } from '@/components/ui/input';
+
 import {
   workerProfileSchema,
   type WorkerProfileFormData,
 } from '../utils/helpers';
+
+import type { IWorker } from '@/types/worker.type';
 
 interface EditProfileSheetProps {
   worker: IWorker;

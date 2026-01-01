@@ -1,7 +1,8 @@
-import Icons from '@/lib/icons';
-import { cn } from '@/lib/utils';
 import * as LabelPrimitive from '@rn-primitives/label';
 import * as React from 'react';
+
+import Icons from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 const Label = React.forwardRef<
   LabelPrimitive.TextRef,

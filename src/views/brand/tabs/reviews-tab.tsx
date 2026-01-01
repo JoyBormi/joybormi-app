@@ -1,10 +1,12 @@
-import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
-import { IBrand, IBrandReview } from '@/types/brand.type';
 import { MotiView } from 'moti';
 import React from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { Text } from '@/components/ui';
+import Icons from '@/lib/icons';
+import { IBrand, IBrandReview } from '@/types/brand.type';
+
 import { ReviewCard } from '../components/review-card';
 
 interface ReviewsTabProps {

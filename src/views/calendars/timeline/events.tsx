@@ -1,9 +1,10 @@
-import { Text } from '@/components/ui';
-import { useColorScheme } from '@/hooks/common';
 import dayjs from 'dayjs';
 import React, { type FC } from 'react';
 import { View } from 'react-native';
 import { PackedEvent } from 'react-native-calendars/src/timeline/EventBlock';
+
+import { Text } from '@/components/ui';
+import { useColorScheme } from '@/hooks/common';
 
 const TimelineEvent: FC<PackedEvent> = ({
   title,

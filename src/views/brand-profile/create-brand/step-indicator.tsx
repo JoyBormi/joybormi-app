@@ -1,12 +1,13 @@
-import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
-import { cn } from '@/lib/utils';
 import { LucideIcon } from 'lucide-react-native';
 import { View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   withSpring,
 } from 'react-native-reanimated';
+
+import { Text } from '@/components/ui';
+import Icons from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 interface StepIndicatorProps {
   currentStep: number;

@@ -1,3 +1,8 @@
+import { MotiView } from 'moti';
+import React from 'react';
+import { Pressable, ScrollView, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 import {
@@ -6,10 +11,7 @@ import {
   IBrandService,
   IBrandWorker,
 } from '@/types/brand.type';
-import { MotiView } from 'moti';
-import React from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { PhotoGrid } from '../components/photo-grid';
 import { ServiceCard } from '../components/service-card';
 import { WorkerCard } from '../components/worker-card';

@@ -1,4 +1,5 @@
 import { Theme } from 'react-native-calendars/src/types';
+
 import { ThemeHex } from './themes';
 
 export const getMonthTheme = (colors: ThemeHex['dark']['colors']): Theme => {

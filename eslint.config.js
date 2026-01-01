@@ -49,6 +49,29 @@ module.exports = defineConfig([
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
 
+      // Import sorting
+      'import/order': [
+        'warn',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+            'object',
+            'type',
+            'unknown',
+          ],
+          'newlines-between': 'always',
+          alphabetize: {
+            order: 'asc',
+            caseInsensitive: true,
+          },
+        },
+      ],
+
       // General
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'warn',

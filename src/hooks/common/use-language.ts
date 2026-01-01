@@ -1,6 +1,7 @@
-import { storage } from '@/lib/mmkv';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { storage } from '@/lib/mmkv';
 
 export function useLanguage() {
   const { i18n } = useTranslation();

@@ -1,4 +1,3 @@
-import { EMOJI_MAP, Major } from '@/constants/enum';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { ScrollView, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -10,6 +9,9 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+
+import { EMOJI_MAP, Major } from '@/constants/enum';
+
 import { CategoryChip } from './category-chip';
 import { CategoryGridItem } from './category-grid-item';
 import { DraggableKnob } from './handle-knob';

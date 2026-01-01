@@ -1,10 +1,10 @@
 // components/UploadField.tsx
+import * as ImagePicker from 'expo-image-picker';
 import React from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 
 import Icons from '@/lib/icons';
 
-import * as ImagePicker from 'expo-image-picker';
 import { PressableBounce } from './pressable-bounce';
 
 interface UploadFieldProps {

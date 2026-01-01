@@ -1,8 +1,9 @@
-import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 import { MotiView } from 'moti';
 import React from 'react';
 import { View } from 'react-native';
+
+import { Text } from '@/components/ui';
+import Icons from '@/lib/icons';
 
 interface MemberAboutTabProps {
   member: {

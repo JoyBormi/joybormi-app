@@ -1,8 +1,10 @@
-import { Button, Text } from '@/components/ui';
-import Icons from '@/lib/icons';
-import type { IBrand } from '@/types/brand.type';
 import React, { Fragment } from 'react';
 import { Image, Pressable, View } from 'react-native';
+
+import { Button, Text } from '@/components/ui';
+import Icons from '@/lib/icons';
+
+import type { IBrand } from '@/types/brand.type';
 
 interface BrandCardProps {
   brand: IBrand;

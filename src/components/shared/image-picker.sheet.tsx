@@ -1,11 +1,12 @@
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
-import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import React, { forwardRef } from 'react';
 import { Alert, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import CustomBottomSheet from '@/components/shared/bottom-sheet';
+import { Text } from '@/components/ui';
+import Icons from '@/lib/icons';
 
 interface ImagePickerSheetProps {
   onChange: (uri: string) => void;

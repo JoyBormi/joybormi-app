@@ -1,3 +1,11 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { BlockedSheet, BlockedSheetRef } from '@/components/shared/block-sheet';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Button, Text } from '@/components/ui';
@@ -15,13 +23,6 @@ import {
   Review,
   StepIndicator,
 } from '@/views/brand-profile/create-brand';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'expo-router';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type SetupStep = 0 | 1 | 2 | 3;
 

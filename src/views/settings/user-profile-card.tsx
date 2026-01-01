@@ -1,9 +1,10 @@
+import React from 'react';
+import { Image, Pressable, Text, View } from 'react-native';
+
 import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
 import { EUserMethod, IUser } from '@/types/user.type';
 import { formatPhoneNumber } from '@/utils/helpers';
-import React from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
 
 interface Props {
   profile: IUser | null;

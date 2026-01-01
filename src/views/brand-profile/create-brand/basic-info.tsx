@@ -1,3 +1,6 @@
+import { Control, FieldValues } from 'react-hook-form';
+import { View } from 'react-native';
+
 import FormField from '@/components/shared/form-field';
 import {
   Input,
@@ -9,8 +12,6 @@ import {
 } from '@/components/ui';
 import { Major } from '@/constants/enum';
 import Icons from '@/lib/icons';
-import { Control, FieldValues } from 'react-hook-form';
-import { View } from 'react-native';
 
 interface BasicInfoProps<T extends FieldValues> {
   control: Control<T>;

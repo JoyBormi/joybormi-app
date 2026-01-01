@@ -1,9 +1,11 @@
-import { Text } from '@/components/ui';
-import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import React from 'react';
 import { View } from 'react-native';
+
+import { Text } from '@/components/ui';
+import { cn } from '@/lib/utils';
+
 import { plans } from './data';
 
 type PlanCardProps = {

@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text } from 'react-native';
@@ -7,6 +6,8 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
+
+import { cn } from '@/lib/utils';
 
 /**
  * Grid Category Item for Bottom Sheet

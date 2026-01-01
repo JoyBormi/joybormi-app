@@ -1,7 +1,8 @@
-import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 import React from 'react';
 import { Pressable, View } from 'react-native';
+
+import { Text } from '@/components/ui';
+import Icons from '@/lib/icons';
 
 interface QuickActionsSectionProps {
   onAddService: () => void;

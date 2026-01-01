@@ -1,3 +1,13 @@
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRef, useState } from 'react';
+import { Platform } from 'react-native';
+import Animated from 'react-native-reanimated';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+
 import { Feedback } from '@/lib/haptics';
 import {
   CategoryFooter,
@@ -8,15 +18,6 @@ import {
   CategoryFilterSheet,
   CategoryFilters,
 } from '@/views/category/category-filter';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
-import { Platform } from 'react-native';
-import Animated from 'react-native-reanimated';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
 
 export default function CategoryScreen() {
   const { category, query } = useLocalSearchParams<{

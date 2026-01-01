@@ -1,3 +1,10 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { Pressable, View } from 'react-native';
+
 import FormField from '@/components/shared/form-field';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import {
@@ -14,14 +21,7 @@ import {
 import { useLogin } from '@/hooks/auth/use-login';
 import { Feedback } from '@/lib/haptics';
 import { normalizePhone } from '@/lib/utils';
-
 import { AuthHeader, LoginFormType, loginSchema } from '@/views/auth';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
 
 export default function LoginScreen() {
   const { t } = useTranslation();

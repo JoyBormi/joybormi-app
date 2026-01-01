@@ -1,6 +1,7 @@
 import { Link } from 'expo-router';
 import { MotiView } from 'moti';
 import { Image, View } from 'react-native';
+
 import { Text } from '../ui';
 
 interface BrandCardProps {

@@ -1,5 +1,3 @@
-import { Text } from '@/components/ui';
-import { Feedback } from '@/lib/haptics';
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
@@ -13,6 +11,9 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
+
+import { Text } from '@/components/ui';
+import { Feedback } from '@/lib/haptics';
 
 const ITEM_HEIGHT = 45;
 const VISIBLE_ITEMS = 5;

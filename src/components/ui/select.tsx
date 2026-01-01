@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { PressableBounce, Text } from '@/components/ui';
-import { Feedback } from '@/lib/haptics';
-import { cn } from '@/lib/utils';
 import { FlashList } from '@shopify/flash-list';
 import { BlurView } from 'expo-blur';
 import { ChevronDown, X } from 'lucide-react-native';
@@ -14,6 +11,10 @@ import Animated, {
   ZoomIn,
   ZoomOut,
 } from 'react-native-reanimated';
+
+import { PressableBounce, Text } from '@/components/ui';
+import { Feedback } from '@/lib/haptics';
+import { cn } from '@/lib/utils';
 
 export type SelectValue = string | number;
 

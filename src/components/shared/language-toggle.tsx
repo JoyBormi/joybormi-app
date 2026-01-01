@@ -1,6 +1,3 @@
-import { cn } from '@/lib/utils';
-
-import { storage } from '@/lib/mmkv';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
@@ -9,6 +6,9 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+
+import { storage } from '@/lib/mmkv';
+import { cn } from '@/lib/utils';
 
 const langs = ['en', 'ru', 'uz'];
 

@@ -1,6 +1,7 @@
-import { ThemeHex } from '@/styles/themes';
 import { Dispatch, RefObject, SetStateAction } from 'react';
 import { SearchBarCommands, SearchBarProps } from 'react-native-screens';
+
+import { ThemeHex } from '@/styles/themes';
 
 interface ISearchBox {
   ref: RefObject<SearchBarCommands>;

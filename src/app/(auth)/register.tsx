@@ -1,3 +1,10 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { View } from 'react-native';
+
 import FormField from '@/components/shared/form-field';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import {
@@ -14,18 +21,11 @@ import {
 import { useRegister } from '@/hooks/auth';
 import { Feedback } from '@/lib/haptics';
 import { normalizePhone } from '@/lib/utils';
-
 import {
   AuthHeader,
   RegisterUserFormType,
   registerUserSchema,
 } from '@/views/auth';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
 
 type RegisterMethod = 'email' | 'phone' | string;
 

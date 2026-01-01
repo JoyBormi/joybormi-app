@@ -1,6 +1,7 @@
-import { cn } from '@/lib/utils';
 import * as React from 'react';
 import { TextInput, View } from 'react-native';
+
+import { cn } from '@/lib/utils';
 
 interface OtpInputProps {
   length?: number;

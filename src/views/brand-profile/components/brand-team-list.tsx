@@ -1,8 +1,10 @@
-import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
-import type { IBrandWorker } from '@/types/brand.type';
 import React from 'react';
 import { Image, Pressable, View } from 'react-native';
+
+import { Text } from '@/components/ui';
+import Icons from '@/lib/icons';
+
+import type { IBrandWorker } from '@/types/brand.type';
 
 interface BrandTeamListProps {
   workers: IBrandWorker[];

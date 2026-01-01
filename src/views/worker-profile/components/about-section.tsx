@@ -1,8 +1,10 @@
-import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
-import type { IWorker } from '@/types/worker.type';
 import React from 'react';
 import { Pressable, View } from 'react-native';
+
+import { Text } from '@/components/ui';
+import Icons from '@/lib/icons';
+
+import type { IWorker } from '@/types/worker.type';
 
 interface AboutSectionDisplayProps {
   worker: IWorker;

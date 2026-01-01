@@ -1,6 +1,7 @@
+import { useMutation } from '@tanstack/react-query';
+
 import { ApiResponse } from '@/lib/agent';
 import { agent } from '@/lib/agent/client';
-import { useMutation } from '@tanstack/react-query';
 
 /**
  * Reset password payload

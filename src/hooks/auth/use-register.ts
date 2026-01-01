@@ -1,7 +1,9 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { agent } from '@/lib/agent/client';
 import { storage } from '@/lib/mmkv';
 import { useUserStore } from '@/stores';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { AuthResponse, RegisterCredentials } from './types';
 
 /**

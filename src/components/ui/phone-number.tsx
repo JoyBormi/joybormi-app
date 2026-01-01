@@ -1,7 +1,8 @@
-import { cn } from '@/lib/utils';
 import { AsYouType, CountryCode } from 'libphonenumber-js';
 import * as React from 'react';
 import { TextInput, type TextInputProps } from 'react-native';
+
+import { cn } from '@/lib/utils';
 
 interface PhoneInputProps extends Omit<
   TextInputProps,

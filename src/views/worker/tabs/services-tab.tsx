@@ -1,8 +1,9 @@
-import { Button, Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 import { MotiView } from 'moti';
 import React from 'react';
 import { Pressable, View } from 'react-native';
+
+import { Button, Text } from '@/components/ui';
+import Icons from '@/lib/icons';
 
 interface Service {
   id: string;

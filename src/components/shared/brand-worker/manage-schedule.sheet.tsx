@@ -1,10 +1,3 @@
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
-import { TimePickerSheet } from '@/components/shared/time-picker.sheet';
-import { Button, Text } from '@/components/ui';
-import { useLocaleData } from '@/hooks/common/use-locale-data';
-import Icons from '@/lib/icons';
-import { cn } from '@/lib/utils';
-import type { IWorkingDay } from '@/types/worker.type';
 import {
   BottomSheetModal,
   useBottomSheetTimingConfigs,
@@ -12,6 +5,15 @@ import {
 import React, { forwardRef, Fragment, useMemo, useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import CustomBottomSheet from '@/components/shared/bottom-sheet';
+import { TimePickerSheet } from '@/components/shared/time-picker.sheet';
+import { Button, Text } from '@/components/ui';
+import { useLocaleData } from '@/hooks/common/use-locale-data';
+import Icons from '@/lib/icons';
+import { cn } from '@/lib/utils';
+
+import type { IWorkingDay } from '@/types/worker.type';
 
 interface ManageScheduleSheetProps {
   workingDays: IWorkingDay[];

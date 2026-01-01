@@ -1,8 +1,3 @@
-import { useColorScheme } from '@/hooks/common/use-color-scheme';
-import { Feedback } from '@/lib/haptics';
-import Icons, { TIcon } from '@/lib/icons';
-import { cn } from '@/lib/utils';
-
 import { TabTriggerSlotProps } from 'expo-router/ui';
 import React, { useCallback } from 'react';
 import { Pressable } from 'react-native';
@@ -12,6 +7,11 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
+
+import { useColorScheme } from '@/hooks/common/use-color-scheme';
+import { Feedback } from '@/lib/haptics';
+import Icons, { TIcon } from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 type Props = TabTriggerSlotProps & {
   icon: TIcon;

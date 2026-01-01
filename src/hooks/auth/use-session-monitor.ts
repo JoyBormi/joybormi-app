@@ -1,5 +1,7 @@
-import { useUserStore } from '@/stores';
 import { useEffect, useRef } from 'react';
+
+import { useUserStore } from '@/stores';
+
 import { useMe } from './use-me';
 import { useRefreshSession } from './use-refresh-session';
 

@@ -1,6 +1,8 @@
-import Icons from '@/lib/icons';
 import React, { useState } from 'react';
 import { Pressable, TextInputProps, View } from 'react-native';
+
+import Icons from '@/lib/icons';
+
 import { Input } from './input';
 
 export function PasswordInput(props: TextInputProps) {

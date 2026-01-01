@@ -1,7 +1,8 @@
-import { useThemeStore } from '@/stores/use-theme-store';
-import { THEMES_HEX } from '@/styles/themes';
 import { useColorScheme as useNativewindColorScheme } from 'nativewind';
 import { useEffect } from 'react';
+
+import { useThemeStore } from '@/stores/use-theme-store';
+import { THEMES_HEX } from '@/styles/themes';
 
 export function useColorScheme() {
   const { colorScheme, setColorScheme, toggleColorScheme } =

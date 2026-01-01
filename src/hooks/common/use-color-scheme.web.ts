@@ -1,7 +1,8 @@
-import { useThemeStore } from '@/stores/use-theme-store';
-import { THEMES_HEX } from '@/styles/themes';
 import { useColorScheme as useNativewindColorScheme } from 'nativewind';
 import { useEffect, useState } from 'react';
+
+import { useThemeStore } from '@/stores/use-theme-store';
+import { THEMES_HEX } from '@/styles/themes';
 
 /**
  * To support static rendering, this value needs to be re-calculated on the client side for web

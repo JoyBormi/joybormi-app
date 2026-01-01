@@ -1,14 +1,15 @@
-import { Input, PressableBounce } from '@/components/ui';
-import { useKeyboardHeight } from '@/hooks/common';
-import { Feedback } from '@/lib/haptics';
-import Icons from '@/lib/icons';
-import { cn } from '@/lib/utils';
 import { BlurView } from 'expo-blur';
 import { router } from 'expo-router';
 import { AnimatePresence, MotiView } from 'moti';
 import { memo, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { Input, PressableBounce } from '@/components/ui';
+import { useKeyboardHeight } from '@/hooks/common';
+import { Feedback } from '@/lib/haptics';
+import Icons from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 export const CategoryFooter = memo(function CategoryFooter({
   value,

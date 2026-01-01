@@ -1,5 +1,6 @@
-import { useOnboarding } from '@/stores/use-onboarding';
 import { Redirect } from 'expo-router';
+
+import { useOnboarding } from '@/stores/use-onboarding';
 
 const Middleware = () => {
   const { visited, canVisitAgain } = useOnboarding();

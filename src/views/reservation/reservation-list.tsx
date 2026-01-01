@@ -1,6 +1,3 @@
-import { Feedback } from '@/lib/haptics';
-import Icons from '@/lib/icons';
-import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
 import React, { Fragment, useCallback, useMemo } from 'react';
 import {
@@ -11,6 +8,11 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { Feedback } from '@/lib/haptics';
+import Icons from '@/lib/icons';
+import { cn } from '@/lib/utils';
+
 import { ReservationItem } from './reservation-item';
 import { Reservation, ReservationFilters } from './types';
 

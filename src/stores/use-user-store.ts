@@ -1,8 +1,9 @@
 // CHecks onboarding visited or not
-import { storage } from '@/lib/mmkv';
-import { EUserType, IUser } from '@/types/user.type';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+
+import { storage } from '@/lib/mmkv';
+import { EUserType, IUser } from '@/types/user.type';
 
 export interface UserStoreState {
   user: IUser | null;

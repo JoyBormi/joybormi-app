@@ -1,14 +1,15 @@
-import FormField from '@/components/shared/form-field';
-import KeyboardAvoid from '@/components/shared/keyboard-avoid';
-import { Button, PasswordInput, Text } from '@/components/ui';
-import { useResetPassword } from '@/hooks/auth';
-import { AuthHeader, ResetPwdFormType, resetPwdSchema } from '@/views/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
+
+import FormField from '@/components/shared/form-field';
+import KeyboardAvoid from '@/components/shared/keyboard-avoid';
+import { Button, PasswordInput, Text } from '@/components/ui';
+import { useResetPassword } from '@/hooks/auth';
+import { AuthHeader, ResetPwdFormType, resetPwdSchema } from '@/views/auth';
 
 export default function ResetPwdScreen() {
   const { t } = useTranslation();

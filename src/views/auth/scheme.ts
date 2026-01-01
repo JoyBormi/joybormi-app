@@ -1,6 +1,7 @@
+import { z } from 'zod';
+
 import { normalizePhone, PASSWORD_REGEX, PHONE_REGEX } from '@/lib/utils';
 import { required } from '@/utils/zod-intl';
-import { z } from 'zod';
 
 const usernameSchema = required(
   z.string().refine((v) => /^[a-zA-Z0-9_ ]+$/.test(v), {

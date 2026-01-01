@@ -1,13 +1,14 @@
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
-import { Feedback } from '@/lib/haptics';
-import Icons from '@/lib/icons';
-import { storage } from '@/lib/mmkv';
-import { cn } from '@/lib/utils';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import CustomBottomSheet from '@/components/shared/bottom-sheet';
+import { Feedback } from '@/lib/haptics';
+import Icons from '@/lib/icons';
+import { storage } from '@/lib/mmkv';
+import { cn } from '@/lib/utils';
 
 export type LanguageCode = 'en' | 'uz' | 'ru';
 

@@ -1,19 +1,21 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { router } from 'expo-router';
+import React, { useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { BlockedSheet, BlockedSheetRef } from '@/components/shared/block-sheet';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Button, Text, Textarea } from '@/components/ui';
 import { Input } from '@/components/ui/input';
-import type { IWorker } from '@/types/worker.type';
 import {
   WorkerProfileFormData,
   workerProfileSchema,
 } from '@/views/worker-profile/utils';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { router } from 'expo-router';
-import React, { useRef } from 'react';
-import { useForm } from 'react-hook-form';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import type { IWorker } from '@/types/worker.type';
 
 interface EditProfileScreenProps {
   worker: IWorker;

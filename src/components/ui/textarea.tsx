@@ -1,6 +1,7 @@
-import { cn } from '@/lib/utils';
 import * as React from 'react';
 import { TextInput, type TextInputProps } from 'react-native';
+
+import { cn } from '@/lib/utils';
 
 const Textarea = React.forwardRef<
   React.ComponentRef<typeof TextInput>,

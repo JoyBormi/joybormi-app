@@ -1,8 +1,9 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { agent } from '@/lib/agent/client';
 import { storage } from '@/lib/mmkv';
 import { useUserStore } from '@/stores';
 import { EUserType } from '@/types/user.type';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 /**
  * Logout API call

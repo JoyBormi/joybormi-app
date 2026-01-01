@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils';
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -10,6 +9,8 @@ import { BottomSheetScrollViewProps } from '@gorhom/bottom-sheet/lib/typescript/
 import { BottomSheetViewProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetView/types';
 import React, { forwardRef } from 'react';
 import { View } from 'react-native';
+
+import { cn } from '@/lib/utils';
 
 export type ScrollConfig = Partial<BottomSheetScrollViewProps> & {
   className?: string;

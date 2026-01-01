@@ -1,3 +1,12 @@
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useRouter } from 'expo-router';
+import React, { useRef, useState } from 'react';
+import { ScrollView } from 'react-native';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+
 import {
   InviteTeamSheet,
   ManageScheduleSheet,
@@ -7,9 +16,7 @@ import {
   UpsertServiceSheet,
 } from '@/components/shared/brand-worker';
 import { useUserStore } from '@/stores';
-import type { IBrandService } from '@/types/brand.type';
 import { EUserType } from '@/types/user.type';
-import type { IWorkingDay } from '@/types/worker.type';
 import {
   mockBrand,
   mockPhotos,
@@ -26,14 +33,9 @@ import {
   BrandServicesList,
   BrandTeamList,
 } from '@/views/brand-profile/components';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { useRouter } from 'expo-router';
-import React, { useRef, useState } from 'react';
-import { ScrollView } from 'react-native';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+
+import type { IBrandService } from '@/types/brand.type';
+import type { IWorkingDay } from '@/types/worker.type';
 
 /**
  * Brand Profile Management Page - For creators/workers to manage their brand

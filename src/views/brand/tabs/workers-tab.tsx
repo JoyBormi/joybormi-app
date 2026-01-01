@@ -1,11 +1,12 @@
-import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
-import { IBrandWorker } from '@/types/brand.type';
 import { router } from 'expo-router';
 import { MotiView } from 'moti';
 import React from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { Text } from '@/components/ui';
+import Icons from '@/lib/icons';
+import { IBrandWorker } from '@/types/brand.type';
 
 interface WorkersTabProps {
   workers: IBrandWorker[];

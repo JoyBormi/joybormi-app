@@ -1,5 +1,6 @@
-import { Locale } from 'i18n.config';
 import { create } from 'zustand';
+
+import { Locale } from 'i18n.config';
 
 /**
  * Locale configuration interface matching react-native-calendars structure

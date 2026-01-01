@@ -1,14 +1,14 @@
-import { PressableBounce } from '@/components/ui';
-import { Major } from '@/constants/enum';
-import { Feedback } from '@/lib/haptics';
-import { cn } from '@/lib/utils';
 import { useRouter } from 'expo-router';
 import { MotiView } from 'moti';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
-
 import Animated, { FadeIn } from 'react-native-reanimated';
+
+import { PressableBounce } from '@/components/ui';
+import { Major } from '@/constants/enum';
+import { Feedback } from '@/lib/haptics';
+import { cn } from '@/lib/utils';
 
 const emojiMap = ['💇‍♂️', '🧖‍♀️', '🦷', '🏋️', '🧘‍♂️', '🎨', '👨‍⚕️', '🧪'];
 

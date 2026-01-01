@@ -1,9 +1,10 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { agent } from '@/lib/agent/client';
 import { queryKeys } from '@/lib/tanstack-query';
 import { TCreateBrandInput } from '@/lib/validations/brand';
 import { useUserStore } from '@/stores';
 import { EUserType } from '@/types/user.type';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 /**
  * Become creator API call

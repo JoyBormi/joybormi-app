@@ -1,14 +1,3 @@
-import { ColorPickerModal } from '@/components/modals';
-import { useColorScheme } from '@/hooks/common';
-import {
-  getTimelineTheme,
-  TIMELINE_MARK_COLORS,
-  TimelineColorName,
-} from '@/styles/calendar';
-import { formatMonth } from '@/utils/date';
-import { getDate } from '@/utils/helpers';
-import { TimeEvent, TimelineEvent } from '@/views/calendars';
-
 import dayjs from 'dayjs';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { groupBy } from 'lodash';
@@ -23,6 +12,17 @@ import {
 } from 'react-native-calendars';
 import { UpdateSources } from 'react-native-calendars/src/expandableCalendar/commons';
 import { PackedEvent } from 'react-native-calendars/src/timeline/EventBlock';
+
+import { ColorPickerModal } from '@/components/modals';
+import { useColorScheme } from '@/hooks/common';
+import {
+  getTimelineTheme,
+  TIMELINE_MARK_COLORS,
+  TimelineColorName,
+} from '@/styles/calendar';
+import { formatMonth } from '@/utils/date';
+import { getDate } from '@/utils/helpers';
+import { TimeEvent, TimelineEvent } from '@/views/calendars';
 
 /* ---------------------------------- */
 /* HELPER FUNCTIONS */

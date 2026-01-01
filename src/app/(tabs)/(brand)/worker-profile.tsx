@@ -1,9 +1,16 @@
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import React, { useRef, useState } from 'react';
+import { ScrollView } from 'react-native';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+
 import {
   ManageScheduleSheet,
   UpsertServiceSheet,
 } from '@/components/shared/brand-worker';
 import { useUserStore } from '@/stores';
-import type { IService } from '@/types/worker.type';
 import {
   AboutSectionDisplay,
   EditProfileSheet,
@@ -21,13 +28,8 @@ import {
   type ServiceFormData,
   type WorkerProfileFormData,
 } from '@/views/worker-profile/utils/helpers';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import React, { useRef, useState } from 'react';
-import { ScrollView } from 'react-native';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+
+import type { IService } from '@/types/worker.type';
 
 /**
  * Worker Profile View Screen

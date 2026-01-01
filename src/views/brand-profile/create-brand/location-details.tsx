@@ -1,8 +1,9 @@
+import { Control, FieldValues } from 'react-hook-form';
+import { View } from 'react-native';
+
 import FormField from '@/components/shared/form-field';
 import { Input, Text } from '@/components/ui';
 import Icons from '@/lib/icons';
-import { Control, FieldValues } from 'react-hook-form';
-import { View } from 'react-native';
 
 interface LocationDetailsProps<T extends FieldValues> {
   control: Control<T>;

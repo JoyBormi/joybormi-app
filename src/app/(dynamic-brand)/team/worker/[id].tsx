@@ -1,3 +1,11 @@
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Image, Pressable, ScrollView, View } from 'react-native';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+
 import { Button, Text } from '@/components/ui';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Icons from '@/lib/icons';
@@ -7,13 +15,6 @@ import {
   MemberScheduleTab,
   MemberServicesTab,
 } from '@/views/worker';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Image, Pressable, ScrollView, View } from 'react-native';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
 
 type WorkerTabType = 'about' | 'services' | 'schedule' | 'reviews';
 

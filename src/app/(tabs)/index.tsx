@@ -1,3 +1,10 @@
+import { useTranslation } from 'react-i18next';
+import { Platform, ScrollView } from 'react-native';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+
 import { BrandCard } from '@/components/shared/brand-card';
 import { ServiceCard } from '@/components/shared/service-card';
 import {
@@ -10,13 +17,6 @@ import {
   mostBookedWorkers,
   mostPopularBrands,
 } from '@/views/home';
-
-import { useTranslation } from 'react-i18next';
-import { Platform, ScrollView } from 'react-native';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();

@@ -1,7 +1,8 @@
+import { useQuery } from '@tanstack/react-query';
+
 import { agent } from '@/lib/agent/client';
 import { queryKeys } from '@/lib/tanstack-query/query-keys';
 import { IUser } from '@/types/user.type';
-import { useQuery } from '@tanstack/react-query';
 
 /**
  * Backend /auth/me response format

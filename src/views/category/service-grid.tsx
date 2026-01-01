@@ -1,9 +1,11 @@
-import { Major } from '@/constants/enum';
-import { CategoryFilters } from './category-filter';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
+
+import { Major } from '@/constants/enum';
+
+import { CategoryFilters } from './category-filter';
 import { ServiceCard } from './service-card';
 
 // Dummy service data - will be replaced with TanStack Query

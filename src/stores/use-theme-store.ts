@@ -1,7 +1,8 @@
-import { storage } from '@/lib/mmkv';
-import { ThemeName } from '@/styles/themes';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+
+import { storage } from '@/lib/mmkv';
+import { ThemeName } from '@/styles/themes';
 
 interface ThemeState {
   currentTheme: ThemeName;

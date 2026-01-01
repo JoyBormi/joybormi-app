@@ -1,11 +1,13 @@
-import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
-import { useUserStore } from '@/stores';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Link } from 'expo-router';
 import { MotiView } from 'moti';
 import React, { useEffect, useRef } from 'react';
 import { Image, Pressable, View } from 'react-native';
+
+import { Text } from '@/components/ui';
+import Icons from '@/lib/icons';
+import { useUserStore } from '@/stores';
+
 import { LocationPickerSheet } from './location-picker';
 
 export function Header() {

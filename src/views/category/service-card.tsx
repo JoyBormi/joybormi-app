@@ -1,6 +1,3 @@
-import { Major } from '@/constants/enum';
-import Icons from '@/lib/icons';
-import { cn } from '@/lib/utils';
 import { MotiView } from 'moti';
 import React, { useState } from 'react';
 import { Dimensions, Image, Pressable, Text, View } from 'react-native';
@@ -15,6 +12,10 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+
+import { Major } from '@/constants/enum';
+import Icons from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_MARGIN = 16;

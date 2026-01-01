@@ -3,10 +3,10 @@
  * The Zustand store (useLocaleStore) is the single source of truth for locale data.
  * This file ensures react-native-calendars stays in sync.
  */
-import { Locale } from 'i18n.config';
 import { LocaleConfig } from 'react-native-calendars';
 
 import { useLocaleStore } from '@/stores/use-locale-store';
+import { Locale } from 'i18n.config';
 
 /**
  * Initialize LocaleConfig with data from the Zustand store

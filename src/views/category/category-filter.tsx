@@ -1,10 +1,11 @@
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import React, { forwardRef, useState } from 'react';
+import { Pressable, ScrollView, Text, View } from 'react-native';
+
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { Input } from '@/components/ui';
 import { Feedback } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import React, { forwardRef, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
 
 export interface CategoryFilters {
   search: string;

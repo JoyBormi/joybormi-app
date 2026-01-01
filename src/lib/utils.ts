@@ -1,6 +1,7 @@
-import { EUserType, UserTypeBlockReason } from '@/types/user.type';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+
+import { EUserType, UserTypeBlockReason } from '@/types/user.type';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

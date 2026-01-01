@@ -1,6 +1,7 @@
-import Icons from '@/lib/icons';
 import * as Application from 'expo-application';
 import { i18n } from 'i18next';
+
+import Icons from '@/lib/icons';
 
 export const settingsGroups = ({
   notificationsEnabled,

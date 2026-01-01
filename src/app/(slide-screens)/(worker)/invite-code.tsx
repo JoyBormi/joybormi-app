@@ -1,14 +1,15 @@
-import FormField from '@/components/shared/form-field';
-import KeyboardAvoid from '@/components/shared/keyboard-avoid';
-import { Button, Input, Text } from '@/components/ui';
-import { Feedback } from '@/lib/haptics';
-import { AuthHeader } from '@/views/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import { z } from 'zod';
+
+import FormField from '@/components/shared/form-field';
+import KeyboardAvoid from '@/components/shared/keyboard-avoid';
+import { Button, Input, Text } from '@/components/ui';
+import { Feedback } from '@/lib/haptics';
+import { AuthHeader } from '@/views/auth';
 
 /* ================= SCHEMA ================= */
 

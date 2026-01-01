@@ -1,7 +1,7 @@
-import { Locale } from 'i18n.config';
+import { useTranslation } from 'react-i18next';
 
 import { useLocaleStore } from '@/stores/use-locale-store';
-import { useTranslation } from 'react-i18next';
+import { Locale } from 'i18n.config';
 
 /**
  * Hook to access locale data from the Zustand store.

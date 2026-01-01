@@ -1,3 +1,11 @@
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { settingsGroups } from '@/constants/setting-groups';
 import { useLogout, useWithdraw } from '@/hooks/auth';
 import { useColorScheme } from '@/hooks/common';
@@ -11,13 +19,6 @@ import {
   UserProfileCard,
   UserTypeSheet,
 } from '@/views/settings';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SettingsScreen: React.FC = () => {
   const insets = useSafeAreaInsets();

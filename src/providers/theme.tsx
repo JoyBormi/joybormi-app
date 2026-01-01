@@ -1,9 +1,10 @@
-import { useThemeStore } from '@/stores/use-theme-store';
-import { STATUSBAR_COLORS, THEME_COLORS, ThemeName } from '@/styles/themes';
 import clsx from 'clsx';
 import { StatusBar } from 'expo-status-bar';
 import React, { createContext, ReactNode, useContext, useMemo } from 'react';
 import { View, ViewProps } from 'react-native';
+
+import { useThemeStore } from '@/stores/use-theme-store';
+import { STATUSBAR_COLORS, THEME_COLORS, ThemeName } from '@/styles/themes';
 
 type ThemeContextType = {
   theme: ThemeName;

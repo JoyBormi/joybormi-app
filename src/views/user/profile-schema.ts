@@ -1,6 +1,7 @@
+import { z } from 'zod';
+
 import { normalizePhone, PHONE_REGEX } from '@/lib/utils';
 import { required } from '@/utils/zod-intl';
-import { z } from 'zod';
 
 /**
  * Username validation schema

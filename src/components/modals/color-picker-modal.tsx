@@ -1,8 +1,9 @@
+import React from 'react';
+import { Modal, Pressable, ScrollView, View } from 'react-native';
+
 import { Text } from '@/components/ui';
 import { useColorScheme } from '@/hooks/common';
 import { TIMELINE_MARK_COLORS, TimelineColorName } from '@/styles/calendar';
-import React from 'react';
-import { Modal, Pressable, ScrollView, View } from 'react-native';
 
 interface ColorPickerModalProps {
   visible: boolean;

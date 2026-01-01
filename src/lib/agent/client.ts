@@ -4,9 +4,12 @@
  * Handles authentication, error transformation, and logging
  */
 
-import { appConfig } from '@/config/app.config';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+
+import { appConfig } from '@/config/app.config';
+
 import { storage } from '../mmkv';
+
 import { ApiError, ApiPaginatedApiResponse } from './types';
 
 /**

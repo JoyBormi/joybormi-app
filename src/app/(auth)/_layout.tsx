@@ -1,6 +1,7 @@
-import { GlobalAlert } from '@/providers/alert';
 import { Stack } from 'expo-router';
 import { Fragment } from 'react';
+
+import { GlobalAlert } from '@/providers/alert';
 
 export default function AuthLayout() {
   return (

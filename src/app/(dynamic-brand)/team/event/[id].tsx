@@ -1,6 +1,3 @@
-import { Button, Text } from '@/components/ui';
-import Icons from '@/lib/icons';
-import { cn } from '@/lib/utils';
 import { BlurView } from 'expo-blur';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MotiText } from 'moti';
@@ -14,6 +11,10 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { Button, Text } from '@/components/ui';
+import Icons from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 const images = [
   'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&auto=format&fit=crop&q=80',

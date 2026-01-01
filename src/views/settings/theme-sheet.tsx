@@ -1,12 +1,13 @@
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import React, { forwardRef } from 'react';
+import { Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { useColorScheme } from '@/hooks/common';
 import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import React, { forwardRef } from 'react';
-import { Pressable, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type ThemeMode = 'light' | 'dark';
 

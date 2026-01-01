@@ -1,7 +1,3 @@
-import { Input, PressableBounce } from '@/components/ui';
-import { Major } from '@/constants/enum';
-import Icons from '@/lib/icons';
-import { cn } from '@/lib/utils';
 import { useRouter } from 'expo-router';
 import { MotiView } from 'moti';
 import React, { useEffect, useState } from 'react';
@@ -12,6 +8,11 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+
+import { Input, PressableBounce } from '@/components/ui';
+import { Major } from '@/constants/enum';
+import Icons from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 interface Props {
   className?: string;

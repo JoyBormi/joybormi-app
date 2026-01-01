@@ -1,11 +1,5 @@
-import { useHeaderMonthControls } from '@/hooks/calendar';
-import { useColorScheme, useLanguage } from '@/hooks/common';
-import { getMonthTheme } from '@/styles/calendar';
-import { setCalendarLocale } from '@/utils/month-names';
-import { RenderHeader } from '@/views/calendars/month/header';
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
-import { Locale } from 'i18n.config';
 import { debounce } from 'lodash';
 import React, {
   useCallback,
@@ -16,6 +10,13 @@ import React, {
 } from 'react';
 import { View } from 'react-native';
 import { CalendarList, DateData } from 'react-native-calendars';
+
+import { useHeaderMonthControls } from '@/hooks/calendar';
+import { useColorScheme, useLanguage } from '@/hooks/common';
+import { getMonthTheme } from '@/styles/calendar';
+import { setCalendarLocale } from '@/utils/month-names';
+import { RenderHeader } from '@/views/calendars/month/header';
+import { Locale } from 'i18n.config';
 
 const initialDate = dayjs().format('YYYY-MM-DD');
 

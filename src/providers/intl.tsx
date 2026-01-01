@@ -1,8 +1,9 @@
-import { enLocale, ruLocale, uzLocale } from '@/utils/zod-intl';
-import { i18n, initI18n, type Locale } from 'i18n.config';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { z } from 'zod/v4';
+
+import { enLocale, ruLocale, uzLocale } from '@/utils/zod-intl';
+import { i18n, initI18n, type Locale } from 'i18n.config';
 
 function applyZodLocale(lng: string) {
   const base = lng.split('-')[0] as Locale;

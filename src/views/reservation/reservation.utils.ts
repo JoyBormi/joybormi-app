@@ -1,5 +1,7 @@
-import Icons from '@/lib/icons';
 import dayjs from 'dayjs';
+
+import Icons from '@/lib/icons';
+
 import { Reservation, ReservationFilters, ReservationStatus } from './types';
 
 const SERVICES = [

@@ -1,10 +1,10 @@
-import { Button, Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 import { useNavigation } from 'expo-router';
-
-import { Feedback } from '@/lib/haptics';
 import { AnimatePresence, MotiView } from 'moti';
 import { View } from 'react-native';
+
+import { Button, Text } from '@/components/ui';
+import { Feedback } from '@/lib/haptics';
+import Icons from '@/lib/icons';
 
 export function AuthHeader({
   title = 'Log in',
