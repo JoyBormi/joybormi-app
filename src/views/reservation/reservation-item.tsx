@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { STATUS_STYLES } from './reservation.utils';
 import { Reservation } from './types';
 
@@ -65,7 +65,7 @@ export const ReservationItem = ({ reservation, onPress, index }: Props) => {
       }}
       className="mb-4"
     >
-      <TouchableOpacity
+      <Pressable
         activeOpacity={0.8}
         onPress={() => {
           Feedback.light();
@@ -177,7 +177,7 @@ export const ReservationItem = ({ reservation, onPress, index }: Props) => {
             </View>
           </View>
         </LinearGradient>
-      </TouchableOpacity>
+      </Pressable>
     </MotiView>
   );
 };

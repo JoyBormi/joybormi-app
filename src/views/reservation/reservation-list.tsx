@@ -5,9 +5,9 @@ import dayjs from 'dayjs';
 import React, { Fragment, useCallback, useMemo } from 'react';
 import {
   ActivityIndicator,
+  Pressable,
   SectionList,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -81,7 +81,7 @@ export const ReservationList = ({
               {dayjs(filters.dateRange.end).format('MMM D')}
             </Text>
           </View>
-          <TouchableOpacity
+          <Pressable
             onPress={() => {
               Feedback.light();
               onFilterPress();
@@ -108,25 +108,25 @@ export const ReservationList = ({
                 </Text>
               </View>
             )}
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {/* Quick Filter Chips */}
         <View className="flex-row items-center gap-2">
-          <TouchableOpacity
+          <Pressable
             activeOpacity={0.7}
             className="bg-primary/10 dark:bg-primary/20 px-4 py-2 rounded-full border border-primary/20"
           >
             <Text className="text-primary font-subtitle text-xs">Today</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          </Pressable>
+          <Pressable
             activeOpacity={0.7}
             className="bg-card/50 px-4 py-2 rounded-full border border-border/20 backdrop-blur-sm"
           >
             <Text className="text-muted-foreground font-subtitle text-xs">
               Upcoming
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     );
@@ -186,12 +186,12 @@ export const ReservationList = ({
         <Text className="text-muted-foreground text-center mt-2 px-10">
           Try adjusting your filters to find what youre looking for.
         </Text>
-        <TouchableOpacity
+        <Pressable
           onPress={onFilterPress}
           className="mt-8 bg-primary/10 px-6 py-3 rounded-2xl"
         >
           <Text className="text-primary font-bold">Clear Filters</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }, [isLoading, onFilterPress]);
@@ -219,7 +219,7 @@ export const ReservationList = ({
                 {dayjs(filters.dateRange.end).format('MMM D')}
               </Text>
             </View>
-            <TouchableOpacity
+            <Pressable
               onPress={() => {
                 Feedback.light();
                 onFilterPress();
@@ -227,7 +227,7 @@ export const ReservationList = ({
               className="w-9 h-9 rounded-xl bg-card/50 items-center justify-center border border-border/20"
             >
               <Icons.Settings className="text-foreground w-4.5 h-4.5" />
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </MotiView> */}

@@ -1,4 +1,3 @@
-import Icons from '@/lib/icons';
 import React, {
   forwardRef,
   useImperativeHandle,
@@ -101,12 +100,8 @@ export const BlockedSheet = forwardRef<BlockedSheetRef, BlockedSheetProps>(
               opacity,
               transform: [{ scale }],
             }}
-            className="bg-card rounded-3xl w-full max-w-md items-center px-6 pt-8 pb-10"
+            className="bg-card rounded-3xl w-full max-w-md items-center px-6 pt-12 pb-10"
           >
-            <View className="w-14 h-14 rounded-full bg-red-500/15 items-center justify-center mb-3">
-              <Icons.Ban className="w-7 h-7 text-red-500" />
-            </View>
-
             <Text className="text-foreground font-heading text-center mb-1">
               {title}
             </Text>
@@ -115,31 +110,29 @@ export const BlockedSheet = forwardRef<BlockedSheetRef, BlockedSheetProps>(
               {subtitle}
             </Text>
 
-            <Button
-              onPress={() => {
-                hide();
-                onCancel?.();
-              }}
-              variant="outline"
-              size="action"
-              className="mt-2 border-destructive px-8"
-            >
-              <Text className="font-subtitle text-destructive">
-                {cancelText}
-              </Text>
-            </Button>
-
-            <Pressable
-              onPress={() => {
-                hide();
-                onConfirm?.();
-              }}
-              className="bg-primary w-full py-4 mt-3 rounded-xl items-center"
-            >
-              <Text className="font-subtitle text-primary-foreground">
-                {confirmText}
-              </Text>
-            </Pressable>
+            <View className="flex-row items-center gap-3 mt-6">
+              <Button
+                onPress={() => {
+                  hide();
+                  onCancel?.();
+                }}
+                variant="ghost"
+                className="px-2 flex-[0.3]"
+              >
+                <Text className="font-body text-destructive">{cancelText}</Text>
+              </Button>
+              <Pressable
+                onPress={() => {
+                  hide();
+                  onConfirm?.();
+                }}
+                className="bg-primary flex-[0.7] py-4 mt-3 rounded-xl items-center"
+              >
+                <Text className="font-subtitle text-foreground">
+                  {confirmText}
+                </Text>
+              </Pressable>
+            </View>
           </Animated.View>
         </Pressable>
       </Modal>

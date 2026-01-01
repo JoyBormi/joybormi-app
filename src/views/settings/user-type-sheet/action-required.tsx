@@ -5,7 +5,7 @@ import {
   useBottomSheetTimingConfigs,
 } from '@gorhom/bottom-sheet';
 import React, { forwardRef } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
@@ -65,14 +65,14 @@ export const UserTypeActionRequiredSheet = forwardRef<BottomSheetModal, Props>(
             {content.desc}
           </Text>
 
-          <TouchableOpacity
+          <Pressable
             onPress={onPrimary}
             className="mt-4 bg-primary px-6 py-3 rounded-xl"
           >
             <Text className="text-primary-foreground font-subtitle">
               {content.action}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </CustomBottomSheet>
     );

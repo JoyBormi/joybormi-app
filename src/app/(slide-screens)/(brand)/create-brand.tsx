@@ -1,3 +1,4 @@
+import { BlockedSheet, BlockedSheetRef } from '@/components/shared/block-sheet';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Button, Text } from '@/components/ui';
 import { useBecomeCreator } from '@/hooks/user/use-become-creator';
@@ -5,42 +6,39 @@ import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
 import { createBrandSchema, TCreateBrandInput } from '@/lib/validations/brand';
 import { useUserStore } from '@/stores';
+import { alert } from '@/stores/use-alert-store';
 import { useBrandDraftStore } from '@/stores/use-brand-draft-store';
 import {
   BasicInfo,
-  ContactLegalInfo,
+  ContactsInfo,
   LocationDetails,
-  OwnerInfo,
   Review,
   StepIndicator,
 } from '@/views/brand-profile/create-brand';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Alert, View } from 'react-native';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-type SetupStep = 0 | 1 | 2 | 3 | 4;
+type SetupStep = 0 | 1 | 2 | 3;
 
 const CreateBrand: React.FC = () => {
-  const { t } = useTranslation();
   const router = useRouter();
+  const { t } = useTranslation();
   const { user } = useUserStore();
   const insets = useSafeAreaInsets();
   const [currentStep, setCurrentStep] = useState<SetupStep>(0);
 
+  const sheetRef = useRef<BlockedSheetRef>(null);
+
   const STEPS = [
-    { label: t('brand.setup.steps.basicInfo'), icon: Icons.FileText, id: '01' },
-    { label: t('brand.setup.steps.location'), icon: Icons.MapPin, id: '02' },
-    {
-      label: t('brand.setup.steps.contactLegal'),
-      icon: Icons.Shield,
-      id: '03',
-    },
-    { label: t('brand.setup.steps.ownerInfo'), icon: Icons.User, id: '04' },
-    { label: t('brand.setup.steps.review'), icon: Icons.CheckCircle, id: '05' },
+    { label: 'Basic Info', icon: Icons.FileText, id: '01' },
+    { label: 'Location', icon: Icons.MapPin, id: '02' },
+    { label: 'Contacts', icon: Icons.User, id: '03' },
+    { label: 'Review', icon: Icons.CheckCircle, id: '04' },
   ];
 
   const {
@@ -127,14 +125,10 @@ const CreateBrand: React.FC = () => {
         break;
       case 2:
         isStepValid = await trigger([
-          'email',
           'phone',
-          'businessNumber',
-          'businessCertUrl',
+          'ownerFirstName',
+          'ownerLastName',
         ]);
-        break;
-      case 3:
-        isStepValid = await trigger(['ownerFirstName', 'ownerLastName']);
         break;
       default:
         isStepValid = true;
@@ -165,33 +159,7 @@ const CreateBrand: React.FC = () => {
 
   const handleGoBack = () => {
     if (isDirty || hasDraft()) {
-      Alert.alert(
-        t('brand.setup.saveDraft.title'),
-        t('brand.setup.saveDraft.message'),
-        [
-          {
-            text: t('brand.setup.saveDraft.discard'),
-            style: 'destructive',
-            onPress: () => {
-              clearDraft();
-              router.back();
-            },
-          },
-          {
-            text: t('brand.setup.saveDraft.save'),
-            onPress: () => {
-              saveDraft(getValues(), currentStep);
-              Feedback.success();
-              router.back();
-            },
-          },
-          {
-            text: t('common.buttons.cancel'),
-            style: 'cancel',
-          },
-        ],
-        { cancelable: true },
-      );
+      sheetRef.current?.show();
     } else {
       router.back();
     }
@@ -202,16 +170,11 @@ const CreateBrand: React.FC = () => {
       onSuccess: (message) => {
         Feedback.success();
         clearDraft();
-        Alert.alert(
-          t('brand.setup.success.title'),
-          t('brand.setup.success.message'),
-          [
-            {
-              text: t('common.buttons.ok'),
-              onPress: () => router.replace('/(tabs)/(brand)/brand-profile'),
-            },
-          ],
-        );
+        alert({
+          title: t('brand.setup.success.title'),
+          subtitle: t('brand.setup.success.message'),
+          onConfirm: () => router.replace('/(tabs)/(brand)/brand-profile'),
+        });
       },
     });
   };
@@ -223,10 +186,8 @@ const CreateBrand: React.FC = () => {
       case 1:
         return <LocationDetails control={control} />;
       case 2:
-        return <ContactLegalInfo control={control} />;
+        return <ContactsInfo control={control} />;
       case 3:
-        return <OwnerInfo control={control} />;
-      case 4:
         return <Review control={control} />;
       default:
         return null;
@@ -254,10 +215,8 @@ const CreateBrand: React.FC = () => {
           !errors.postalCode
         );
       case 2:
-        return !errors.phone;
+        return !errors.phone && !errors.ownerFirstName && !errors.ownerLastName;
       case 3:
-        return !errors.ownerFirstName && !errors.ownerLastName;
-      case 4:
         return isValid;
       default:
         return false;
@@ -316,12 +275,9 @@ const CreateBrand: React.FC = () => {
             disabled={isSubmitting}
             className="flex-1 h-12 rounded-2xl"
           >
-            <View className="flex-row items-center gap-2">
-              <Icons.ChevronLeft className="text-foreground" size={20} />
-              <Text className="font-semibold text-foreground">
-                {t('common.buttons.back')}
-              </Text>
-            </View>
+            <Text className="font-semibold text-foreground">
+              {t('common.buttons.back')}
+            </Text>
           </Button>
         )}
         {currentStep < STEPS.length - 1 ? (
@@ -330,15 +286,7 @@ const CreateBrand: React.FC = () => {
             disabled={!isCurrentStepValid() || isSubmitting}
             className="flex-1 h-12 rounded-2xl"
           >
-            <View className="flex-row items-center gap-2">
-              <Text className="font-semibold text-primary-foreground">
-                {t('brand.setup.buttons.next')}
-              </Text>
-              <Icons.ChevronRight
-                className="text-primary-foreground"
-                size={20}
-              />
-            </View>
+            <Text className="font-semibold text-primary-foreground">Next</Text>
           </Button>
         ) : (
           <Button
@@ -346,27 +294,28 @@ const CreateBrand: React.FC = () => {
             disabled={!isValid || isSubmitting}
             className="flex-1 h-12 rounded-2xl"
           >
-            <View className="flex-row items-center gap-2">
-              {isSubmitting ? (
-                <Icons.RefreshCcw
-                  className="text-primary-foreground"
-                  size={20}
-                />
-              ) : (
-                <Icons.CheckCircle
-                  className="text-primary-foreground"
-                  size={20}
-                />
-              )}
-              <Text className="font-semibold text-primary-foreground">
-                {isSubmitting
-                  ? t('common.buttons.loading')
-                  : t('brand.setup.buttons.submit')}
-              </Text>
-            </View>
+            <Text className="font-semibold text-primary-foreground">
+              {isSubmitting ? 'Loading...' : 'Submit'}
+            </Text>
           </Button>
         )}
       </View>
+      <BlockedSheet
+        ref={sheetRef}
+        title="Save Draft?"
+        subtitle="Do you want to save your progress?"
+        cancelText="Cancel"
+        confirmText="Save"
+        onConfirm={() => {
+          saveDraft(getValues(), currentStep);
+          Feedback.success();
+          router.back();
+        }}
+        onCancel={() => {
+          clearDraft();
+          router.back();
+        }}
+      />
     </KeyboardAvoid>
   );
 };

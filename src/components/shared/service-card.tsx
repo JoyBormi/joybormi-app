@@ -1,7 +1,7 @@
 import Icons from '@/lib/icons';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 import { Text } from '../ui';
 
 interface ServiceCardProps {
@@ -21,7 +21,7 @@ export function ServiceCard({
 }: ServiceCardProps) {
   const router = useRouter();
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={() => id && router.push(`/(dynamic-brand)/team/event/${id}`)}
       className="w-[180px] aspect-[3/4] bg-popover border border-ring/10 relative overflow-hidden rounded-xl mr-4"
     >
@@ -52,6 +52,6 @@ export function ServiceCard({
           <View className="h-0.5 w-12 bg-primary mt-0.5 rounded-full" />
         </BlurView>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }

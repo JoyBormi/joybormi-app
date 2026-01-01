@@ -5,7 +5,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Link } from 'expo-router';
 import { MotiView } from 'moti';
 import React, { useEffect, useRef } from 'react';
-import { Image, Pressable, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 import { LocationPickerSheet } from './location-picker';
 
 export function Header() {
@@ -13,7 +13,7 @@ export function Header() {
   const sheetRef = useRef<BottomSheetModal>(null);
 
   const LocationDisplay = (
-    <TouchableOpacity
+    <Pressable
       onPress={() => sheetRef.current?.present()}
       className="flex-row items-center"
       hitSlop={10}
@@ -22,7 +22,7 @@ export function Header() {
       <Text numberOfLines={1} className="font-caption text-muted-foreground">
         {location}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   useEffect(() => {
@@ -74,7 +74,7 @@ export function Header() {
             </View>
 
             <Link href="/(auth)/login" asChild>
-              <Pressable className="bg-primary px-5 py-2.5 rounded-full">
+              <Pressable className="bg-primary px-10 py-2.5 rounded-full">
                 <Text className="font-caption text-primary-foreground">
                   Login
                 </Text>

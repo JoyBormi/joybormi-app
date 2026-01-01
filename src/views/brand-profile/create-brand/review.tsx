@@ -77,33 +77,17 @@ export function Review<T extends FieldValues>({ control }: ReviewProps<T>) {
           </View>
         </View>
 
-        {/* Contact & Legal Card */}
+        {/* Contacts Card */}
         <View className="bg-card/40 dark:bg-card/25 rounded-2xl border border-border/30 overflow-hidden">
           <View className="bg-primary/10 dark:bg-primary/15 px-4 py-3 flex-row items-center gap-2">
-            <Icons.Shield className="text-primary" size={18} />
+            <Icons.User className="text-primary" size={18} />
             <Text className="text-base font-bold text-foreground">
-              Contact & Legal
+              Contact Information
             </Text>
           </View>
           <View className="p-4">
             <InfoRow label="Email" value={formData.email} />
             <InfoRow label="Phone" value={formData.phone} />
-            <InfoRow
-              label="Registration #"
-              value={formData.businessRegistrationNumber}
-            />
-          </View>
-        </View>
-
-        {/* Owner Info Card */}
-        <View className="bg-card/40 dark:bg-card/25 rounded-2xl border border-border/30 overflow-hidden">
-          <View className="bg-primary/10 dark:bg-primary/15 px-4 py-3 flex-row items-center gap-2">
-            <Icons.User className="text-primary" size={18} />
-            <Text className="text-base font-bold text-foreground">
-              Owner Information
-            </Text>
-          </View>
-          <View className="p-4">
             <InfoRow label="First Name" value={formData.ownerFirstName} />
             <InfoRow label="Last Name" value={formData.ownerLastName} />
           </View>

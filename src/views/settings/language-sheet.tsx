@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type LanguageCode = 'en' | 'uz' | 'ru';
@@ -101,7 +101,7 @@ export const LanguageSheet = forwardRef<BottomSheetModal, LanguageSheetProps>(
               const isSelected = selectedLanguage === language.code;
 
               return (
-                <TouchableOpacity
+                <Pressable
                   key={language.code}
                   activeOpacity={0.7}
                   onPress={() => handleSelect(language.code)}
@@ -124,7 +124,7 @@ export const LanguageSheet = forwardRef<BottomSheetModal, LanguageSheetProps>(
                   {isSelected && (
                     <Icons.CheckCircle className="text-primary w-6 h-6" />
                   )}
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </View>

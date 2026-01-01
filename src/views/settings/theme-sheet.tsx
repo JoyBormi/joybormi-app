@@ -5,7 +5,7 @@ import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type ThemeMode = 'light' | 'dark';
@@ -85,7 +85,7 @@ export const ThemeSheet = forwardRef<BottomSheetModal, ThemeSheetProps>(
                 theme.mode === 'dark' ? isDarkColorScheme : !isDarkColorScheme;
 
               return (
-                <TouchableOpacity
+                <Pressable
                   key={theme.mode}
                   activeOpacity={0.7}
                   onPress={() => handleSelect(theme.mode)}
@@ -122,7 +122,7 @@ export const ThemeSheet = forwardRef<BottomSheetModal, ThemeSheetProps>(
                   {isSelected && (
                     <Icons.CheckCircle className="text-primary w-6 h-6" />
                   )}
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </View>

@@ -6,7 +6,7 @@ import { StackHeader } from '@/views/calendars';
 import dayjs from 'dayjs';
 import { Stack, useGlobalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 export default function CalendarLayout() {
   const router = useRouter();
@@ -56,9 +56,9 @@ export default function CalendarLayout() {
             backgroundColor: colors.background,
           },
           headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
+            <Pressable onPress={() => router.back()}>
               <Icons.ChevronLeft size={24} className="text-primary" />
-            </TouchableOpacity>
+            </Pressable>
           ),
           headerTitle: () => (
             <View className="min-w-fit">

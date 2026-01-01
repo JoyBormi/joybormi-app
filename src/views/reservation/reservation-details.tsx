@@ -4,7 +4,7 @@ import Icons from '@/lib/icons';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import dayjs from 'dayjs';
 import React, { forwardRef, useMemo } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { getStatusConfig } from './reservation.utils';
 import { Reservation } from './types';
 
@@ -156,7 +156,7 @@ export const ReservationBottomSheet = forwardRef<
         <View className="flex-row gap-3 mt-2">
           {reservation.status === 'pending' && (
             <>
-              <TouchableOpacity
+              <Pressable
                 activeOpacity={0.7}
                 className="flex-1 bg-success h-14 rounded-2xl items-center justify-center"
                 onPress={() => {
@@ -168,8 +168,8 @@ export const ReservationBottomSheet = forwardRef<
                 <Text className="text-white font-subtitle text-base">
                   Approve
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
+              </Pressable>
+              <Pressable
                 activeOpacity={0.7}
                 className="flex-1 bg-destructive h-14 rounded-2xl items-center justify-center"
                 onPress={() => {
@@ -181,12 +181,12 @@ export const ReservationBottomSheet = forwardRef<
                 <Text className="text-white font-subtitle text-base">
                   Reject
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </>
           )}
           {(reservation.status === 'approved' ||
             reservation.status === 'confirmed') && (
-            <TouchableOpacity
+            <Pressable
               activeOpacity={0.7}
               className="flex-1 bg-primary h-14 rounded-2xl items-center justify-center"
               onPress={() => {
@@ -198,9 +198,9 @@ export const ReservationBottomSheet = forwardRef<
               <Text className="text-primary-foreground font-subtitle text-base">
                 View Details
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
-          <TouchableOpacity
+          <Pressable
             activeOpacity={0.7}
             hitSlop={20}
             className="bg-card/50 h-14 rounded-2xl items-center justify-center"
@@ -213,7 +213,7 @@ export const ReservationBottomSheet = forwardRef<
               className="text-foreground stroke-foreground w-5 h-5"
               strokeWidth="3"
             />
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </CustomBottomSheet>

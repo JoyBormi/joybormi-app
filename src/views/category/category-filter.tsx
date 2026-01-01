@@ -4,7 +4,7 @@ import { Feedback } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 export interface CategoryFilters {
   search: string;
@@ -94,9 +94,9 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
             <Text className="text-2xl text-foreground font-heading tracking-tight">
               Filters
             </Text>
-            <TouchableOpacity onPress={handleReset}>
+            <Pressable onPress={handleReset}>
               <Text className="text-primary font-subtitle">Reset</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           <ScrollView
@@ -110,7 +110,7 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
               </Text>
               <View className="flex-row flex-wrap gap-2">
                 {SORT_OPTIONS.map((option) => (
-                  <TouchableOpacity
+                  <Pressable
                     key={option.value}
                     onPress={() => setSortBy(option.value)}
                     className={cn(
@@ -130,7 +130,7 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
                     >
                       {option.label}
                     </Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 ))}
               </View>
             </View>
@@ -157,7 +157,7 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
               </Text>
               <View className="flex-row flex-wrap gap-2">
                 {RATING_OPTIONS.map((rating) => (
-                  <TouchableOpacity
+                  <Pressable
                     key={rating}
                     onPress={() => toggleRating(rating)}
                     className={cn(
@@ -177,7 +177,7 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
                     >
                       {rating}+ ⭐
                     </Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 ))}
               </View>
             </View>
@@ -189,7 +189,7 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
               </Text>
               <View className="flex-row flex-wrap gap-2">
                 {DISTANCE_OPTIONS.map((distance) => (
-                  <TouchableOpacity
+                  <Pressable
                     key={distance}
                     onPress={() => setDistance(distance)}
                     className={cn(
@@ -209,14 +209,14 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
                     >
                       {distance} km
                     </Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 ))}
               </View>
             </View>
           </ScrollView>
 
           <View className="pt-4 border-t border-border/10 mt-4">
-            <TouchableOpacity
+            <Pressable
               activeOpacity={0.8}
               className="bg-primary h-14 rounded-2xl items-center justify-center"
               onPress={handleApply}
@@ -224,7 +224,7 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
               <Text className="text-primary-foreground font-bold text-lg">
                 Apply Filters
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </CustomBottomSheet>

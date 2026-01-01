@@ -2,7 +2,7 @@ import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import React from 'react';
-import { Switch, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, Switch, Text, View } from 'react-native';
 import { ISettingsItem } from './types';
 
 interface Props {
@@ -98,20 +98,20 @@ export const SettingsItem: React.FC<Props> = ({
 
   if (item.type === 'navigation' && item.href) {
     return (
-      <TouchableOpacity
+      <Pressable
         activeOpacity={0.7}
         onPress={() => {
           Feedback.light();
         }}
       >
         {content}
-      </TouchableOpacity>
+      </Pressable>
     );
   }
 
   if (item.type === 'action' || item.type === 'userType') {
     return (
-      <TouchableOpacity
+      <Pressable
         activeOpacity={0.7}
         onPress={() => {
           Feedback.light();
@@ -119,7 +119,7 @@ export const SettingsItem: React.FC<Props> = ({
         }}
       >
         {content}
-      </TouchableOpacity>
+      </Pressable>
     );
   }
 

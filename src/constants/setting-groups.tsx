@@ -31,16 +31,6 @@ export const settingsGroups = ({
             title: 'Account',
             items: [
               {
-                id: 'profile',
-                type: 'navigation',
-                title: 'Profile',
-                subtitle: 'Your account information',
-                icon: Icons.User,
-                iconColor: 'text-primary',
-                iconBgColor: 'bg-primary/10',
-                href: '/(tabs)/(settings)/profile',
-              },
-              {
                 id: 'likes',
                 type: 'navigation',
                 title: 'Liked Items',

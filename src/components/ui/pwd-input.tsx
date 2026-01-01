@@ -1,6 +1,6 @@
 import Icons from '@/lib/icons';
 import React, { useState } from 'react';
-import { TextInputProps, TouchableOpacity, View } from 'react-native';
+import { Pressable, TextInputProps, View } from 'react-native';
 import { Input } from './input';
 
 export function PasswordInput(props: TextInputProps) {
@@ -16,7 +16,7 @@ export function PasswordInput(props: TextInputProps) {
         secureTextEntry={!showPassword}
       />
 
-      <TouchableOpacity
+      <Pressable
         className="absolute right-3 top-0 bottom-0 w-10 items-center justify-center"
         onPress={() => setShowPassword((prev) => !prev)}
         activeOpacity={0.7}
@@ -26,7 +26,7 @@ export function PasswordInput(props: TextInputProps) {
         ) : (
           <Icons.Eye size={20} className="text-muted-foreground" />
         )}
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }

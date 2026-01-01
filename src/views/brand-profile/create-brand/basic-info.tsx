@@ -8,10 +8,7 @@ import {
   UploadField,
 } from '@/components/ui';
 import { Major } from '@/constants/enum';
-import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
-import * as ImagePicker from 'expo-image-picker';
-import { useCallback } from 'react';
 import { Control, FieldValues } from 'react-hook-form';
 import { View } from 'react-native';
 
@@ -22,21 +19,6 @@ interface BasicInfoProps<T extends FieldValues> {
 export function BasicInfo<T extends FieldValues>({
   control,
 }: BasicInfoProps<T>) {
-  const pickImage = useCallback(async (onChange: (value: string) => void) => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: 'images',
-      allowsEditing: true,
-      aspect: [16, 9],
-      quality: 1,
-      selectionLimit: 1,
-    });
-
-    if (!result.canceled && result.assets[0]) {
-      Feedback.light();
-      onChange(result.assets[0].uri);
-    }
-  }, []);
-
   return (
     <View className="gap-6 flex-1">
       {/* Header */}
@@ -121,11 +103,15 @@ export function BasicInfo<T extends FieldValues>({
           control={control}
           name="description"
           label="Description (Optional)"
-          className="min-h-[120px]"
           message="Briefly describe what makes your brand unique"
           render={({ field }) => (
             <Textarea
               placeholder="Tell customers about your brand..."
+              multiline
+              numberOfLines={6}
+              className="min-h-[120px]"
+              textAlignVertical="top"
+              scrollEnabled={false}
               {...field}
             />
           )}

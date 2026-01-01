@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import dayjs from 'dayjs';
 import React, { forwardRef, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { ReservationFilters, ReservationStatus } from './types';
 
 interface Props {
@@ -85,9 +85,9 @@ export const ReservationFilterSheet = forwardRef<BottomSheetModal, Props>(
           <Text className="text-2xl text-foreground font-heading tracking-tight">
             Filters
           </Text>
-          <TouchableOpacity onPress={handleReset}>
+          <Pressable onPress={handleReset}>
             <Text className="text-primary font-subtitle">Reset</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         <ScrollView
@@ -123,7 +123,7 @@ export const ReservationFilterSheet = forwardRef<BottomSheetModal, Props>(
             </Text>
             <View className="flex-row flex-wrap gap-2">
               {STATUS_OPTIONS.map((status) => (
-                <TouchableOpacity
+                <Pressable
                   key={status}
                   onPress={() => toggleStatus(status)}
                   className={cn(
@@ -142,7 +142,7 @@ export const ReservationFilterSheet = forwardRef<BottomSheetModal, Props>(
                   >
                     {status}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           </View>
@@ -154,7 +154,7 @@ export const ReservationFilterSheet = forwardRef<BottomSheetModal, Props>(
             </Text>
             <View className="flex-row flex-wrap gap-2">
               {TYPE_OPTIONS.map((type) => (
-                <TouchableOpacity
+                <Pressable
                   key={type}
                   onPress={() => toggleType(type)}
                   className={cn(
@@ -173,14 +173,14 @@ export const ReservationFilterSheet = forwardRef<BottomSheetModal, Props>(
                   >
                     {type}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           </View>
         </ScrollView>
 
         <View className="pt-4 border-t border-border/10 mt-4">
-          <TouchableOpacity
+          <Pressable
             activeOpacity={0.8}
             className="bg-primary h-14 rounded-2xl items-center justify-center"
             onPress={handleApply}
@@ -188,7 +188,7 @@ export const ReservationFilterSheet = forwardRef<BottomSheetModal, Props>(
             <Text className="text-primary-foreground font-bold text-lg">
               Apply Filters
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </CustomBottomSheet>
     );

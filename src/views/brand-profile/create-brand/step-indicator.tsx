@@ -28,7 +28,7 @@ export function StepIndicator({
   steps = DEFAULT_STEPS,
 }: StepIndicatorProps) {
   return (
-    <View className="flex-row justify-between items-start mt-6 pb-6 border-b border-border w-full">
+    <View className="flex-row justify-between items-start mt-6 pb-6 border-b border-border w-full mb-8">
       {steps.map((step, index) => {
         const isActive = index === currentStep;
         const isCompleted = index < currentStep;
@@ -46,7 +46,7 @@ export function StepIndicator({
             <View className="px-2 py-1 rounded-lg">
               <Text
                 className={cn(
-                  'text-[10px] font-medium text-center',
+                  'font-caption text-center',
                   isActive
                     ? 'text-primary font-bold'
                     : isCompleted
@@ -88,7 +88,7 @@ function AnimatedBox({
     <Animated.View
       style={animatedStyle}
       className={cn(
-        'w-12 h-12 rounded-2xl justify-center items-center mb-2',
+        'w-14 h-14 rounded-2xl justify-center items-center mb-2',
         isActive
           ? 'bg-primary/30 dark:bg-primary/30'
           : isCompleted

@@ -4,7 +4,7 @@ import Icons from '@/lib/icons';
 import { useUserStore } from '@/stores/use-user-store';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useEffect } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const LOCATIONS = ['Tashkent', 'Bukhara', 'Samarkand'];
@@ -60,7 +60,7 @@ export const LocationPickerSheet = forwardRef<BottomSheetModal>((_, ref) => {
             const selected = location === loc;
 
             return (
-              <TouchableOpacity
+              <Pressable
                 key={loc}
                 onPress={() => {
                   setLocation(loc);
@@ -79,7 +79,7 @@ export const LocationPickerSheet = forwardRef<BottomSheetModal>((_, ref) => {
                 {selected && (
                   <Icons.CheckCircle className="w-6 h-6 text-primary" />
                 )}
-              </TouchableOpacity>
+              </Pressable>
             );
           })}
         </View>

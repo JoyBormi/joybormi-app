@@ -27,7 +27,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { TouchableOpacity, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 interface ForgotPwdState {
   tab: 'email' | 'phone';
@@ -277,7 +277,7 @@ export default function ForgotPwdScreen() {
         )}
 
         <View className="justify-center items-center">
-          <TouchableOpacity
+          <Pressable
             onPress={() => {
               Feedback.soft();
               router.back();
@@ -286,7 +286,7 @@ export default function ForgotPwdScreen() {
             <Text className="font-primary underline text-sm">
               {t('auth.forgotPwd.backToLogin')}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </KeyboardAvoid>

@@ -2,12 +2,12 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { storage } from '@/lib/mmkv';
-import { BrandFormData } from '@/lib/validations/brand';
+import { TCreateBrandInput } from '@/lib/validations/brand';
 
 interface BrandDraftStore {
-  draftData: Partial<BrandFormData> | null;
+  draftData: Partial<TCreateBrandInput> | null;
   currentStep: number;
-  saveDraft: (data: Partial<BrandFormData>, step: number) => void;
+  saveDraft: (data: Partial<TCreateBrandInput>, step: number) => void;
   clearDraft: () => void;
   hasDraft: () => boolean;
 }

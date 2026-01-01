@@ -21,7 +21,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { TouchableOpacity, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
@@ -182,7 +182,7 @@ export default function LoginScreen() {
       </View>
 
       <View className="justify-center items-center mt-4">
-        <TouchableOpacity
+        <Pressable
           onPress={() => {
             Feedback.soft();
             router.push('/(auth)/forgot-pwd');
@@ -191,7 +191,7 @@ export default function LoginScreen() {
           <Text className="font-primary underline text-sm">
             {t('auth.login.forgotPassword')}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </KeyboardAvoid>
   );

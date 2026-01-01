@@ -92,7 +92,7 @@ const FormField = memo(<T extends FieldValues>(props: FormFieldProps<T>) => {
           {message && (
             <Text
               className={cn(
-                'text-muted-foreground text-xs mt-1',
+                'text-muted-foreground text-xs mt-1.5',
                 messageClassName,
               )}
             >

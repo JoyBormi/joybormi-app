@@ -7,7 +7,7 @@ import { EUserType } from '@/types/user.type';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { router } from 'expo-router';
 import React, { forwardRef, useRef, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { UserTypeActionRequiredSheet } from './action-required';
 
@@ -117,7 +117,7 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
               const isSelected = selectedType === userType.type;
 
               return (
-                <TouchableOpacity
+                <Pressable
                   key={userType.type}
                   activeOpacity={0.7}
                   onPress={() => handleSelect(userType.type)}
@@ -154,12 +154,12 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
                   {isSelected && (
                     <Icons.CheckCircle className="text-primary w-6 h-6" />
                   )}
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </View>
 
-          <TouchableOpacity
+          <Pressable
             activeOpacity={0.8}
             className="bg-primary h-14 rounded-2xl items-center justify-center mt-2"
             onPress={handleConfirm}
@@ -167,7 +167,7 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
             <Text className="text-primary-foreground font-subtitle text-base">
               Confirm Switch
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
         <UserTypeActionRequiredSheet
           ref={actionSheetRef}

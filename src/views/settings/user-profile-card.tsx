@@ -3,7 +3,7 @@ import Icons from '@/lib/icons';
 import { EUserMethod, IUser } from '@/types/user.type';
 import { formatPhoneNumber } from '@/utils/helpers';
 import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 
 interface Props {
   profile: IUser | null;
@@ -12,7 +12,7 @@ interface Props {
 
 export const UserProfileCard: React.FC<Props> = ({ profile, onPress }) => {
   return (
-    <TouchableOpacity
+    <Pressable
       activeOpacity={0.7}
       onPress={() => {
         Feedback.light();
@@ -56,6 +56,6 @@ export const UserProfileCard: React.FC<Props> = ({ profile, onPress }) => {
 
       {/* Chevron */}
       <Icons.ChevronRight className="text-muted-foreground w-5 h-5" />
-    </TouchableOpacity>
+    </Pressable>
   );
 };

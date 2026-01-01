@@ -16,7 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SettingsScreen: React.FC = () => {
@@ -169,7 +169,7 @@ const SettingsScreen: React.FC = () => {
 
         {isLoggedIn && (
           <View className="mb-8">
-            <TouchableOpacity
+            <Pressable
               activeOpacity={0.85}
               onPress={handleUserTypeSwitch}
               className="overflow-hidden rounded-2xl"
@@ -201,7 +201,7 @@ const SettingsScreen: React.FC = () => {
                   </View>
                 </View>
               </LinearGradient>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         )}
         {/* Settings Groups */}
