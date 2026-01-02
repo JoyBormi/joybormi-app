@@ -1,7 +1,8 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
-import React, { useRef, useState } from 'react';
-import { ScrollView } from 'react-native';
+import React, { Fragment, useRef, useState } from 'react';
+import { ActivityIndicator, ScrollView } from 'react-native';
+import { RefreshControl } from 'react-native-gesture-handler';
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -15,7 +16,9 @@ import {
   UploadProfileImageSheet,
   UpsertServiceSheet,
 } from '@/components/shared/brand-worker';
+import { useGetBrand } from '@/hooks/brand';
 import { useUserStore } from '@/stores';
+import { BrandStatus, type IBrandService } from '@/types/brand.type';
 import { EUserType } from '@/types/user.type';
 import {
   mockBrand,
@@ -33,8 +36,8 @@ import {
   BrandServicesList,
   BrandTeamList,
 } from '@/views/brand-profile/components';
+import { BrandProfilePendingScreen } from '@/views/brand-profile/in-pending';
 
-import type { IBrandService } from '@/types/brand.type';
 import type { IWorkingDay } from '@/types/worker.type';
 
 /**
@@ -45,11 +48,16 @@ import type { IWorkingDay } from '@/types/worker.type';
 const BrandProfileScreen: React.FC = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { appType } = useUserStore();
+  const { appType, user } = useUserStore();
 
   // Check if user is creator or worker
   const isCreator = appType === EUserType.CREATOR;
   const canEdit = isCreator;
+
+  const { data, isLoading, refetch } = useGetBrand({
+    userId: user?.id,
+  });
+  console.log(`🚀 ~ brandData:`, data);
 
   // State - In production, fetch from API based on user's brand
   const [brand] = useState(mockBrand);
@@ -200,114 +208,129 @@ const BrandProfileScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
-      >
-        {/* Brand Profile Card */}
-        <BrandCard
-          brand={brand}
-          servicesCount={services.length}
-          workersCount={workers.length}
-          photosCount={photos.length}
-          canEdit={canEdit}
-          onEditAvatar={handleEditProfileImage}
-          onEditBanner={handleEditBanner}
-          onEdit={handleEditBrand}
-        />
+    <Fragment>
+      {isLoading ? (
+        <ActivityIndicator />
+      ) : data && data.status === BrandStatus.PENDING ? (
+        <BrandProfilePendingScreen onRefresh={refetch} />
+      ) : (
+        <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+          <ScrollView
+            className="flex-1"
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
+            refreshControl={
+              <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+            }
+          >
+            {/* Brand Profile Card */}
+            <BrandCard
+              brand={brand}
+              servicesCount={services.length}
+              workersCount={workers.length}
+              photosCount={photos.length}
+              canEdit={canEdit}
+              onEditAvatar={handleEditProfileImage}
+              onEditBanner={handleEditBanner}
+              onEdit={handleEditBrand}
+            />
 
-        {/* Quick Actions */}
-        {canEdit && (
-          <BrandQuickActions
-            onAddService={handleAddService}
-            onAddWorker={handleAddWorker}
-            onManageHours={handleManageHours}
+            {/* Quick Actions */}
+            {canEdit && (
+              <BrandQuickActions
+                onAddService={handleAddService}
+                onAddWorker={handleAddWorker}
+                onManageHours={handleManageHours}
+              />
+            )}
+
+            {/* About Section */}
+            <BrandAbout
+              brand={brand}
+              canEdit={canEdit}
+              onEdit={handleEditBanner}
+            />
+
+            {/* Services Section */}
+            <BrandServicesList
+              services={services}
+              canEdit={canEdit}
+              onAddService={handleAddService}
+              onServicePress={handleServicePress}
+            />
+
+            {/* Team Section */}
+            <BrandTeamList
+              workers={workers}
+              canEdit={canEdit}
+              onAddWorker={handleAddWorker}
+              onWorkerPress={handleWorkerPress}
+            />
+
+            {/* Photos Section */}
+            <BrandPhotosGrid
+              photos={photos}
+              canEdit={canEdit}
+              onAddPhoto={handleAddPhoto}
+              onPhotoPress={handlePhotoPress}
+            />
+
+            {/* Reviews Section */}
+            <BrandReviewsList reviews={reviews} maxDisplay={2} />
+          </ScrollView>
+
+          {/* Bottom Sheets */}
+          <UploadBannerSheet
+            ref={uploadBannerSheetRef}
+            currentBanner={brand.coverImage}
+            onUpload={handleUploadBanner}
           />
-        )}
 
-        {/* About Section */}
-        <BrandAbout brand={brand} canEdit={canEdit} onEdit={handleEditBanner} />
+          <UploadProfileImageSheet
+            ref={uploadProfileImageSheetRef}
+            currentImage={brand.logo}
+            onUpload={handleUploadProfileImage}
+          />
 
-        {/* Services Section */}
-        <BrandServicesList
-          services={services}
-          canEdit={canEdit}
-          onAddService={handleAddService}
-          onServicePress={handleServicePress}
-        />
+          <UpsertServiceSheet
+            ref={upsertServiceSheetRef}
+            service={
+              selectedService
+                ? {
+                    id: selectedService.id,
+                    name: selectedService.name,
+                    description: selectedService.description,
+                    durationMins: selectedService.duration,
+                    price: selectedService.price.toString(),
+                    creatorId: '',
+                    brandId: brand.id,
+                    createdAt: new Date().toISOString(),
+                  }
+                : null
+            }
+            onSave={handleSaveService}
+            onDelete={handleDeleteService}
+          />
 
-        {/* Team Section */}
-        <BrandTeamList
-          workers={workers}
-          canEdit={canEdit}
-          onAddWorker={handleAddWorker}
-          onWorkerPress={handleWorkerPress}
-        />
+          <InviteTeamSheet
+            ref={inviteTeamSheetRef}
+            brandId={brand.id}
+            brandName={brand.name}
+          />
 
-        {/* Photos Section */}
-        <BrandPhotosGrid
-          photos={photos}
-          canEdit={canEdit}
-          onAddPhoto={handleAddPhoto}
-          onPhotoPress={handlePhotoPress}
-        />
+          <UploadPhotosSheet
+            ref={uploadPhotosSheetRef}
+            onUpload={handleUploadPhotos}
+          />
 
-        {/* Reviews Section */}
-        <BrandReviewsList reviews={reviews} maxDisplay={2} />
-      </ScrollView>
-
-      {/* Bottom Sheets */}
-      <UploadBannerSheet
-        ref={uploadBannerSheetRef}
-        currentBanner={brand.coverImage}
-        onUpload={handleUploadBanner}
-      />
-
-      <UploadProfileImageSheet
-        ref={uploadProfileImageSheetRef}
-        currentImage={brand.logo}
-        onUpload={handleUploadProfileImage}
-      />
-
-      <UpsertServiceSheet
-        ref={upsertServiceSheetRef}
-        service={
-          selectedService
-            ? {
-                id: selectedService.id,
-                name: selectedService.name,
-                description: selectedService.description,
-                durationMins: selectedService.duration,
-                price: selectedService.price.toString(),
-                creatorId: '',
-                brandId: brand.id,
-                createdAt: new Date().toISOString(),
-              }
-            : null
-        }
-        onSave={handleSaveService}
-        onDelete={handleDeleteService}
-      />
-
-      <InviteTeamSheet
-        ref={inviteTeamSheetRef}
-        brandId={brand.id}
-        brandName={brand.name}
-      />
-
-      <UploadPhotosSheet
-        ref={uploadPhotosSheetRef}
-        onUpload={handleUploadPhotos}
-      />
-
-      <ManageScheduleSheet
-        ref={manageScheduleSheetRef}
-        workingDays={workingDays}
-        onSave={handleSaveSchedule}
-      />
-    </SafeAreaView>
+          <ManageScheduleSheet
+            ref={manageScheduleSheetRef}
+            workingDays={workingDays}
+            onSave={handleSaveSchedule}
+          />
+        </SafeAreaView>
+      )}
+    </Fragment>
   );
 };
 

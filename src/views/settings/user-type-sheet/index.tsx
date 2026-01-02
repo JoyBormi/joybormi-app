@@ -14,52 +14,41 @@ import { EUserType } from '@/types/user.type';
 import { UserTypeActionRequiredSheet } from './action-required';
 
 interface UserTypeSheetProps {
-  currentType: EUserType;
   onClose: () => void;
 }
 
-const USER_TYPES = (userType: EUserType) => {
-  return [
-    {
-      type: EUserType.USER,
-      title: 'User',
-      description: 'Book services and manage appointments',
-      icon: Icons.User,
-      color: 'text-blue-500',
-    },
-    ...(userType !== EUserType.WORKER
-      ? [
-          {
-            type: EUserType.CREATOR,
-            title: 'Creator',
-            description: 'Manage your brand and services',
-            icon: Icons.Briefcase,
-            color: 'text-purple-500',
-          },
-        ]
-      : []),
-    ...(userType !== EUserType.CREATOR
-      ? [
-          {
-            type: EUserType.WORKER,
-            title: 'Worker',
-            description: 'Provide services and manage bookings',
-            icon: Icons.Users,
-            color: 'text-green-500',
-          },
-        ]
-      : []),
-  ];
-};
+const ALL_USER_TYPES = [
+  {
+    type: EUserType.USER,
+    title: 'User',
+    description: 'Book services and manage appointments',
+    icon: Icons.User,
+    color: 'text-blue-500',
+  },
+  {
+    type: EUserType.CREATOR,
+    title: 'Creator',
+    description: 'Manage your brand and services',
+    icon: Icons.Briefcase,
+    color: 'text-purple-500',
+  },
+  {
+    type: EUserType.WORKER,
+    title: 'Worker',
+    description: 'Provide services and manage bookings',
+    icon: Icons.Users,
+    color: 'text-green-500',
+  },
+];
 
 export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
-  ({ currentType, onClose }, ref) => {
-    const { user } = useUserStore();
+  ({ onClose }, ref) => {
+    const { user, appType, setAppType } = useUserStore();
     const insets = useSafeAreaInsets();
     const actionSheetRef = useRef<BottomSheetModal>(null);
 
     // States
-    const [selectedType, setSelectedType] = useState<EUserType>(currentType);
+    const [selectedType, setSelectedType] = useState<EUserType>(appType);
     const [actionReason, setActionReason] = useState<
       'NEED_CODE' | 'NEED_BRAND'
     >('NEED_CODE');
@@ -71,11 +60,10 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
 
     const handleConfirm = () => {
       const reason = validateUserTypeSwitch(
-        currentType,
+        appType,
         selectedType,
-        user?.type === EUserType.CREATOR,
+        user?.role === EUserType.CREATOR,
       );
-
       if (reason === 'NEED_CODE' || reason === 'NEED_BRAND') {
         setActionReason(reason);
         actionSheetRef.current?.present();
@@ -83,10 +71,9 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
       }
 
       Feedback.success();
+      setAppType(selectedType);
       onClose();
     };
-
-    const userTypeList = USER_TYPES(currentType);
 
     return (
       <CustomBottomSheet
@@ -114,14 +101,13 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
           </View>
 
           <View className="gap-3">
-            {userTypeList.map((userType) => {
+            {ALL_USER_TYPES.map((userType) => {
               const Icon = userType.icon;
               const isSelected = selectedType === userType.type;
 
               return (
                 <Pressable
                   key={userType.type}
-                  activeOpacity={0.7}
                   onPress={() => handleSelect(userType.type)}
                   className={cn(
                     'flex-row items-center gap-4 p-4 rounded-2xl border-2 transition-all',
@@ -162,7 +148,6 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
           </View>
 
           <Pressable
-            activeOpacity={0.8}
             className="bg-primary h-14 rounded-2xl items-center justify-center mt-2"
             onPress={handleConfirm}
           >

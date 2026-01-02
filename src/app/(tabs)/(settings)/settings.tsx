@@ -171,7 +171,6 @@ const SettingsScreen: React.FC = () => {
         {isLoggedIn && (
           <View className="mb-8">
             <Pressable
-              activeOpacity={0.85}
               onPress={handleUserTypeSwitch}
               className="overflow-hidden rounded-2xl"
             >
@@ -233,7 +232,6 @@ const SettingsScreen: React.FC = () => {
       {/* Bottom Sheets */}
       <UserTypeSheet
         ref={userTypeSheetRef}
-        currentType={appType}
         onClose={() => userTypeSheetRef.current?.dismiss()}
       />
 

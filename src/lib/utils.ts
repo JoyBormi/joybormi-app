@@ -14,6 +14,14 @@ export const PASSWORD_REGEX =
 
 export const normalizePhone = (v: string) => v.replace(/\D/g, '');
 
+/**
+ * 1. User can switch to Worker if he has an invite code otherwise need to invite code
+ * 2. User can switch to Creator if he has a brand otherwise need to create a brand
+ * 3. Worker can switch to Creator if he has a brand only if his role is Creator, (role worker can not create brand or switch to creator)
+ * 4. Creator can switch to Worker if he has a brand (coz he is a worker)
+ * 5. Creator/Worker can switch User anytime
+ */
+
 export function validateUserTypeSwitch(
   from: EUserType,
   to: EUserType,
@@ -21,19 +29,32 @@ export function validateUserTypeSwitch(
 ): UserTypeBlockReason {
   if (from === to) return null;
 
+  // Creator / Worker → User is always allowed
   if (
-    (from === EUserType.CREATOR && to === EUserType.WORKER) ||
-    (from === EUserType.WORKER && to === EUserType.CREATOR)
+    (from === EUserType.CREATOR || from === EUserType.WORKER) &&
+    to === EUserType.USER
   ) {
-    return 'NOT_ALLOWED';
+    return null;
   }
 
+  // User → Worker needs invite code
   if (from === EUserType.USER && to === EUserType.WORKER) {
     return 'NEED_CODE';
   }
 
-  if (from === EUserType.USER && to === EUserType.CREATOR && !hasBrand) {
-    return 'NEED_BRAND';
+  // User → Creator needs brand
+  if (from === EUserType.USER && to === EUserType.CREATOR) {
+    return hasBrand ? null : 'NEED_BRAND';
+  }
+
+  // Worker → Creator needs brand
+  if (from === EUserType.WORKER && to === EUserType.CREATOR) {
+    return hasBrand ? null : 'NOT_ALLOWED';
+  }
+
+  // Creator → Worker needs brand
+  if (from === EUserType.CREATOR && to === EUserType.WORKER) {
+    return hasBrand ? null : 'NOT_ALLOWED';
   }
 
   return null;

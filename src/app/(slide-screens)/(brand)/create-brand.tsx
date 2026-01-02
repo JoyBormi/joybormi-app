@@ -279,6 +279,7 @@ const CreateBrand: React.FC = () => {
             onPress={handleBack}
             disabled={isSubmitting}
             size="action"
+            className="px-6"
           >
             <Text className="font-semibold text-foreground">
               {t('common.buttons.back')}
@@ -299,6 +300,7 @@ const CreateBrand: React.FC = () => {
             onPress={handleSubmit(onSubmit)}
             disabled={!isValid || isSubmitting}
             size="action"
+            className="flex-1"
           >
             <Text className="font-semibold text-primary-foreground">
               {isSubmitting ? 'Loading...' : 'Submit'}

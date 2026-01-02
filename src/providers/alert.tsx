@@ -39,14 +39,14 @@ export function GlobalAlert() {
         <Animated.View
           entering={FadeIn.duration(120)}
           exiting={FadeOut.duration(150)}
-          className="absolute inset-0 bg-purple-950/15"
+          className="absolute inset-0 bg-purple-950/10"
         />
 
         {/* Modal content with linear-style Zoom for a "system" feel */}
         <Animated.View
           entering={ZoomIn.duration(250)}
           exiting={ZoomOut.duration(200)}
-          className="w-full max-w-sm overflow-hidden rounded-[32px] border border-white/60 shadow-2xl shadow-purple-900/10"
+          className="w-full max-w-sm overflow-hidden rounded-[32px] border border-white/60 shadow-2xl shadow-primary/10"
         >
           <BlurView
             intensity={Platform.OS === 'ios' ? 45 : 80}
@@ -55,7 +55,7 @@ export function GlobalAlert() {
           >
             <View className="items-center">
               {/* Creative Icon Housing */}
-              <View className="w-14 h-14 bg-purple-500/10 rounded-full items-center justify-center mb-5">
+              <View className="w-14 h-14 bg-primary/10 rounded-full items-center justify-center mb-5">
                 {options.icon || (
                   <AlertCircle size={28} color="#8A70D6" strokeWidth={2} />
                 )}
@@ -87,7 +87,7 @@ export function GlobalAlert() {
 
               <Pressable
                 onPress={handleConfirm}
-                className="flex-1 h-12 items-center justify-center rounded-2xl bg-purple-500/70 active:bg-purple-700 shadow-sm"
+                className="flex-1 h-12 items-center justify-center rounded-2xl bg-primary active:bg-primary shadow-sm"
               >
                 <Text className="text-sm font-semibold text-white">
                   {options.confirmLabel || 'Confirm'}

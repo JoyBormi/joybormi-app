@@ -22,11 +22,6 @@ export default function TabLayout() {
 
   const isTabBarHidden = SCREENS_WITHOUT_TAB.some((s) => segments.includes(s));
 
-  const brandHref =
-    appType === EUserType.CREATOR
-      ? '/(tabs)/(brand)/brand-profile'
-      : '/(tabs)/(brand)/worker-profile';
-
   return (
     <Tabs>
       <TabSlot />
@@ -48,9 +43,18 @@ export default function TabLayout() {
         <TabTrigger name="reservations" href="/reservations" asChild>
           <TabButton icon="List">{t('common.tabs.reservations')}</TabButton>
         </TabTrigger>
-        {(appType === EUserType.CREATOR || appType === EUserType.WORKER) && (
-          <TabTrigger name="brand" href={brandHref} asChild>
+        {appType === EUserType.CREATOR && (
+          <TabTrigger name="brand" href="/(tabs)/(brand)/brand-profile" asChild>
             <TabButton icon="Store">{t('common.tabs.store')}</TabButton>
+          </TabTrigger>
+        )}
+        {appType === EUserType.WORKER && (
+          <TabTrigger
+            name="brand"
+            href="/(tabs)/(brand)/worker-profile"
+            asChild
+          >
+            <TabButton icon="Users">{t('common.tabs.profile')}</TabButton>
           </TabTrigger>
         )}
         <TabTrigger name="settings" href="/(tabs)/(settings)/settings" asChild>

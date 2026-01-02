@@ -1,31 +1,38 @@
+import { Major } from '@/constants/enum';
+
 export interface IBrand {
   id: string;
-  name: string;
-  description: string;
-  category: string;
-  logo: string;
-  coverImage: string;
-  rating: number;
-  reviewCount: number;
-  location: {
-    address: string;
-    city: string;
-    coordinates: {
-      lat: number;
-      lng: number;
-    };
-  };
-  contact: {
-    phone: string;
-    email: string;
-    website?: string;
-  };
-  workingHours: IWorkingHours[];
-  isOpen: boolean;
-  nextOpenTime?: string;
-  verified: boolean;
-  tags: string[];
-  priceRange: 'budget' | 'moderate' | 'premium' | 'luxury';
+  creatorId: string;
+  brandName: string;
+  businessName: string;
+  businessNumber: string;
+  verifiedAt: Date | null;
+  status: BrandStatus;
+  country: string;
+  state: string;
+  city: string;
+  street: string;
+  detailedAddress: string;
+  postalCode: string;
+  profileImage: string | null;
+  bannerImage: string | null;
+  description: string | null;
+  email: string | null;
+  phone: string;
+  createdAt: Date;
+  updatedAt: Date;
+  businessCategory: Major;
+  businessCertUrl: string;
+  ownerFirstName: string;
+  ownerLastName: string;
+}
+
+export enum BrandStatus {
+  PENDING = 'PENDING',
+  ACTIVE = 'ACTIVE',
+  SUSPENDED = 'SUSPENDED',
+  REJECTED = 'REJECTED',
+  WITHDRAWN = 'WITHDRAWN',
 }
 
 export interface IWorkingHours {
