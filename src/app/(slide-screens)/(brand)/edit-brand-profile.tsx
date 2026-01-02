@@ -1,7 +1,8 @@
 import { router } from 'expo-router';
-import React, { useCallback, useRef } from 'react';
+import { RefreshCcw } from 'lucide-react-native';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { KeyboardAvoid } from '@/components/shared';
@@ -16,6 +17,8 @@ import {
   Text,
   Textarea,
 } from '@/components/ui';
+import { useDeleteBrand, useGetBrand, useUpdateBrand } from '@/hooks/brand';
+import { useUserStore } from '@/stores';
 
 export interface Brandform {
   brand_name: string;
@@ -32,74 +35,132 @@ export interface Brandform {
   banner_image?: string;
 }
 
-const brand = {
-  id: '1',
-  name: 'Egg Deurap Jamwon Station Branch',
-  description:
-    'Premium beauty salon offering professional hair styling, coloring, and treatment services. Our experienced team provides personalized care in a modern, relaxing environment.',
-  category: 'Hair Salon',
-  logo: 'https://picsum.photos/seed/brand-logo/200/200',
-  coverImage: 'https://picsum.photos/seed/brand-cover/800/400',
-  rating: 4.8,
-  reviewCount: 968,
-  location: {
-    address: 'Seoul Seocho-gu Jamwon-dong 91-9',
-    city: 'Seoul',
-    coordinates: {
-      lat: 37.5172,
-      lng: 127.0119,
-    },
-  },
-  contact: {
-    phone: '+82 2-1234-5678',
-    email: 'contact@eggdeurap.com',
-    website: 'https://eggdeurap.com',
-  },
-  workingHours: [
-    { day: 'Monday', isOpen: true, openTime: '10:00', closeTime: '20:00' },
-    { day: 'Tuesday', isOpen: true, openTime: '10:00', closeTime: '20:00' },
-    { day: 'Wednesday', isOpen: true, openTime: '10:00', closeTime: '20:00' },
-    { day: 'Thursday', isOpen: true, openTime: '10:00', closeTime: '20:00' },
-    { day: 'Friday', isOpen: true, openTime: '10:00', closeTime: '21:00' },
-    { day: 'Saturday', isOpen: true, openTime: '09:00', closeTime: '21:00' },
-    { day: 'Sunday', isOpen: true, openTime: '09:00', closeTime: '19:00' },
-  ],
-  isOpen: true,
-  verified: true,
-  tags: [
-    'Hair Salon',
-    'Color Specialist',
-    'Premium Service',
-    'Reservation Required',
-  ],
-  priceRange: 'premium',
-};
-
-const EditBrandProfileScreen = (uuid: string) => {
+const EditBrandProfileScreen = () => {
   const insets = useSafeAreaInsets();
   const blockedSheetRef = useRef<BlockedSheetRef>(null);
+  const { user } = useUserStore();
+
+  // Fetch brand data
+  const { data: brand, isLoading } = useGetBrand({ userId: user?.id });
+  const { mutate: updateBrand, isPending: isUpdating } = useUpdateBrand(
+    brand?.id || '',
+  );
+  const { mutate: deleteBrand, isPending: isDeleting } = useDeleteBrand();
 
   // Form state matching backend schema
   const form = useForm<Brandform>({
     defaultValues: {
-      brand_name: brand.name,
-      description: brand.description,
-      country: brand.location.address.split(',')[2]?.trim() || '',
-      state: brand.location.address.split(',')[1]?.trim() || '',
-      city: brand.location.city,
-      street: brand.location.address.split(',')[0]?.trim() || '',
-      detailed_address: brand.location.address,
+      brand_name: '',
+      description: '',
+      country: '',
+      state: '',
+      city: '',
+      street: '',
+      detailed_address: '',
       postal_code: '',
-      email: brand.contact.email,
-      phone: brand.contact.phone,
-      profile_image: brand.logo,
-      banner_image: brand.coverImage,
+      email: '',
+      phone: '',
+      profile_image: '',
+      banner_image: '',
     },
   });
 
+  // Update form when brand data loads
+  useEffect(() => {
+    if (brand) {
+      form.reset({
+        brand_name: brand.brandName,
+        description: brand.description || '',
+        country: brand.country,
+        state: brand.state,
+        city: brand.city,
+        street: brand.street,
+        detailed_address: brand.detailedAddress,
+        postal_code: brand.postalCode,
+        email: brand.email || '',
+        phone: brand.phone,
+        profile_image: brand.profileImage || '',
+        banner_image: brand.bannerImage || '',
+      });
+    }
+  }, [brand, form]);
+
   const isFormDirty = form.formState.isDirty;
 
-  const handleSave = useCallback(() => {}, []);
+  const handleSave = useCallback(() => {
+    if (!brand) return;
+
+    const formData = form.getValues();
+    const changedFields: Record<string, unknown> = {};
+
+    // Only send changed fields
+    Object.keys(formData).forEach((key) => {
+      const formKey = key as keyof Brandform;
+      const brandKey =
+        {
+          brand_name: 'brandName',
+          detailed_address: 'detailedAddress',
+          postal_code: 'postalCode',
+          profile_image: 'profileImage',
+          banner_image: 'bannerImage',
+        }[key] || key;
+
+      if (form.formState.dirtyFields[formKey]) {
+        changedFields[brandKey] = formData[formKey];
+      }
+    });
+
+    if (Object.keys(changedFields).length === 0) {
+      Alert.alert('No Changes', 'No changes were made to save.');
+      return;
+    }
+
+    updateBrand(changedFields, {
+      onSuccess: () => {
+        Alert.alert('Success', 'Brand profile updated successfully!');
+        form.reset(formData);
+        router.back();
+      },
+      onError: (error) => {
+        Alert.alert('Error', error.message || 'Failed to update brand profile');
+      },
+    });
+  }, [brand, form, updateBrand]);
+
+  const handleDelete = useCallback(() => {
+    if (!brand) return;
+
+    Alert.alert(
+      'Delete Brand',
+      'Are you sure you want to delete your brand? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            deleteBrand(brand.id, {
+              onSuccess: () => {
+                Alert.alert('Success', 'Brand deleted successfully');
+                router.replace('/(tabs)/(brand)/brand-profile');
+              },
+              onError: (error) => {
+                Alert.alert('Error', error.message || 'Failed to delete brand');
+              },
+            });
+          },
+        },
+      ],
+    );
+  }, [brand, deleteBrand]);
+
+  if (isLoading || !brand) {
+    return (
+      <View className="flex-1 bg-background items-center justify-center">
+        <RefreshCcw size={32} className="text-primary animate-spin" />
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoid
@@ -261,21 +322,29 @@ const EditBrandProfileScreen = (uuid: string) => {
       {/* Action Buttons */}
       <View className="mt-4 gap-4 flex-row">
         <Button
-          onPress={() => {}}
+          onPress={handleDelete}
           variant="outline"
           size="action"
           className="flex-[0.3] border-destructive"
+          disabled={isDeleting}
         >
           <Text className="text-destructive">Delete</Text>
         </Button>
 
         <Button
           onPress={handleSave}
-          disabled={!form.formState.isValid}
+          disabled={!isFormDirty || isUpdating}
           size="action"
           className="flex-[0.7]"
         >
-          <Text>Save Changes</Text>
+          {isUpdating ? (
+            <RefreshCcw
+              size={20}
+              className="text-primary-foreground animate-spin"
+            />
+          ) : (
+            <Text>Save Changes</Text>
+          )}
         </Button>
       </View>
 

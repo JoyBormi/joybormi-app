@@ -1,7 +1,7 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { Fragment, useRef, useState } from 'react';
-import { ActivityIndicator, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import {
   SafeAreaView,
@@ -16,6 +16,12 @@ import {
   UploadProfileImageSheet,
   UpsertServiceSheet,
 } from '@/components/shared/brand-worker';
+import {
+  BlockedScreen,
+  LoadingScreen,
+  NotFoundScreen,
+  SuspendedScreen,
+} from '@/components/shared/status-screens';
 import { useGetBrand } from '@/hooks/brand';
 import { useUserStore } from '@/stores';
 import { BrandStatus, type IBrandService } from '@/types/brand.type';
@@ -210,9 +216,15 @@ const BrandProfileScreen: React.FC = () => {
   return (
     <Fragment>
       {isLoading ? (
-        <ActivityIndicator />
+        <LoadingScreen />
       ) : data && data.status === BrandStatus.PENDING ? (
         <BrandProfilePendingScreen onRefresh={refetch} />
+      ) : data && data.status === BrandStatus.SUSPENDED ? (
+        <SuspendedScreen />
+      ) : data && data.status === BrandStatus.WITHDRAWN ? (
+        <BlockedScreen />
+      ) : data && data.status === BrandStatus.REJECTED ? (
+        <NotFoundScreen />
       ) : (
         <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
           <ScrollView
