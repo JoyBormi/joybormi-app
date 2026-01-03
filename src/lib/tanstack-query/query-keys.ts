@@ -66,13 +66,21 @@ export const queryKeys = {
   },
 
   // ============================================
+  // SCHEDULE
+  // ============================================
+  schedule: {
+    all: ['schedule'],
+    detail: ['schedule', 'detail'],
+  },
+
+  // ============================================
   // SERVICES
   // ============================================
-  services: {
-    all: ['services'],
-    list: ['services', 'list'],
-    detail: ['services', 'detail'],
-    categories: ['services', 'categories'],
+  service: {
+    all: ['service'],
+    list: ['service', 'list'],
+    detail: ['service', 'detail'],
+    categories: ['service', 'categories'],
   },
 
   // ============================================

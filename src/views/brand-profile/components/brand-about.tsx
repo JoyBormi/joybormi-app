@@ -39,23 +39,19 @@ export const BrandAbout: React.FC<BrandAboutProps> = ({
           <View className="flex-row items-center gap-3">
             <Icons.MapPin size={16} className="text-muted-foreground" />
             <Text className="font-body text-foreground">
-              {brand.location.address}, {brand.location.city}
+              {brand.city}, {brand.state}
             </Text>
           </View>
-          {brand.contact?.phone && (
+          {brand.phone && (
             <View className="flex-row items-center gap-3">
               <Icons.Phone size={16} className="text-muted-foreground" />
-              <Text className="font-body text-foreground">
-                {brand.contact.phone}
-              </Text>
+              <Text className="font-body text-foreground">{brand.phone}</Text>
             </View>
           )}
-          {brand.contact?.email && (
+          {brand.email && (
             <View className="flex-row items-center gap-3">
               <Icons.Mail size={16} className="text-muted-foreground" />
-              <Text className="font-body text-foreground">
-                {brand.contact.email}
-              </Text>
+              <Text className="font-body text-foreground">{brand.email}</Text>
             </View>
           )}
         </View>

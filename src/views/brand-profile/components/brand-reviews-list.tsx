@@ -4,10 +4,8 @@ import { Image, View } from 'react-native';
 import { Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 
-import type { IBrandReview } from '@/types/brand.type';
-
 interface BrandReviewsListProps {
-  reviews: IBrandReview[];
+  reviews: any[];
   maxDisplay?: number;
 }
 

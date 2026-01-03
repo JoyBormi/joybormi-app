@@ -1,16 +1,16 @@
 import React from 'react';
-import { Image, Pressable, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 
-import type { IBrandPhoto } from '@/types/brand.type';
+import type { IBrand } from '@/types/brand.type';
 
 interface BrandPhotosGridProps {
-  photos: IBrandPhoto[];
+  brand: IBrand;
   canEdit: boolean;
   onAddPhoto: () => void;
-  onPhotoPress?: (photo: IBrandPhoto, index: number) => void;
+  onPhotoPress?: (photo: IBrand, index: number) => void;
 }
 
 /**
@@ -18,7 +18,7 @@ interface BrandPhotosGridProps {
  * Displays grid of brand photos with add button
  */
 export const BrandPhotosGrid: React.FC<BrandPhotosGridProps> = ({
-  photos,
+  brand,
   canEdit,
   onAddPhoto,
   onPhotoPress,
@@ -27,7 +27,8 @@ export const BrandPhotosGrid: React.FC<BrandPhotosGridProps> = ({
     <View className="px-6 mb-8">
       <View className="flex-row items-center justify-between mb-4">
         <Text className="font-title text-lg text-foreground">
-          Photos ({photos.length})
+          Photos
+          {/* ({brand.photos.length}) */}
         </Text>
         {canEdit && (
           <Pressable onPress={onAddPhoto}>
@@ -35,7 +36,7 @@ export const BrandPhotosGrid: React.FC<BrandPhotosGridProps> = ({
           </Pressable>
         )}
       </View>
-      <View className="flex-row flex-wrap gap-2">
+      {/* <View className="flex-row flex-wrap gap-2">
         {photos.map((photo, index) => (
           <Pressable
             key={photo.id}
@@ -48,7 +49,7 @@ export const BrandPhotosGrid: React.FC<BrandPhotosGridProps> = ({
             />
           </Pressable>
         ))}
-      </View>
+      </View> */}
     </View>
   );
 };

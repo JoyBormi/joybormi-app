@@ -35,8 +35,11 @@ export const BrandCard: React.FC<BrandCardProps> = ({
     <Fragment>
       <View className="relative h-60 mb-4">
         {/* Cover Image */}
-        {brand.coverImage && (
-          <Image source={{ uri: brand.coverImage }} className="w-full h-full" />
+        {brand.bannerImage && (
+          <Image
+            source={{ uri: brand.bannerImage }}
+            className="w-full h-full"
+          />
         )}
         <Pressable
           onPress={onEditBanner}
@@ -52,7 +55,7 @@ export const BrandCard: React.FC<BrandCardProps> = ({
           <View className="items-center mb-6">
             <View className="relative mb-4 -mt-20">
               <Image
-                source={{ uri: brand.logo }}
+                source={{ uri: brand.profileImage ?? '' }}
                 className="w-32 h-32 rounded-3xl border-4 border-card"
               />
               {canEdit && (
@@ -66,21 +69,21 @@ export const BrandCard: React.FC<BrandCardProps> = ({
             </View>
 
             <Text className="font-title text-center text-foreground mb-1">
-              {brand.name}
+              {brand.brandName}
             </Text>
             <Text className="font-subtitle text-muted-foreground mb-3">
-              {brand.category}
+              {brand.businessCategory}
             </Text>
 
             {/* Rating Badge */}
             <View className="flex-row items-center gap-2 bg-warning/10 px-4 py-2 rounded-full">
               <Icons.Star size={16} className="text-warning" fill="#f59e0b" />
               <Text className="font-subtitle text-foreground">
-                {brand.rating}
+                {brand.verifiedAt ? 'Verified' : 'Not Verified'}
               </Text>
-              <Text className="font-caption text-muted-foreground">
+              {/* <Text className="font-caption text-muted-foreground">
                 • {brand.reviewCount} reviews
-              </Text>
+              </Text> */}
             </View>
           </View>
 

@@ -4,13 +4,13 @@ import { Pressable, View } from 'react-native';
 import { Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 
-import type { IBrandService } from '@/types/brand.type';
+import type { IService } from '@/types/service.type';
 
 interface BrandServicesListProps {
-  services: IBrandService[];
+  services: IService[];
   canEdit: boolean;
   onAddService: () => void;
-  onServicePress: (service: IBrandService) => void;
+  onServicePress: (service: IService) => void;
 }
 
 /**
@@ -56,7 +56,7 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
             <View className="flex-row items-center gap-2">
               <Icons.Clock size={16} className="text-muted-foreground" />
               <Text className="font-caption text-muted-foreground">
-                {service.duration} minutes
+                {service.durationMins} minutes
               </Text>
             </View>
           </Pressable>

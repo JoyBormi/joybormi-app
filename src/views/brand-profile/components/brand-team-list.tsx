@@ -4,13 +4,13 @@ import { Image, Pressable, View } from 'react-native';
 import { Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 
-import type { IBrandWorker } from '@/types/brand.type';
+import type { IWorker } from '@/types/worker.type';
 
 interface BrandTeamListProps {
-  workers: IBrandWorker[];
+  workers: IWorker[];
   canEdit: boolean;
   onAddWorker: () => void;
-  onWorkerPress: (worker: IBrandWorker) => void;
+  onWorkerPress: (worker: IWorker) => void;
 }
 
 /**

@@ -22,29 +22,31 @@ import {
   NotFoundScreen,
   SuspendedScreen,
 } from '@/components/shared/status-screens';
-import { useGetBrand } from '@/hooks/brand';
-import { useUserStore } from '@/stores';
-import { BrandStatus, type IBrandService } from '@/types/brand.type';
-import { EUserType } from '@/types/user.type';
+import { useGetBrand, useUpdateBrand } from '@/hooks/brand';
+import { useUploadFile } from '@/hooks/common';
+import { useGetSchedule, useUpdateSchedule } from '@/hooks/schedule';
 import {
-  mockBrand,
-  mockPhotos,
-  mockReviews,
-  mockServices,
-  mockWorkers,
-} from '@/views/brand';
+  useCreateService,
+  useDeleteService,
+  useGetServices,
+  useUpdateService,
+} from '@/hooks/service';
+import { useUserStore } from '@/stores';
+import { BrandStatus } from '@/types/brand.type';
+import { ServiceOwnerType, type IService } from '@/types/service.type';
+import { EUserType } from '@/types/user.type';
+import { pickImage } from '@/utils/file-upload';
+import { mockPhotos, mockReviews, mockWorkers } from '@/views/brand';
 import {
   BrandAbout,
   BrandCard,
-  BrandPhotosGrid,
   BrandQuickActions,
-  BrandReviewsList,
   BrandServicesList,
   BrandTeamList,
 } from '@/views/brand-profile/components';
 import { BrandProfilePendingScreen } from '@/views/brand-profile/in-pending';
 
-import type { IWorkingDay } from '@/types/worker.type';
+import type { IWorkingDay } from '@/types/schedule.type';
 
 /**
  * Brand Profile Management Page - For creators/workers to manage their brand
@@ -60,21 +62,50 @@ const BrandProfileScreen: React.FC = () => {
   const isCreator = appType === EUserType.CREATOR;
   const canEdit = isCreator;
 
-  const { data, isLoading, refetch } = useGetBrand({
+  // Fetch brand data
+  const {
+    data: brand,
+    isLoading: isBrandLoading,
+    refetch: refetchBrand,
+  } = useGetBrand({
     userId: user?.id,
   });
-  console.log(`🚀 ~ brandData:`, data);
 
-  // State - In production, fetch from API based on user's brand
-  const [brand] = useState(mockBrand);
-  const [services, setServices] = useState(mockServices);
+  // Fetch services
+  const {
+    data: services = [],
+    isLoading: isServicesLoading,
+    refetch: refetchServices,
+  } = useGetServices({
+    brandId: brand?.id,
+    ownerType: 'BRAND' as const,
+  });
+
+  // Fetch schedule
+  const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
+    brandId: brand?.id,
+  });
+
+  // Mutations
+  const updateBrandMutation = useUpdateBrand(brand?.id || '');
+  const uploadFileMutation = useUploadFile();
+  const createServiceMutation = useCreateService(brand?.id || '');
+  const updateServiceMutation = useUpdateService();
+  const deleteServiceMutation = useDeleteService();
+  const updateScheduleMutation = useUpdateSchedule(brand?.id || '');
+
+  // Local state for UI (TODO: Replace with real API data)
   const [workers] = useState(mockWorkers);
   const [photos, setPhotos] = useState(mockPhotos);
   const [reviews] = useState(mockReviews);
-  const [workingDays, setWorkingDays] = useState<IWorkingDay[]>([]);
-  const [selectedService, setSelectedService] = useState<IBrandService | null>(
-    null,
-  );
+  const [selectedService, setSelectedService] = useState<IService | null>(null);
+
+  const isLoading = isBrandLoading || isServicesLoading;
+  const refetch = () => {
+    refetchBrand();
+    refetchServices();
+    refetchSchedule();
+  };
 
   // Bottom sheet refs
   const uploadBannerSheetRef = useRef<BottomSheetModal>(null);
@@ -98,18 +129,36 @@ const BrandProfileScreen: React.FC = () => {
     uploadBannerSheetRef.current?.present();
   };
 
-  const handleUploadBanner = (uri: string) => {
-    console.warn('Upload banner:', uri);
-    // TODO: API call to update banner
+  const handleUploadBanner = async (uri: string) => {
+    if (!brand?.id) return;
+
+    try {
+      const file = await pickImage({ allowsEditing: true, aspect: [16, 9] });
+      if (!file) return;
+
+      const { url } = await uploadFileMutation.mutateAsync({ file });
+      await updateBrandMutation.mutateAsync({ bannerImage: url });
+    } catch (error) {
+      console.error('Failed to upload banner:', error);
+    }
   };
 
   const handleEditProfileImage = () => {
     uploadProfileImageSheetRef.current?.present();
   };
 
-  const handleUploadProfileImage = (uri: string) => {
-    console.warn('Upload profile image:', uri);
-    // TODO: API call to update profile image
+  const handleUploadProfileImage = async (uri: string) => {
+    if (!brand?.id) return;
+
+    try {
+      const file = await pickImage({ allowsEditing: true, aspect: [1, 1] });
+      if (!file) return;
+
+      const { url } = await uploadFileMutation.mutateAsync({ file });
+      await updateBrandMutation.mutateAsync({ profileImage: url });
+    } catch (error) {
+      console.error('Failed to upload profile image:', error);
+    }
   };
 
   const handleAddService = () => {
@@ -117,12 +166,12 @@ const BrandProfileScreen: React.FC = () => {
     upsertServiceSheetRef.current?.present();
   };
 
-  const handleServicePress = (service: IBrandService) => {
+  const handleServicePress = (service: IService) => {
     setSelectedService(service);
     upsertServiceSheetRef.current?.present();
   };
 
-  const handleSaveService = (
+  const handleSaveService = async (
     serviceId: string | null,
     data: {
       name: string;
@@ -131,40 +180,39 @@ const BrandProfileScreen: React.FC = () => {
       price: string;
     },
   ) => {
-    if (serviceId) {
-      setServices((prev) =>
-        prev.map((s) =>
-          s.id === serviceId
-            ? {
-                ...s,
-                name: data.name,
-                description: data.description,
-                duration: data.durationMins,
-                price: parseFloat(data.price),
-              }
-            : s,
-        ),
-      );
-      console.warn('Service updated:', serviceId, data);
-    } else {
-      const newService: IBrandService = {
-        id: `service-${Date.now()}`,
-        name: data.name,
-        description: data.description,
-        duration: data.durationMins,
-        price: parseFloat(data.price),
-        currency: 'USD',
-        category: 'General',
-        popular: false,
-      };
-      setServices((prev) => [...prev, newService]);
-      console.warn('Service added:', newService);
+    try {
+      if (serviceId) {
+        await updateServiceMutation.mutateAsync({
+          serviceId,
+          payload: {
+            name: data.name,
+            description: data.description,
+            durationMins: data.durationMins,
+            price: parseFloat(data.price),
+          },
+        });
+      } else {
+        await createServiceMutation.mutateAsync({
+          name: data.name,
+          description: data.description,
+          durationMins: data.durationMins,
+          price: parseFloat(data.price),
+          ownerType: ServiceOwnerType.BRAND,
+        });
+      }
+      refetchServices();
+    } catch (error) {
+      console.error('Failed to save service:', error);
     }
   };
 
-  const handleDeleteService = (serviceId: string) => {
-    setServices((prev) => prev.filter((s) => s.id !== serviceId));
-    console.warn('Service deleted:', serviceId);
+  const handleDeleteService = async (serviceId: string) => {
+    try {
+      await deleteServiceMutation.mutateAsync(serviceId);
+      refetchServices();
+    } catch (error) {
+      console.error('Failed to delete service:', error);
+    }
   };
 
   const handleAddWorker = () => {
@@ -179,10 +227,25 @@ const BrandProfileScreen: React.FC = () => {
     manageScheduleSheetRef.current?.present();
   };
 
-  const handleSaveSchedule = (newWorkingDays: IWorkingDay[]) => {
-    setWorkingDays(newWorkingDays);
-    console.warn('Schedule updated:', newWorkingDays);
-    // TODO: API call to update schedule
+  const handleSaveSchedule = async (newWorkingDays: IWorkingDay[]) => {
+    if (!brand?.id) return;
+
+    try {
+      await updateScheduleMutation.mutateAsync({
+        workingDays: newWorkingDays.map((day) => ({
+          dayOfWeek: day.dayOfWeek,
+          startTime: day.startTime,
+          endTime: day.endTime,
+          breaks: day.breaks?.map((b) => ({
+            startTime: b.startTime,
+            endTime: b.endTime,
+          })),
+        })),
+      });
+      refetchSchedule();
+    } catch (error) {
+      console.error('Failed to update schedule:', error);
+    }
   };
 
   const handleAddPhoto = () => {
@@ -213,19 +276,24 @@ const BrandProfileScreen: React.FC = () => {
     // TODO: API call to upload photos
   };
 
+  // Early return if no brand data
+  if (!brand && !isLoading) {
+    return <NotFoundScreen />;
+  }
+
   return (
     <Fragment>
       {isLoading ? (
         <LoadingScreen />
-      ) : data && data.status === BrandStatus.PENDING ? (
-        <BrandProfilePendingScreen onRefresh={refetch} />
-      ) : data && data.status === BrandStatus.SUSPENDED ? (
+      ) : brand && brand.status === BrandStatus.PENDING ? (
+        <BrandProfilePendingScreen onRefresh={refetchBrand} />
+      ) : brand && brand.status === BrandStatus.SUSPENDED ? (
         <SuspendedScreen />
-      ) : data && data.status === BrandStatus.WITHDRAWN ? (
+      ) : brand && brand.status === BrandStatus.WITHDRAWN ? (
         <BlockedScreen />
-      ) : data && data.status === BrandStatus.REJECTED ? (
+      ) : brand && brand.status === BrandStatus.REJECTED ? (
         <NotFoundScreen />
-      ) : (
+      ) : brand ? (
         <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
           <ScrollView
             className="flex-1"
@@ -280,27 +348,27 @@ const BrandProfileScreen: React.FC = () => {
             />
 
             {/* Photos Section */}
-            <BrandPhotosGrid
+            {/* <BrandPhotosGrid
               photos={photos}
               canEdit={canEdit}
               onAddPhoto={handleAddPhoto}
               onPhotoPress={handlePhotoPress}
-            />
+            /> */}
 
             {/* Reviews Section */}
-            <BrandReviewsList reviews={reviews} maxDisplay={2} />
+            {/* <BrandReviewsList reviews={reviews} maxDisplay={2} /> */}
           </ScrollView>
 
           {/* Bottom Sheets */}
           <UploadBannerSheet
             ref={uploadBannerSheetRef}
-            currentBanner={brand.coverImage}
+            currentBanner={brand.bannerImage || ''}
             onUpload={handleUploadBanner}
           />
 
           <UploadProfileImageSheet
             ref={uploadProfileImageSheetRef}
-            currentImage={brand.logo}
+            currentImage={brand.profileImage || ''}
             onUpload={handleUploadProfileImage}
           />
 
@@ -311,12 +379,12 @@ const BrandProfileScreen: React.FC = () => {
                 ? {
                     id: selectedService.id,
                     name: selectedService.name,
-                    description: selectedService.description,
-                    durationMins: selectedService.duration,
+                    description: selectedService.description || '',
+                    durationMins: selectedService.durationMins,
                     price: selectedService.price.toString(),
-                    creatorId: '',
-                    brandId: brand.id,
-                    createdAt: new Date().toISOString(),
+                    creatorId: selectedService.ownerId,
+                    brandId: selectedService.brandId,
+                    createdAt: selectedService.createdAt,
                   }
                 : null
             }
@@ -327,7 +395,7 @@ const BrandProfileScreen: React.FC = () => {
           <InviteTeamSheet
             ref={inviteTeamSheetRef}
             brandId={brand.id}
-            brandName={brand.name}
+            brandName={brand.brandName}
           />
 
           <UploadPhotosSheet
@@ -337,10 +405,12 @@ const BrandProfileScreen: React.FC = () => {
 
           <ManageScheduleSheet
             ref={manageScheduleSheetRef}
-            workingDays={workingDays}
+            workingDays={schedule?.workingDays || []}
             onSave={handleSaveSchedule}
           />
         </SafeAreaView>
+      ) : (
+        <NotFoundScreen />
       )}
     </Fragment>
   );
