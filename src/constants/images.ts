@@ -4,3 +4,8 @@ export const HERO = {
   hero_3: require('@/assets/images/website/hero-3.jpg'),
   hero_4: require('@/assets/images/website/hero-4.jpg'),
 };
+
+export const placeholder = {
+  banner: require('@/assets/images/placeholder/banner.png'),
+  avatar: require('@/assets/images/placeholder/avatar.png'),
+};

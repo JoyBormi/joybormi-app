@@ -14,7 +14,6 @@ import {
   UploadBannerSheet,
   UploadPhotosSheet,
   UploadProfileImageSheet,
-  UpsertServiceSheet,
 } from '@/components/shared/brand-worker';
 import {
   BlockedScreen,
@@ -25,15 +24,10 @@ import {
 import { useGetBrand, useUpdateBrand } from '@/hooks/brand';
 import { useUploadFile } from '@/hooks/common';
 import { useGetSchedule, useUpdateSchedule } from '@/hooks/schedule';
-import {
-  useCreateService,
-  useDeleteService,
-  useGetServices,
-  useUpdateService,
-} from '@/hooks/service';
+import { useGetServices } from '@/hooks/service';
 import { useUserStore } from '@/stores';
 import { BrandStatus } from '@/types/brand.type';
-import { ServiceOwnerType, type IService } from '@/types/service.type';
+import { type IService } from '@/types/service.type';
 import { EUserType } from '@/types/user.type';
 import { pickImage } from '@/utils/file-upload';
 import { mockPhotos, mockReviews, mockWorkers } from '@/views/brand';
@@ -78,7 +72,7 @@ const BrandProfileScreen: React.FC = () => {
     refetch: refetchServices,
   } = useGetServices({
     brandId: brand?.id,
-    ownerType: 'BRAND' as const,
+    ownerId: brand?.id,
   });
 
   // Fetch schedule
@@ -89,10 +83,8 @@ const BrandProfileScreen: React.FC = () => {
   // Mutations
   const updateBrandMutation = useUpdateBrand(brand?.id || '');
   const uploadFileMutation = useUploadFile();
-  const createServiceMutation = useCreateService(brand?.id || '');
-  const updateServiceMutation = useUpdateService();
-  const deleteServiceMutation = useDeleteService();
-  const updateScheduleMutation = useUpdateSchedule(brand?.id || '');
+
+  const updateScheduleMutation = useUpdateSchedule(schedule?.id);
 
   // Local state for UI (TODO: Replace with real API data)
   const [workers] = useState(mockWorkers);
@@ -110,7 +102,6 @@ const BrandProfileScreen: React.FC = () => {
   // Bottom sheet refs
   const uploadBannerSheetRef = useRef<BottomSheetModal>(null);
   const uploadProfileImageSheetRef = useRef<BottomSheetModal>(null);
-  const upsertServiceSheetRef = useRef<BottomSheetModal>(null);
   const inviteTeamSheetRef = useRef<BottomSheetModal>(null);
   const uploadPhotosSheetRef = useRef<BottomSheetModal>(null);
   const manageScheduleSheetRef = useRef<BottomSheetModal>(null);
@@ -118,11 +109,6 @@ const BrandProfileScreen: React.FC = () => {
   // Handlers
   const handleEditBrand = () => {
     router.push('/(slide-screens)/(brand)/edit-brand-profile');
-  };
-
-  const handleSaveBrand = () => {
-    console.warn('Save brand:', brand);
-    // TODO: API call to update brand
   };
 
   const handleEditBanner = () => {
@@ -158,60 +144,6 @@ const BrandProfileScreen: React.FC = () => {
       await updateBrandMutation.mutateAsync({ profileImage: url });
     } catch (error) {
       console.error('Failed to upload profile image:', error);
-    }
-  };
-
-  const handleAddService = () => {
-    setSelectedService(null);
-    upsertServiceSheetRef.current?.present();
-  };
-
-  const handleServicePress = (service: IService) => {
-    setSelectedService(service);
-    upsertServiceSheetRef.current?.present();
-  };
-
-  const handleSaveService = async (
-    serviceId: string | null,
-    data: {
-      name: string;
-      description: string;
-      durationMins: number;
-      price: string;
-    },
-  ) => {
-    try {
-      if (serviceId) {
-        await updateServiceMutation.mutateAsync({
-          serviceId,
-          payload: {
-            name: data.name,
-            description: data.description,
-            durationMins: data.durationMins,
-            price: parseFloat(data.price),
-          },
-        });
-      } else {
-        await createServiceMutation.mutateAsync({
-          name: data.name,
-          description: data.description,
-          durationMins: data.durationMins,
-          price: parseFloat(data.price),
-          ownerType: ServiceOwnerType.BRAND,
-        });
-      }
-      refetchServices();
-    } catch (error) {
-      console.error('Failed to save service:', error);
-    }
-  };
-
-  const handleDeleteService = async (serviceId: string) => {
-    try {
-      await deleteServiceMutation.mutateAsync(serviceId);
-      refetchServices();
-    } catch (error) {
-      console.error('Failed to delete service:', error);
     }
   };
 
@@ -318,7 +250,9 @@ const BrandProfileScreen: React.FC = () => {
             {/* Quick Actions */}
             {canEdit && (
               <BrandQuickActions
-                onAddService={handleAddService}
+                onAddService={() =>
+                  router.push(`/(slide-screens)/add-service?id=${brand.id}`)
+                }
                 onAddWorker={handleAddWorker}
                 onManageHours={handleManageHours}
               />
@@ -328,15 +262,19 @@ const BrandProfileScreen: React.FC = () => {
             <BrandAbout
               brand={brand}
               canEdit={canEdit}
-              onEdit={handleEditBanner}
+              onEdit={handleEditBrand}
             />
 
             {/* Services Section */}
             <BrandServicesList
               services={services}
               canEdit={canEdit}
-              onAddService={handleAddService}
-              onServicePress={handleServicePress}
+              onAddService={() =>
+                router.push(`/(slide-screens)/add-service?id=${brand.id}`)
+              }
+              onServicePress={() =>
+                router.push(`/(slide-screens)/add-service?id=${brand.id}`)
+              }
             />
 
             {/* Team Section */}
@@ -370,26 +308,6 @@ const BrandProfileScreen: React.FC = () => {
             ref={uploadProfileImageSheetRef}
             currentImage={brand.profileImage || ''}
             onUpload={handleUploadProfileImage}
-          />
-
-          <UpsertServiceSheet
-            ref={upsertServiceSheetRef}
-            service={
-              selectedService
-                ? {
-                    id: selectedService.id,
-                    name: selectedService.name,
-                    description: selectedService.description || '',
-                    durationMins: selectedService.durationMins,
-                    price: selectedService.price.toString(),
-                    creatorId: selectedService.ownerId,
-                    brandId: selectedService.brandId,
-                    createdAt: selectedService.createdAt,
-                  }
-                : null
-            }
-            onSave={handleSaveService}
-            onDelete={handleDeleteService}
           />
 
           <InviteTeamSheet

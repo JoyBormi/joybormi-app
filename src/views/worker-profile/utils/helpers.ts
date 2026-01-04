@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { ServiceOwnerType } from '@/types/service.type';
+
 import type {
   IReview,
   IService,
@@ -24,9 +26,14 @@ export const workerProfileSchema = z.object({
 
 export const serviceSchema = z.object({
   name: z.string().min(2, 'Service name must be at least 2 characters'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
+  description: z
+    .string()
+    .min(10, 'Description must be at least 10 characters')
+    .nullable()
+    .optional(),
   durationMins: z.number().min(15, 'Duration must be at least 15 minutes'),
-  price: z.string().min(1, 'Price is required'),
+  price: z.string().min(0, 'Price must be a positive number'),
+  ownerType: z.nativeEnum(ServiceOwnerType),
 });
 
 export type WorkerProfileFormData = z.infer<typeof workerProfileSchema>;

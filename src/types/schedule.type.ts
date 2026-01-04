@@ -67,6 +67,5 @@ export interface CreateSpecialDayOffPayload {
 }
 
 export interface UpdateSchedulePayload {
-  workingDays?: CreateWorkingDayPayload[];
-  daysOff?: CreateSpecialDayOffPayload[];
+  days: CreateWorkingDayPayload[];
 }

@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { Image, Pressable, View } from 'react-native';
 
 import { Button, Text } from '@/components/ui';
+import { placeholder } from '@/constants/images';
 import Icons from '@/lib/icons';
 
 import type { IBrand } from '@/types/brand.type';
@@ -35,12 +36,14 @@ export const BrandCard: React.FC<BrandCardProps> = ({
     <Fragment>
       <View className="relative h-60 mb-4">
         {/* Cover Image */}
-        {brand.bannerImage && (
-          <Image
-            source={{ uri: brand.bannerImage }}
-            className="w-full h-full"
-          />
-        )}
+
+        <Image
+          source={
+            brand.bannerImage ? { uri: brand.bannerImage } : placeholder.banner
+          }
+          className="w-full h-full object-contain"
+        />
+
         <Pressable
           onPress={onEditBanner}
           className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-primary/60 items-center justify-center border border-card shadow-lg"
@@ -55,7 +58,11 @@ export const BrandCard: React.FC<BrandCardProps> = ({
           <View className="items-center mb-6">
             <View className="relative mb-4 -mt-20">
               <Image
-                source={{ uri: brand.profileImage ?? '' }}
+                source={
+                  brand.profileImage
+                    ? { uri: brand.profileImage }
+                    : placeholder.avatar
+                }
                 className="w-32 h-32 rounded-3xl border-4 border-card"
               />
               {canEdit && (
