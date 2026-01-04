@@ -1,24 +1,26 @@
-import {
-  BottomSheetModal,
-  useBottomSheetTimingConfigs,
-} from '@gorhom/bottom-sheet';
-import React, { forwardRef, Fragment, useMemo, useRef, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
+import { KeyboardAvoid } from '@/components/shared';
+import { Header } from '@/components/shared/header';
+import { Loading } from '@/components/shared/status-screens';
 import { TimePickerSheet } from '@/components/shared/time-picker.sheet';
 import { Button, Text } from '@/components/ui';
 import { useLocaleData } from '@/hooks/common/use-locale-data';
+import {
+  useCreateSchedule,
+  useGetSchedule,
+  useUpdateSchedule,
+} from '@/hooks/schedule';
+import { agent } from '@/lib/agent';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
+import { alert } from '@/stores/use-alert-store';
 
-import type { IWorkingDay } from '@/types/worker.type';
-
-interface ManageScheduleSheetProps {
-  workingDays: IWorkingDay[];
-  onSave: (workingDays: IWorkingDay[]) => void;
-}
+import type { IWorkingDay } from '@/types/schedule.type';
 
 // Start week from Monday (ISO standard)
 // LocaleConfig array: [Mon=0, Tue=1, Wed=2, Thu=3, Fri=4, Sat=5, Sun=6]
@@ -26,13 +28,25 @@ interface ManageScheduleSheetProps {
 // Map LocaleConfig index to database dayOfWeek
 const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0]; // Mon-Sun
 
-export const ManageScheduleSheet = forwardRef<
-  BottomSheetModal,
-  ManageScheduleSheetProps
->(({ workingDays, onSave }, ref) => {
+const ManageScheduleScreen = () => {
   const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams<{ brandId?: string }>();
+  const brandId = params?.brandId;
+
   const { dayNames } = useLocaleData();
-  const [schedule, setSchedule] = useState<IWorkingDay[]>(workingDays);
+
+  // Fetch existing schedule
+  const { data: scheduleData, isLoading: isLoadingSchedule } = useGetSchedule({
+    brandId,
+  });
+
+  // Mutations
+  const { mutateAsync: createSchedule, isPending: isCreatingSchedule } =
+    useCreateSchedule();
+  const updateScheduleMutation = useUpdateSchedule(scheduleData?.id);
+  const isUpdatingSchedule = updateScheduleMutation.isPending;
+
+  const [schedule, setSchedule] = useState<IWorkingDay[]>([]);
   const [editingState, setEditingState] = useState<{
     day: number;
     field: 'start' | 'end';
@@ -41,9 +55,12 @@ export const ManageScheduleSheet = forwardRef<
 
   const timePickerRef = useRef<BottomSheetModal>(null);
 
-  const animationConfigs = useBottomSheetTimingConfigs({
-    duration: 150,
-  });
+  // Populate schedule when data is loaded
+  useEffect(() => {
+    if (scheduleData?.workingDays) {
+      setSchedule(scheduleData.workingDays);
+    }
+  }, [scheduleData]);
 
   // Format time to HH:mm
   const formatTime = (time: string) => {
@@ -150,6 +167,66 @@ export const ManageScheduleSheet = forwardRef<
     );
   };
 
+  const handleSave = async () => {
+    if (!brandId) return;
+
+    // Validate that at least one day is configured
+    if (schedule.length === 0) {
+      alert({
+        title: 'No Working Days',
+        subtitle: 'Please add at least one working day before saving.',
+        confirmLabel: 'OK',
+      });
+      return;
+    }
+
+    try {
+      const workingDaysPayload = {
+        days: schedule.map((day) => ({
+          dayOfWeek: day.dayOfWeek,
+          startTime: day.startTime,
+          endTime: day.endTime,
+          breaks: day.breaks?.map((b) => ({
+            startTime: b.startTime,
+            endTime: b.endTime,
+          })),
+        })),
+      };
+
+      if (scheduleData?.id) {
+        // Update existing schedule
+        await updateScheduleMutation.mutateAsync(workingDaysPayload);
+        alert({
+          title: 'Success',
+          subtitle: 'Working hours updated successfully',
+          confirmLabel: 'OK',
+          onConfirm: () => router.back(),
+        });
+      } else {
+        // Create new schedule first
+        const newSchedule = await createSchedule({ brandId });
+
+        // Then update with working days using the new schedule ID
+        if (newSchedule?.id && schedule.length > 0) {
+          // Use agent API directly to update the newly created schedule
+          await agent.put(
+            `/schedule/${newSchedule.id}/working-days`,
+            workingDaysPayload,
+          );
+        }
+
+        alert({
+          title: 'Success',
+          subtitle: 'Schedule created successfully',
+          confirmLabel: 'OK',
+          onConfirm: () => router.back(),
+        });
+      }
+    } catch (error) {
+      console.error('Failed to save schedule:', error);
+    }
+  };
+
   const activeWorkingDayValue = useMemo(() => {
     if (!editingState) return '09:00';
     const day = schedule.find((s) => s.dayOfWeek === editingState.day);
@@ -167,26 +244,15 @@ export const ManageScheduleSheet = forwardRef<
     return editingState.field === 'start' ? day.startTime : day.endTime;
   }, [editingState, schedule]);
 
+  // Show loading state
+  if (isLoadingSchedule) {
+    return <Loading />;
+  }
+
   return (
     <Fragment>
-      <CustomBottomSheet
-        ref={ref}
-        index={0}
-        scrollEnabled
-        snapPoints={['90%', '99%']}
-        animationConfigs={animationConfigs}
-        scrollConfig={{
-          contentContainerStyle: {
-            paddingBottom: insets.bottom + 120,
-          },
-          showsVerticalScrollIndicator: false,
-        }}
-      >
-        <View className="mb-6 mt-2">
-          <Text className="text-2xl font-bold text-foreground">
-            Working Hours
-          </Text>
-        </View>
+      <KeyboardAvoid className="main-area">
+        <Header title="Working Hours" subtitle="Manage your working hours" />
 
         <View className="gap-y-3">
           {DAY_ORDER.map((dayValue, localeIndex) => {
@@ -326,20 +392,21 @@ export const ManageScheduleSheet = forwardRef<
         >
           <Button
             size="lg"
-            onPress={() => {
-              onSave(schedule);
-              if (ref && 'current' in ref) {
-                ref.current?.dismiss();
-              }
-            }}
+            onPress={handleSave}
+            disabled={isCreatingSchedule || isUpdatingSchedule}
             className="rounded-2xl shadow-xl shadow-primary/30"
           >
+            {(isCreatingSchedule || isUpdatingSchedule) && (
+              <ActivityIndicator size="small" color="white" className="mr-2" />
+            )}
             <Text className="font-bold text-primary-foreground text-lg">
-              Save Changes
+              {isCreatingSchedule || isUpdatingSchedule
+                ? 'Saving...'
+                : 'Save Changes'}
             </Text>
           </Button>
         </View>
-      </CustomBottomSheet>
+      </KeyboardAvoid>
 
       <TimePickerSheet
         ref={timePickerRef}
@@ -355,7 +422,9 @@ export const ManageScheduleSheet = forwardRef<
       />
     </Fragment>
   );
-});
+};
+
+export default ManageScheduleScreen;
 
 const TimeButton = ({
   label,
@@ -399,5 +468,3 @@ const TimeButton = ({
     />
   </Pressable>
 );
-
-ManageScheduleSheet.displayName = 'ManageScheduleSheet';

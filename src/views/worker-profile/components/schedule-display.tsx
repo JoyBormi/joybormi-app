@@ -6,7 +6,7 @@ import { useLocaleData } from '@/hooks/common/use-locale-data';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
-import type { IWorkingDay } from '@/types/worker.type';
+import type { IWorkingDay } from '@/types/schedule.type';
 
 interface ScheduleDisplayProps {
   workingDays: IWorkingDay[];

@@ -10,7 +10,6 @@ import {
 
 import {
   InviteTeamSheet,
-  ManageScheduleSheet,
   UploadBannerSheet,
   UploadPhotosSheet,
   UploadProfileImageSheet,
@@ -27,10 +26,9 @@ import { useGetSchedule, useUpdateSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
 import { useUserStore } from '@/stores';
 import { BrandStatus } from '@/types/brand.type';
-import { type IService } from '@/types/service.type';
 import { EUserType } from '@/types/user.type';
 import { pickImage } from '@/utils/file-upload';
-import { mockPhotos, mockReviews, mockWorkers } from '@/views/brand';
+import { mockPhotos, mockWorkers } from '@/views/brand';
 import {
   BrandAbout,
   BrandCard,
@@ -74,7 +72,6 @@ const BrandProfileScreen: React.FC = () => {
     brandId: brand?.id,
     ownerId: user?.id,
   });
-  console.log('🚀 ~ file: brand-profile.tsx:71 ~ services:', services);
 
   // Fetch schedule
   const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
@@ -90,8 +87,6 @@ const BrandProfileScreen: React.FC = () => {
   // Local state for UI (TODO: Replace with real API data)
   const [workers] = useState(mockWorkers);
   const [photos, setPhotos] = useState(mockPhotos);
-  const [reviews] = useState(mockReviews);
-  const [selectedService, setSelectedService] = useState<IService | null>(null);
 
   const isLoading = isBrandLoading || isServicesLoading;
   const refetch = () => {
@@ -105,7 +100,6 @@ const BrandProfileScreen: React.FC = () => {
   const uploadProfileImageSheetRef = useRef<BottomSheetModal>(null);
   const inviteTeamSheetRef = useRef<BottomSheetModal>(null);
   const uploadPhotosSheetRef = useRef<BottomSheetModal>(null);
-  const manageScheduleSheetRef = useRef<BottomSheetModal>(null);
 
   // Handlers
   const handleEditBrand = () => {
@@ -156,16 +150,12 @@ const BrandProfileScreen: React.FC = () => {
     router.push(`/(dynamic-brand)/team/worker/${worker.id}`);
   };
 
-  const handleManageHours = () => {
-    manageScheduleSheetRef.current?.present();
-  };
-
   const handleSaveSchedule = async (newWorkingDays: IWorkingDay[]) => {
-    if (!brand?.id) return;
+    if (!brand?.id || !schedule?.id) return;
 
     try {
       await updateScheduleMutation.mutateAsync({
-        workingDays: newWorkingDays.map((day) => ({
+        days: newWorkingDays.map((day) => ({
           dayOfWeek: day.dayOfWeek,
           startTime: day.startTime,
           endTime: day.endTime,
@@ -257,7 +247,11 @@ const BrandProfileScreen: React.FC = () => {
                   )
                 }
                 onAddWorker={handleAddWorker}
-                onManageHours={handleManageHours}
+                onManageHours={() =>
+                  router.push(
+                    `/(slide-screens)/upsert-schedule?brandId=${brand.id}`,
+                  )
+                }
               />
             )}
 
@@ -269,7 +263,11 @@ const BrandProfileScreen: React.FC = () => {
             />
 
             {/* Services Section */}
-            <BrandServicesList services={services} canEdit={canEdit} />
+            <BrandServicesList
+              brandId={brand.id}
+              services={services}
+              canEdit={canEdit}
+            />
 
             {/* Team Section */}
             <BrandTeamList
@@ -313,12 +311,6 @@ const BrandProfileScreen: React.FC = () => {
           <UploadPhotosSheet
             ref={uploadPhotosSheetRef}
             onUpload={handleUploadPhotos}
-          />
-
-          <ManageScheduleSheet
-            ref={manageScheduleSheetRef}
-            workingDays={schedule?.workingDays || []}
-            onSave={handleSaveSchedule}
           />
         </SafeAreaView>
       ) : (
