@@ -1,33 +1,28 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { ActivityIndicator, Alert, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import FormField from '@/components/shared/form-field';
+import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
-import {
-  LoadingScreen,
-  NotFoundScreen,
-} from '@/components/shared/status-screens';
+import { Loading, NotFoundScreen } from '@/components/shared/status-screens';
 import { Button, Text, Textarea } from '@/components/ui';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import {
+  ServiceFormData,
+  serviceSchema,
   useCreateService,
   useDeleteService,
   useGetServiceDetail,
   useUpdateService,
 } from '@/hooks/service';
 import { useUserStore } from '@/stores';
-import { ServiceOwnerType } from '@/types/service.type';
-import { EUserType } from '@/types/user.type';
+import { alert } from '@/stores/use-alert-store';
 import { validateFormErrors } from '@/utils/validation';
-import {
-  ServiceFormData,
-  serviceSchema,
-} from '@/views/worker-profile/utils/helpers';
 
 /**
  * Add/Edit Service Screen
@@ -36,12 +31,14 @@ import {
  * - serviceId: service id (optional, for editing existing service)
  */
 const UpsertServiceScreen = () => {
-  const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { user } = useUserStore();
-  const params = useLocalSearchParams<{ id?: string; serviceId?: string }>();
+  const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams<{
+    brandId?: string;
+    serviceId?: string;
+  }>();
 
-  const brandId = params.id;
+  const brandId = params.brandId;
   const serviceId = params.serviceId;
   const isEdit = !!serviceId;
 
@@ -50,27 +47,22 @@ const UpsertServiceScreen = () => {
     useGetServiceDetail(serviceId);
 
   // Mutations
-  const createServiceMutation = useCreateService(brandId || '');
-  const updateServiceMutation = useUpdateService();
-  const deleteServiceMutation = useDeleteService();
-
-  const isSubmitting =
-    createServiceMutation.isPending ||
-    updateServiceMutation.isPending ||
-    deleteServiceMutation.isPending;
+  const { mutateAsync: createService, isPending: isCreatingService } =
+    useCreateService();
+  const { mutateAsync: updateService, isPending: isUpdatingService } =
+    useUpdateService();
+  const { mutateAsync: deleteService, isPending: isDeletingService } =
+    useDeleteService();
 
   const form = useForm<ServiceFormData>({
     resolver: zodResolver(serviceSchema),
     mode: 'onChange',
     defaultValues: {
       name: '',
-      description: null,
-      durationMins: 60,
-      price: 0,
-      ownerType:
-        user?.role === EUserType.CREATOR
-          ? ServiceOwnerType.BRAND
-          : ServiceOwnerType.WORKER,
+      description: '',
+      durationMins: '60',
+      price: '',
+      ownerType: user?.role,
     },
   });
 
@@ -80,8 +72,8 @@ const UpsertServiceScreen = () => {
       form.reset({
         name: service.name,
         description: service.description,
-        durationMins: service.durationMins,
-        price: service.price,
+        durationMins: String(service.durationMins),
+        price: service.price.toString(),
         ownerType: service.ownerType,
       });
     }
@@ -96,55 +88,63 @@ const UpsertServiceScreen = () => {
   }, [form.formState.errors, form]);
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    try {
-      if (isEdit && serviceId) {
-        // Update existing service
-        await updateServiceMutation.mutateAsync({
-          serviceId,
-          payload: data,
+    if (!user?.id) return;
+
+    if (isEdit && serviceId) {
+      // Update existing service
+      await updateService({
+        serviceId,
+        payload: {
+          name: data.name,
+          description: data.description,
+          durationMins: parseInt(data.durationMins),
+          price: parseFloat(data.price),
+        },
+      }).then(() => {
+        alert({
+          title: 'Success',
+          subtitle: 'Service updated successfully',
+          confirmLabel: 'OK',
+          onConfirm: () => router.back(),
         });
-        Alert.alert('Success', 'Service updated successfully');
-      } else if (brandId) {
-        // Create new service
-        await createServiceMutation.mutateAsync(data);
-        Alert.alert('Success', 'Service created successfully');
-      }
-      router.back();
-    } catch (error) {
-      console.error('Failed to save service:', error);
-      // Error is handled by global error handler
+      });
+    } else if (brandId) {
+      // Create new service
+      await createService({
+        brandId,
+        name: data.name,
+        description: data.description,
+        durationMins: parseInt(data.durationMins),
+        price: parseFloat(data.price),
+        ownerId: user.id,
+        ownerType: user.role,
+      }).then(() => {
+        alert({
+          title: 'Success',
+          subtitle: 'Service created successfully',
+          confirmLabel: 'OK',
+          onConfirm: () => router.back(),
+        });
+      });
     }
   });
 
   const handleDelete = () => {
     if (!serviceId) return;
-
-    Alert.alert(
-      'Delete Service',
-      'Are you sure you want to delete this service? This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteServiceMutation.mutateAsync(serviceId);
-              Alert.alert('Success', 'Service deleted successfully');
-              router.back();
-            } catch (error) {
-              console.error('Failed to delete service:', error);
-            }
-          },
-        },
-      ],
-    );
+    alert({
+      title: 'Delete Service',
+      subtitle:
+        'Are you sure you want to delete this service? This action cannot be undone.',
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+      onConfirm: async () => {
+        await deleteService(serviceId).then(() => router.back());
+      },
+    });
   };
 
   // Loading state
-  if (isEdit && isLoadingService) {
-    return <LoadingScreen />;
-  }
+  if (isEdit && isLoadingService) return <Loading />;
 
   // Not found state
   if (isEdit && !service && !isLoadingService) {
@@ -171,18 +171,23 @@ const UpsertServiceScreen = () => {
   }
 
   return (
-    <KeyboardAvoid className="main-area">
+    <KeyboardAvoid
+      className="main-area"
+      scrollConfig={{
+        contentContainerStyle: {
+          paddingBottom: insets.bottom + 16,
+        },
+      }}
+    >
       {/* Header */}
-      <View className="mb-6">
-        <Text className="font-heading text-2xl text-foreground">
-          {isEdit ? 'Edit Service' : 'Add New Service'}
-        </Text>
-        <Text className="font-body text-sm text-muted-foreground mt-2">
-          {isEdit
+      <Header
+        title={isEdit ? 'Edit Service' : 'Add New Service'}
+        subtitle={
+          isEdit
             ? 'Update service details below'
-            : 'Create a new service offering for your brand'}
-        </Text>
-      </View>
+            : 'Create a new service offering for your brand'
+        }
+      />
 
       {/* Form Fields */}
       <View className="gap-4">
@@ -194,8 +199,9 @@ const UpsertServiceScreen = () => {
           render={({ field }) => (
             <Input
               placeholder="e.g. Hair Coloring, Massage, Consultation"
+              returnKeyType="next"
+              onSubmitEditing={() => form.setFocus('description')}
               {...field}
-              editable={!isSubmitting}
             />
           )}
         />
@@ -209,8 +215,10 @@ const UpsertServiceScreen = () => {
           render={({ field }) => (
             <Textarea
               placeholder="Describe what this service includes..."
+              maxLength={350}
+              returnKeyType="next"
+              onSubmitEditing={() => form.setFocus('durationMins')}
               {...field}
-              editable={!isSubmitting}
             />
           )}
         />
@@ -224,14 +232,10 @@ const UpsertServiceScreen = () => {
           render={({ field }) => (
             <NumberInput
               placeholder="60"
+              {...field}
               maxDecimals={0}
-              value={field.value?.toString() || '60'}
-              onNumberChange={(text) => {
-                const num = parseInt(text, 10);
-                field.onChange(isNaN(num) ? 15 : Math.max(15, num));
-              }}
-              onBlur={field.onBlur}
-              editable={!isSubmitting}
+              returnKeyType="next"
+              onSubmitEditing={() => form.setFocus('price')}
             />
           )}
         />
@@ -246,42 +250,23 @@ const UpsertServiceScreen = () => {
             <NumberInput
               placeholder="80"
               {...field}
-              onNumberChange={(text) => {
-                const num = parseFloat(text);
-                field.onChangeText(num);
-              }}
-              editable={!isSubmitting}
+              maxDecimals={1}
+              returnKeyType="done"
             />
           )}
         />
       </View>
 
       {/* Action Buttons */}
-      <View className="mt-8 gap-3">
-        {isEdit && (
-          <Button
-            onPress={handleDelete}
-            variant="outline"
-            size="action"
-            className="border-destructive"
-            disabled={isSubmitting}
-          >
-            {deleteServiceMutation.isPending ? (
-              <ActivityIndicator size="small" className="text-destructive" />
-            ) : (
-              <Text className="text-destructive font-title">
-                Delete Service
-              </Text>
-            )}
-          </Button>
-        )}
-
+      <View className="mt-12 gap-3">
         <Button
           onPress={handleSubmit}
-          disabled={!form.formState.isValid || isSubmitting}
+          disabled={
+            !form.formState.isValid || isCreatingService || isUpdatingService
+          }
           size="action"
         >
-          {isSubmitting ? (
+          {isCreatingService || isUpdatingService ? (
             <ActivityIndicator
               size="small"
               className="text-primary-foreground"
@@ -292,15 +277,22 @@ const UpsertServiceScreen = () => {
             </Text>
           )}
         </Button>
-
-        <Button
-          onPress={() => router.back()}
-          variant="ghost"
-          size="action"
-          disabled={isSubmitting}
-        >
-          <Text className="text-muted-foreground font-title">Cancel</Text>
-        </Button>
+        {isEdit && (
+          <Button
+            onPress={handleDelete}
+            variant="ghost"
+            size="action"
+            disabled={isDeletingService}
+          >
+            <Text className="text-destructive font-title">
+              {isDeletingService ? (
+                <ActivityIndicator size="small" className="text-destructive" />
+              ) : (
+                'Delete'
+              )}
+            </Text>
+          </Button>
+        )}
       </View>
     </KeyboardAvoid>
   );

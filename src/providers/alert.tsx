@@ -17,8 +17,18 @@ export function GlobalAlert() {
 
   if (!visible || !options) return null;
 
-  const handleConfirm = () => {
-    options.onConfirm?.();
+  const handleConfirm = async () => {
+    if (!options.onConfirm) {
+      hideAlert();
+      return;
+    }
+
+    const result = options.onConfirm();
+
+    if (result instanceof Promise) {
+      await result;
+    }
+
     hideAlert();
   };
 

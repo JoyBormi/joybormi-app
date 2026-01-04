@@ -6,7 +6,7 @@ interface AlertOptions {
   icon?: React.ReactNode;
   cancelLabel?: string | null;
   confirmLabel?: string;
-  onConfirm?: () => void;
+  onConfirm?: () => void | Promise<void>;
   onCancel?: () => void;
 }
 

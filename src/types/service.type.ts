@@ -13,7 +13,7 @@ export interface IService {
   id: string;
   brandId: string;
   name: string;
-  description: string | null;
+  description?: string;
   durationMins: number;
   price: number;
   status: ServiceStatus;
@@ -24,16 +24,19 @@ export interface IService {
 }
 
 export interface CreateServicePayload {
+  brandId: string;
   name: string;
-  description?: string | null;
+  description?: string;
   durationMins: number;
   price: number;
-  ownerType: ServiceOwnerType;
+  status?: ServiceStatus;
+  ownerId: string;
+  ownerType: string;
 }
 
 export interface UpdateServicePayload {
   name?: string;
-  description?: string | null;
+  description?: string;
   durationMins?: number;
   price?: number;
   status?: ServiceStatus;

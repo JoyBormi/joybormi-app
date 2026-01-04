@@ -17,7 +17,7 @@ import {
 } from '@/components/shared/brand-worker';
 import {
   BlockedScreen,
-  LoadingScreen,
+  Loading,
   NotFoundScreen,
   SuspendedScreen,
 } from '@/components/shared/status-screens';
@@ -67,13 +67,14 @@ const BrandProfileScreen: React.FC = () => {
 
   // Fetch services
   const {
-    data: services = [],
+    data: services,
     isLoading: isServicesLoading,
     refetch: refetchServices,
   } = useGetServices({
     brandId: brand?.id,
-    ownerId: brand?.id,
+    ownerId: user?.id,
   });
+  console.log('🚀 ~ file: brand-profile.tsx:71 ~ services:', services);
 
   // Fetch schedule
   const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
@@ -216,7 +217,7 @@ const BrandProfileScreen: React.FC = () => {
   return (
     <Fragment>
       {isLoading ? (
-        <LoadingScreen />
+        <Loading />
       ) : brand && brand.status === BrandStatus.PENDING ? (
         <BrandProfilePendingScreen onRefresh={refetchBrand} />
       ) : brand && brand.status === BrandStatus.SUSPENDED ? (
@@ -238,7 +239,7 @@ const BrandProfileScreen: React.FC = () => {
             {/* Brand Profile Card */}
             <BrandCard
               brand={brand}
-              servicesCount={services.length}
+              servicesCount={services?.length || 0}
               workersCount={workers.length}
               photosCount={photos.length}
               canEdit={canEdit}
@@ -251,7 +252,9 @@ const BrandProfileScreen: React.FC = () => {
             {canEdit && (
               <BrandQuickActions
                 onAddService={() =>
-                  router.push(`/(slide-screens)/add-service?id=${brand.id}`)
+                  router.push(
+                    `/(slide-screens)/upsert-service?brandId=${brand.id}`,
+                  )
                 }
                 onAddWorker={handleAddWorker}
                 onManageHours={handleManageHours}
@@ -266,16 +269,7 @@ const BrandProfileScreen: React.FC = () => {
             />
 
             {/* Services Section */}
-            <BrandServicesList
-              services={services}
-              canEdit={canEdit}
-              onAddService={() =>
-                router.push(`/(slide-screens)/add-service?id=${brand.id}`)
-              }
-              onServicePress={() =>
-                router.push(`/(slide-screens)/add-service?id=${brand.id}`)
-              }
-            />
+            <BrandServicesList services={services} canEdit={canEdit} />
 
             {/* Team Section */}
             <BrandTeamList

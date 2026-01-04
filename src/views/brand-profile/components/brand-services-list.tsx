@@ -1,16 +1,17 @@
+import { router } from 'expo-router';
 import React from 'react';
 import { Pressable, View } from 'react-native';
 
+import { NoData } from '@/components/shared/status-screens';
 import { Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 
 import type { IService } from '@/types/service.type';
 
 interface BrandServicesListProps {
-  services: IService[];
+  services?: IService[];
   canEdit: boolean;
-  onAddService: () => void;
-  onServicePress: (service: IService) => void;
+  brandId: string;
 }
 
 /**
@@ -20,9 +21,20 @@ interface BrandServicesListProps {
 export const BrandServicesList: React.FC<BrandServicesListProps> = ({
   services,
   canEdit,
-  onAddService,
-  onServicePress,
+  brandId,
 }) => {
+  if (!services || services.length === 0)
+    return (
+      <NoData
+        title="No Services"
+        message="Please add a service"
+        action={{
+          label: 'Add Service',
+          onPress: () =>
+            router.push(`/(slide-screens)/upsert-service?brandId=${brandId}`),
+        }}
+      />
+    );
   return (
     <View className="px-6 mb-8">
       <View className="flex-row items-center justify-between mb-4">
@@ -30,7 +42,11 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
           Services ({services.length})
         </Text>
         {canEdit && (
-          <Pressable onPress={onAddService}>
+          <Pressable
+            onPress={() =>
+              router.push(`/(slide-screens)/upsert-service?brandId=${brandId}`)
+            }
+          >
             <Icons.Plus size={20} className="text-primary" />
           </Pressable>
         )}
@@ -39,7 +55,11 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
         {services.map((service) => (
           <Pressable
             key={service.id}
-            onPress={() => onServicePress(service)}
+            onPress={() =>
+              router.push(
+                `/(slide-screens)/upsert-service?serviceId=${service.id}&brandId=${brandId}`,
+              )
+            }
             className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50 active:scale-[0.98]"
           >
             <View className="flex-row items-start justify-between mb-3">

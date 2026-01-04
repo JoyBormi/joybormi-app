@@ -8,7 +8,7 @@ import type { IService, UpdateServicePayload } from '@/types/service.type';
 const updateService = async (
   serviceId: string,
   payload: UpdateServicePayload,
-): Promise<IService> => await agent.put(`/services/${serviceId}`, payload);
+): Promise<IService> => await agent.patch(`/services/${serviceId}`, payload);
 
 export const useUpdateService = () => {
   const queryClient = useQueryClient();
