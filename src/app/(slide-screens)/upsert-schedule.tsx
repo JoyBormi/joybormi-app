@@ -1,6 +1,6 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -8,7 +8,7 @@ import { KeyboardAvoid } from '@/components/shared';
 import { Header } from '@/components/shared/header';
 import { Loading } from '@/components/shared/status-screens';
 import { TimePickerSheet } from '@/components/shared/time-picker.sheet';
-import { Button, Text } from '@/components/ui';
+import { Button, PressableBounce, Text } from '@/components/ui';
 import { useLocaleData } from '@/hooks/common/use-locale-data';
 import {
   useCreateSchedule,
@@ -33,7 +33,7 @@ const ManageScheduleScreen = () => {
   const params = useLocalSearchParams<{ brandId?: string }>();
   const brandId = params?.brandId;
 
-  const { dayNames } = useLocaleData();
+  const { dayNames, dayNamesShort } = useLocaleData();
 
   // Fetch existing schedule
   const { data: scheduleData, isLoading: isLoadingSchedule } = useGetSchedule({
@@ -43,10 +43,20 @@ const ManageScheduleScreen = () => {
   // Mutations
   const { mutateAsync: createSchedule, isPending: isCreatingSchedule } =
     useCreateSchedule();
-  const updateScheduleMutation = useUpdateSchedule(scheduleData?.id);
-  const isUpdatingSchedule = updateScheduleMutation.isPending;
+  const { mutateAsync: updateSchedule, isPending: isUpdatingSchedule } =
+    useUpdateSchedule(scheduleData?.id);
 
-  const [schedule, setSchedule] = useState<IWorkingDay[]>([]);
+  const [schedule, setSchedule] = useState<IWorkingDay[]>([
+    {
+      id: 'new-1',
+      scheduleId: 'sched-1',
+      dayOfWeek: 1,
+      startTime: '09:00',
+      endTime: '18:00',
+      breaks: [],
+      createdAt: new Date().toISOString(),
+    },
+  ]);
   const [editingState, setEditingState] = useState<{
     day: number;
     field: 'start' | 'end';
@@ -71,24 +81,20 @@ const ManageScheduleScreen = () => {
 
   // --- Actions ---
   const toggleDay = (dayOfWeek: number) => {
-    setSchedule((prev) => {
-      const index = prev.findIndex((wd) => wd.dayOfWeek === dayOfWeek);
-      if (index !== -1) {
-        return prev.filter((wd) => wd.dayOfWeek !== dayOfWeek);
-      }
-      return [
-        ...prev,
-        {
-          id: `new-${dayOfWeek}-${Date.now()}`,
-          scheduleId: 'sched-1',
-          dayOfWeek,
-          startTime: '09:00',
-          endTime: '18:00',
-          breaks: [],
-          createdAt: new Date().toISOString(),
-        },
-      ];
-    });
+    const defaultWorkingDay = {
+      id: `new-${dayOfWeek}`,
+      scheduleId: 'sched-1',
+      dayOfWeek,
+      startTime: '09:00',
+      endTime: '18:00',
+      breaks: [],
+      createdAt: new Date().toISOString(),
+    };
+    console.log(
+      '🚀 ~ file: upsert-schedule.tsx:75 ~ defaultWorkingDay:',
+      defaultWorkingDay,
+    );
+    setSchedule((prev) => [...prev, defaultWorkingDay]);
   };
 
   const openTimePicker = (
@@ -195,12 +201,13 @@ const ManageScheduleScreen = () => {
 
       if (scheduleData?.id) {
         // Update existing schedule
-        await updateScheduleMutation.mutateAsync(workingDaysPayload);
-        alert({
-          title: 'Success',
-          subtitle: 'Working hours updated successfully',
-          confirmLabel: 'OK',
-          onConfirm: () => router.back(),
+        await updateSchedule(workingDaysPayload).then(() => {
+          alert({
+            title: 'Success',
+            subtitle: 'Working hours updated successfully',
+            confirmLabel: 'OK',
+            onConfirm: () => router.back(),
+          });
         });
       } else {
         // Create new schedule first
@@ -250,164 +257,166 @@ const ManageScheduleScreen = () => {
   }
 
   return (
-    <Fragment>
-      <KeyboardAvoid className="main-area">
-        <Header title="Working Hours" subtitle="Manage your working hours" />
+    <KeyboardAvoid className="main-area">
+      <Header title="Working Hours" subtitle="Manage your working hours" />
 
-        <View className="gap-y-3">
-          {DAY_ORDER.map((dayValue, localeIndex) => {
-            const config = schedule.find((wd) => wd.dayOfWeek === dayValue);
-            const isActive = !!config;
-            const label = dayNames[localeIndex];
+      <View className="gap-y-3">
+        {DAY_ORDER.map((dayValue, localeIndex) => {
+          const config = schedule.find((wd) => wd.dayOfWeek === dayValue);
+          const isActive = !!config;
+          console.log(
+            '🚀 ~ file: upsert-schedule.tsx:258 ~ isActive:',
+            isActive,
+          );
+          const label = dayNames[localeIndex];
+          console.log('🚀 ~ file: upsert-schedule.tsx:260 ~ label:', label);
 
-            return (
-              <View
-                key={dayValue}
-                className={cn(
-                  'rounded-3xl border p-4 transition-all',
-                  isActive
-                    ? 'bg-card border-primary/20 shadow-sm'
-                    : 'bg-muted/5 border-transparent',
-                )}
+          return (
+            <View
+              key={dayValue}
+              className={cn(
+                'rounded-3xl border p-4 transition-all',
+                isActive
+                  ? 'bg-card border-primary/20 shadow-sm'
+                  : 'bg-muted/5 border-transparent',
+              )}
+            >
+              <PressableBounce
+                onPress={() => toggleDay(dayValue)}
+                className="flex-row items-center justify-between"
               >
-                <View className="flex-row items-center justify-between">
-                  <View className="flex-row items-center gap-3">
-                    <View
-                      className={cn(
-                        'w-2 h-2 rounded-full',
-                        isActive ? 'bg-primary' : 'bg-muted-foreground/20',
-                      )}
-                    />
-                    <Text
-                      className={cn(
-                        'text-lg font-semibold',
-                        isActive ? 'text-foreground' : 'text-muted-foreground',
-                      )}
-                    >
-                      {label}
-                    </Text>
-                  </View>
-                  <Pressable
-                    onPress={() => toggleDay(dayValue)}
+                <View className="flex-row items-center gap-3">
+                  <View
                     className={cn(
-                      'px-4 py-1.5 rounded-full border',
-                      isActive
-                        ? 'bg-primary border-primary'
-                        : 'bg-transparent border-border/50',
+                      'w-2 h-2 rounded-full',
+                      isActive ? 'bg-primary' : 'bg-muted-foreground/20',
+                    )}
+                  />
+                  <Text
+                    className={cn(
+                      'text-lg font-semibold',
+                      isActive ? 'text-foreground' : 'text-muted-foreground',
                     )}
                   >
-                    <Text
-                      className={cn(
-                        'text-[10px] font-black',
-                        isActive
-                          ? 'text-primary-foreground'
-                          : 'text-muted-foreground',
-                      )}
-                    >
-                      {isActive ? 'ACTIVE' : 'OFF'}
+                    {label}
+                  </Text>
+                </View>
+                <View
+                  className={cn(
+                    'px-4 py-1.5 rounded-full border',
+                    isActive
+                      ? 'bg-primary border-primary'
+                      : 'bg-transparent border-border/50',
+                  )}
+                >
+                  <Text
+                    className={cn(
+                      'text-[10px] font-black',
+                      isActive
+                        ? 'text-primary-foreground'
+                        : 'text-muted-foreground',
+                    )}
+                  >
+                    {isActive ? 'ACTIVE' : 'OFF'}
+                  </Text>
+                </View>
+              </PressableBounce>
+
+              {isActive && config && (
+                <View className="mt-4 pt-4 border-t border-border/50">
+                  {/* Working Hours */}
+                  <View className="flex-row items-center gap-2 mb-3">
+                    <TimeButton
+                      label="Open"
+                      value={formatTime(config.startTime)}
+                      onPress={() => openTimePicker(dayValue, 'start')}
+                    />
+                    <View className="h-[1px] w-3 bg-border" />
+                    <TimeButton
+                      label="Close"
+                      value={formatTime(config.endTime)}
+                      onPress={() => openTimePicker(dayValue, 'end')}
+                    />
+                  </View>
+
+                  {/* Breaks */}
+                  {config.breaks && config.breaks.length > 0 && (
+                    <View className="gap-2 mb-2">
+                      {config.breaks.map((breakItem, idx) => (
+                        <View
+                          key={breakItem.id}
+                          className="flex-row items-center gap-2 bg-muted/10 rounded-xl p-2"
+                        >
+                          <Icons.Coffee
+                            size={14}
+                            className="text-muted-foreground"
+                          />
+                          <TimeButton
+                            label="Break Start"
+                            value={formatTime(breakItem.startTime)}
+                            onPress={() =>
+                              openTimePicker(dayValue, 'start', breakItem.id)
+                            }
+                            compact
+                          />
+                          <View className="h-[1px] w-2 bg-border" />
+                          <TimeButton
+                            label="Break End"
+                            value={formatTime(breakItem.endTime)}
+                            onPress={() =>
+                              openTimePicker(dayValue, 'end', breakItem.id)
+                            }
+                            compact
+                          />
+                          <Pressable
+                            onPress={() => removeBreak(dayValue, breakItem.id)}
+                            className="ml-auto p-1"
+                          >
+                            <Icons.X size={16} className="text-destructive" />
+                          </Pressable>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+
+                  {/* Add Break Button */}
+                  <Pressable
+                    onPress={() => addBreak(dayValue)}
+                    className="flex-row items-center gap-2 bg-muted/5 border border-dashed border-border/50 rounded-xl p-3"
+                  >
+                    <Icons.Plus size={16} className="text-muted-foreground" />
+                    <Text className="text-xs text-muted-foreground font-medium">
+                      Add Break
                     </Text>
                   </Pressable>
                 </View>
+              )}
+            </View>
+          );
+        })}
+      </View>
 
-                {isActive && config && (
-                  <View className="mt-4 pt-4 border-t border-border/50">
-                    {/* Working Hours */}
-                    <View className="flex-row items-center gap-2 mb-3">
-                      <TimeButton
-                        label="Open"
-                        value={formatTime(config.startTime)}
-                        onPress={() => openTimePicker(dayValue, 'start')}
-                      />
-                      <View className="h-[1px] w-3 bg-border" />
-                      <TimeButton
-                        label="Close"
-                        value={formatTime(config.endTime)}
-                        onPress={() => openTimePicker(dayValue, 'end')}
-                      />
-                    </View>
-
-                    {/* Breaks */}
-                    {config.breaks && config.breaks.length > 0 && (
-                      <View className="gap-2 mb-2">
-                        {config.breaks.map((breakItem, idx) => (
-                          <View
-                            key={breakItem.id}
-                            className="flex-row items-center gap-2 bg-muted/10 rounded-xl p-2"
-                          >
-                            <Icons.Coffee
-                              size={14}
-                              className="text-muted-foreground"
-                            />
-                            <TimeButton
-                              label="Break Start"
-                              value={formatTime(breakItem.startTime)}
-                              onPress={() =>
-                                openTimePicker(dayValue, 'start', breakItem.id)
-                              }
-                              compact
-                            />
-                            <View className="h-[1px] w-2 bg-border" />
-                            <TimeButton
-                              label="Break End"
-                              value={formatTime(breakItem.endTime)}
-                              onPress={() =>
-                                openTimePicker(dayValue, 'end', breakItem.id)
-                              }
-                              compact
-                            />
-                            <Pressable
-                              onPress={() =>
-                                removeBreak(dayValue, breakItem.id)
-                              }
-                              className="ml-auto p-1"
-                            >
-                              <Icons.X size={16} className="text-destructive" />
-                            </Pressable>
-                          </View>
-                        ))}
-                      </View>
-                    )}
-
-                    {/* Add Break Button */}
-                    <Pressable
-                      onPress={() => addBreak(dayValue)}
-                      className="flex-row items-center gap-2 bg-muted/5 border border-dashed border-border/50 rounded-xl p-3"
-                    >
-                      <Icons.Plus size={16} className="text-muted-foreground" />
-                      <Text className="text-xs text-muted-foreground font-medium">
-                        Add Break
-                      </Text>
-                    </Pressable>
-                  </View>
-                )}
-              </View>
-            );
-          })}
-        </View>
-
-        {/* Fixed Floating Footer */}
-        <View
-          style={{ paddingBottom: insets.bottom + 16 }}
-          className="absolute bottom-0 left-0 right-0 bg-background/95 border-t border-border p-5"
+      {/* Fixed Floating Footer */}
+      <View
+        style={{ paddingBottom: insets.bottom + 16 }}
+        className="absolute bottom-0 left-0 right-0 bg-background/95 border-t border-border p-5"
+      >
+        <Button
+          size="lg"
+          onPress={handleSave}
+          disabled={isCreatingSchedule || isUpdatingSchedule}
+          className="rounded-2xl shadow-xl shadow-primary/30"
         >
-          <Button
-            size="lg"
-            onPress={handleSave}
-            disabled={isCreatingSchedule || isUpdatingSchedule}
-            className="rounded-2xl shadow-xl shadow-primary/30"
-          >
-            {(isCreatingSchedule || isUpdatingSchedule) && (
-              <ActivityIndicator size="small" color="white" className="mr-2" />
-            )}
-            <Text className="font-bold text-primary-foreground text-lg">
-              {isCreatingSchedule || isUpdatingSchedule
-                ? 'Saving...'
-                : 'Save Changes'}
-            </Text>
-          </Button>
-        </View>
-      </KeyboardAvoid>
-
+          {(isCreatingSchedule || isUpdatingSchedule) && (
+            <ActivityIndicator size="small" color="white" className="mr-2" />
+          )}
+          <Text className="font-bold text-primary-foreground text-lg">
+            {isCreatingSchedule || isUpdatingSchedule
+              ? 'Saving...'
+              : 'Save Changes'}
+          </Text>
+        </Button>
+      </View>
       <TimePickerSheet
         ref={timePickerRef}
         value={activeWorkingDayValue || '09:00'}
@@ -415,12 +424,12 @@ const ManageScheduleScreen = () => {
         title={
           editingState
             ? `${editingState.field === 'start' ? 'Open' : 'Close'} - ${
-                dayNames[DAY_ORDER.indexOf(editingState.day)]
+                dayNamesShort[DAY_ORDER.indexOf(editingState.day)]
               }`
             : ''
         }
       />
-    </Fragment>
+    </KeyboardAvoid>
   );
 };
 

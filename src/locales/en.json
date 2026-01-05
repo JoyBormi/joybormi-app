@@ -25,7 +25,8 @@
       "ok": "Okay",
       "save": "Save",
       "saving": "Saving...",
-      "backToLogin": "Back to Login"
+      "backToLogin": "Back to Login",
+      "logout": "Logout"
     },
     "tabs": {
       "home": "Home",

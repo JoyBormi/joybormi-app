@@ -8,6 +8,7 @@ export * from './phone-number';
 export * from './pressable-bounce';
 export * from './pwd-input';
 export * from './select';
+export * from './skeleton';
 export * from './tabs';
 export * from './text';
 export * from './textarea';

@@ -44,7 +44,7 @@ export const useError = () => {
           alert({
             title,
             subtitle: message,
-            confirmLabel: t('common.buttons.ok'),
+            confirmLabel: t('common.buttons.logout'),
             onConfirm: handleLogout,
             cancelLabel: null,
           });
@@ -55,7 +55,7 @@ export const useError = () => {
         alert({
           title: t('common.error.title'),
           subtitle: message,
-          confirmLabel: t('common.buttons.ok'),
+          confirmLabel: t('common.buttons.logout'),
           cancelLabel: null,
         });
         return;

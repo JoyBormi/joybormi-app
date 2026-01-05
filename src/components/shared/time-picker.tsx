@@ -213,16 +213,14 @@ export const TimePicker = ({
       <View className="flex-row items-center justify-center bg-muted/10 backdrop-blur-sm drop-shadow-[0_0_20px_rgba(0,0,0,0.1)] shadow-[0_0_20px_rgba(0,0,0,0.1)] rounded-[32px] overflow-hidden">
         <Wheel items={hours} value={sanitized.h} onChange={handleHourChange} />
         <View className="z-10 bg-transparent px-1">
-          <Text className="text-3xl font-light text-muted-foreground/50">
-            :
-          </Text>
+          <Text className="text-3xl font-bold text-muted-foreground/50">:</Text>
         </View>
         <Wheel items={minutes} value={sanitized.m} onChange={handleMinChange} />
 
         {/* Selection Indicator */}
         <View
           pointerEvents="none"
-          className="absolute left-4 right-4 border-y border-primary/20 bg-primary/5"
+          className="absolute left-4 right-4 shadow-[0_0_20px_rgba(0,0,0,0.1)] bg-primary/5"
           style={{
             height: ITEM_HEIGHT,
             top: '50%',

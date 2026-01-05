@@ -16,19 +16,16 @@ import {
 } from '@/components/shared/brand-worker';
 import {
   BlockedScreen,
-  Loading,
   NotFoundScreen,
   SuspendedScreen,
 } from '@/components/shared/status-screens';
 import { useGetBrand, useUpdateBrand } from '@/hooks/brand';
 import { useUploadFile } from '@/hooks/common';
-import { useGetSchedule, useUpdateSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
 import { useUserStore } from '@/stores';
 import { BrandStatus } from '@/types/brand.type';
 import { EUserType } from '@/types/user.type';
 import { pickImage } from '@/utils/file-upload';
-import { mockPhotos, mockWorkers } from '@/views/brand';
 import {
   BrandAbout,
   BrandCard,
@@ -37,8 +34,13 @@ import {
   BrandTeamList,
 } from '@/views/brand-profile/components';
 import { BrandProfilePendingScreen } from '@/views/brand-profile/in-pending';
-
-import type { IWorkingDay } from '@/types/schedule.type';
+import {
+  BrandAboutSkeleton,
+  BrandCardSkeleton,
+  BrandQuickActionsSkeleton,
+  BrandServicesListSkeleton,
+  BrandTeamListSkeleton,
+} from '@/views/brand-profile/skeletons';
 
 /**
  * Brand Profile Management Page - For creators/workers to manage their brand
@@ -73,26 +75,18 @@ const BrandProfileScreen: React.FC = () => {
     ownerId: user?.id,
   });
 
-  // Fetch schedule
-  const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
-    brandId: brand?.id,
-  });
-
   // Mutations
   const updateBrandMutation = useUpdateBrand(brand?.id || '');
   const uploadFileMutation = useUploadFile();
 
-  const updateScheduleMutation = useUpdateSchedule(schedule?.id);
+  // Local state for UI
+  // TODO: Replace with real types when API is connected
+  const [workers] = useState<unknown[]>([]);
+  const [photos, setPhotos] = useState<unknown[]>([]);
 
-  // Local state for UI (TODO: Replace with real API data)
-  const [workers] = useState(mockWorkers);
-  const [photos, setPhotos] = useState(mockPhotos);
-
-  const isLoading = isBrandLoading || isServicesLoading;
   const refetch = () => {
     refetchBrand();
     refetchServices();
-    refetchSchedule();
   };
 
   // Bottom sheet refs
@@ -150,27 +144,6 @@ const BrandProfileScreen: React.FC = () => {
     router.push(`/(dynamic-brand)/team/worker/${worker.id}`);
   };
 
-  const handleSaveSchedule = async (newWorkingDays: IWorkingDay[]) => {
-    if (!brand?.id || !schedule?.id) return;
-
-    try {
-      await updateScheduleMutation.mutateAsync({
-        days: newWorkingDays.map((day) => ({
-          dayOfWeek: day.dayOfWeek,
-          startTime: day.startTime,
-          endTime: day.endTime,
-          breaks: day.breaks?.map((b) => ({
-            startTime: b.startTime,
-            endTime: b.endTime,
-          })),
-        })),
-      });
-      refetchSchedule();
-    } catch (error) {
-      console.error('Failed to update schedule:', error);
-    }
-  };
-
   const handleAddPhoto = () => {
     uploadPhotosSheetRef.current?.present();
   };
@@ -200,30 +173,39 @@ const BrandProfileScreen: React.FC = () => {
   };
 
   // Early return if no brand data
-  if (!brand && !isLoading) {
-    return <NotFoundScreen />;
+
+  if (isBrandLoading) {
+    return (
+      <SafeAreaView className="main-area" edges={['top']}>
+        {/* Section Skeletons */}
+        <BrandCardSkeleton />
+        <BrandQuickActionsSkeleton />
+        <BrandAboutSkeleton />
+        <BrandServicesListSkeleton />
+        <BrandTeamListSkeleton />
+      </SafeAreaView>
+    );
   }
+  if (!brand && !isBrandLoading) return <NotFoundScreen />;
 
   return (
     <Fragment>
-      {isLoading ? (
-        <Loading />
-      ) : brand && brand.status === BrandStatus.PENDING ? (
+      {brand?.status === BrandStatus.PENDING ? (
         <BrandProfilePendingScreen onRefresh={refetchBrand} />
-      ) : brand && brand.status === BrandStatus.SUSPENDED ? (
+      ) : brand?.status === BrandStatus.SUSPENDED ? (
         <SuspendedScreen />
-      ) : brand && brand.status === BrandStatus.WITHDRAWN ? (
+      ) : brand?.status === BrandStatus.WITHDRAWN ? (
         <BlockedScreen />
-      ) : brand && brand.status === BrandStatus.REJECTED ? (
+      ) : brand?.status === BrandStatus.REJECTED ? (
         <NotFoundScreen />
-      ) : brand ? (
+      ) : (
         <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
           <ScrollView
             className="flex-1"
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
             refreshControl={
-              <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+              <RefreshControl refreshing={isBrandLoading} onRefresh={refetch} />
             }
           >
             {/* Brand Profile Card */}
@@ -313,8 +295,6 @@ const BrandProfileScreen: React.FC = () => {
             onUpload={handleUploadPhotos}
           />
         </SafeAreaView>
-      ) : (
-        <NotFoundScreen />
       )}
     </Fragment>
   );
