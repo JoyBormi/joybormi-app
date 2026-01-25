@@ -21,7 +21,6 @@ export function PasswordInput(props: TextInputProps) {
       <Pressable
         className="absolute right-3 top-0 bottom-0 w-10 items-center justify-center"
         onPress={() => setShowPassword((prev) => !prev)}
-        activeOpacity={0.7}
       >
         {showPassword ? (
           <Icons.EyeClosed size={20} className="text-muted-foreground" />
