@@ -8,7 +8,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icons from '@/components/icons';
 import { Input, PressableBounce } from '@/components/ui';
 import { useKeyboardHeight } from '@/hooks/common';
-import { Feedback } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
 
 export const CategoryFooter = memo(function CategoryFooter({
@@ -45,7 +44,7 @@ export const CategoryFooter = memo(function CategoryFooter({
           {!focused && (
             <BlurView
               intensity={focused ? 90 : 30}
-              tint="light"
+              tint="regular"
               className={cn(
                 'overflow-hidden rounded-full',
                 focused
@@ -54,16 +53,11 @@ export const CategoryFooter = memo(function CategoryFooter({
               )}
             >
               <PressableBounce
-                onPress={() => {
-                  Feedback.light();
-                  router.back();
-                }}
+                haptic
                 hitSlop={24}
-                onLongPress={() => {
-                  Feedback.medium();
-                  router.replace('/(tabs)');
-                }}
-                className="p-3 items-center justify-center rounded-full border border-border active:opacity-60"
+                onPress={() => router.back()}
+                onLongPress={() => router.dismissTo('/(tabs)')}
+                className="p-3 items-center justify-center rounded-full active:opacity-60"
               >
                 <Icons.ChevronLeft size={24} className="text-foreground" />
               </PressableBounce>
@@ -72,7 +66,7 @@ export const CategoryFooter = memo(function CategoryFooter({
 
           <BlurView
             intensity={focused ? 90 : 30}
-            tint="light"
+            tint="regular"
             className={cn(
               'overflow-hidden rounded-full',
               focused
@@ -89,7 +83,7 @@ export const CategoryFooter = memo(function CategoryFooter({
               onSubmitEditing={onSubmitEditing}
               maxLength={45}
               className={cn(
-                'bg-transparent border-none rounded-full px-5 py-3 font-body text-black/80 ',
+                'bg-transparent border-0 rounded-full px-5 py-3 text-foreground ',
                 focused ? 'w-full' : 'w-36 text-center',
               )}
             />
@@ -98,7 +92,7 @@ export const CategoryFooter = memo(function CategoryFooter({
           {!focused && onFilterPress && (
             <BlurView
               intensity={focused ? 90 : 30}
-              tint="light"
+              tint="regular"
               className={cn(
                 'overflow-hidden rounded-full items-center',
                 focused
@@ -108,11 +102,9 @@ export const CategoryFooter = memo(function CategoryFooter({
             >
               <PressableBounce
                 hitSlop={24}
-                onPress={() => {
-                  Feedback.light();
-                  onFilterPress();
-                }}
-                className="p-3 items-center border rounded-full border-border justify-center active:opacity-60"
+                onPress={onFilterPress}
+                haptic
+                className="p-3 items-center justify-center rounded-full active:opacity-60"
               >
                 <Icons.SlidersHorizontal
                   size={24}

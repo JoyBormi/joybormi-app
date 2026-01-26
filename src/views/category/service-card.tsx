@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_MARGIN = 16;
-const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 2.5;
+const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 1.2;
 
 interface Service {
   id: string;
@@ -75,7 +75,7 @@ const PaginationDot = ({
   return (
     <Animated.View
       style={animatedDotStyle}
-      className="h-1.5 rounded-full bg-foreground border-[0.5px] border-border mx-0.5"
+      className="h-1.5 rounded-full bg-foreground mx-0.5"
     />
   );
 };
@@ -133,7 +133,7 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
       from={{ opacity: 0, translateY: 20 }}
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ delay: index * 100 }}
-      className="mb-6"
+      className="mb-6 shadow-sm"
     >
       <Animated.View
         style={[
