@@ -57,7 +57,10 @@ export default function CalendarLayout() {
             backgroundColor: colors.background,
           },
           headerLeft: () => (
-            <Pressable onPress={() => router.back()}>
+            <Pressable
+              onPress={() => router.back()}
+              className="flex-center size-8"
+            >
               <Icons.ChevronLeft size={24} className="text-primary" />
             </Pressable>
           ),

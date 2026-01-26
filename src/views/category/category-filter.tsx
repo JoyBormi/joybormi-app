@@ -218,7 +218,6 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
 
           <View className="pt-4 border-t border-border/10 mt-4">
             <Pressable
-              activeOpacity={0.8}
               className="bg-primary h-14 rounded-2xl items-center justify-center"
               onPress={handleApply}
             >
