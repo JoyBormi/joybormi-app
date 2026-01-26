@@ -126,6 +126,15 @@ module.exports = {
             default: 'sans-serif',
           }),
         },
+        '.font-subbody': {
+          fontSize: '14px',
+          lineHeight: '22px',
+          fontFamily: platformSelect({
+            ios: 'Montserrat-Light',
+            android: 'Montserrat-Light',
+            default: 'sans-serif',
+          }),
+        },
         '.font-caption': {
           fontSize: '12px',
           lineHeight: '20px',
@@ -139,8 +148,8 @@ module.exports = {
           fontSize: '12px',
           lineHeight: '18px',
           fontFamily: platformSelect({
-            ios: 'Montserrat-Regular',
-            android: 'Montserrat-Regular',
+            ios: 'Montserrat-Light',
+            android: 'Montserrat-Light',
             default: 'sans-serif',
           }),
         },

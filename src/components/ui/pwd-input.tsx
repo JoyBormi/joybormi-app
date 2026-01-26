@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Pressable, TextInputProps, View } from 'react-native';
 
-import Icons from '@/lib/icons';
+import Icons from '@/components/icons';
 
 import { Input } from './input';
 

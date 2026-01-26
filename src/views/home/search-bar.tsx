@@ -9,9 +9,9 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import Icons from '@/components/icons';
 import { Input, PressableBounce } from '@/components/ui';
 import { Major } from '@/constants/enum';
-import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 interface Props {

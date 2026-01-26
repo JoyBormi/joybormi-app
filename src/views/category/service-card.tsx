@@ -13,8 +13,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import Icons from '@/components/icons';
 import { Major } from '@/constants/enum';
-import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');

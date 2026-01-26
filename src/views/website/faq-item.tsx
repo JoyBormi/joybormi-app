@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 
 type FAQItemProps = {
   question: string;

@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import Icons from '@/components/icons';
 import { Feedback } from '@/lib/haptics';
-import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 import { ReservationItem } from './reservation-item';

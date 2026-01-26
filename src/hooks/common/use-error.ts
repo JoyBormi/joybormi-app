@@ -5,6 +5,7 @@ import { ErrorCodes } from '@/constants/error-codes';
 import { ApiError } from '@/lib/agent';
 import { storage } from '@/lib/mmkv';
 import { queryClient } from '@/lib/tanstack-query';
+import toast from '@/providers/toaster';
 import { useUserStore } from '@/stores';
 import { alert } from '@/stores/use-alert-store';
 import { EUserType } from '@/types/user.type';
@@ -52,12 +53,10 @@ export const useError = () => {
         }
 
         // Show error message from backend (backend provides localized messages)
-        alert({
-          title: t('common.error.title'),
-          subtitle: message,
-          confirmLabel: t('common.buttons.logout'),
-          cancelLabel: null,
+        toast.error({
+          title: message ?? t('common.error.title'),
         });
+
         return;
       }
 

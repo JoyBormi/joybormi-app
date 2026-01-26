@@ -4,8 +4,8 @@ import { MotiView } from 'moti';
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { Feedback } from '@/lib/haptics';
-import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 import { STATUS_STYLES } from './reservation.utils';

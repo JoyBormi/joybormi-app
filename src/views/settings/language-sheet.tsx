@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { DetachedSheet } from '@/components/bottom-sheet';
+import Icons from '@/components/icons';
 import { Feedback } from '@/lib/haptics';
-import Icons from '@/lib/icons';
 import { storage } from '@/lib/mmkv';
 import { cn } from '@/lib/utils';
 

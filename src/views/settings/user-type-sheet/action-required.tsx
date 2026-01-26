@@ -6,8 +6,8 @@ import React, { forwardRef } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import Icons from '@/components/icons';
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
-import Icons from '@/lib/icons';
 
 interface Props {
   type: 'NEED_CODE' | 'NEED_BRAND';

@@ -2,9 +2,9 @@ import { useNavigation } from 'expo-router';
 import { AnimatePresence, MotiView } from 'moti';
 import { View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
 import { Feedback } from '@/lib/haptics';
-import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 export function Header({

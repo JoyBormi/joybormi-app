@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Animated, Easing, Pressable, Text } from 'react-native';
 
+import Icons from '@/components/icons';
 import { useColorScheme } from '@/hooks/common/use-color-scheme';
-import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 export const ThemeToggle = ({ className }: { className?: string }) => {

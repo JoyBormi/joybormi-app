@@ -7,8 +7,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import Icons, { TIcon } from '@/components/icons';
 import { Feedback } from '@/lib/haptics';
-import Icons, { TIcon } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 type Props = TabTriggerSlotProps & {

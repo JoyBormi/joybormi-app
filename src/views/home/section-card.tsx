@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 
 export function SectionCard({
   title,

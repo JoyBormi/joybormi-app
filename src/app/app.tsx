@@ -4,6 +4,7 @@ import { Suspense, useEffect } from 'react';
 import { ActivityIndicator } from 'react-native';
 
 import MontserratBold from '@/assets/fonts/Montserrat-Bold.ttf';
+import MontserratLight from '@/assets/fonts/Montserrat-Light.ttf';
 import MontserratMedium from '@/assets/fonts/Montserrat-Medium.ttf';
 import MontserratRegular from '@/assets/fonts/Montserrat-Regular.ttf';
 import { useSessionMonitor } from '@/hooks/auth';
@@ -18,6 +19,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [loaded] = useFonts({
+    'montserrat-light': MontserratLight,
     'montserrat-regular': MontserratRegular,
     'montserrat-medium': MontserratMedium,
     'montserrat-bold': MontserratBold,
@@ -43,7 +45,7 @@ export default function App() {
         <Stack.Screen
           name="(auth)"
           options={{
-            presentation: 'modal',
+            presentation: 'card',
             animation: 'slide_from_bottom',
             statusBarAnimation: 'slide',
             keyboardHandlingEnabled: true,

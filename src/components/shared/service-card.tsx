@@ -2,7 +2,7 @@ import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import { Image, Pressable, View } from 'react-native';
 
-import Icons from '@/lib/icons';
+import Icons from '@/components/icons';
 
 import { Text } from '../ui';
 

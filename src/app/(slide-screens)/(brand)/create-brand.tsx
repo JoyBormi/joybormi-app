@@ -6,12 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BlockedSheet, BlockedSheetRef } from '@/components/modals/block-sheet';
+import Icons from '@/components/icons';
+import { BlockedSheet, BlockedSheetRef } from '@/components/modals/block-modal';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Button, Text } from '@/components/ui';
 import { useBecomeCreator } from '@/hooks/user/use-become-creator';
 import { Feedback } from '@/lib/haptics';
-import Icons from '@/lib/icons';
 import { createBrandSchema, TCreateBrandInput } from '@/lib/validations/brand';
 import { useUserStore } from '@/stores';
 import { alert } from '@/stores/use-alert-store';

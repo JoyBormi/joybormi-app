@@ -73,7 +73,10 @@ const FormField = memo(<T extends FieldValues>(props: FormFieldProps<T>) => {
         <View className={className}>
           {label && (
             <Text
-              className={cn('mb-1.5 font-body text-foreground', labelClassName)}
+              className={cn(
+                'mb-1.5 font-subbody text-foreground',
+                labelClassName,
+              )}
             >
               {label}
               {required && <Text className="text-destructive">*</Text>}

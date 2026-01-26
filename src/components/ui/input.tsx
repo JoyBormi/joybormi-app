@@ -14,8 +14,8 @@ const Input = React.forwardRef<
       ref={ref}
       value={value ? value?.toString() : ''}
       className={cn(
-        'h-14 bg-muted/30  rounded-md border border-input focus:border-border focus:bg-muted/50 px-3 font-body native:leading-[1.25] text-foreground placeholder:font-regular placeholder:text-muted-foreground',
-        props.editable === false && 'opacity-50 web:cursor-not-allowed',
+        'h-14 bg-muted/50  rounded-md border border-input placeholder:text-muted-foreground focus:border-border focus:bg-muted/70 px-3 font-body native:leading-[1.25] text-foreground',
+        props.editable === false && 'opacity-50',
         className,
       )}
       {...props}

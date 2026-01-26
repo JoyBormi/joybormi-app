@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import Icons from '@/lib/icons';
+import Icons from '@/components/icons';
 
 import { Reservation, ReservationFilters, ReservationStatus } from './types';
 

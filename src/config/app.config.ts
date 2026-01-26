@@ -13,15 +13,15 @@ import { Platform } from 'react-native';
  * - Mac/Linux: Run `ifconfig | grep "inet " | grep -v 127.0.0.1`
  * - Windows: Run `ipconfig` and look for IPv4 Address
  *
- * Then set EXPO_PUBLIC_API_ENDPOINT in your .env file:
- * EXPO_PUBLIC_API_ENDPOINT=http://YOUR_LOCAL_IP:4000
+ * Then set EXPO_PUBLIC_API_URL in your .env file:
+ * EXPO_PUBLIC_API_URL=http://YOUR_LOCAL_IP:4000
  */
 const getApiBaseUrl = (): string => {
   let url: string;
 
   // Use environment variable if set
-  if (process.env.EXPO_PUBLIC_API_ENDPOINT) {
-    url = process.env.EXPO_PUBLIC_API_ENDPOINT;
+  if (process.env.EXPO_PUBLIC_API_URL) {
+    url = process.env.EXPO_PUBLIC_API_URL;
   } else {
     // Production default
     url = 'https://api.joybormi.uz';

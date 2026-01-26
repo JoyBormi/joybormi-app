@@ -4,9 +4,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
 import { Feedback } from '@/lib/haptics';
-import Icons from '@/lib/icons';
 
 export default function SuccessScreen() {
   const { t } = useTranslation();

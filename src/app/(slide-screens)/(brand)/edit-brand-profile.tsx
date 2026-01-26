@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Alert, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BlockedSheet, BlockedSheetRef } from '@/components/modals/block-sheet';
+import { BlockedSheet, BlockedSheetRef } from '@/components/modals/block-modal';
 import { KeyboardAvoid } from '@/components/shared';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';

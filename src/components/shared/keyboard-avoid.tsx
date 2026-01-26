@@ -21,7 +21,7 @@ function KeyboardAvoid({
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 20}
       enabled={true}
       {...props}
     >

@@ -4,9 +4,9 @@ import React, { forwardRef, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import Icons from '@/components/icons';
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { Feedback } from '@/lib/haptics';
-import Icons from '@/lib/icons';
 import { cn, validateUserTypeSwitch } from '@/lib/utils';
 import { useUserStore } from '@/stores';
 import { EUserType } from '@/types/user.type';

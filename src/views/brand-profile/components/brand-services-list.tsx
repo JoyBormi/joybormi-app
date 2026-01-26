@@ -2,9 +2,9 @@ import { router } from 'expo-router';
 import React from 'react';
 import { Pressable, View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { NoData } from '@/components/status-screens';
 import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 
 import type { IService } from '@/types/service.type';
 

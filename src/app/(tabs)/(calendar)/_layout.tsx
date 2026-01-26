@@ -3,10 +3,10 @@ import { Stack, useGlobalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { Pressable, View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
 import { useColorScheme } from '@/hooks/common';
 import { useLocaleData } from '@/hooks/common/use-locale-data';
-import Icons from '@/lib/icons';
 import { StackHeader } from '@/views/calendars';
 
 export default function CalendarLayout() {

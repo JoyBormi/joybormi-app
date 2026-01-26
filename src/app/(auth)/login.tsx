@@ -73,94 +73,93 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoid className="main-area">
-      <View>
-        <Header
-          title={t('auth.login.title')}
-          subtitle={t('auth.login.subtitle')}
-        />
-        <Tabs value={tab} onValueChange={handleTab} className="w-full mt-10">
-          <TabsList>
-            <TabsTrigger value="phone">
-              <Text>{t('auth.register.phoneTab')}</Text>
-            </TabsTrigger>
-            <TabsTrigger value="email">
-              <Text>{t('auth.register.emailTab')}</Text>
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="email" className="gap-y-6 mt-10">
-            <FormField
-              control={control}
-              name="email"
-              label={t('auth.email')}
-              required
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  placeholder={t('auth.emailPlaceholder')}
-                  keyboardType="email-address"
-                  returnKeyType="next"
-                  autoCapitalize="none"
-                  onSubmitEditing={() => setFocus('password')}
-                />
-              )}
-            />
+      <Header
+        title={t('auth.login.title')}
+        subtitle={t('auth.login.subtitle')}
+      />
+      <Tabs value={tab} onValueChange={handleTab} className="w-full mt-10">
+        <TabsList>
+          <TabsTrigger value="phone">
+            <Text>{t('auth.register.phoneTab')}</Text>
+          </TabsTrigger>
+          <TabsTrigger value="email">
+            <Text>{t('auth.register.emailTab')}</Text>
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="email" className="gap-y-6 mt-10">
+          <FormField
+            control={control}
+            name="email"
+            label={t('auth.email')}
+            required
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder={t('auth.emailPlaceholder')}
+                keyboardType="email-address"
+                returnKeyType="next"
+                autoCapitalize="none"
+                onSubmitEditing={() => setFocus('password')}
+              />
+            )}
+          />
 
-            <FormField
-              control={control}
-              name="password"
-              label={t('auth.password')}
-              required
-              render={({ field }) => (
-                <PasswordInput
-                  {...field}
-                  placeholder={t('auth.passwordPlaceholder')}
-                  secureTextEntry
-                  returnKeyType="done"
-                  onSubmitEditing={handleSubmit(onSubmit)}
-                />
-              )}
-            />
-          </TabsContent>
-          <TabsContent value="phone" className="gap-y-6 mt-10">
-            <FormField
-              control={control}
-              name="phone"
-              label={t('auth.phone')}
-              required
-              render={({ field }) => (
-                <PhoneInput
-                  {...field}
-                  placeholder={t('auth.phonePlaceholder')}
-                  returnKeyType="next"
-                  defaultCountry="UZ"
-                  onSubmitEditing={() => setFocus('password')}
-                />
-              )}
-            />
+          <FormField
+            control={control}
+            name="password"
+            label={t('auth.password')}
+            required
+            render={({ field }) => (
+              <PasswordInput
+                {...field}
+                placeholder={t('auth.passwordPlaceholder')}
+                secureTextEntry
+                returnKeyType="done"
+                onSubmitEditing={handleSubmit(onSubmit)}
+              />
+            )}
+          />
+        </TabsContent>
+        <TabsContent value="phone" className="gap-y-6 mt-10">
+          <FormField
+            control={control}
+            name="phone"
+            label={t('auth.phone')}
+            required
+            render={({ field }) => (
+              <PhoneInput
+                {...field}
+                placeholder={t('auth.phonePlaceholder')}
+                returnKeyType="next"
+                defaultCountry="UZ"
+                onSubmitEditing={() => setFocus('password')}
+              />
+            )}
+          />
 
-            <FormField
-              control={control}
-              name="password"
-              label={t('auth.password')}
-              required
-              render={({ field }) => (
-                <PasswordInput
-                  {...field}
-                  placeholder={t('auth.passwordPlaceholder')}
-                  secureTextEntry
-                  returnKeyType="done"
-                  onSubmitEditing={handleSubmit(onSubmit)}
-                />
-              )}
-            />
-          </TabsContent>
-        </Tabs>
-      </View>
+          <FormField
+            control={control}
+            name="password"
+            label={t('auth.password')}
+            required
+            render={({ field }) => (
+              <PasswordInput
+                {...field}
+                placeholder={t('auth.passwordPlaceholder')}
+                secureTextEntry
+                returnKeyType="done"
+                onSubmitEditing={handleSubmit(onSubmit)}
+              />
+            )}
+          />
+        </TabsContent>
+      </Tabs>
 
       <Button
         className="my-10"
         onPress={handleSubmit(onSubmit)}
         disabled={isPending}
+        size="lg"
       >
         <Text>
           {isPending ? t('common.buttons.loading') : t('common.buttons.login')}
@@ -178,7 +177,7 @@ export default function LoginScreen() {
             router.push('/(auth)/register');
           }}
         >
-          <Text className="font-primary">{t('auth.login.register')}</Text>
+          <Text className="font-body">{t('auth.login.register')}</Text>
         </Button>
       </View>
 
@@ -189,7 +188,7 @@ export default function LoginScreen() {
             router.push('/(auth)/forgot-pwd');
           }}
         >
-          <Text className="font-primary underline text-sm">
+          <Text className="font-caption underline">
             {t('auth.login.forgotPassword')}
           </Text>
         </Pressable>

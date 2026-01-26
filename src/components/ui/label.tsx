@@ -1,7 +1,7 @@
 import * as LabelPrimitive from '@rn-primitives/label';
 import * as React from 'react';
 
-import Icons from '@/lib/icons';
+import Icons from '@/components/icons';
 import { cn } from '@/lib/utils';
 
 const Label = React.forwardRef<
@@ -21,7 +21,7 @@ const Label = React.forwardRef<
     ref,
   ) => (
     <LabelPrimitive.Root
-      className="web:cursor-default "
+      className="web:cursor-default"
       onPress={onPress}
       onLongPress={onLongPress}
       onPressIn={onPressIn}
@@ -29,10 +29,7 @@ const Label = React.forwardRef<
     >
       <LabelPrimitive.Text
         ref={ref}
-        className={cn(
-          ' text-foreground relative web:peer-disabled:cursor-not-allowed web:peer-disabled:opacity-70',
-          className,
-        )}
+        className={cn('text-foreground relative ', className)}
       >
         {props.children}
         {required && (

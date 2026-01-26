@@ -3,9 +3,9 @@ import { router } from 'expo-router';
 import React, { Fragment, useRef, useState } from 'react';
 import { Image, Pressable, View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { ImagePickerSheet } from '@/components/shared/image-picker.sheet';
 import { Button, Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 
 import type { IWorker } from '@/types/worker.type';
 

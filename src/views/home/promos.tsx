@@ -2,8 +2,8 @@ import { router } from 'expo-router';
 import { MotiView } from 'moti';
 import { Dimensions, Image, Pressable, ScrollView, View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 const { width } = Dimensions.get('window');

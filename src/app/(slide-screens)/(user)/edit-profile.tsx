@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BlockedSheet, BlockedSheetRef } from '@/components/modals/block-sheet';
+import { BlockModal, BlockModalRef } from '@/components/modals/block-modal';
 import { KeyboardAvoid } from '@/components/shared';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
@@ -21,7 +21,7 @@ const EditProfileScreen = () => {
   const { t } = useTranslation();
   const { user } = useUserStore();
   const insets = useSafeAreaInsets();
-  const blockedSheetRef = useRef<BlockedSheetRef>(null);
+  const blockedSheetRef = useRef<BlockModalRef>(null);
 
   const [identifier, setIdentifier] = useState<string>('');
 
@@ -323,7 +323,7 @@ const EditProfileScreen = () => {
         <Button
           onPress={form.handleSubmit(handleSave)}
           disabled={!isFormDirty || isPending}
-          size="action"
+          size="lg"
         >
           <Text>
             {isPending ? t('common.buttons.saving') : t('common.buttons.save')}
@@ -331,7 +331,7 @@ const EditProfileScreen = () => {
         </Button>
       </View>
 
-      <BlockedSheet
+      <BlockModal
         ref={blockedSheetRef}
         onCancel={() => router.back()}
         onConfirm={() => blockedSheetRef.current?.hide()}

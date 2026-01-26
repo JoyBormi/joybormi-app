@@ -3,9 +3,9 @@ import React, { forwardRef, useEffect } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import Icons from '@/components/icons';
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { useUserLocation } from '@/hooks/common/use-location';
-import Icons from '@/lib/icons';
 import { useUserStore } from '@/stores/use-user-store';
 
 const LOCATIONS = ['Tashkent', 'Bukhara', 'Samarkand'];

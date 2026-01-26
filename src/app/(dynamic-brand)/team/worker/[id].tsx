@@ -6,9 +6,9 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
+import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Icons from '@/lib/icons';
 import {
   MemberAboutTab,
   MemberReviewsTab,

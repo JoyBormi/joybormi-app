@@ -1,0 +1,201 @@
+import {
+  AlertCircle,
+  ArrowLeft,
+  ArrowRight,
+  Asterisk,
+  Ban,
+  Bell,
+  BookOpen,
+  Briefcase,
+  Calendar,
+  CalendarDays,
+  CalendarPlus,
+  Camera,
+  Check,
+  CheckCircle,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Clock,
+  Coffee,
+  Copy,
+  CreditCard,
+  Eye,
+  EyeClosed,
+  FileText,
+  Globe,
+  Heart,
+  HelpCircle,
+  Home,
+  Image,
+  Info,
+  LayoutGrid,
+  List,
+  Lock,
+  LogOut,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Moon,
+  MoonStar,
+  Notebook,
+  Pencil,
+  Phone,
+  Plus,
+  RefreshCcw,
+  Scissors,
+  Search,
+  Settings,
+  Share2,
+  Shield,
+  SlidersHorizontal,
+  Sparkles,
+  Star,
+  Stethoscope,
+  Store,
+  Sun,
+  ThumbsUp,
+  Trash2,
+  Upload,
+  User,
+  UserPlus,
+  Users,
+  X,
+} from 'lucide-react-native';
+
+import { iconWithClassName } from './classNames';
+
+iconWithClassName(Home);
+iconWithClassName(Search);
+iconWithClassName(Calendar);
+iconWithClassName(ArrowRight);
+iconWithClassName(CalendarDays);
+iconWithClassName(CalendarPlus);
+iconWithClassName(Notebook);
+iconWithClassName(User);
+iconWithClassName(Settings);
+iconWithClassName(Check);
+iconWithClassName(CheckCircle);
+iconWithClassName(AlertCircle);
+iconWithClassName(Info);
+iconWithClassName(ChevronDown);
+iconWithClassName(Upload);
+iconWithClassName(Plus);
+iconWithClassName(X);
+iconWithClassName(Clock);
+iconWithClassName(MapPin);
+iconWithClassName(Ban);
+iconWithClassName(Pencil);
+iconWithClassName(Users);
+iconWithClassName(LayoutGrid);
+iconWithClassName(Bell);
+iconWithClassName(Sun);
+iconWithClassName(MoonStar);
+iconWithClassName(List);
+iconWithClassName(ChevronUp);
+iconWithClassName(ArrowLeft);
+iconWithClassName(Asterisk);
+iconWithClassName(Eye);
+iconWithClassName(EyeClosed);
+iconWithClassName(Sparkles);
+iconWithClassName(Briefcase);
+iconWithClassName(Scissors);
+iconWithClassName(Stethoscope);
+iconWithClassName(BookOpen);
+iconWithClassName(ChevronRight);
+iconWithClassName(ChevronLeft);
+iconWithClassName(SlidersHorizontal);
+iconWithClassName(Star);
+iconWithClassName(RefreshCcw);
+iconWithClassName(Heart);
+iconWithClassName(Store);
+iconWithClassName(CreditCard);
+iconWithClassName(FileText);
+iconWithClassName(Globe);
+iconWithClassName(HelpCircle);
+iconWithClassName(Lock);
+iconWithClassName(Mail);
+iconWithClassName(Moon);
+iconWithClassName(Shield);
+iconWithClassName(LogOut);
+iconWithClassName(ThumbsUp);
+iconWithClassName(Share2);
+iconWithClassName(Phone);
+iconWithClassName(MessageSquare);
+iconWithClassName(Coffee);
+iconWithClassName(Trash2);
+iconWithClassName(Camera);
+iconWithClassName(Image);
+iconWithClassName(UserPlus);
+iconWithClassName(Copy);
+
+const Icons = {
+  AlertCircle,
+  Ban,
+  Bell,
+  Calendar,
+  CalendarDays,
+  CalendarPlus,
+  Check,
+  CheckCircle,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Clock,
+  Eye,
+  EyeClosed,
+  Home,
+  Info,
+  LayoutGrid,
+  List,
+  MapPin,
+  MoonStar,
+  Notebook,
+  Pencil,
+  Plus,
+  Search,
+  Settings,
+  Sun,
+  ArrowRight,
+  Upload,
+  User,
+  Users,
+  X,
+  Asterisk,
+  ArrowLeft,
+  Sparkles,
+  Briefcase,
+  Scissors,
+  Stethoscope,
+  BookOpen,
+  SlidersHorizontal,
+  Star,
+  Heart,
+  RefreshCcw,
+  Store,
+  CreditCard,
+  FileText,
+  Globe,
+  HelpCircle,
+  Lock,
+  Mail,
+  Moon,
+  Shield,
+  LogOut,
+  ThumbsUp,
+  Share2,
+  Phone,
+  MessageSquare,
+  Coffee,
+  Trash2,
+  Camera,
+  Image,
+  UserPlus,
+  Copy,
+} as const;
+
+export type TIcon = keyof typeof Icons;
+
+export default Icons;

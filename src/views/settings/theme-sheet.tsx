@@ -3,9 +3,9 @@ import React, { forwardRef } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { DetachedSheet } from '@/components/bottom-sheet';
+import Icons from '@/components/icons';
 import { useColorScheme } from '@/hooks/common';
 import { Feedback } from '@/lib/haptics';
-import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 export type ThemeMode = 'light' | 'dark';

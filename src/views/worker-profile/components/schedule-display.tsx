@@ -1,9 +1,9 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
 import { useLocaleData } from '@/hooks/common/use-locale-data';
-import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 import type { IWorkingDay } from '@/types/schedule.type';

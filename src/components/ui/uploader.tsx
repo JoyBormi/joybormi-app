@@ -3,7 +3,7 @@ import * as ImagePicker from 'expo-image-picker';
 import React from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 
-import Icons from '@/lib/icons';
+import Icons from '@/components/icons';
 
 import { PressableBounce } from './pressable-bounce';
 

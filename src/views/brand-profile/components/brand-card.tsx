@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react';
 import { Image, Pressable, View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
 import { placeholder } from '@/constants/images';
-import Icons from '@/lib/icons';
 
 import type { IBrand } from '@/types/brand.type';
 

@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import Icons from '@/components/icons';
 import { KeyboardAvoid } from '@/components/shared';
 import { Header } from '@/components/shared/header';
 import { TimePickerSheet } from '@/components/shared/time-picker.sheet';
@@ -16,7 +17,6 @@ import {
   useUpdateSchedule,
 } from '@/hooks/schedule';
 import { agent } from '@/lib/agent';
-import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { alert } from '@/stores/use-alert-store';
 

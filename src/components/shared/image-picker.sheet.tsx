@@ -4,9 +4,9 @@ import React, { forwardRef } from 'react';
 import { Alert, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import Icons from '@/components/icons';
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 
 interface ImagePickerSheetProps {
   onChange: (uri: string) => void;

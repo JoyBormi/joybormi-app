@@ -214,12 +214,13 @@ export default function RegisterScreen() {
         <Button
           onPress={form.handleSubmit(handleRegister)}
           disabled={isRegisterPending || form.formState.isSubmitting}
+          size="lg"
         >
           <Text>{t('auth.register.submit')}</Text>
         </Button>
 
         <View className="flex-row justify-center items-center mt-4 pb-20">
-          <Text className="text-sm text-muted-foreground">
+          <Text className="text-muted-foreground">
             {t('auth.register.alreadyHaveAccount')}
           </Text>
           <Button
@@ -229,7 +230,7 @@ export default function RegisterScreen() {
               router.dismissTo('/(auth)/login');
             }}
           >
-            <Text className="text-primary">{t('auth.register.login')}</Text>
+            <Text className="font-body">{t('auth.register.login')}</Text>
           </Button>
         </View>
       </View>

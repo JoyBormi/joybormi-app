@@ -4,8 +4,8 @@ import React from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 import { IBrandWorker } from '@/types/brand.type';
 
 interface WorkersTabProps {

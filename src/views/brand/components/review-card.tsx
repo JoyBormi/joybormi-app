@@ -2,8 +2,8 @@ import { MotiView } from 'moti';
 import React from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 import { IBrandReview } from '@/types/brand.type';
 
 interface ReviewCardProps {

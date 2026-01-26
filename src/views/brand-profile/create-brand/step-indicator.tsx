@@ -5,8 +5,8 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
+import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 interface StepIndicatorProps {

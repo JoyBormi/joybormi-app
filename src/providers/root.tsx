@@ -10,6 +10,7 @@ import { GlobalAlert } from './alert';
 import { I18nProvider } from './intl';
 import { QueryProvider } from './query';
 import { ThemeProvider } from './theme';
+import { ToastProvider } from './toaster';
 
 const RootProvider = ({ children }: { children: React.ReactNode }) => {
   // Setup React Query managers on mount
@@ -25,9 +26,9 @@ const RootProvider = ({ children }: { children: React.ReactNode }) => {
           <GestureHandlerRootView style={{ flex: 1 }}>
             <BottomSheetModalProvider>
               {children}
-              {/* <PortalHost /> */}
               <OfflineModal />
               <GlobalAlert />
+              <ToastProvider />
             </BottomSheetModalProvider>
           </GestureHandlerRootView>
         </QueryProvider>

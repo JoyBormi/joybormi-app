@@ -3,8 +3,8 @@ import React from 'react';
 import { Image, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 import { IBrand } from '@/types/brand.type';
 
 interface BrandHeaderProps {

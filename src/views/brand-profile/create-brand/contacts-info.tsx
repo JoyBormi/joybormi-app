@@ -1,9 +1,9 @@
 import { Control, FieldValues, Path, UseFormSetFocus } from 'react-hook-form';
 import { View } from 'react-native';
 
+import Icons from '@/components/icons';
 import FormField from '@/components/shared/form-field';
 import { Input, PhoneInput, Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 
 interface ContactsInfoProps<T extends FieldValues> {
   control: Control<T>;

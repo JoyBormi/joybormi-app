@@ -12,8 +12,8 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 const images = [

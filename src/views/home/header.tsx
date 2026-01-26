@@ -4,8 +4,8 @@ import { MotiView } from 'moti';
 import React, { useEffect, useRef } from 'react';
 import { Image, Pressable, View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 import { useUserStore } from '@/stores';
 
 import { LocationPickerSheet } from './location-picker';

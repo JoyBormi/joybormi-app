@@ -1,8 +1,8 @@
 import React from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { Feedback } from '@/lib/haptics';
-import Icons from '@/lib/icons';
 import { EUserMethod, IUser } from '@/types/user.type';
 import { formatPhoneNumber } from '@/utils/helpers';
 

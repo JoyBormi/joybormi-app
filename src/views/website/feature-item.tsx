@@ -2,8 +2,8 @@ import React from 'react';
 import { View } from 'react-native';
 import Animated, { SlideInRight } from 'react-native-reanimated';
 
+import Icons, { Icon } from '@/components/icons';
 import { Text } from '@/components/ui';
-import Icons, { Icon } from '@/lib/icons';
 
 type FeatureItemProps = {
   title: string;

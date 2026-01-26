@@ -1,8 +1,8 @@
 import { Control, FieldValues, useWatch } from 'react-hook-form';
 import { View } from 'react-native';
 
+import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
-import Icons from '@/lib/icons';
 
 interface ReviewProps<T extends FieldValues> {
   control: Control<T>;

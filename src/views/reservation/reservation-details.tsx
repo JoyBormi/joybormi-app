@@ -3,9 +3,9 @@ import dayjs from 'dayjs';
 import React, { forwardRef, useMemo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
+import Icons from '@/components/icons';
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { Feedback } from '@/lib/haptics';
-import Icons from '@/lib/icons';
 
 import { getStatusConfig } from './reservation.utils';
 import { Reservation } from './types';
