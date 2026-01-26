@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
 import FormField from '@/components/shared/form-field';
+import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import {
   Button,
@@ -21,7 +22,7 @@ import {
 import { useLogin } from '@/hooks/auth/use-login';
 import { Feedback } from '@/lib/haptics';
 import { normalizePhone } from '@/lib/utils';
-import { AuthHeader, LoginFormType, loginSchema } from '@/views/auth';
+import { LoginFormType, loginSchema } from '@/views/auth';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
@@ -72,8 +73,8 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoid className="main-area">
-      <View className="pt-20">
-        <AuthHeader
+      <View>
+        <Header
           title={t('auth.login.title')}
           subtitle={t('auth.login.subtitle')}
         />

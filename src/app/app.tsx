@@ -1,13 +1,12 @@
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { Suspense, useEffect } from 'react';
-import { ActivityIndicator, Platform } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 
 import MontserratBold from '@/assets/fonts/Montserrat-Bold.ttf';
 import MontserratMedium from '@/assets/fonts/Montserrat-Medium.ttf';
 import MontserratRegular from '@/assets/fonts/Montserrat-Regular.ttf';
 import { useSessionMonitor } from '@/hooks/auth';
-import { useColorScheme } from '@/hooks/common/use-color-scheme';
 
 export const unstable_settings = {
   // Ensure that loading the initial screen does not block rendering of the app.
@@ -19,23 +18,13 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [loaded] = useFonts({
-    regular: MontserratRegular,
-    medium: MontserratMedium,
-    bold: MontserratBold,
+    'montserrat-regular': MontserratRegular,
+    'montserrat-medium': MontserratMedium,
+    'montserrat-bold': MontserratBold,
   });
-
-  const { colorScheme } = useColorScheme();
 
   // Session monitor to refresh session before it expires
   useSessionMonitor();
-
-  // Apply color scheme to document for web
-  useEffect(() => {
-    if (Platform.OS === 'web') {
-      document.documentElement.classList.toggle('dark', colorScheme === 'dark');
-      document.documentElement.classList.add('bg-background');
-    }
-  }, [colorScheme]);
 
   // Hide the splash screen once fonts are loaded
   useEffect(() => {

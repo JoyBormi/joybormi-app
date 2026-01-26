@@ -49,42 +49,21 @@ module.exports = {
         },
       },
       fontFamily: {
-        regular: platformSelect({
+        'montserrat-regular': platformSelect({
           ios: 'Montserrat-Regular',
           android: 'Montserrat-Regular',
           default: 'sans-serif',
         }),
-        medium: platformSelect({
+        'montserrat-medium': platformSelect({
           ios: 'Montserrat-Medium',
           android: 'Montserrat-Medium',
           default: 'sans-serif',
         }),
-        bold: platformSelect({
+        'montserrat-bold': platformSelect({
           ios: 'Montserrat-Bold',
           android: 'Montserrat-Bold',
           default: 'sans-serif',
         }),
-      },
-      // fontSize: {
-      //   heading: 28,
-      //   title: 22,
-      //   subtitle: 18,
-      //   body: 17,
-      //   caption: 13,
-      //   base: 12,
-      // },
-      // lineHeight: {
-      //   heading: '36px',
-      //   title: '30px',
-      //   subtitle: '26px',
-      //   body: '26px',
-      //   caption: '20px',
-      //   base: '12px',
-      // },
-      fontWeight: {
-        regular: '400',
-        medium: '500',
-        bold: '700',
       },
       spacing: {
         xs: '2px',
@@ -108,5 +87,64 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        '.font-heading': {
+          fontSize: '28px',
+          lineHeight: '36px',
+          fontFamily: platformSelect({
+            ios: 'Montserrat-Bold',
+            android: 'Montserrat-Bold',
+            default: 'sans-serif',
+          }),
+        },
+        '.font-title': {
+          fontSize: '20px',
+          lineHeight: '28px',
+          fontFamily: platformSelect({
+            ios: 'Montserrat-Medium',
+            android: 'Montserrat-Medium',
+            default: 'sans-serif',
+          }),
+        },
+        '.font-subtitle': {
+          fontSize: '18px',
+          lineHeight: '26px',
+          fontFamily: platformSelect({
+            ios: 'Montserrat-Medium',
+            android: 'Montserrat-Medium',
+            default: 'sans-serif',
+          }),
+        },
+        '.font-body': {
+          fontSize: '16px',
+          lineHeight: '24px',
+          fontFamily: platformSelect({
+            ios: 'Montserrat-Regular',
+            android: 'Montserrat-Regular',
+            default: 'sans-serif',
+          }),
+        },
+        '.font-caption': {
+          fontSize: '12px',
+          lineHeight: '20px',
+          fontFamily: platformSelect({
+            ios: 'Montserrat-Regular',
+            android: 'Montserrat-Regular',
+            default: 'sans-serif',
+          }),
+        },
+        '.font-base': {
+          fontSize: '12px',
+          lineHeight: '18px',
+          fontFamily: platformSelect({
+            ios: 'Montserrat-Regular',
+            android: 'Montserrat-Regular',
+            default: 'sans-serif',
+          }),
+        },
+      });
+    },
+  ],
 };

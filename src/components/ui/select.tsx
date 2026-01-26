@@ -12,9 +12,11 @@ import Animated, {
   ZoomOut,
 } from 'react-native-reanimated';
 
-import { PressableBounce, Text } from '@/components/ui';
 import { Feedback } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
+
+import { PressableBounce } from './pressable-bounce';
+import { Text } from './text';
 
 export type SelectValue = string | number;
 

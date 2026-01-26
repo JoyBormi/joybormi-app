@@ -2,14 +2,11 @@ import { Control, FieldValues, Path, UseFormSetFocus } from 'react-hook-form';
 import { View } from 'react-native';
 
 import FormField from '@/components/shared/form-field';
-import {
-  Input,
-  Select,
-  SelectValue,
-  Text,
-  Textarea,
-  UploadField,
-} from '@/components/ui';
+import { Input } from '@/components/ui/input';
+import { Select, SelectValue } from '@/components/ui/select';
+import { Text } from '@/components/ui/text';
+import { Textarea } from '@/components/ui/textarea';
+import { UploadField } from '@/components/ui/uploader';
 import { Major } from '@/constants/enum';
 import Icons from '@/lib/icons';
 

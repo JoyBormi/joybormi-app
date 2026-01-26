@@ -1,14 +1,13 @@
 import { router } from 'expo-router';
 import { MotiView } from 'moti';
-import React from 'react';
 import { Dimensions, Image, Pressable, ScrollView, View } from 'react-native';
 
-import { PressableBounce, Text } from '@/components/ui';
+import { Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 const { width } = Dimensions.get('window');
-const CARD_WIDTH = width * 0.935;
+const CARD_WIDTH = width * 0.9;
 const CARD_GAP = 16;
 
 const offers = [
@@ -100,7 +99,7 @@ export function PromoOffers({ className }: { className?: string }) {
               marginRight: CARD_GAP,
             }}
           >
-            <PressableBounce
+            <Pressable
               onPress={() => router.push(`/(dynamic-brand)/brand/${item.id}`)}
               className="bg-popover rounded-xl border border-border overflow-hidden p-2.5 w-full h-[320px] justify-between"
             >
@@ -110,16 +109,16 @@ export function PromoOffers({ className }: { className?: string }) {
                 resizeMode="cover"
               />
 
-              <View className="gap-y-1">
+              <View className="gap-y-1 mt-4 mb-2">
                 <Text className="font-title text-base text-foreground line-clamp-1">
                   {item.title}
                 </Text>
-                <Text className="font-caption text-muted-foreground line-clamp-3">
+                <Text className="font-caption text-muted-foreground line-clamp-2">
                   {item.subtitle}
                 </Text>
               </View>
 
-              <View className="flex-row px-3 items-center justify-between flex">
+              <View className="flex-row  items-center justify-between flex">
                 <Text className="text-3xl font-bold text-primary">
                   {item.discount}
                 </Text>
@@ -136,7 +135,7 @@ export function PromoOffers({ className }: { className?: string }) {
                   </Pressable>
                 </View>
               </View>
-            </PressableBounce>
+            </Pressable>
           </MotiView>
         ))}
       </ScrollView>

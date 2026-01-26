@@ -73,10 +73,7 @@ const FormField = memo(<T extends FieldValues>(props: FormFieldProps<T>) => {
         <View className={className}>
           {label && (
             <Text
-              className={cn(
-                'mb-1.5 text-base font-semibold text-foreground',
-                labelClassName,
-              )}
+              className={cn('mb-1.5 font-body text-foreground', labelClassName)}
             >
               {label}
               {required && <Text className="text-destructive">*</Text>}
@@ -92,7 +89,7 @@ const FormField = memo(<T extends FieldValues>(props: FormFieldProps<T>) => {
           {message && (
             <Text
               className={cn(
-                'text-muted-foreground text-xs mt-1.5',
+                'text-muted-foreground font-base mt-1.5',
                 messageClassName,
               )}
             >
@@ -101,7 +98,7 @@ const FormField = memo(<T extends FieldValues>(props: FormFieldProps<T>) => {
           )}
 
           {fieldState.error && (
-            <Text className="text-destructive text-xs mt-1">
+            <Text className="text-destructive font-base mt-1">
               {fieldState.error.message}
             </Text>
           )}

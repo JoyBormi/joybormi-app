@@ -1,6 +1,6 @@
-export { CategoryPills } from './category-pills';
+export * from './category-pills';
 export * from './data';
-export { Header } from './header';
-export { PromoOffers } from './promos';
-export { SearchBar } from './search-bar';
-export { SectionCard } from './section-card';
+export * from './header';
+export * from './promos';
+export * from './search-bar';
+export * from './section-card';

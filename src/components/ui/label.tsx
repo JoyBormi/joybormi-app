@@ -30,7 +30,7 @@ const Label = React.forwardRef<
       <LabelPrimitive.Text
         ref={ref}
         className={cn(
-          'text-body font-medium text-foreground relative web:peer-disabled:cursor-not-allowed web:peer-disabled:opacity-70',
+          ' text-foreground relative web:peer-disabled:cursor-not-allowed web:peer-disabled:opacity-70',
           className,
         )}
       >

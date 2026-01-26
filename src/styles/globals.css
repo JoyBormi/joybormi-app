@@ -2,74 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .font-heading {
-    font-size: 32px;
-    line-height: 40px;
-    font-family: Montserrat-Bold;
-    font-weight: 700;
-  }
-
-  .font-title {
-    font-size: 20px;
-    line-height: 28px;
-    font-family: Montserrat-Bold;
-    font-weight: 700;
-  }
-
-  .font-subtitle {
-    font-size: 18px;
-    line-height: 26px;
-    font-family: Montserrat-Medium;
-    font-weight: 500;
-  }
-
-  .font-body {
-    font-size: 16px;
-    line-height: 24px;
-    font-family: Montserrat-Regular;
-    font-weight: 400;
-  }
-
-  .font-caption {
-    font-size: 12px;
-    line-height: 18px;
-    font-family: Montserrat-Regular;
-    font-weight: 400;
-  }
-
-  .font-base {
-    font-size: 12px;
-    line-height: 18px;
-    font-family: Montserrat-Regular;
-    font-weight: 400;
-  }
-
-  .separate-words {
-    @apply break-words line-clamp-1 truncate;
-  }
-  .separate-words-2 {
-    @apply break-words line-clamp-2 truncate;
-  }
-}
-
 @layer base {
+  /* Flex */
   .flex-center {
     @apply flex items-center justify-center w-full h-full;
   }
   .flex-between {
     @apply flex flex-row items-center justify-between w-full;
   }
-  .flex-s-between {
-    @apply flex flex-row items-start justify-between w-full;
+
+  .flex-col-center {
+    @apply flex flex-col items-center justify-center w-full;
   }
-  .flex-e-between {
-    @apply flex flex-row items-end justify-between w-full;
+
+  .flex-col-between {
+    @apply flex flex-col items-center justify-between w-full;
   }
+
+  /* Container */
   .main-area {
     @apply flex flex-1 flex-col bg-background text-foreground px-4 lg:px-6;
   }
   .safe-area {
     @apply flex-1 bg-background;
+  }
+
+  /* Text */
+  .separate-words {
+    @apply break-words line-clamp-1 truncate;
+  }
+  .separate-words-2 {
+    @apply break-words line-clamp-2 truncate;
   }
 }

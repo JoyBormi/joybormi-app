@@ -42,7 +42,7 @@ export function Header({
         )}
         <View className="flex flex-col items-start gap-y-1 mt-5">
           <Text className="font-heading">{title}</Text>
-          <Text className="font-regular text-card-foreground pl-0.5">
+          <Text className="font-body text-card-foreground pl-0.5">
             {subtitle}
           </Text>
         </View>

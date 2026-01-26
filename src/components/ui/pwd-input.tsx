@@ -19,6 +19,7 @@ export function PasswordInput(props: TextInputProps) {
       />
 
       <Pressable
+        hitSlop={10}
         className="absolute right-3 top-0 bottom-0 w-10 items-center justify-center"
         onPress={() => setShowPassword((prev) => !prev)}
       >
