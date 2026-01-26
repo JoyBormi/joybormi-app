@@ -5,16 +5,15 @@ import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
+import { ScrollSheet } from '@/components/bottom-sheet';
 import FormField from '@/components/shared/form-field';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Button, Text } from '@/components/ui';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
+import { ServiceFormData, serviceSchema } from '@/hooks/service';
 
-import { serviceSchema, type ServiceFormData } from '../utils/helpers';
-
-import type { IService } from '@/types/worker.type';
+import type { IService } from '@/types/service.type';
 
 interface UpsertServiceSheetProps {
   service?: IService | null;
@@ -87,11 +86,10 @@ export const UpsertServiceSheet = forwardRef<
   };
 
   return (
-    <CustomBottomSheet
+    <ScrollSheet
       ref={ref}
       index={0}
       snapPoints={['90%', '99%']}
-      scrollEnabled
       scrollConfig={{
         contentContainerStyle: {
           paddingBottom: insets.bottom + 100,
@@ -206,7 +204,7 @@ export const UpsertServiceSheet = forwardRef<
           </Button>
         </View>
       </KeyboardAvoid>
-    </CustomBottomSheet>
+    </ScrollSheet>
   );
 });
 

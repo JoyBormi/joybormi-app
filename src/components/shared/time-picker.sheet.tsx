@@ -7,8 +7,8 @@ import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
-import { TimePicker } from '@/components/shared/time-picker';
 import { Button, Text } from '@/components/ui';
+import { TimePicker } from '@/components/ui/time-picker';
 import { Feedback } from '@/lib/haptics';
 
 interface TimePickerSheetProps {

@@ -50,7 +50,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
+          "photosPermission": "The Image Picker is required to upload your profile picture. To use this feature, please grant permission to access your photos."
         }
       ],
       [

@@ -8,7 +8,7 @@ import { Animated, Easing, Modal, Pressable, Text, View } from 'react-native';
 
 import { Button } from '../ui';
 
-interface BlockedSheetProps {
+interface BlockModalProps {
   title?: string;
   subtitle?: string;
   confirmText?: string;
@@ -18,12 +18,12 @@ interface BlockedSheetProps {
   onCancel?: () => void;
 }
 
-export interface BlockedSheetRef {
+export interface BlockModalRef {
   show: () => void;
   hide: () => void;
 }
 
-export const BlockedSheet = forwardRef<BlockedSheetRef, BlockedSheetProps>(
+export const BlockModal = forwardRef<BlockModalRef, BlockModalProps>(
   (
     {
       title = 'Hey, be careful!',
@@ -141,4 +141,4 @@ export const BlockedSheet = forwardRef<BlockedSheetRef, BlockedSheetProps>(
   },
 );
 
-BlockedSheet.displayName = 'BlockedSheet';
+BlockModal.displayName = 'BlockModal';

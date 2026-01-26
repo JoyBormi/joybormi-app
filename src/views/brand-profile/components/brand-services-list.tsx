@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import React from 'react';
 import { Pressable, View } from 'react-native';
 
-import { NoData } from '@/components/shared/status-screens';
+import { NoData } from '@/components/status-screens';
 import { Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 

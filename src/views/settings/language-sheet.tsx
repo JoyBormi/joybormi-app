@@ -2,9 +2,8 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
+import { DetachedSheet } from '@/components/bottom-sheet';
 import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
 import { storage } from '@/lib/mmkv';
@@ -40,7 +39,6 @@ const LANGUAGE_OPTIONS: {
 
 export const LanguageSheet = forwardRef<BottomSheetModal, LanguageSheetProps>(
   ({ onClose }, ref) => {
-    const insets = useSafeAreaInsets();
     const { i18n } = useTranslation();
     const currentLanguage = i18n.language;
 
@@ -73,20 +71,7 @@ export const LanguageSheet = forwardRef<BottomSheetModal, LanguageSheetProps>(
     };
 
     return (
-      <CustomBottomSheet
-        ref={ref}
-        index={0}
-        detached
-        enablePanDownToClose
-        enableDismissOnClose
-        bottomInset={insets.bottom}
-        style={{
-          paddingHorizontal: 12,
-        }}
-        bottomSheetViewConfig={{
-          className: 'rounded-b-3xl',
-        }}
-      >
+      <DetachedSheet ref={ref}>
         <View className="gap-5 pb-6">
           <View>
             <Text className="text-2xl text-foreground font-heading tracking-tight">
@@ -104,7 +89,6 @@ export const LanguageSheet = forwardRef<BottomSheetModal, LanguageSheetProps>(
               return (
                 <Pressable
                   key={language.code}
-                  activeOpacity={0.7}
                   onPress={() => handleSelect(language.code)}
                   className={cn(
                     'flex-row items-center justify-between p-4 rounded-2xl border-2 transition-all',
@@ -130,7 +114,7 @@ export const LanguageSheet = forwardRef<BottomSheetModal, LanguageSheetProps>(
             })}
           </View>
         </View>
-      </CustomBottomSheet>
+      </DetachedSheet>
     );
   },
 );

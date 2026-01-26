@@ -4,7 +4,7 @@ import React, { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BlockedSheet, BlockedSheetRef } from '@/components/shared/block-sheet';
+import { BlockedSheet, BlockedSheetRef } from '@/components/modals/block-sheet';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';

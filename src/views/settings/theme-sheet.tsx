@@ -1,9 +1,8 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
+import { DetachedSheet } from '@/components/bottom-sheet';
 import { useColorScheme } from '@/hooks/common';
 import { Feedback } from '@/lib/haptics';
 import Icons from '@/lib/icons';
@@ -43,7 +42,6 @@ const THEME_OPTIONS: {
 
 export const ThemeSheet = forwardRef<BottomSheetModal, ThemeSheetProps>(
   ({ onClose }, ref) => {
-    const insets = useSafeAreaInsets();
     const { isDarkColorScheme, changeTheme } = useColorScheme();
 
     const handleSelect = (theme: ThemeMode) => {
@@ -55,20 +53,7 @@ export const ThemeSheet = forwardRef<BottomSheetModal, ThemeSheetProps>(
     };
 
     return (
-      <CustomBottomSheet
-        ref={ref}
-        index={0}
-        detached
-        enablePanDownToClose
-        enableDismissOnClose
-        bottomInset={insets.bottom}
-        style={{
-          paddingHorizontal: 12,
-        }}
-        bottomSheetViewConfig={{
-          className: 'rounded-b-3xl',
-        }}
-      >
+      <DetachedSheet ref={ref}>
         <View className="gap-5 pb-6">
           <View>
             <Text className="text-2xl text-foreground font-heading tracking-tight">
@@ -88,7 +73,6 @@ export const ThemeSheet = forwardRef<BottomSheetModal, ThemeSheetProps>(
               return (
                 <Pressable
                   key={theme.mode}
-                  activeOpacity={0.7}
                   onPress={() => handleSelect(theme.mode)}
                   className={cn(
                     'flex-row items-center gap-4 p-4 rounded-2xl border-2 transition-all',
@@ -128,7 +112,7 @@ export const ThemeSheet = forwardRef<BottomSheetModal, ThemeSheetProps>(
             })}
           </View>
         </View>
-      </CustomBottomSheet>
+      </DetachedSheet>
     );
   },
 );

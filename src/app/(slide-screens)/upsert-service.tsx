@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
-import { Loading, NotFoundScreen } from '@/components/shared/status-screens';
+import { Loading, NotFoundScreen } from '@/components/status-screens';
 import { Button, Text, Textarea } from '@/components/ui';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';

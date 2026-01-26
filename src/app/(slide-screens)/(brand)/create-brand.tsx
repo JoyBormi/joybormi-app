@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BlockedSheet, BlockedSheetRef } from '@/components/shared/block-sheet';
+import { BlockedSheet, BlockedSheetRef } from '@/components/modals/block-sheet';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Button, Text } from '@/components/ui';
 import { useBecomeCreator } from '@/hooks/user/use-become-creator';

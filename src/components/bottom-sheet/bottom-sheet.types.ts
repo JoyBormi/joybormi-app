@@ -57,10 +57,9 @@ export interface DetachedSheetProps extends Omit<
 }
 
 export const DEFAULT_SHEET_CONFIG: Partial<BottomSheetModalProps> = {
-  index: -1,
   enablePanDownToClose: true,
   enableContentPanningGesture: true,
   handleIndicatorStyle: {
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
 };

@@ -9,7 +9,7 @@ import {
 import {
   ManageScheduleSheet,
   UpsertServiceSheet,
-} from '@/components/shared/brand-worker';
+} from '@/components/brand-worker';
 import { useUserStore } from '@/stores';
 import {
   AboutSectionDisplay,
@@ -29,7 +29,7 @@ import {
   type WorkerProfileFormData,
 } from '@/views/worker-profile/utils/helpers';
 
-import type { IService } from '@/types/worker.type';
+import type { IService } from '@/types/service.type';
 
 /**
  * Worker Profile View Screen

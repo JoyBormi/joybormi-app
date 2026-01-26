@@ -13,12 +13,12 @@ import {
   UploadBannerSheet,
   UploadPhotosSheet,
   UploadProfileImageSheet,
-} from '@/components/shared/brand-worker';
+} from '@/components/brand-worker';
 import {
   BlockedScreen,
   NotFoundScreen,
   SuspendedScreen,
-} from '@/components/shared/status-screens';
+} from '@/components/status-screens';
 import { useGetBrand, useUpdateBrand } from '@/hooks/brand';
 import { useUploadFile } from '@/hooks/common';
 import { useGetServices } from '@/hooks/service';

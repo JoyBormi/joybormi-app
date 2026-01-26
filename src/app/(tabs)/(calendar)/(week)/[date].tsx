@@ -13,7 +13,7 @@ import {
 import { UpdateSources } from 'react-native-calendars/src/expandableCalendar/commons';
 import { PackedEvent } from 'react-native-calendars/src/timeline/EventBlock';
 
-import { ColorPickerModal } from '@/components/modals';
+import { ColorPickerModal } from '@/components/modals/color-picker-modal';
 import { useColorScheme } from '@/hooks/common';
 import {
   getTimelineTheme,

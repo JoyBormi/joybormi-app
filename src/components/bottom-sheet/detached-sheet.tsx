@@ -32,6 +32,7 @@ const DetachedSheet = forwardRef<BottomSheetModal, DetachedSheetProps>(
           <BottomSheetBackdrop
             {...backdropProps}
             appearsOnIndex={0}
+            opacity={0.3}
             disappearsOnIndex={-1}
             enableTouchThrough={false}
             {...backdropConfig}
@@ -40,13 +41,17 @@ const DetachedSheet = forwardRef<BottomSheetModal, DetachedSheetProps>(
         backgroundStyle={{
           backgroundColor: 'transparent',
         }}
+        style={{
+          paddingHorizontal: 16,
+          ...config.style,
+        }}
         bottomInset={insets.bottom}
-        handleComponent={() => null}
+        handleComponent={null}
       >
         <BottomSheetView
           {...bottomSheetViewConfig}
           className={cn(
-            'bg-card backdrop-blur-xl px-6 flex-1',
+            'bg-card backdrop-blur-xl px-6 flex-1 rounded-2xl',
             bottomSheetViewConfig?.className,
           )}
         >

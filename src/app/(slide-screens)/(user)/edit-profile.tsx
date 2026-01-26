@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { BlockedSheet, BlockedSheetRef } from '@/components/modals/block-sheet';
 import { KeyboardAvoid } from '@/components/shared';
-import { BlockedSheet, BlockedSheetRef } from '@/components/shared/block-sheet';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
 import { Button, Input, PhoneInput, Text } from '@/components/ui';

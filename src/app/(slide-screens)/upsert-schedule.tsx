@@ -6,8 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { KeyboardAvoid } from '@/components/shared';
 import { Header } from '@/components/shared/header';
-import { Loading } from '@/components/shared/status-screens';
 import { TimePickerSheet } from '@/components/shared/time-picker.sheet';
+import { Loading } from '@/components/status-screens';
 import { Button, PressableBounce, Text } from '@/components/ui';
 import { useLocaleData } from '@/hooks/common/use-locale-data';
 import {
