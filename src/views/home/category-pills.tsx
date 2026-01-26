@@ -2,12 +2,11 @@ import { useRouter } from 'expo-router';
 import { MotiView } from 'moti';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
-import { PressableBounce } from '@/components/ui';
+import { PressableBounce, Text } from '@/components/ui';
 import { Major } from '@/constants/enum';
-import { Feedback } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
 
 const emojiMap = ['💇‍♂️', '🧖‍♀️', '🦷', '🏋️', '🧘‍♂️', '🎨', '👨‍⚕️', '🧪'];
@@ -62,15 +61,11 @@ export function CategoryPills({ className }: Props) {
         transition={{ delay: 750 }}
       >
         <PressableBounce
-          onPress={() => {
-            Feedback.medium();
-            router.push('/(category)/all');
-          }}
-          className="py-2.5 mt-4 items-center justify-center bg-card/50 rounded-xl border border-border active:opacity-80"
+          haptic
+          onPress={() => router.push('/(category)/all')}
+          className="py-2.5 mt-4 items-center justify-center bg-card/50 rounded-2xl border border-border active:opacity-80"
         >
-          <Text className="font-medium text-lg text-foreground">
-            {t('categories.seeAll')}
-          </Text>
+          <Text>{t('categories.seeAll')}</Text>
         </PressableBounce>
       </MotiView>
     </View>

@@ -6,95 +6,95 @@ import { TextClassContext } from '@/components/ui/text';
 import { Feedback } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
 
-const buttonVariants = cva(
-  'group flex items-center justify-center rounded-md web:ring-offset-background web:transition-colors web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
-  {
-    variants: {
-      variant: {
-        default: 'bg-primary web:hover:bg-primary/90 active:bg-primary/80',
-        destructive:
-          'bg-destructive web:hover:bg-destructive/90 active:bg-destructive/80',
-        outline:
-          'border border-border bg-background web:hover:bg-accent/40 web:hover:text-accent-foreground active:bg-accent/30',
-        secondary:
-          'bg-secondary web:hover:bg-secondary/80 active:bg-secondary/70',
-        ghost:
-          'web:hover:bg-accent/40 web:hover:text-accent-foreground active:bg-accent/30',
-        link: 'web:underline-offset-4 web:hover:underline web:focus:underline',
-      },
-      size: {
-        default: 'h-9 px-4 py-2 native:h-12 native:px-5 native:py-3',
-        sm: 'h-8 rounded-md px-3',
-        lg: 'h-11 rounded-md px-8 native:h-14',
-        icon: 'h-10 w-10',
-        action: 'h-14 rounded-2xl',
-      },
+const buttonVariants = cva('flex items-center justify-center rounded-xl', {
+  variants: {
+    variant: {
+      default: 'bg-primary active:opacity-90 shadow-sm',
+      destructive: 'bg-destructive active:opacity-90 shadow-sm',
+      outline: 'border-2 border-border bg-background active:bg-accent/20',
+      secondary: 'bg-secondary active:opacity-85 shadow-sm',
+      ghost: 'active:bg-accent/25',
+      link: 'active:opacity-70',
     },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
+    size: {
+      default: 'h-12 px-6',
+      sm: 'h-10 px-4',
+      lg: 'h-14 px-8',
+      xl: 'h-16 px-10',
+      icon: 'h-12 w-12',
+      iconSm: 'h-10 w-10',
+      iconLg: 'h-14 w-14',
+      full: 'h-14 px-8 w-full',
     },
   },
-);
+  defaultVariants: {
+    variant: 'default',
+    size: 'default',
+  },
+});
 
-const buttonTextVariants = cva(
-  'web:whitespace-nowrap text-sm native:text-base font-medium text-foreground web:transition-colors',
-  {
-    variants: {
-      variant: {
-        default: 'text-primary-foreground',
-        destructive: 'text-destructive-foreground',
-        outline: 'text-foreground group-hover:text-accent-foreground',
-        secondary: 'text-secondary-foreground',
-        ghost: 'text-foreground group-hover:text-accent-foreground',
-        link: 'text-primary group-hover:underline',
-      },
-      size: {
-        default: '',
-        sm: '',
-        lg: 'native:text-lg',
-        icon: '',
-        action: 'native:text-lg',
-      },
+const buttonTextVariants = cva('font-montserrat-medium text-foreground', {
+  variants: {
+    variant: {
+      default: 'text-primary-foreground',
+      destructive: 'text-destructive-foreground',
+      outline: 'text-foreground',
+      secondary: 'text-secondary-foreground',
+      ghost: 'text-foreground',
+      link: 'text-primary underline',
     },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
+    size: {
+      sm: 'text-base',
+      default: 'text-sm',
+      lg: 'text-lg',
+      xl: 'text-xl',
+      full: 'text-2xl',
+      icon: '',
+      iconSm: '',
+      iconLg: '',
     },
   },
-);
+  defaultVariants: {
+    variant: 'default',
+    size: 'default',
+  },
+});
 
 type ButtonProps = React.ComponentPropsWithoutRef<typeof Pressable> &
-  VariantProps<typeof buttonVariants>;
+  VariantProps<typeof buttonVariants> & {
+    haptic?: boolean;
+  };
 
 const Button = React.forwardRef<
   React.ComponentRef<typeof Pressable>,
   ButtonProps
->(({ className, variant, size, onPress, ...props }, ref) => {
-  return (
-    <TextClassContext.Provider
-      value={buttonTextVariants({
-        variant,
-        size,
-        className: 'web:pointer-events-none',
-      })}
-    >
-      <Pressable
-        className={cn(
-          props.disabled && 'opacity-50 web:pointer-events-none',
-          buttonVariants({ variant, size, className }),
-        )}
-        ref={ref}
-        role="button"
-        onPress={(e) => {
-          Feedback.soft();
-          onPress?.(e);
-        }}
-        {...props}
-      />
-    </TextClassContext.Provider>
-  );
-});
+>(
+  (
+    { className, variant, size, onPress, disabled, haptic = false, ...props },
+    ref,
+  ) => {
+    return (
+      <TextClassContext.Provider value={buttonTextVariants({ variant, size })}>
+        <Pressable
+          className={cn(
+            disabled && 'opacity-40',
+            buttonVariants({ variant, size, className }),
+          )}
+          ref={ref}
+          role="button"
+          disabled={disabled}
+          onPress={(e) => {
+            if (!disabled) {
+              haptic && Feedback.light();
+              onPress?.(e);
+            }
+          }}
+          {...props}
+        />
+      </TextClassContext.Provider>
+    );
+  },
+);
 Button.displayName = 'Button';
 
 export { Button, buttonTextVariants, buttonVariants };

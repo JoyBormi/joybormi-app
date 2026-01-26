@@ -8,6 +8,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { Feedback } from '@/lib/haptics';
+
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const easing = Easing.inOut(Easing.ease);
 
@@ -15,12 +17,14 @@ interface PressableBounceProps extends PressableProps {
   children: React.ReactNode;
   bounceScale?: number;
   duration?: number;
+  haptic?: boolean;
 }
 
 const PressableBounce: React.FC<PressableBounceProps> = ({
   children,
   bounceScale = 0.95,
   duration = 150,
+  haptic = false,
   ...props
 }) => {
   const scale = useSharedValue(1);
@@ -36,6 +40,7 @@ const PressableBounce: React.FC<PressableBounceProps> = ({
       duration,
       easing,
     });
+    haptic && Feedback.soft();
     props.onPressIn && props.onPressIn(event);
   };
 

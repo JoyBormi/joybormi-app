@@ -103,7 +103,7 @@ export function SearchBar({ className }: Props) {
             onChangeText={setSearch}
             onSubmitEditing={handleSearch}
             onBlur={() => setSearch('')}
-            className="border-0 h-auto bg-transparent focus:bg-transparent font-body"
+            className="border-0 h-14 bg-transparent focus:bg-transparent font-body"
             returnKeyType="search"
             autoCapitalize="none"
             autoCorrect={false}

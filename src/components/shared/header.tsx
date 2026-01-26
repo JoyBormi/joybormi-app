@@ -12,19 +12,21 @@ export function Header({
   subtitle = 'Login to start using your app',
   onGoBack,
   className,
+  animate = true,
 }: {
   title?: string;
   subtitle?: string;
   onGoBack?: () => void;
   className?: string;
+  animate?: boolean;
 }) {
   const navigation = useNavigation();
 
   return (
     <AnimatePresence>
       <MotiView
-        from={{ opacity: 0, translateY: 10 }}
-        animate={{ opacity: 1, translateY: 0 }}
+        from={animate ? { opacity: 0, translateY: 10 } : undefined}
+        animate={animate ? { opacity: 1, translateY: 0 } : undefined}
         transition={{ type: 'timing', duration: 900 }}
         className={cn('mb-5 pt-20', className)}
       >
@@ -33,6 +35,7 @@ export function Header({
             onPress={() => {
               Feedback.soft();
               onGoBack?.();
+              navigation.goBack();
             }}
             className="p-2 w-fit aspect-square rounded-full !pl-0"
             variant="ghost"

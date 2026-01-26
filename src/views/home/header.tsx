@@ -4,7 +4,7 @@ import { MotiView } from 'moti';
 import React, { useEffect, useRef } from 'react';
 import { Image, Pressable, View } from 'react-native';
 
-import { Text } from '@/components/ui';
+import { Button, Text } from '@/components/ui';
 import Icons from '@/lib/icons';
 import { useUserStore } from '@/stores';
 
@@ -76,11 +76,9 @@ export function Header() {
             </View>
 
             <Link href="/(auth)/login" asChild>
-              <Pressable className="bg-primary px-10 py-2.5 rounded-full">
-                <Text className="font-caption text-primary-foreground">
-                  Login
-                </Text>
-              </Pressable>
+              <Button role="link" className="px-10 py-2.5 rounded-full" haptic>
+                <Text>Login</Text>
+              </Button>
             </Link>
           </>
         )}
