@@ -18,6 +18,7 @@ import {
   ChevronRight,
   ChevronUp,
   Clock,
+  CloudDownload,
   Coffee,
   Copy,
   CreditCard,
@@ -37,11 +38,13 @@ import {
   Mail,
   MapPin,
   MessageSquare,
+  Megaphone,
   Moon,
   MoonStar,
   Notebook,
   Pencil,
   Phone,
+  PlayCircle,
   Plus,
   RefreshCcw,
   Scissors,
@@ -61,6 +64,7 @@ import {
   User,
   UserPlus,
   Users,
+  Volume2,
   X,
 } from 'lucide-react-native';
 
@@ -84,6 +88,7 @@ iconWithClassName(Upload);
 iconWithClassName(Plus);
 iconWithClassName(X);
 iconWithClassName(Clock);
+iconWithClassName(CloudDownload);
 iconWithClassName(MapPin);
 iconWithClassName(Ban);
 iconWithClassName(Pencil);
@@ -122,13 +127,16 @@ iconWithClassName(LogOut);
 iconWithClassName(ThumbsUp);
 iconWithClassName(Share2);
 iconWithClassName(Phone);
+iconWithClassName(PlayCircle);
 iconWithClassName(MessageSquare);
+iconWithClassName(Megaphone);
 iconWithClassName(Coffee);
 iconWithClassName(Trash2);
 iconWithClassName(Camera);
 iconWithClassName(Image);
 iconWithClassName(UserPlus);
 iconWithClassName(Copy);
+iconWithClassName(Volume2);
 
 const Icons = {
   AlertCircle,
@@ -144,6 +152,7 @@ const Icons = {
   ChevronRight,
   ChevronUp,
   Clock,
+  CloudDownload,
   Eye,
   EyeClosed,
   Home,
@@ -187,13 +196,16 @@ const Icons = {
   ThumbsUp,
   Share2,
   Phone,
+  PlayCircle,
   MessageSquare,
+  Megaphone,
   Coffee,
   Trash2,
   Camera,
   Image,
   UserPlus,
   Copy,
+  Volume2,
 } as const;
 
 export type TIcon = keyof typeof Icons;

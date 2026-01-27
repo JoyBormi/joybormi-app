@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { Pressable, Switch, Text, View } from 'react-native';
 
@@ -20,6 +21,7 @@ export const SettingsItem: React.FC<Props> = ({
   isLast,
   onToggle,
 }) => {
+  const router = useRouter();
   const Icon = item.icon;
 
   const content = (
@@ -104,6 +106,7 @@ export const SettingsItem: React.FC<Props> = ({
         activeOpacity={0.7}
         onPress={() => {
           Feedback.light();
+          router.push(item.href);
         }}
       >
         {content}
