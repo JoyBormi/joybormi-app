@@ -1,6 +1,6 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useMemo, useRef, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import {
@@ -19,16 +19,16 @@ import {
   NotFoundScreen,
   SuspendedScreen,
 } from '@/components/status-screens';
-import { useGetBrand, useUpdateBrand } from '@/hooks/brand';
-import { useUploadFile } from '@/hooks/common';
-import { useGetServices } from '@/hooks/service';
+import { useBrandProfile, useUpdateBrand } from '@/hooks/brand';
+import { useUploadFile, useUploadMultipleFiles } from '@/hooks/common';
 import { useUserStore } from '@/stores';
-import { BrandStatus } from '@/types/brand.type';
+import { BrandStatus, type IBrandPhoto } from '@/types/brand.type';
 import { EUserType } from '@/types/user.type';
-import { pickImage } from '@/utils/file-upload';
+import { type UploadedFile } from '@/utils/file-upload';
 import {
   BrandAbout,
   BrandCard,
+  BrandPhotosGrid,
   BrandQuickActions,
   BrandServicesList,
   BrandTeamList,
@@ -41,6 +41,9 @@ import {
   BrandServicesListSkeleton,
   BrandTeamListSkeleton,
 } from '@/views/brand-profile/skeletons';
+import { ScheduleDisplay } from '@/views/worker-profile/components';
+
+import type { IWorker } from '@/types/worker.type';
 
 /**
  * Brand Profile Management Page - For creators/workers to manage their brand
@@ -56,37 +59,43 @@ const BrandProfileScreen: React.FC = () => {
   const isCreator = appType === EUserType.CREATOR;
   const canEdit = isCreator;
 
-  // Fetch brand data
   const {
-    data: brand,
-    isLoading: isBrandLoading,
-    refetch: refetchBrand,
-  } = useGetBrand({
+    brandQuery,
+    servicesQuery,
+    teamQuery,
+    photosQuery,
+    scheduleQuery,
+    isLoading: isBrandProfileLoading,
+  } = useBrandProfile({
     userId: user?.id,
   });
 
-  // Fetch services
-  const {
-    data: services,
-    isLoading: isServicesLoading,
-    refetch: refetchServices,
-  } = useGetServices({
-    brandId: brand?.id,
-    ownerId: user?.id,
-  });
+  const { data: brand, refetch: refetchBrand } = brandQuery;
+  const { data: services, refetch: refetchServices } = servicesQuery;
+  const { data: team, refetch: refetchTeam } = teamQuery;
+  const { data: photos, refetch: refetchPhotos } = photosQuery;
+  const { data: schedule, refetch: refetchSchedule } = scheduleQuery;
 
   // Mutations
   const updateBrandMutation = useUpdateBrand(brand?.id || '');
   const uploadFileMutation = useUploadFile();
+  const uploadMultipleFilesMutation = useUploadMultipleFiles();
 
   // Local state for UI
-  // TODO: Replace with real types when API is connected
-  const [workers] = useState<unknown[]>([]);
-  const [photos, setPhotos] = useState<unknown[]>([]);
+  const [localPhotos, setLocalPhotos] = useState<IBrandPhoto[]>([]);
+  const mergedPhotos = useMemo(
+    () => [...localPhotos, ...(photos ?? [])],
+    [localPhotos, photos],
+  );
+  const workers = team ?? [];
+  const workingDays = schedule?.workingDays ?? [];
 
   const refetch = () => {
     refetchBrand();
     refetchServices();
+    refetchTeam();
+    refetchPhotos();
+    refetchSchedule();
   };
 
   // Bottom sheet refs
@@ -104,13 +113,20 @@ const BrandProfileScreen: React.FC = () => {
     uploadBannerSheetRef.current?.present();
   };
 
+  const buildUploadedFile = (uri: string, label: string): UploadedFile => {
+    const name = uri.split('/').pop() || `${label}-${Date.now()}.jpg`;
+    return {
+      uri,
+      name,
+      type: 'image/jpeg',
+    };
+  };
+
   const handleUploadBanner = async (uri: string) => {
     if (!brand?.id) return;
 
     try {
-      const file = await pickImage({ allowsEditing: true, aspect: [16, 9] });
-      if (!file) return;
-
+      const file = buildUploadedFile(uri, 'brand-banner');
       const { url } = await uploadFileMutation.mutateAsync({ file });
       await updateBrandMutation.mutateAsync({ bannerImage: url });
     } catch (error) {
@@ -126,9 +142,7 @@ const BrandProfileScreen: React.FC = () => {
     if (!brand?.id) return;
 
     try {
-      const file = await pickImage({ allowsEditing: true, aspect: [1, 1] });
-      if (!file) return;
-
+      const file = buildUploadedFile(uri, 'brand-avatar');
       const { url } = await uploadFileMutation.mutateAsync({ file });
       await updateBrandMutation.mutateAsync({ profileImage: url });
     } catch (error) {
@@ -140,7 +154,7 @@ const BrandProfileScreen: React.FC = () => {
     inviteTeamSheetRef.current?.present();
   };
 
-  const handleWorkerPress = (worker: (typeof workers)[0]) => {
+  const handleWorkerPress = (worker: IWorker) => {
     router.push(`/(dynamic-brand)/team/worker/${worker.id}`);
   };
 
@@ -152,29 +166,34 @@ const BrandProfileScreen: React.FC = () => {
     uploadPhotosSheetRef.current?.present();
   };
 
-  const handleUploadPhotos = (
+  const handleUploadPhotos = async (
     newPhotos: { uri: string; category: string }[],
   ) => {
-    const photosToAdd = newPhotos.map((photo, index) => ({
-      id: `photo-${Date.now()}-${index}`,
-      url: photo.uri,
-      caption: '',
-      category: photo.category as
-        | 'interior'
-        | 'exterior'
-        | 'service'
-        | 'team'
-        | 'other',
-      uploadedAt: new Date().toISOString(),
-    }));
-    setPhotos((prev) => [...prev, ...photosToAdd]);
-    console.warn('Photos added:', photosToAdd);
-    // TODO: API call to upload photos
+    if (!brand?.id || newPhotos.length === 0) return;
+
+    try {
+      const files = newPhotos.map((photo, index) =>
+        buildUploadedFile(photo.uri, `brand-photo-${index}`),
+      );
+      const { urls } = await uploadMultipleFilesMutation.mutateAsync({
+        files,
+      });
+      const photosToAdd: IBrandPhoto[] = urls.map((url, index) => ({
+        id: `photo-${Date.now()}-${index}`,
+        url,
+        category: (newPhotos[index]?.category ??
+          'other') as IBrandPhoto['category'],
+        uploadedAt: new Date().toISOString(),
+      }));
+      setLocalPhotos((prev) => [...photosToAdd, ...prev]);
+    } catch (error) {
+      console.error('Failed to upload photos:', error);
+    }
   };
 
   // Early return if no brand data
 
-  if (isBrandLoading) {
+  if (isBrandProfileLoading) {
     return (
       <SafeAreaView className="main-area" edges={['top']}>
         {/* Section Skeletons */}
@@ -186,7 +205,7 @@ const BrandProfileScreen: React.FC = () => {
       </SafeAreaView>
     );
   }
-  if (!brand && !isBrandLoading) return <NotFoundScreen />;
+  if (!brand && !isBrandProfileLoading) return <NotFoundScreen />;
 
   return (
     <Fragment>
@@ -205,7 +224,10 @@ const BrandProfileScreen: React.FC = () => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
             refreshControl={
-              <RefreshControl refreshing={isBrandLoading} onRefresh={refetch} />
+              <RefreshControl
+                refreshing={isBrandProfileLoading}
+                onRefresh={refetch}
+              />
             }
           >
             {/* Brand Profile Card */}
@@ -213,7 +235,7 @@ const BrandProfileScreen: React.FC = () => {
               brand={brand}
               servicesCount={services?.length || 0}
               workersCount={workers.length}
-              photosCount={photos.length}
+              photosCount={mergedPhotos.length}
               canEdit={canEdit}
               onEditAvatar={handleEditProfileImage}
               onEditBanner={handleEditBanner}
@@ -251,6 +273,15 @@ const BrandProfileScreen: React.FC = () => {
               canEdit={canEdit}
             />
 
+            <ScheduleDisplay
+              workingDays={workingDays}
+              onEditSchedule={() =>
+                router.push(
+                  `/(slide-screens)/upsert-schedule?brandId=${brand.id}`,
+                )
+              }
+            />
+
             {/* Team Section */}
             <BrandTeamList
               workers={workers}
@@ -260,12 +291,12 @@ const BrandProfileScreen: React.FC = () => {
             />
 
             {/* Photos Section */}
-            {/* <BrandPhotosGrid
-              photos={photos}
+            <BrandPhotosGrid
+              photos={mergedPhotos}
               canEdit={canEdit}
               onAddPhoto={handleAddPhoto}
               onPhotoPress={handlePhotoPress}
-            /> */}
+            />
 
             {/* Reviews Section */}
             {/* <BrandReviewsList reviews={reviews} maxDisplay={2} /> */}

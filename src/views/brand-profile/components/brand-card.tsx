@@ -44,12 +44,14 @@ export const BrandCard: React.FC<BrandCardProps> = ({
           className="w-full h-full object-contain"
         />
 
-        <Pressable
-          onPress={onEditBanner}
-          className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-primary/60 items-center justify-center border border-card shadow-lg"
-        >
-          <Icons.Pencil size={16} className="text-primary-foreground" />
-        </Pressable>
+        {canEdit && (
+          <Pressable
+            onPress={onEditBanner}
+            className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-primary/60 items-center justify-center border border-card shadow-lg"
+          >
+            <Icons.Pencil size={16} className="text-primary-foreground" />
+          </Pressable>
+        )}
       </View>
 
       <View className="main-area">

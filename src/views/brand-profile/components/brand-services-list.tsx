@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { MotiView } from 'moti';
 import React from 'react';
 import { Pressable, View } from 'react-native';
 
@@ -28,11 +29,17 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
       <NoData
         title="No Services"
         message="Please add a service"
-        action={{
-          label: 'Add Service',
-          onPress: () =>
-            router.push(`/(slide-screens)/upsert-service?brandId=${brandId}`),
-        }}
+        action={
+          canEdit
+            ? {
+                label: 'Add Service',
+                onPress: () =>
+                  router.push(
+                    `/(slide-screens)/upsert-service?brandId=${brandId}`,
+                  ),
+              }
+            : undefined
+        }
       />
     );
   return (
@@ -52,34 +59,40 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
         )}
       </View>
       <View className="gap-3">
-        {services.map((service) => (
-          <Pressable
+        {services.map((service, index) => (
+          <MotiView
             key={service.id}
-            onPress={() =>
-              router.push(
-                `/(slide-screens)/upsert-service?serviceId=${service.id}&brandId=${brandId}`,
-              )
-            }
-            className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50 active:scale-[0.98]"
+            from={{ opacity: 0, translateY: 6 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ type: 'timing', duration: 250, delay: index * 60 }}
           >
-            <View className="flex-row items-start justify-between mb-3">
-              <Text className="font-subtitle text-foreground flex-1">
-                {service.name}
+            <Pressable
+              onPress={() =>
+                router.push(
+                  `/(slide-screens)/upsert-service?serviceId=${service.id}&brandId=${brandId}`,
+                )
+              }
+              className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50 active:scale-[0.98]"
+            >
+              <View className="flex-row items-start justify-between mb-3">
+                <Text className="font-subtitle text-foreground flex-1">
+                  {service.name}
+                </Text>
+                <Text className="font-subtitle text-primary">
+                  ${service.price}
+                </Text>
+              </View>
+              <Text className="font-body text-muted-foreground mb-3">
+                {service.description}
               </Text>
-              <Text className="font-subtitle text-primary">
-                ${service.price}
-              </Text>
-            </View>
-            <Text className="font-body text-muted-foreground mb-3">
-              {service.description}
-            </Text>
-            <View className="flex-row items-center gap-2">
-              <Icons.Clock size={16} className="text-muted-foreground" />
-              <Text className="font-caption text-muted-foreground">
-                {service.durationMins} minutes
-              </Text>
-            </View>
-          </Pressable>
+              <View className="flex-row items-center gap-2">
+                <Icons.Clock size={16} className="text-muted-foreground" />
+                <Text className="font-caption text-muted-foreground">
+                  {service.durationMins} minutes
+                </Text>
+              </View>
+            </Pressable>
+          </MotiView>
         ))}
       </View>
     </View>

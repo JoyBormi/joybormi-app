@@ -12,8 +12,7 @@ import { Button, Text } from '@/components/ui';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import { ServiceFormData, serviceSchema } from '@/hooks/service';
-
-import type { IService } from '@/types/service.type';
+import { ServiceOwnerType, type IService } from '@/types/service.type';
 
 interface UpsertServiceSheetProps {
   service?: IService | null;
@@ -39,14 +38,16 @@ export const UpsertServiceSheet = forwardRef<
       ? {
           name: service.name,
           description: service.description,
-          durationMins: service.durationMins,
-          price: service.price,
+          durationMins: String(service.durationMins),
+          price: service.price.toString(),
+          ownerType: service.ownerType,
         }
       : {
           name: '',
           description: '',
-          durationMins: 60,
+          durationMins: '60',
           price: '',
+          ownerType: ServiceOwnerType.WORKER,
         },
   });
 
@@ -55,15 +56,17 @@ export const UpsertServiceSheet = forwardRef<
       form.reset({
         name: service.name,
         description: service.description,
-        durationMins: service.durationMins,
-        price: service.price,
+        durationMins: String(service.durationMins),
+        price: service.price.toString(),
+        ownerType: service.ownerType,
       });
     } else {
       form.reset({
         name: '',
         description: '',
-        durationMins: 60,
+        durationMins: '60',
         price: '',
+        ownerType: ServiceOwnerType.WORKER,
       });
     }
   }, [service, form]);
@@ -153,11 +156,8 @@ export const UpsertServiceSheet = forwardRef<
             <NumberInput
               placeholder="60"
               maxDecimals={0}
-              value={field.value?.toString() || ''}
-              onNumberChange={(text) => {
-                const num = parseInt(text, 10);
-                field.onChange(isNaN(num) ? 0 : num);
-              }}
+              value={(field.value as string) || ''}
+              onNumberChange={(text) => field.onChange(text)}
               onBlur={field.onBlur}
             />
           )}

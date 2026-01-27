@@ -61,6 +61,7 @@ export const queryKeys = {
     brand: ['creator', 'brand'],
     team: ['creator', 'team'],
     services: ['creator', 'services'],
+    photos: ['creator', 'photos'],
     analytics: ['creator', 'analytics'],
     revenue: ['creator', 'revenue'],
   },

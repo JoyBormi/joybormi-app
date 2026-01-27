@@ -2,9 +2,10 @@ import React from 'react';
 import { Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
+import { NoData } from '@/components/status-screens';
 import { Text } from '@/components/ui';
 
-import type { IService } from '@/types/worker.type';
+import type { IService } from '@/types/service.type';
 
 interface ServicesListProps {
   services: IService[];
@@ -21,6 +22,19 @@ export const ServicesList: React.FC<ServicesListProps> = ({
   onAddService,
   onServicePress,
 }) => {
+  if (services.length === 0) {
+    return (
+      <NoData
+        title="No Services"
+        message="Create your first service to start accepting bookings."
+        action={{
+          label: 'Add Service',
+          onPress: onAddService,
+        }}
+      />
+    );
+  }
+
   return (
     <View className="px-6 mb-8">
       <View className="flex-row items-center justify-between mb-4">
@@ -43,7 +57,7 @@ export const ServicesList: React.FC<ServicesListProps> = ({
                 {service.name}
               </Text>
               <Text className="font-subtitle text-primary">
-                {service.price}
+                ${service.price}
               </Text>
             </View>
             <Text className="font-body text-muted-foreground mb-3">
