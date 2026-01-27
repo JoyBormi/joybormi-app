@@ -64,7 +64,7 @@ const BrandProfileScreen: React.FC = () => {
     data: brand,
     refetch: refetchBrand,
     isLoading: isBrandProfileLoading,
-  } = useGetBrand(user?.id);
+  } = useGetBrand(user?.id, appType);
   const { data: services, refetch: refetchServices } = useGetServices({
     brandId: brand?.id,
   });

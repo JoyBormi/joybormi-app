@@ -24,7 +24,7 @@ const Textarea = React.forwardRef<
       <TextInput
         ref={ref}
         className={cn(
-          'h-fit min-h-[100px] rounded-md border border-input focus:border-border bg-muted/50 focus:bg-muted/70 px-3  font-body leading-[1.25] text-foreground placeholder:text-muted-foreground w',
+          'h-fit min-h-[100px] rounded-md border border-input focus:border-border bg-muted/50 focus:bg-muted/70 px-3  font-body leading-[1.25] text-foreground placeholder:text-muted-foreground',
           props.editable === false && 'opacity-50',
           className,
         )}

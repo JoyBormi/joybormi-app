@@ -140,7 +140,7 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
       from={{ opacity: 0, translateY: 20 }}
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ delay: index * 100 }}
-      className="mb-6 shadow-sm"
+      className="mb-6"
     >
       <Animated.View
         style={[

@@ -1,17 +1,15 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useEffect } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { DetachedSheet } from '@/components/bottom-sheet';
 import Icons from '@/components/icons';
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { useUserLocation } from '@/hooks/common/use-location';
 import { usePreferencesStore } from '@/stores/use-preferences';
 
 const LOCATIONS = ['Tashkent', 'Bukhara', 'Samarkand'];
 
 export const LocationPickerSheet = forwardRef<BottomSheetModal>((_, ref) => {
-  const insets = useSafeAreaInsets();
   const { location: autoLocation } = useUserLocation();
   const { location, setLocation } = usePreferencesStore();
 
@@ -22,27 +20,18 @@ export const LocationPickerSheet = forwardRef<BottomSheetModal>((_, ref) => {
     }
   }, [autoLocation, setLocation]);
   return (
-    <CustomBottomSheet
+    <DetachedSheet
       ref={ref}
-      index={0}
-      detached
-      scrollEnabled={false}
-      bottomInset={insets.bottom}
       enablePanDownToClose={!location}
       enableDismissOnClose={!location}
       enableContentPanningGesture={!location}
-      style={{
-        paddingHorizontal: 12,
-      }}
-      bottomSheetViewConfig={{
-        className: 'rounded-b-3xl',
-      }}
+      grabbable={false}
       backdropConfig={{
         pressBehavior: 'none',
         appearsOnIndex: 1,
       }}
     >
-      <View className="px-5 pb-6 gap-5">
+      <View className="py-6 gap-5">
         <View className="items-center gap-2">
           <View className="w-12 h-12 rounded-full bg-primary/15 items-center justify-center">
             <Icons.MapPin className="w-6 h-6 text-primary" />
@@ -85,7 +74,7 @@ export const LocationPickerSheet = forwardRef<BottomSheetModal>((_, ref) => {
           })}
         </View>
       </View>
-    </CustomBottomSheet>
+    </DetachedSheet>
   );
 });
 

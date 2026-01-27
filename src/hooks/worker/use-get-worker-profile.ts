@@ -5,7 +5,7 @@ import { queryKeys } from '@/lib/tanstack-query';
 import { IWorker } from '@/types/worker.type';
 
 const getWorkerProfile = async (userId: string): Promise<IWorker> =>
-  await agent.get(`/worker/${userId}`);
+  await agent.get(`/workers/me`);
 
 export const useGetWorkerProfile = ({ userId }: { userId?: string }) =>
   useQuery({
