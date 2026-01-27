@@ -17,10 +17,19 @@ import {
 import {
   BlockedScreen,
   NotFoundScreen,
+  PendingScreen,
   SuspendedScreen,
 } from '@/components/status-screens';
-import { useBrandProfile, useUpdateBrand } from '@/hooks/brand';
+import { Skeleton } from '@/components/ui';
+import {
+  useGetBrand,
+  useGetBrandPhotos,
+  useGetBrandTeam,
+  useUpdateBrand,
+} from '@/hooks/brand';
 import { useUploadFile, useUploadMultipleFiles } from '@/hooks/common';
+import { useGetSchedule } from '@/hooks/schedule';
+import { useGetServices } from '@/hooks/service';
 import { useUserStore } from '@/stores';
 import { BrandStatus, type IBrandPhoto } from '@/types/brand.type';
 import { EUserType } from '@/types/user.type';
@@ -33,14 +42,6 @@ import {
   BrandServicesList,
   BrandTeamList,
 } from '@/views/brand-profile/components';
-import { BrandProfilePendingScreen } from '@/views/brand-profile/in-pending';
-import {
-  BrandAboutSkeleton,
-  BrandCardSkeleton,
-  BrandQuickActionsSkeleton,
-  BrandServicesListSkeleton,
-  BrandTeamListSkeleton,
-} from '@/views/brand-profile/skeletons';
 import { ScheduleDisplay } from '@/views/worker-profile/components';
 
 import type { IWorker } from '@/types/worker.type';
@@ -60,21 +61,22 @@ const BrandProfileScreen: React.FC = () => {
   const canEdit = isCreator;
 
   const {
-    brandQuery,
-    servicesQuery,
-    teamQuery,
-    photosQuery,
-    scheduleQuery,
+    data: brand,
+    refetch: refetchBrand,
     isLoading: isBrandProfileLoading,
-  } = useBrandProfile({
-    userId: user?.id,
+  } = useGetBrand(user?.id);
+  const { data: services, refetch: refetchServices } = useGetServices({
+    brandId: brand?.id,
   });
-
-  const { data: brand, refetch: refetchBrand } = brandQuery;
-  const { data: services, refetch: refetchServices } = servicesQuery;
-  const { data: team, refetch: refetchTeam } = teamQuery;
-  const { data: photos, refetch: refetchPhotos } = photosQuery;
-  const { data: schedule, refetch: refetchSchedule } = scheduleQuery;
+  const { data: team, refetch: refetchTeam } = useGetBrandTeam({
+    brandId: brand?.id,
+  });
+  const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos({
+    brandId: brand?.id,
+  });
+  const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
+    brandId: brand?.id,
+  });
 
   // Mutations
   const updateBrandMutation = useUpdateBrand(brand?.id || '');
@@ -197,20 +199,16 @@ const BrandProfileScreen: React.FC = () => {
     return (
       <SafeAreaView className="main-area" edges={['top']}>
         {/* Section Skeletons */}
-        <BrandCardSkeleton />
-        <BrandQuickActionsSkeleton />
-        <BrandAboutSkeleton />
-        <BrandServicesListSkeleton />
-        <BrandTeamListSkeleton />
+        <Skeleton className="h-64" />
       </SafeAreaView>
     );
   }
-  if (!brand && !isBrandProfileLoading) return <NotFoundScreen />;
+  if (!brand) return <NotFoundScreen />;
 
   return (
     <Fragment>
       {brand?.status === BrandStatus.PENDING ? (
-        <BrandProfilePendingScreen onRefresh={refetchBrand} />
+        <PendingScreen onRefresh={refetchBrand} />
       ) : brand?.status === BrandStatus.SUSPENDED ? (
         <SuspendedScreen />
       ) : brand?.status === BrandStatus.WITHDRAWN ? (

@@ -118,7 +118,7 @@ function InviteCodeScreen() {
             )}
           />
 
-          <Text className="mt-3 text-center typo-base text-muted-foreground">
+          <Text className="mt-3 text-center font-base text-muted-foreground">
             Don’t have a code? Ask the creator to invite you.
           </Text>
         </View>
@@ -172,7 +172,7 @@ function InviteCodeScreen() {
                     </Text>
                   </View>
                   <View className=" flex-row items-center justify-between px-4 pt-14 pb-3">
-                    <Text className="text-white typo-lg">Scan QR</Text>
+                    <Text className="text-white font-lg">Scan QR</Text>
                     <Pressable
                       onPress={closeScan}
                       className="h-10 w-10 items-center justify-center"

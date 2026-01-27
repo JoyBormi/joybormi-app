@@ -1,16 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import { agent } from '@/lib/agent';
 import { queryKeys } from '@/lib/tanstack-query';
 import { IBrand } from '@/types/brand.type';
 
-const getBrand = async (id?: string): Promise<IBrand> =>
-  await agent.get(`/brand/${id}`);
-
-export const useGetBrand = ({ userId }: { userId?: string }) =>
-  useQuery({
-    queryKey: [...queryKeys.creator.brand, { userId }],
-    queryFn: () => getBrand(userId),
+export const useGetBrand = (userId?: string): UseQueryResult<IBrand, Error> =>
+  useQuery<IBrand, Error, IBrand, string[]>({
+    queryKey: [...queryKeys.creator.brand, { userId }] as string[],
+    queryFn: () => agent.get(`/brand/me`),
     enabled: !!userId,
     refetchOnWindowFocus: true,
   });

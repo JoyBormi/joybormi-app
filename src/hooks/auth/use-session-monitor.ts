@@ -13,7 +13,7 @@ import { useRefreshSession } from './use-refresh-session';
  * useSessionMonitor();
  */
 export function useSessionMonitor() {
-  const { isLoggedIn } = useUserStore();
+  const { isLoggedIn, setUser } = useUserStore();
   const { mutate: refreshSession } = useRefreshSession();
   const { data: meData, isSuccess, isError } = useMe({ enabled: isLoggedIn });
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -50,6 +50,7 @@ export function useSessionMonitor() {
     if (timeUntilRefresh <= 0) {
       console.warn('[Session Monitor] Session expiring soon, refreshing now');
       refreshSession();
+      setUser(meData.user);
       return;
     }
 
@@ -62,6 +63,7 @@ export function useSessionMonitor() {
     refreshTimerRef.current = setTimeout(() => {
       console.warn('[Session Monitor] Refreshing session');
       refreshSession();
+      setUser(meData.user);
     }, timeUntilRefresh);
 
     // Cleanup on unmount

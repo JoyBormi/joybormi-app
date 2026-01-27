@@ -45,7 +45,7 @@ export default function App() {
         <Stack.Screen
           name="(auth)"
           options={{
-            presentation: 'card',
+            presentation: 'modal',
             animation: 'slide_from_bottom',
             statusBarAnimation: 'slide',
             keyboardHandlingEnabled: true,

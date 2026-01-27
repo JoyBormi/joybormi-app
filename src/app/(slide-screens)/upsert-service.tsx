@@ -260,11 +260,11 @@ const UpsertServiceScreen = () => {
       {/* Action Buttons */}
       <View className="mt-12 gap-3">
         <Button
+          size="lg"
           onPress={handleSubmit}
           disabled={
             !form.formState.isValid || isCreatingService || isUpdatingService
           }
-          size="action"
         >
           {isCreatingService || isUpdatingService ? (
             <ActivityIndicator
@@ -281,7 +281,7 @@ const UpsertServiceScreen = () => {
           <Button
             onPress={handleDelete}
             variant="ghost"
-            size="action"
+            size="lg"
             disabled={isDeletingService}
           >
             <Text className="text-destructive font-title">

@@ -24,7 +24,6 @@ const buttonVariants = cva('flex items-center justify-center rounded-xl', {
       icon: 'h-12 w-12',
       iconSm: 'h-10 w-10',
       iconLg: 'h-14 w-14',
-      full: 'h-14 px-8 w-full',
     },
   },
   defaultVariants: {
@@ -48,7 +47,6 @@ const buttonTextVariants = cva('font-montserrat-medium text-foreground', {
       default: 'text-sm',
       lg: 'text-lg',
       xl: 'text-xl',
-      full: 'text-2xl',
       icon: '',
       iconSm: '',
       iconLg: '',

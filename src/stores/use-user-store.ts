@@ -1,4 +1,3 @@
-// CHecks onboarding visited or not
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -13,8 +12,6 @@ export interface UserStoreState {
   setAppType: (appType: EUserType) => void;
   isLoggedIn: boolean;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
-  location: string | null;
-  setLocation: (location: string | null) => void;
 }
 
 export const useUserStore = create<UserStoreState>()(
@@ -27,8 +24,6 @@ export const useUserStore = create<UserStoreState>()(
       setAppType: (appType: EUserType) => set({ appType }),
       isLoggedIn: false,
       setIsLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
-      location: null,
-      setLocation: (location: string | null) => set({ location }),
     }),
     {
       name: 'user-store',

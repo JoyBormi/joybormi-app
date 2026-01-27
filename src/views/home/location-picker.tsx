@@ -6,14 +6,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icons from '@/components/icons';
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { useUserLocation } from '@/hooks/common/use-location';
-import { useUserStore } from '@/stores/use-user-store';
+import { usePreferencesStore } from '@/stores/use-preferences';
 
 const LOCATIONS = ['Tashkent', 'Bukhara', 'Samarkand'];
 
 export const LocationPickerSheet = forwardRef<BottomSheetModal>((_, ref) => {
   const insets = useSafeAreaInsets();
   const { location: autoLocation } = useUserLocation();
-  const { location, setLocation } = useUserStore();
+  const { location, setLocation } = usePreferencesStore();
 
   // auto set location if user is in supported locations
   useEffect(() => {

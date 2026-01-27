@@ -7,7 +7,7 @@ import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Icons from '@/components/icons';
-import { BlockedSheet, BlockedSheetRef } from '@/components/modals/block-modal';
+import { BlockModal, BlockModalRef } from '@/components/modals/block-modal';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Button, Text } from '@/components/ui';
 import { useBecomeCreator } from '@/hooks/user/use-become-creator';
@@ -33,7 +33,7 @@ const CreateBrand: React.FC = () => {
   const insets = useSafeAreaInsets();
   const [currentStep, setCurrentStep] = useState<SetupStep>(0);
 
-  const sheetRef = useRef<BlockedSheetRef>(null);
+  const sheetRef = useRef<BlockModalRef>(null);
 
   const STEPS = [
     { label: 'Basic Info', icon: Icons.FileText, id: '01' },
@@ -278,7 +278,6 @@ const CreateBrand: React.FC = () => {
             variant="outline"
             onPress={handleBack}
             disabled={isSubmitting}
-            size="action"
             className="px-6"
           >
             <Text className="font-semibold text-foreground">
@@ -290,7 +289,6 @@ const CreateBrand: React.FC = () => {
           <Button
             onPress={handleNext}
             disabled={!isCurrentStepValid() || isSubmitting}
-            size="action"
             className="flex-1"
           >
             <Text className="font-semibold text-primary-foreground">Next</Text>
@@ -299,7 +297,6 @@ const CreateBrand: React.FC = () => {
           <Button
             onPress={handleSubmit(onSubmit)}
             disabled={!isValid || isSubmitting}
-            size="action"
             className="flex-1"
           >
             <Text className="font-semibold text-primary-foreground">
@@ -308,7 +305,7 @@ const CreateBrand: React.FC = () => {
           </Button>
         )}
       </View>
-      <BlockedSheet
+      <BlockModal
         ref={sheetRef}
         title="Save Draft?"
         subtitle="Do you want to save your progress?"

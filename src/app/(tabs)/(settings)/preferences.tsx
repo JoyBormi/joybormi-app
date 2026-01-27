@@ -5,6 +5,7 @@ import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Icons from '@/components/icons';
+import { Header } from '@/components/shared/header';
 import { useColorScheme } from '@/hooks/common';
 import {
   ISettingsItem,
@@ -230,30 +231,25 @@ const PreferencesScreen: React.FC = () => {
 
   return (
     <View className="main-area">
+      <Header
+        title={t('settings.preferencesScreen.title')}
+        subtitle={t('settings.preferencesScreen.subtitle')}
+        className="px-2"
+      />
       <ScrollView
         className="flex-1"
         contentContainerStyle={{
           paddingBottom: insets.bottom + 100,
-          paddingTop: insets.top + 16,
         }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="px-4 mb-6">
-          <Text className="text-2xl font-heading text-foreground">
-            {t('settings.preferencesScreen.title')}
-          </Text>
-          <Text className="text-sm text-muted-foreground font-body mt-2">
-            {t('settings.preferencesScreen.subtitle')}
-          </Text>
-        </View>
-
-        <View className="gap-6">
+        <View className="gap-6 mt-1">
           {preferenceGroups.map((group) => (
             <View key={group.id} className="gap-2">
               <Text className="text-sm text-muted-foreground font-subtitle uppercase tracking-wider px-4">
                 {group.title}
               </Text>
-              <View className="overflow-hidden rounded-2xl mx-4">
+              <View className="overflow-hidden rounded-2xl">
                 {group.items.map((item, index) => (
                   <SettingsItemComponent
                     key={item.id}

@@ -52,6 +52,8 @@ export const useError = () => {
           return;
         }
 
+        if (status === 404) return;
+
         // Show error message from backend (backend provides localized messages)
         toast.error({
           title: message ?? t('common.error.title'),

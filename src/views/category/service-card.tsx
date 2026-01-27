@@ -1,6 +1,13 @@
 import { MotiView } from 'moti';
 import React, { useState } from 'react';
-import { Dimensions, Image, Pressable, Text, View } from 'react-native';
+import {
+  Dimensions,
+  GestureResponderEvent,
+  Image,
+  Pressable,
+  Text,
+  View,
+} from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -112,7 +119,7 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
     scale.value = withSpring(1);
   };
 
-  const toggleFavorite = (e) => {
+  const toggleFavorite = (e: GestureResponderEvent) => {
     e.stopPropagation(); // Prevent card navigation
     setIsFavorite(!isFavorite);
     heartScale.value = withSequence(withSpring(1.3), withSpring(1));
