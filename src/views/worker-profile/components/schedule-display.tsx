@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
+import { NoData } from '@/components/status-screens';
 import { Text } from '@/components/ui';
 import { useLocaleData } from '@/hooks/common/use-locale-data';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,20 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
   onEditSchedule,
 }) => {
   const { dayNamesShort } = useLocaleData();
+
+  if (workingDays.length === 0) {
+    return (
+      <NoData
+        title="No Schedule Yet"
+        message="Set your working hours to show availability."
+        action={{
+          label: 'Add Schedule',
+          onPress: onEditSchedule,
+        }}
+      />
+    );
+  }
+
   return (
     <View className="px-6 mb-8">
       <View className="flex-row items-center justify-between mb-4">

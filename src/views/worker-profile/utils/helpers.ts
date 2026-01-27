@@ -1,11 +1,13 @@
 import { z } from 'zod';
 
-import type {
-  IReview,
-  IService,
-  IWorker,
-  IWorkingDay,
-} from '@/types/worker.type';
+import {
+  ServiceOwnerType,
+  ServiceStatus,
+  type IService,
+} from '@/types/service.type';
+
+import type { IWorkingDay } from '@/types/schedule.type';
+import type { IReview, IWorker } from '@/types/worker.type';
 
 /**
  * Validation schemas for Worker Profile forms
@@ -52,33 +54,42 @@ export const getMockWorker = (
 export const getMockServices = (): IService[] => [
   {
     id: 'service-1',
-    creatorId: 'worker-123',
     brandId: 'brand-123',
     name: 'Hair Coloring',
     description: 'Professional hair coloring with premium products',
     durationMins: 120,
-    price: '$150',
+    price: 150,
+    status: ServiceStatus.ACTIVE,
     createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    ownerId: 'worker-123',
+    ownerType: ServiceOwnerType.WORKER,
   },
   {
     id: 'service-2',
-    creatorId: 'worker-123',
     brandId: 'brand-123',
     name: 'Haircut & Style',
     description: 'Modern haircut with styling',
     durationMins: 60,
-    price: '$80',
+    price: 80,
+    status: ServiceStatus.ACTIVE,
     createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    ownerId: 'worker-123',
+    ownerType: ServiceOwnerType.WORKER,
   },
   {
     id: 'service-3',
-    creatorId: 'worker-123',
     brandId: 'brand-123',
     name: 'Balayage Treatment',
     description: 'Natural-looking highlights with balayage technique',
     durationMins: 180,
-    price: '$200',
+    price: 200,
+    status: ServiceStatus.ACTIVE,
     createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    ownerId: 'worker-123',
+    ownerType: ServiceOwnerType.WORKER,
   },
 ];
 

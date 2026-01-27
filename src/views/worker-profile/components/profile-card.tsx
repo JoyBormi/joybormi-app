@@ -1,5 +1,4 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { router } from 'expo-router';
 import React, { Fragment, useRef, useState } from 'react';
 import { Image, Pressable, View } from 'react-native';
 
@@ -15,6 +14,8 @@ interface ProfileCardProps {
   workDaysCount: number;
   reviewsCount: number;
   onEdit: () => void;
+  onAvatarChange?: (uri: string) => void;
+  onBannerChange?: (uri: string) => void;
 }
 
 /**
@@ -27,6 +28,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   workDaysCount,
   reviewsCount,
   onEdit,
+  onAvatarChange,
+  onBannerChange,
 }) => {
   const imagePickerRef = useRef<BottomSheetModal>(null);
   const [avatarUri, setAvatarUri] = useState(worker.avatar);
@@ -46,8 +49,10 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   const handleImageChange = (uri: string, type: 'avatar' | 'banner') => {
     if (type === 'avatar') {
       setAvatarUri(uri);
+      onAvatarChange?.(uri);
     } else {
       setBannerUri(uri);
+      onBannerChange?.(uri);
     }
   };
 
@@ -128,12 +133,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
         </View>
 
         {/* Edit Profile Button */}
-        <Button
-          onPress={() =>
-            router.push('/(slide-screens)/(worker)/edit-worker-profile')
-          }
-          className="bg-primary"
-        >
+        <Button onPress={onEdit} className="bg-primary">
           <View className="flex-row items-center gap-2">
             <Icons.Pencil size={18} className="text-primary-foreground" />
             <Text className="font-subtitle text-primary-foreground">

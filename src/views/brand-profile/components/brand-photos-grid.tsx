@@ -1,16 +1,18 @@
+import { MotiView } from 'moti';
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
+import { NoData } from '@/components/status-screens';
 import { Text } from '@/components/ui';
 
-import type { IBrand } from '@/types/brand.type';
+import type { IBrandPhoto } from '@/types/brand.type';
 
 interface BrandPhotosGridProps {
-  brand: IBrand;
+  photos: IBrandPhoto[];
   canEdit: boolean;
   onAddPhoto: () => void;
-  onPhotoPress?: (photo: IBrand, index: number) => void;
+  onPhotoPress?: (photo: IBrandPhoto, index: number) => void;
 }
 
 /**
@@ -18,17 +20,34 @@ interface BrandPhotosGridProps {
  * Displays grid of brand photos with add button
  */
 export const BrandPhotosGrid: React.FC<BrandPhotosGridProps> = ({
-  brand,
+  photos,
   canEdit,
   onAddPhoto,
   onPhotoPress,
 }) => {
+  if (photos.length === 0) {
+    return (
+      <NoData
+        title="No Photos"
+        message="Upload photos to showcase your brand."
+        action={
+          canEdit
+            ? {
+                label: 'Add Photos',
+                onPress: onAddPhoto,
+              }
+            : undefined
+        }
+      />
+    );
+  }
+
   return (
     <View className="px-6 mb-8">
       <View className="flex-row items-center justify-between mb-4">
         <Text className="font-title text-lg text-foreground">
           Photos
-          {/* ({brand.photos.length}) */}
+          {photos.length > 0 ? ` (${photos.length})` : ''}
         </Text>
         {canEdit && (
           <Pressable onPress={onAddPhoto}>
@@ -36,20 +55,27 @@ export const BrandPhotosGrid: React.FC<BrandPhotosGridProps> = ({
           </Pressable>
         )}
       </View>
-      {/* <View className="flex-row flex-wrap gap-2">
+      <View className="flex-row flex-wrap gap-2">
         {photos.map((photo, index) => (
-          <Pressable
+          <MotiView
             key={photo.id}
-            onPress={() => onPhotoPress?.(photo, index)}
-            className="active:opacity-70 w-[31%] h-24 aspect-square"
+            from={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'timing', duration: 250, delay: index * 40 }}
+            className="w-[31%]"
           >
-            <Image
-              source={{ uri: photo.url }}
-              className="w-full h-full rounded-xl"
-            />
-          </Pressable>
+            <Pressable
+              onPress={() => onPhotoPress?.(photo, index)}
+              className="active:opacity-70 w-full h-24 aspect-square"
+            >
+              <Image
+                source={{ uri: photo.url }}
+                className="w-full h-full rounded-xl"
+              />
+            </Pressable>
+          </MotiView>
         ))}
-      </View> */}
+      </View>
     </View>
   );
 };

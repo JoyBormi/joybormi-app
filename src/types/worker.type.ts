@@ -18,3 +18,13 @@ export interface IWorker {
   email: string;
   phone: string;
 }
+
+export interface IReview {
+  id: string;
+  customerName: string;
+  customerAvatar: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  serviceName?: string;
+}

@@ -2,6 +2,7 @@ import React from 'react';
 import { Image, View } from 'react-native';
 
 import Icons from '@/components/icons';
+import { NoData } from '@/components/status-screens';
 import { Text } from '@/components/ui';
 
 import type { IReview } from '@/types/worker.type';
@@ -19,6 +20,15 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
   reviews,
   maxDisplay = 2,
 }) => {
+  if (reviews.length === 0) {
+    return (
+      <NoData
+        title="No Reviews Yet"
+        message="Reviews from customers will show up here."
+      />
+    );
+  }
+
   return (
     <View className="px-6">
       <Text className="font-title text-lg text-foreground mb-4">
