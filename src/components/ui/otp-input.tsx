@@ -101,7 +101,7 @@ const OtpInput = React.forwardRef<View, OtpInputProps>(
             autoFocus={autoFocus && index === 0}
             editable={!disabled}
             className={cn(
-              'h-12 w-12 rounded-md border border-input bg-background text-center text-caption font-semibold text-foreground',
+              'h-14 w-14 rounded-md border-2 border-border bg-background text-center typo-subtitle text-foreground',
               'focus:border-primary focus:ring-2 focus:ring-primary/20',
               disabled && 'opacity-50',
               otpValues[index] && 'border-primary',

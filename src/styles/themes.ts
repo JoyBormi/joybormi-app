@@ -23,46 +23,76 @@ export type ThemeHex = Record<
 // 1. Raw HSL values (no rgb(...) wrapper)
 export const THEME_COLORS: ThemeColorMap = {
   light: vars({
-    '--background': '40 20% 97%',
-    '--foreground': '240 10% 10%',
-    '--card': '45 25% 96%',
-    '--card-foreground': '240 8% 20%',
-    '--primary': '280 30% 80%',
+    /* Base */
+    '--background': '270 25% 98%',
+    '--foreground': '270 12% 12%',
+
+    /* Surfaces */
+    '--card': '0 0% 100%',
+    '--card-foreground': '270 12% 15%',
+
+    /* Brand / Primary CTA */
+    '--primary': '280 45% 52%', // soft orchid purple
     '--primary-foreground': '0 0% 100%',
-    '--secondary': '260 10% 94%',
-    '--secondary-foreground': '240 10% 25%',
-    '--muted': '260 12% 90%',
-    '--muted-foreground': '260 10% 30%',
-    '--accent': '270 8% 96%',
-    '--accent-foreground': '240 10% 25%',
-    '--destructive': '0 85% 72%',
+
+    /* Secondary UI */
+    '--secondary': '270 22% 92%',
+    '--secondary-foreground': '270 12% 28%',
+
+    /* Muted */
+    '--muted': '270 18% 88%',
+    '--muted-foreground': '270 10% 45%',
+
+    /* Accent (selected dates, chips) */
+    '--accent': '285 35% 92%',
+    '--accent-foreground': '280 45% 42%',
+
+    /* Status */
+    '--success': '145 50% 40%',
+    '--warning': '38 85% 55%',
+    '--destructive': '0 75% 55%',
     '--destructive-foreground': '0 0% 100%',
-    '--border': '260 8% 82%',
-    '--input': '260 8% 93%',
-    '--ring': '280 30% 70%',
-    '--success': '140 50% 45%',
-    '--warning': '40 90% 55%',
+
+    /* Borders & inputs */
+    '--border': '270 14% 80%',
+    '--input': '270 18% 94%',
+    '--ring': '280 45% 52%',
   }),
   dark: vars({
-    '--background': '240 6% 10%',
+    /* Base */
+    '--background': '270 18% 8%',
     '--foreground': '0 0% 95%',
-    '--card': '240 8% 14%',
-    '--card-foreground': '0 0% 90%',
-    '--primary': '280 30% 72%',
-    '--primary-foreground': '0 0% 10%',
-    '--secondary': '260 8% 20%',
+
+    /* Surfaces */
+    '--card': '270 16% 12%',
+    '--card-foreground': '0 0% 92%',
+
+    /* Brand / Primary */
+    '--primary': '280 45% 60%',
+    '--primary-foreground': '270 20% 10%',
+
+    /* Secondary */
+    '--secondary': '270 14% 18%',
     '--secondary-foreground': '0 0% 95%',
-    '--muted': '260 10% 24%',
-    '--muted-foreground': '260 8% 65%',
-    '--accent': '270 6% 22%',
-    '--accent-foreground': '0 0% 95%',
-    '--destructive': '0 72% 60%',
+
+    /* Muted */
+    '--muted': '270 12% 22%',
+    '--muted-foreground': '270 10% 65%',
+
+    /* Accent */
+    '--accent': '285 25% 22%',
+    '--accent-foreground': '285 45% 65%',
+
+    /* Status */
+    '--success': '145 45% 45%',
+    '--warning': '38 80% 55%',
+    '--destructive': '0 70% 55%',
     '--destructive-foreground': '0 0% 100%',
-    '--border': '260 6% 22%',
-    '--input': '260 6% 18%',
-    '--ring': '280 30% 62%',
-    '--success': '140 45% 40%',
-    '--warning': '40 85% 50%',
+
+    /* Borders & inputs */
+    '--border': '270 12% 22%',
+    '--input': '270 14% 18%',
+    '--ring': '280 45% 60%',
   }),
 };
 
