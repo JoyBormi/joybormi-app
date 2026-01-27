@@ -299,42 +299,169 @@
         "address": "Address",
         "preferences": "Preferences"
       },
-
       "username": "Username",
       "usernamePlaceholder": "Enter your username",
-
       "firstName": "First name",
       "firstNamePlaceholder": "Enter your first name",
-
       "lastName": "Last name",
       "lastNamePlaceholder": "Enter your last name",
-
       "email": "Email address",
       "emailPlaceholder": "Enter your email",
-
       "phone": "Phone number",
       "phonePlaceholder": "Enter your phone number",
-
       "street": "Street address",
       "streetPlaceholder": "Enter your street",
-
       "detailedAddress": "Apartment, suite, etc.",
       "detailedAddressPlaceholder": "Apartment, suite, floor, etc.",
-
       "city": "City",
       "cityPlaceholder": "Enter your city",
-
       "state": "State / Province",
       "statePlaceholder": "Enter your state or province",
-
       "postalCode": "Postal code",
       "postalCodePlaceholder": "Enter your postal code",
-
       "country": "Country",
       "countryPlaceholder": "Enter your country",
-
       "preferredLocation": "Preferred location",
       "preferredLocationPlaceholder": "Enter your preferred location"
+    },
+    "alerts": {
+      "logout": "Are you sure you want to log out?",
+      "deleteAccount": "Are you sure you want to delete your account?"
+    },
+    "groups": {
+      "account": "Account",
+      "preferences": "Preferences",
+      "support": "Support & About"
+    },
+    "items": {
+      "likes": {
+        "title": "Liked Items",
+        "subtitle": "Your favorite workers and brands"
+      },
+      "reviews": {
+        "title": "My Reviews",
+        "subtitle": "Reviews you've written"
+      },
+      "security": {
+        "title": "Security & Privacy",
+        "subtitle": "Password, 2FA, and privacy settings"
+      },
+      "payment": {
+        "title": "Payment Methods",
+        "subtitle": "Manage your payment options"
+      },
+      "preferences": {
+        "title": "Preferences",
+        "subtitle": "Theme, language, and notifications"
+      },
+      "help": {
+        "title": "Help & Support"
+      },
+      "terms": {
+        "title": "Terms & Conditions"
+      },
+      "privacy": {
+        "title": "Privacy Policy"
+      },
+      "version": {
+        "title": "App Version"
+      },
+      "logout": {
+        "title": "Log Out"
+      },
+      "deleteAccount": {
+        "title": "Delete Account"
+      }
+    },
+    "userType": {
+      "title": "Switch Role",
+      "subtitle": "Use the app as a User, Worker, or Creator",
+      "current": "Current: {{type}}"
+    },
+    "preferencesScreen": {
+      "title": "Preferences",
+      "subtitle": "Manage how the app looks and behaves.",
+      "sections": {
+        "appearance": "Appearance",
+        "notifications": "Notifications",
+        "experience": "Experience"
+      },
+      "options": {
+        "theme": {
+          "title": "Theme",
+          "subtitle": "Choose light or dark mode"
+        },
+        "language": {
+          "title": "Language",
+          "subtitle": "Pick the language you want"
+        },
+        "push": {
+          "title": "Push Notifications",
+          "subtitle": "Receive alerts on your device"
+        },
+        "email": {
+          "title": "Email Notifications",
+          "subtitle": "Get updates by email"
+        },
+        "sms": {
+          "title": "SMS Alerts",
+          "subtitle": "SMS updates for important activity"
+        },
+        "reminders": {
+          "title": "Reminders",
+          "subtitle": "Stay on top of upcoming bookings"
+        },
+        "marketing": {
+          "title": "Marketing Emails",
+          "subtitle": "Promotions, tips, and offers"
+        },
+        "sound": {
+          "title": "Sound Effects",
+          "subtitle": "Play sounds for in-app actions"
+        },
+        "haptics": {
+          "title": "Haptic Feedback",
+          "subtitle": "Vibration feedback for taps"
+        },
+        "autoplay": {
+          "title": "Autoplay Videos",
+          "subtitle": "Auto-play videos in feeds"
+        },
+        "dataSaver": {
+          "title": "Data Saver",
+          "subtitle": "Reduce data usage on cellular"
+        }
+      }
+    },
+    "pages": {
+      "likes": {
+        "title": "Liked Items",
+        "description": "Review and manage the services, brands, and workers you have favorited."
+      },
+      "reviews": {
+        "title": "My Reviews",
+        "description": "Track feedback you've shared and update past reviews."
+      },
+      "security": {
+        "title": "Security & Privacy",
+        "description": "Manage your password, two-factor authentication, and privacy controls."
+      },
+      "payment": {
+        "title": "Payment Methods",
+        "description": "Add, remove, and update your saved payment options."
+      },
+      "help": {
+        "title": "Help & Support",
+        "description": "Find answers or contact support if you need a hand."
+      },
+      "terms": {
+        "title": "Terms & Conditions",
+        "description": "Review the terms of service that govern Joy Bormi."
+      },
+      "privacy": {
+        "title": "Privacy Policy",
+        "description": "Learn how your data is collected, stored, and protected."
+      }
     }
   }
 }
