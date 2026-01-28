@@ -15,7 +15,7 @@ import { Button, Text } from '../ui';
 
 export function NotificationPermissionModal() {
   const { t } = useTranslation();
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const checkPermissions = async () => {
