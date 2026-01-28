@@ -3,7 +3,6 @@ import React from 'react';
 import { Image, Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
-import { NoData } from '@/components/status-screens';
 import { Text } from '@/components/ui';
 
 import type { IBrandPhoto } from '@/types/brand.type';
@@ -25,22 +24,7 @@ export const BrandPhotosGrid: React.FC<BrandPhotosGridProps> = ({
   onAddPhoto,
   onPhotoPress,
 }) => {
-  if (photos.length === 0) {
-    return (
-      <NoData
-        title="No Photos"
-        message="Upload photos to showcase your brand."
-        action={
-          canEdit
-            ? {
-                label: 'Add Photos',
-                onPress: onAddPhoto,
-              }
-            : undefined
-        }
-      />
-    );
-  }
+  if (photos.length === 0) return null;
 
   return (
     <View className="px-6 mb-8">

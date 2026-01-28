@@ -4,7 +4,6 @@ import React from 'react';
 import { Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
-import { NoData } from '@/components/status-screens';
 import { Text } from '@/components/ui';
 
 import type { IService } from '@/types/service.type';
@@ -24,24 +23,7 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
   canEdit,
   brandId,
 }) => {
-  if (!services || services.length === 0)
-    return (
-      <NoData
-        title="No Services"
-        message="Please add a service"
-        action={
-          canEdit
-            ? {
-                label: 'Add Service',
-                onPress: () =>
-                  router.push(
-                    `/(slide-screens)/upsert-service?brandId=${brandId}`,
-                  ),
-              }
-            : undefined
-        }
-      />
-    );
+  if (!services || services.length === 0) return null;
   return (
     <View className="px-6 mb-8">
       <View className="flex-row items-center justify-between mb-4">
