@@ -54,7 +54,7 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
         <View className="flex-row flex-wrap gap-2">
           {dayNamesShort.map((day: string, index: number) => {
             const isWorking = workingDays.some((wd) => {
-              const uiIndex = wd.dayOfWeek % 7;
+              const uiIndex = (wd.dayOfWeek + 6) % 7;
               return uiIndex === index;
             });
 

@@ -13,7 +13,9 @@ export function AnimatedProgress({
   totalSteps: number;
   props?: ViewProps;
 }) {
-  const progress = ((currentStep + 1) / totalSteps) * 100;
+  const safeTotal = totalSteps > 0 ? totalSteps : 1;
+  const safeCurrent = Math.min(Math.max(currentStep, 0), safeTotal);
+  const progress = (safeCurrent / safeTotal) * 100;
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
