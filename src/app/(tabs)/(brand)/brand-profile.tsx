@@ -1,7 +1,7 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { Fragment, useMemo, useRef, useState } from 'react';
-import { ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import {
   SafeAreaView,
@@ -20,7 +20,7 @@ import {
   PendingScreen,
   SuspendedScreen,
 } from '@/components/status-screens';
-import { Skeleton } from '@/components/ui';
+import { AnimatedProgress, Skeleton, Text } from '@/components/ui';
 import {
   useGetBrand,
   useGetBrandPhotos,
@@ -91,6 +91,55 @@ const BrandProfileScreen: React.FC = () => {
   );
   const workers = team ?? [];
   const workingDays = schedule?.workingDays ?? [];
+
+  const profileCompletion = useMemo(() => {
+    const steps = [
+      {
+        label: 'Brand details',
+        complete: Boolean(brand?.brandName && brand?.businessCategory),
+      },
+      {
+        label: 'Description',
+        complete: Boolean(brand?.description),
+      },
+      {
+        label: 'Images',
+        complete: Boolean(brand?.profileImage && brand?.bannerImage),
+      },
+      {
+        label: 'Services',
+        complete: (services?.length ?? 0) > 0,
+      },
+      {
+        label: 'Team',
+        complete: workers.length > 0,
+      },
+      {
+        label: 'Photos',
+        complete: mergedPhotos.length > 0,
+      },
+      {
+        label: 'Schedule',
+        complete: workingDays.length > 0,
+      },
+    ];
+    const completedCount = steps.filter((step) => step.complete).length;
+    return {
+      steps,
+      completedCount,
+      total: steps.length,
+    };
+  }, [
+    brand?.bannerImage,
+    brand?.brandName,
+    brand?.businessCategory,
+    brand?.description,
+    brand?.profileImage,
+    mergedPhotos.length,
+    services?.length,
+    workers.length,
+    workingDays.length,
+  ]);
 
   const refetch = () => {
     refetchBrand();
@@ -198,8 +247,23 @@ const BrandProfileScreen: React.FC = () => {
   if (isBrandProfileLoading) {
     return (
       <SafeAreaView className="main-area" edges={['top']}>
-        {/* Section Skeletons */}
-        <Skeleton className="h-64" />
+        <View className="gap-6 pt-4">
+          <Skeleton className="h-48 rounded-3xl" />
+          <View className="gap-3">
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-16 rounded-2xl" />
+            <Skeleton className="h-16 rounded-2xl" />
+            <Skeleton className="h-16 rounded-2xl" />
+          </View>
+          <View className="gap-3">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-24 rounded-2xl" />
+          </View>
+          <View className="gap-3">
+            <Skeleton className="h-5 w-36" />
+            <Skeleton className="h-32 rounded-2xl" />
+          </View>
+        </View>
       </SafeAreaView>
     );
   }
@@ -255,6 +319,28 @@ const BrandProfileScreen: React.FC = () => {
                   )
                 }
               />
+            )}
+
+            {canEdit && (
+              <View className="px-6 mb-8">
+                <View className="flex-row items-center justify-between">
+                  <Text className="font-title text-lg text-foreground">
+                    Profile setup
+                  </Text>
+                  <Text className="font-caption text-muted-foreground">
+                    {profileCompletion.completedCount}/{profileCompletion.total}
+                  </Text>
+                </View>
+                <View className="mt-3 h-3 rounded-full bg-muted/30 overflow-hidden">
+                  <AnimatedProgress
+                    currentStep={profileCompletion.completedCount}
+                    totalSteps={profileCompletion.total}
+                  />
+                </View>
+                <Text className="font-caption text-muted-foreground mt-2">
+                  Complete your profile to attract more bookings.
+                </Text>
+              </View>
             )}
 
             {/* About Section */}

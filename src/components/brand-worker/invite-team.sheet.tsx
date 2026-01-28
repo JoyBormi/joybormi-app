@@ -3,14 +3,21 @@ import {
   useBottomSheetTimingConfigs,
 } from '@gorhom/bottom-sheet';
 import * as Haptics from 'expo-haptics';
-import React, { forwardRef, useCallback, useMemo } from 'react';
-import { Pressable, View } from 'react-native';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { ActivityIndicator, Pressable, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Icons from '@/components/icons';
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { Text } from '@/components/ui';
+import { agent } from '@/lib/agent';
 
 interface InviteTeamSheetProps {
   brandId: string;
@@ -28,13 +35,31 @@ export const InviteTeamSheet = forwardRef<
   const insets = useSafeAreaInsets();
   const animationConfigs = useBottomSheetTimingConfigs({ duration: 150 });
 
-  // Generate 6-digit code from brandId
-  const inviteCode = useMemo(() => {
-    const hash = brandId
-      .split('')
-      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return String(hash).slice(-6).padStart(6, '0');
-  }, [brandId]);
+  const [inviteCode, setInviteCode] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchInviteCode = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await agent.post<
+        string | { inviteCode?: string; code?: string }
+      >('/workers/invite');
+      const resolvedCode =
+        typeof response === 'string'
+          ? response
+          : (response.inviteCode ?? response.code ?? '');
+      setInviteCode(resolvedCode);
+    } catch (error) {
+      console.error('Failed to fetch invite code:', error);
+      setInviteCode('');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchInviteCode();
+  }, [fetchInviteCode]);
 
   const qrData = useMemo(
     () =>
@@ -47,6 +72,7 @@ export const InviteTeamSheet = forwardRef<
   );
 
   const handleCopyCode = useCallback(() => {
+    if (!inviteCode) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     // TODO: Copy to clipboard
     console.warn('Copy code:', inviteCode);
@@ -88,8 +114,12 @@ export const InviteTeamSheet = forwardRef<
         </View>
 
         {/* QR Code */}
-        <View className="bg-white p-6 rounded-2xl">
-          <QRCode value={qrData} size={120} />
+        <View className="bg-white p-6 rounded-2xl items-center justify-center">
+          {isLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <QRCode value={qrData} size={120} />
+          )}
         </View>
 
         {/* 6-Digit Code */}
@@ -101,9 +131,13 @@ export const InviteTeamSheet = forwardRef<
             onPress={handleCopyCode}
             className="bg-card/50 backdrop-blur-xl rounded-2xl p-6 border border-border/50 items-center"
           >
-            <Text className="font-heading text-4xl text-foreground tracking-widest">
-              {inviteCode.match(/.{1,3}/g)?.join(' ')}
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <Text className="font-heading text-4xl text-foreground tracking-widest">
+                {inviteCode ? inviteCode.match(/.{1,3}/g)?.join(' ') : '------'}
+              </Text>
+            )}
           </Pressable>
         </View>
       </View>

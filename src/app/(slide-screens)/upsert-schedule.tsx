@@ -1,6 +1,12 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { ActivityIndicator, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -65,50 +71,85 @@ const ManageScheduleScreen = () => {
 
   const timePickerRef = useRef<BottomSheetModal>(null);
 
+  const formatTime = (time?: string) => {
+    if (!time) return '--:--';
+    const [hours = '00', minutes = '00'] = time.split(':');
+    return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+  };
+
+  const normalizeTime = (time?: string, fallback = '09:00') => {
+    if (!time) return fallback;
+    const [hours = '00', minutes = '00'] = time.split(':');
+    return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+  };
+
+  const toApiTime = (time: string) => {
+    const parts = time.split(':');
+    if (parts.length === 2) {
+      return `${parts[0]}:${parts[1]}:00`;
+    }
+    return time;
+  };
+
   // Populate schedule when data is loaded
   useEffect(() => {
     if (scheduleData?.workingDays) {
-      setSchedule(scheduleData.workingDays);
+      setSchedule(
+        scheduleData.workingDays.map((day) => ({
+          ...day,
+          dayOfWeek: Number(day.dayOfWeek),
+          startTime: normalizeTime(day.startTime, '09:00'),
+          endTime: normalizeTime(day.endTime, '18:00'),
+          breaks: day.breaks?.map((breakItem) => ({
+            ...breakItem,
+            startTime: normalizeTime(breakItem.startTime, '12:00'),
+            endTime: normalizeTime(breakItem.endTime, '13:00'),
+          })),
+        })),
+      );
     }
   }, [scheduleData]);
 
-  // Format time to HH:mm
-  const formatTime = (time: string) => {
-    if (!time) return '--:--';
-    const parts = time.split(':');
-    return `${parts[0]}:${parts[1]}`;
-  };
-
   // --- Actions ---
-  const toggleDay = (dayOfWeek: number) => {
-    const defaultWorkingDay = {
-      id: `new-${dayOfWeek}`,
-      scheduleId: 'sched-1',
-      dayOfWeek,
-      startTime: '09:00',
-      endTime: '18:00',
-      breaks: [],
-      createdAt: new Date().toISOString(),
-    };
-    setSchedule((prev) => {
-      const isActive = prev.some((day) => day.dayOfWeek === dayOfWeek);
-      if (isActive) {
-        if (editingState?.day === dayOfWeek) {
-          setEditingState(null);
-          timePickerRef.current?.dismiss();
-        }
-        return prev.filter((day) => day.dayOfWeek !== dayOfWeek);
+  const toggleDay = useCallback(
+    (dayOfWeek: number) => {
+      const normalizedDay = Number(dayOfWeek);
+      const defaultWorkingDay = {
+        id: `new-${normalizedDay}`,
+        scheduleId: 'sched-1',
+        dayOfWeek: normalizedDay,
+        startTime: '09:00',
+        endTime: '18:00',
+        breaks: [],
+        createdAt: new Date().toISOString(),
+      };
+
+      setSchedule((prev) => {
+        const isActive = prev.some((day) => day.dayOfWeek === normalizedDay);
+        const next = isActive
+          ? prev.filter((day) => day.dayOfWeek !== normalizedDay)
+          : [...prev, defaultWorkingDay];
+
+        return next.sort(
+          (a, b) =>
+            DAY_ORDER.indexOf(a.dayOfWeek) - DAY_ORDER.indexOf(b.dayOfWeek),
+        );
+      });
+
+      if (editingState?.day === normalizedDay) {
+        setEditingState(null);
+        timePickerRef.current?.dismiss();
       }
-      return [...prev, defaultWorkingDay];
-    });
-  };
+    },
+    [editingState],
+  );
 
   const openTimePicker = (
     dayOfWeek: number,
     field: 'start' | 'end',
     breakId?: string,
   ) => {
-    setEditingState({ day: dayOfWeek, field, breakId });
+    setEditingState({ day: Number(dayOfWeek), field, breakId });
     timePickerRef.current?.present();
   };
 
@@ -196,11 +237,11 @@ const ManageScheduleScreen = () => {
       const workingDaysPayload = {
         days: schedule.map((day) => ({
           dayOfWeek: day.dayOfWeek,
-          startTime: day.startTime,
-          endTime: day.endTime,
+          startTime: toApiTime(day.startTime),
+          endTime: toApiTime(day.endTime),
           breaks: day.breaks?.map((b) => ({
-            startTime: b.startTime,
-            endTime: b.endTime,
+            startTime: toApiTime(b.startTime),
+            endTime: toApiTime(b.endTime),
           })),
         })),
       };
@@ -249,12 +290,14 @@ const ManageScheduleScreen = () => {
     if (editingState.breakId) {
       const breakItem = day.breaks?.find((b) => b.id === editingState.breakId);
       return editingState.field === 'start'
-        ? breakItem?.startTime || '12:00'
-        : breakItem?.endTime || '13:00';
+        ? normalizeTime(breakItem?.startTime, '12:00')
+        : normalizeTime(breakItem?.endTime, '13:00');
     }
 
     // Editing working day time
-    return editingState.field === 'start' ? day.startTime : day.endTime;
+    return editingState.field === 'start'
+      ? normalizeTime(day.startTime, '09:00')
+      : normalizeTime(day.endTime, '18:00');
   }, [editingState, schedule]);
 
   // Show loading state
