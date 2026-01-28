@@ -1,9 +1,10 @@
-import { PackageOpen } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import React from 'react';
 import { Pressable, PressableProps, Text, View } from 'react-native';
 
 import { cn } from '@/lib/utils';
+
+import Icons from '../icons';
 
 interface NoDataProps {
   /** The main heading */
@@ -51,7 +52,13 @@ export function NoData({
         <View className="mb-6 relative justify-center items-center">
           <View className="absolute w-24 h-24 rounded-[28px] bg-primary/5 rotate-3" />
           <View className="w-24 h-24 rounded-[28px] bg-primary/10 items-center justify-center -rotate-3 border border-primary/20">
-            {icon || <PackageOpen size={40} strokeWidth={1.5} />}
+            {icon || (
+              <Icons.PackageOpen
+                size={40}
+                strokeWidth={1.5}
+                className="text-primary"
+              />
+            )}
           </View>
         </View>
 

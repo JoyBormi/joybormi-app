@@ -1,7 +1,7 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { Fragment, useMemo, useRef, useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import {
   SafeAreaView,
@@ -20,7 +20,8 @@ import {
   PendingScreen,
   SuspendedScreen,
 } from '@/components/status-screens';
-import { AnimatedProgress, Skeleton, Text } from '@/components/ui';
+import { Skeleton, Text } from '@/components/ui';
+import { AnimatedProgress } from '@/components/ui/progress';
 import {
   useGetBrand,
   useGetBrandPhotos,
@@ -54,17 +55,13 @@ import type { IWorker } from '@/types/worker.type';
 const BrandProfileScreen: React.FC = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { appType, user } = useUserStore();
+  const { appType } = useUserStore();
 
   // Check if user is creator or worker
   const isCreator = appType === EUserType.CREATOR;
   const canEdit = isCreator;
 
-  const {
-    data: brand,
-    refetch: refetchBrand,
-    isLoading: isBrandProfileLoading,
-  } = useGetBrand(user?.id, appType);
+  const { data: brand, refetch: refetchBrand, isLoading } = useGetBrand();
   const { data: services, refetch: refetchServices } = useGetServices({
     brandId: brand?.id,
   });
@@ -79,9 +76,9 @@ const BrandProfileScreen: React.FC = () => {
   });
 
   // Mutations
-  const updateBrandMutation = useUpdateBrand(brand?.id || '');
-  const uploadFileMutation = useUploadFile();
-  const uploadMultipleFilesMutation = useUploadMultipleFiles();
+  const { mutateAsync: updateBrand } = useUpdateBrand();
+  const { mutateAsync: uploadFile } = useUploadFile();
+  const { mutateAsync: uploadMultipleFiles } = useUploadMultipleFiles();
 
   // Local state for UI
   const [localPhotos, setLocalPhotos] = useState<IBrandPhoto[]>([]);
@@ -157,7 +154,7 @@ const BrandProfileScreen: React.FC = () => {
 
   // Handlers
   const handleEditBrand = () => {
-    router.push('/(slide-screens)/(brand)/edit-brand-profile');
+    router.push('/(screens)/edit-brand-profile');
   };
 
   const handleEditBanner = () => {
@@ -178,8 +175,8 @@ const BrandProfileScreen: React.FC = () => {
 
     try {
       const file = buildUploadedFile(uri, 'brand-banner');
-      const { url } = await uploadFileMutation.mutateAsync({ file });
-      await updateBrandMutation.mutateAsync({ bannerImage: url });
+      const { url } = await uploadFile({ file });
+      await updateBrand({ brandId: brand.id, bannerImage: url });
     } catch (error) {
       console.error('Failed to upload banner:', error);
     }
@@ -194,8 +191,8 @@ const BrandProfileScreen: React.FC = () => {
 
     try {
       const file = buildUploadedFile(uri, 'brand-avatar');
-      const { url } = await uploadFileMutation.mutateAsync({ file });
-      await updateBrandMutation.mutateAsync({ profileImage: url });
+      const { url } = await uploadFile({ file });
+      await updateBrand({ brandId: brand.id, profileImage: url });
     } catch (error) {
       console.error('Failed to upload profile image:', error);
     }
@@ -226,9 +223,7 @@ const BrandProfileScreen: React.FC = () => {
       const files = newPhotos.map((photo, index) =>
         buildUploadedFile(photo.uri, `brand-photo-${index}`),
       );
-      const { urls } = await uploadMultipleFilesMutation.mutateAsync({
-        files,
-      });
+      const { urls } = await uploadMultipleFiles({ files });
       const photosToAdd: IBrandPhoto[] = urls.map((url, index) => ({
         id: `photo-${Date.now()}-${index}`,
         url,
@@ -244,7 +239,7 @@ const BrandProfileScreen: React.FC = () => {
 
   // Early return if no brand data
 
-  if (isBrandProfileLoading) {
+  if (isLoading) {
     return (
       <SafeAreaView className="main-area" edges={['top']}>
         <View className="gap-6 pt-4">
@@ -286,10 +281,7 @@ const BrandProfileScreen: React.FC = () => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
             refreshControl={
-              <RefreshControl
-                refreshing={isBrandProfileLoading}
-                onRefresh={refetch}
-              />
+              <RefreshControl refreshing={isLoading} onRefresh={refetch} />
             }
           >
             {/* Brand Profile Card */}

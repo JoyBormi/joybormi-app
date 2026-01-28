@@ -19,18 +19,20 @@ export interface UpdateBrandPayload {
   phone?: string;
   profileImage?: string | null;
   bannerImage?: string | null;
+  brandId?: string;
 }
 
-const updateBrand = async (
-  brandId: string,
-  payload: UpdateBrandPayload,
-): Promise<IBrand> => await agent.put(`/brand/${brandId}`, payload);
+const updateBrand = async ({
+  brandId,
+  ...payload
+}: UpdateBrandPayload): Promise<IBrand> =>
+  await agent.put(`/brand/${brandId}`, payload);
 
-export const useUpdateBrand = (brandId: string) => {
+export const useUpdateBrand = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: UpdateBrandPayload) => updateBrand(brandId, payload),
+    mutationFn: (payload: UpdateBrandPayload) => updateBrand(payload),
     onSuccess: (data) => {
       // Update the brand query cache
       queryClient.setQueryData(

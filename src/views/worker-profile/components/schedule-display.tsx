@@ -16,7 +16,7 @@ interface ScheduleDisplayProps {
 
 /**
  * Schedule Display Component
- * Displays working days calendar
+ * Shows weekly working days with date-of-month
  */
 export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
   workingDays,
@@ -37,44 +37,74 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
     );
   }
 
+  const today = new Date();
+  const todayUiIndex = (today.getDay() + 6) % 7; // Monday = 0
+
+  const getDateForWeekday = (uiIndex: number) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() + (uiIndex - todayUiIndex));
+    return date;
+  };
+
   return (
     <View className="px-6 mb-8">
+      {/* Header */}
       <View className="flex-row items-center justify-between mb-4">
         <Text className="font-title text-lg text-foreground">
           Schedule Overview
         </Text>
-        <Pressable onPress={onEditSchedule}>
+        <Pressable onPress={onEditSchedule} hitSlop={10}>
           <Icons.Calendar size={20} className="text-primary" />
         </Pressable>
       </View>
-      <View className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50">
-        <Text className="font-body text-muted-foreground mb-3">
+
+      {/* Card */}
+      <View>
+        <Text className="font-body text-muted-foreground mb-4">
           Working {workingDays.length} days per week
         </Text>
-        <View className="flex-row flex-wrap gap-2">
+
+        {/* Days grid */}
+        <View className="flex-row flex-wrap justify-between gap-3">
           {dayNamesShort.map((day: string, index: number) => {
             const isWorking = workingDays.some((wd) => {
               const uiIndex = (wd.dayOfWeek + 6) % 7;
               return uiIndex === index;
             });
 
+            const date = getDateForWeekday(index);
+            const isToday = date.toDateString() === today.toDateString();
+
             return (
               <View
                 key={day}
                 className={cn(
-                  'w-12 h-12 rounded-xl items-center justify-center',
+                  'w-[13%] min-w-[48px] h-16 rounded-xl items-center justify-center',
                   isWorking
                     ? 'bg-success/20 border border-success/30'
                     : 'bg-muted/20',
+                  isToday && 'border-primary',
                 )}
               >
+                {/* Day name */}
                 <Text
                   className={cn(
-                    'font-caption',
+                    'font-caption uppercase',
                     isWorking ? 'text-success' : 'text-muted-foreground',
                   )}
                 >
                   {day}
+                </Text>
+
+                {/* Day of month */}
+                <Text
+                  className={cn(
+                    'font-body text-sm mt-0.5',
+                    isWorking ? 'text-success' : 'text-muted-foreground',
+                    isToday && 'text-primary',
+                  )}
+                >
+                  {date.getDate()}
                 </Text>
               </View>
             );

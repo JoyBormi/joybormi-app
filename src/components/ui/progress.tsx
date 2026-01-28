@@ -5,12 +5,12 @@ import Animated, {
 } from 'react-native-reanimated';
 
 export function AnimatedProgress({
-  currentStep,
-  totalSteps,
+  currentStep = 0,
+  totalSteps = 1,
   props,
 }: {
-  currentStep: number;
-  totalSteps: number;
+  currentStep?: number;
+  totalSteps?: number;
   props?: ViewProps;
 }) {
   const safeTotal = totalSteps > 0 ? totalSteps : 1;

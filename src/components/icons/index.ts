@@ -37,11 +37,12 @@ import {
   LogOut,
   Mail,
   MapPin,
-  MessageSquare,
   Megaphone,
+  MessageSquare,
   Moon,
   MoonStar,
   Notebook,
+  PackageOpen,
   Pencil,
   Phone,
   PlayCircle,
@@ -81,6 +82,7 @@ iconWithClassName(User);
 iconWithClassName(Settings);
 iconWithClassName(Check);
 iconWithClassName(CheckCircle);
+iconWithClassName(PackageOpen);
 iconWithClassName(AlertCircle);
 iconWithClassName(Info);
 iconWithClassName(ChevronDown);
@@ -169,6 +171,7 @@ const Icons = {
   Sun,
   ArrowRight,
   Upload,
+  PackageOpen,
   User,
   Users,
   X,

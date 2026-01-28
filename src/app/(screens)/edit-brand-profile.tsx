@@ -5,10 +5,11 @@ import { useForm } from 'react-hook-form';
 import { Alert, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BlockedSheet, BlockedSheetRef } from '@/components/modals/block-modal';
+import { BlockModal, BlockModalRef } from '@/components/modals/block-modal';
 import { KeyboardAvoid } from '@/components/shared';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
+import { Loading } from '@/components/status-screens';
 import {
   Button,
   Input,
@@ -18,9 +19,10 @@ import {
   Textarea,
 } from '@/components/ui';
 import { useDeleteBrand, useGetBrand, useUpdateBrand } from '@/hooks/brand';
-import { useUserStore } from '@/stores';
+import { toast } from '@/providers/toaster';
+import { alert } from '@/stores/use-alert-store';
 
-export interface Brandform {
+export interface BrandForm {
   brand_name: string;
   description: string;
   country: string;
@@ -37,18 +39,15 @@ export interface Brandform {
 
 const EditBrandProfileScreen = () => {
   const insets = useSafeAreaInsets();
-  const blockedSheetRef = useRef<BlockedSheetRef>(null);
-  const { user } = useUserStore();
+  const blockedSheetRef = useRef<BlockModalRef>(null);
 
   // Fetch brand data
-  const { data: brand, isLoading } = useGetBrand({ userId: user?.id });
-  const { mutate: updateBrand, isPending: isUpdating } = useUpdateBrand(
-    brand?.id || '',
-  );
+  const { data: brand, isLoading } = useGetBrand();
+  const { mutate: updateBrand, isPending: isUpdating } = useUpdateBrand();
   const { mutate: deleteBrand, isPending: isDeleting } = useDeleteBrand();
 
   // Form state matching backend schema
-  const form = useForm<Brandform>({
+  const form = useForm<BrandForm>({
     defaultValues: {
       brand_name: '',
       description: '',
@@ -95,7 +94,7 @@ const EditBrandProfileScreen = () => {
 
     // Only send changed fields
     Object.keys(formData).forEach((key) => {
-      const formKey = key as keyof Brandform;
+      const formKey = key as keyof BrandForm;
       const brandKey =
         {
           brand_name: 'brandName',
@@ -110,61 +109,46 @@ const EditBrandProfileScreen = () => {
       }
     });
 
-    if (Object.keys(changedFields).length === 0) {
-      Alert.alert('No Changes', 'No changes were made to save.');
-      return;
-    }
-
-    updateBrand(changedFields, {
-      onSuccess: () => {
-        Alert.alert('Success', 'Brand profile updated successfully!');
-        form.reset(formData);
-        router.back();
+    updateBrand(
+      { brandId: brand.id, ...changedFields },
+      {
+        onSuccess: () => {
+          toast.success({ title: 'Brand profile updated successfully!' });
+          form.reset(formData);
+          router.back();
+        },
       },
-      onError: (error) => {
-        Alert.alert('Error', error.message || 'Failed to update brand profile');
-      },
-    });
+    );
   }, [brand, form, updateBrand]);
 
   const handleDelete = useCallback(() => {
     if (!brand) return;
 
-    Alert.alert(
-      'Delete Brand',
-      'Are you sure you want to delete your brand? This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => {
-            deleteBrand(brand.id, {
-              onSuccess: () => {
-                Alert.alert('Success', 'Brand deleted successfully');
-                router.replace('/(tabs)/(brand)/brand-profile');
-              },
-              onError: (error) => {
-                Alert.alert('Error', error.message || 'Failed to delete brand');
-              },
-            });
+    alert({
+      title: 'Delete Brand',
+      subtitle:
+        'Are you sure you want to delete your brand? This action cannot be undone.',
+      cancelLabel: 'Cancel',
+      confirmLabel: 'Delete',
+      onConfirm: () => {
+        deleteBrand(brand.id, {
+          onSuccess: () => {
+            Alert.alert('Success', 'Brand deleted successfully');
+            router.replace('/(tabs)/(brand)/brand-profile');
           },
-        },
-      ],
-    );
+          onError: (error) => {
+            Alert.alert('Error', error.message || 'Failed to delete brand');
+          },
+        });
+      },
+    });
   }, [brand, deleteBrand]);
 
-  if (isLoading || !brand) {
-    return (
-      <View className="flex-1 bg-background items-center justify-center">
-        <RefreshCcw size={32} className="text-primary animate-spin" />
-      </View>
-    );
-  }
+  if (isLoading || !brand) return <Loading />;
 
   return (
     <KeyboardAvoid
-      className="bg-background px-4"
+      className="main-area"
       scrollConfig={{
         showsVerticalScrollIndicator: false,
         contentContainerStyle: {
@@ -324,7 +308,7 @@ const EditBrandProfileScreen = () => {
         <Button
           onPress={handleDelete}
           variant="outline"
-          size="action"
+          size="lg"
           className="flex-[0.3] border-destructive"
           disabled={isDeleting}
         >
@@ -334,7 +318,7 @@ const EditBrandProfileScreen = () => {
         <Button
           onPress={handleSave}
           disabled={!isFormDirty || isUpdating}
-          size="action"
+          size="lg"
           className="flex-[0.7]"
         >
           {isUpdating ? (
@@ -348,7 +332,7 @@ const EditBrandProfileScreen = () => {
         </Button>
       </View>
 
-      <BlockedSheet
+      <BlockModal
         ref={blockedSheetRef}
         onCancel={() => router.back()}
         onConfirm={() => blockedSheetRef.current?.hide()}
