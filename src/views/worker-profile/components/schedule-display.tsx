@@ -47,7 +47,7 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
   };
 
   return (
-    <View className="px-6 mb-8">
+    <View className="px-6 my-12">
       {/* Header */}
       <View className="flex-row items-center justify-between mb-4">
         <Text className="font-title text-lg text-foreground">
@@ -65,7 +65,7 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
         </Text>
 
         {/* Days grid */}
-        <View className="flex-row flex-wrap justify-between gap-3">
+        <View className="flex-row flex-wrap justify-between gap-1">
           {dayNamesShort.map((day: string, index: number) => {
             const isWorking = workingDays.some((wd) => {
               const uiIndex = (wd.dayOfWeek + 6) % 7;
@@ -79,11 +79,10 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
               <View
                 key={day}
                 className={cn(
-                  'w-[13%] min-w-[48px] h-16 rounded-xl items-center justify-center',
+                  'w-[12%] h-16 rounded-2xl items-center justify-center',
                   isWorking
                     ? 'bg-success/20 border border-success/30'
                     : 'bg-muted/20',
-                  isToday && 'border-primary',
                 )}
               >
                 {/* Day name */}

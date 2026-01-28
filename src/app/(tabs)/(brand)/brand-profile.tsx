@@ -306,9 +306,7 @@ const BrandProfileScreen: React.FC = () => {
                 }
                 onAddWorker={handleAddWorker}
                 onManageHours={() =>
-                  router.push(
-                    `/(slide-screens)/upsert-schedule?brandId=${brand.id}`,
-                  )
+                  router.push(`/(screens)/upsert-schedule?brandId=${brand.id}`)
                 }
               />
             )}
@@ -352,9 +350,7 @@ const BrandProfileScreen: React.FC = () => {
             <ScheduleDisplay
               workingDays={workingDays}
               onEditSchedule={() =>
-                router.push(
-                  `/(slide-screens)/upsert-schedule?brandId=${brand.id}`,
-                )
+                router.push(`/(screens)/upsert-schedule?brandId=${brand.id}`)
               }
             />
 

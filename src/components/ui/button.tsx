@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import { Pressable } from 'react-native';
+import { ActivityIndicator, Pressable, View } from 'react-native';
 
 import { TextClassContext } from '@/components/ui/text';
 import { Feedback } from '@/lib/haptics';
@@ -61,6 +61,7 @@ const buttonTextVariants = cva('font-montserrat-medium text-foreground', {
 type ButtonProps = React.ComponentPropsWithoutRef<typeof Pressable> &
   VariantProps<typeof buttonVariants> & {
     haptic?: boolean;
+    loading?: boolean;
   };
 
 const Button = React.forwardRef<
@@ -68,27 +69,51 @@ const Button = React.forwardRef<
   ButtonProps
 >(
   (
-    { className, variant, size, onPress, disabled, haptic = false, ...props },
+    {
+      className,
+      variant,
+      size,
+      onPress,
+      disabled,
+      haptic = false,
+      loading = false,
+      children,
+      ...props
+    },
     ref,
   ) => {
+    const isDisabled = disabled || loading;
+
     return (
       <TextClassContext.Provider value={buttonTextVariants({ variant, size })}>
         <Pressable
           className={cn(
-            disabled && 'opacity-40',
+            isDisabled && 'opacity-40',
             buttonVariants({ variant, size, className }),
           )}
           ref={ref}
           role="button"
-          disabled={disabled}
+          disabled={isDisabled}
           onPress={(e) => {
-            if (!disabled) {
+            if (!isDisabled) {
               haptic && Feedback.light();
               onPress?.(e);
             }
           }}
           {...props}
-        />
+        >
+          {(state) => (
+            <View className="flex-row items-center gap-2">
+              {loading && (
+                <ActivityIndicator
+                  size="small"
+                  className="text-primary-foreground"
+                />
+              )}
+              {typeof children === 'function' ? children(state) : children}
+            </View>
+          )}
+        </Pressable>
       </TextClassContext.Provider>
     );
   },

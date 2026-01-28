@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -36,11 +35,19 @@ const Wheel = ({ items, value, onChange }: WheelProps) => {
   const lastHapticIndex = useSharedValue(-1);
   const isScrolling = useSharedValue(false);
 
-  // Sync initial position
+  // CRITICAL FIX: Initialize scroll position correctly
   useEffect(() => {
     const index = items.indexOf(value);
+
     if (index !== -1) {
-      scrollY.value = index * -ITEM_HEIGHT;
+      // To center item at index N:
+      // - Item needs to be at centerPosition = (VISIBLE_ITEMS / 2 - 0.5) * ITEM_HEIGHT = 2 * 45 = 90px from top
+      // - Item's natural position is index * ITEM_HEIGHT
+      // - So scrollY = centerPosition - (index * ITEM_HEIGHT)
+      const centerPosition = (VISIBLE_ITEMS / 2 - 0.5) * ITEM_HEIGHT;
+      const targetScrollY = centerPosition - index * ITEM_HEIGHT;
+
+      scrollY.value = targetScrollY;
     }
   }, [items, value, scrollY]);
 
@@ -61,47 +68,73 @@ const Wheel = ({ items, value, onChange }: WheelProps) => {
       contextY.value = scrollY.value;
     })
     .onUpdate((event) => {
-      const minScroll = -(items.length - 1) * ITEM_HEIGHT;
+      // Calculate scroll boundaries
+      // When first item (index 0) is centered: scrollY should be at centerPosition - 0 = 90
+      // When last item is centered: scrollY should be at centerPosition - (lastIndex * ITEM_HEIGHT)
+      const centerPosition = (VISIBLE_ITEMS / 2 - 0.5) * ITEM_HEIGHT;
+      const maxScroll = centerPosition; // First item centered
+      const minScroll = centerPosition - (items.length - 1) * ITEM_HEIGHT; // Last item centered
+
       const newScroll = contextY.value + event.translationY;
 
-      // Add rubber-band resistance at boundaries
-      if (newScroll > 0) {
-        scrollY.value = newScroll * 0.3;
+      // Apply rubber-band resistance at boundaries
+      if (newScroll > maxScroll) {
+        // Trying to scroll beyond first item
+        scrollY.value = maxScroll + (newScroll - maxScroll) * 0.3;
       } else if (newScroll < minScroll) {
+        // Trying to scroll beyond last item
         scrollY.value = minScroll + (newScroll - minScroll) * 0.3;
       } else {
         scrollY.value = newScroll;
       }
 
-      // Haptic feedback during scroll (throttled)
-      const currentIndex = Math.round(Math.abs(scrollY.value / ITEM_HEIGHT));
-      if (currentIndex !== lastHapticIndex.value) {
+      // Calculate which item is currently centered
+      const currentItemPosition = centerPosition - scrollY.value;
+      const currentIndex = Math.round(currentItemPosition / ITEM_HEIGHT);
+
+      if (
+        currentIndex !== lastHapticIndex.value &&
+        currentIndex >= 0 &&
+        currentIndex < items.length
+      ) {
         lastHapticIndex.value = currentIndex;
         runOnJS(triggerHaptic)();
       }
     })
     .onEnd((event) => {
-      const minScroll = -(items.length - 1) * ITEM_HEIGHT;
+      const centerPosition = (VISIBLE_ITEMS / 2 - 0.5) * ITEM_HEIGHT;
+      const maxScroll = centerPosition;
+      const minScroll = centerPosition - (items.length - 1) * ITEM_HEIGHT;
       const currentScroll = scrollY.value;
 
-      // Calculate target with velocity
+      // Calculate target snap position
       let target: number;
       if (Math.abs(event.velocityY) > 500) {
-        // Fast scroll - use decay for natural deceleration
+        // Fast scroll with velocity
         const decayEnd = currentScroll + event.velocityY * 0.15;
-        target = Math.round(decayEnd / ITEM_HEIGHT) * ITEM_HEIGHT;
+        // Find which item position this corresponds to
+        const targetItemPos = centerPosition - decayEnd;
+        const targetIndex = Math.round(targetItemPos / ITEM_HEIGHT);
+        target = centerPosition - targetIndex * ITEM_HEIGHT;
       } else {
-        // Slow scroll - snap to nearest
-        target = Math.round(currentScroll / ITEM_HEIGHT) * ITEM_HEIGHT;
+        // Slow scroll - snap to nearest item
+        const currentItemPos = centerPosition - currentScroll;
+        const nearestIndex = Math.round(currentItemPos / ITEM_HEIGHT);
+        target = centerPosition - nearestIndex * ITEM_HEIGHT;
       }
 
-      const clampedTarget = Math.max(Math.min(target, 0), minScroll);
-      const finalIndex = Math.abs(clampedTarget / ITEM_HEIGHT);
+      // Clamp target within bounds
+      const clampedTarget = Math.max(Math.min(target, maxScroll), minScroll);
+
+      // Calculate final index from clamped position
+      const finalItemPos = centerPosition - clampedTarget;
+      const finalIndex = Math.round(finalItemPos / ITEM_HEIGHT);
+      const safeIndex = Math.max(0, Math.min(finalIndex, items.length - 1));
 
       scrollY.value = withSpring(clampedTarget, SPRING_CONFIG, (finished) => {
         if (finished) {
           isScrolling.value = false;
-          runOnJS(notifyChange)(items[finalIndex]);
+          runOnJS(notifyChange)(items[safeIndex]);
         }
       });
     });
@@ -134,9 +167,12 @@ const TimeItem = ({
   scrollY: SharedValue<number>;
 }) => {
   const animatedStyle = useAnimatedStyle(() => {
-    const itemOffset = index * ITEM_HEIGHT + scrollY.value;
-    const centerOffset = (VISIBLE_ITEMS / 2 - 0.5) * ITEM_HEIGHT;
-    const distanceFromCenter = Math.abs(itemOffset - centerOffset);
+    // Item's position on screen = its natural position + scroll offset
+    const itemPosition = index * ITEM_HEIGHT + scrollY.value;
+
+    // Center of viewport is at (VISIBLE_ITEMS / 2 - 0.5) * ITEM_HEIGHT = 90px
+    const centerPosition = (VISIBLE_ITEMS / 2 - 0.5) * ITEM_HEIGHT;
+    const distanceFromCenter = Math.abs(itemPosition - centerPosition);
 
     return {
       opacity: interpolate(
@@ -146,7 +182,7 @@ const TimeItem = ({
         Extrapolation.CLAMP,
       ),
       transform: [
-        { translateY: itemOffset },
+        { translateY: itemPosition },
         {
           scale: interpolate(
             distanceFromCenter,
@@ -179,12 +215,15 @@ export const TimePicker = ({
   value: string;
   onChange: (val: string) => void;
 }) => {
+  // Parse the time value into hours and minutes
   const sanitized = useMemo(() => {
-    const d = dayjs(value, 'HH:mm');
-    const valid = d.isValid() ? d : dayjs().hour(0).minute(0);
-    return { h: valid.format('HH'), m: valid.format('mm') };
+    const parts = value?.split(':') || [];
+    const h = parts[0]?.padStart(2, '0') || '00';
+    const m = parts[1]?.padStart(2, '0') || '00';
+    return { h, m };
   }, [value]);
 
+  // Generate arrays for hours (00-23) and minutes (00-59)
   const hours = useMemo(
     () => Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0')),
     [],
@@ -194,33 +233,42 @@ export const TimePicker = ({
     [],
   );
 
+  // Handle hour selection change
   const handleHourChange = useCallback(
     (newH: string) => {
-      onChange(`${newH}:${sanitized.m}`);
+      const newValue = `${newH}:${sanitized.m}`;
+      onChange(newValue);
     },
     [sanitized.m, onChange],
   );
 
+  // Handle minute selection change
   const handleMinChange = useCallback(
     (newM: string) => {
-      onChange(`${sanitized.h}:${newM}`);
+      const newValue = `${sanitized.h}:${newM}`;
+      onChange(newValue);
     },
     [sanitized.h, onChange],
   );
 
   return (
-    <View className="p-6 drop-shadow-[0_0_20px_rgba(0,0,0,0.1)]">
-      <View className="flex-row items-center justify-center bg-muted/10 backdrop-blur-sm drop-shadow-[0_0_20px_rgba(0,0,0,0.1)] shadow-[0_0_20px_rgba(0,0,0,0.1)] rounded-[32px] overflow-hidden">
+    <View className="p-4">
+      <View className="flex-row items-center justify-center overflow-hidden">
+        {/* Hour wheel */}
         <Wheel items={hours} value={sanitized.h} onChange={handleHourChange} />
+
+        {/* Separator */}
         <View className="z-10 bg-transparent px-1">
           <Text className="text-3xl font-bold text-muted-foreground/50">:</Text>
         </View>
+
+        {/* Minute wheel */}
         <Wheel items={minutes} value={sanitized.m} onChange={handleMinChange} />
 
-        {/* Selection Indicator */}
+        {/* Selection Indicator - highlights the centered/selected item */}
         <View
           pointerEvents="none"
-          className="absolute left-4 right-4 shadow-[0_0_20px_rgba(0,0,0,0.1)] bg-primary/5"
+          className="absolute left-4 right-4 shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-primary/5"
           style={{
             height: ITEM_HEIGHT,
             top: '50%',
