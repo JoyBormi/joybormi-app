@@ -3,7 +3,6 @@ import React from 'react';
 import { Image, Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
-import { NoData } from '@/components/status-screens';
 import { Text } from '@/components/ui';
 
 import type { IWorker } from '@/types/worker.type';
@@ -25,22 +24,7 @@ export const BrandTeamList: React.FC<BrandTeamListProps> = ({
   onAddWorker,
   onWorkerPress,
 }) => {
-  if (workers.length === 0) {
-    return (
-      <NoData
-        title="No Team Members"
-        message="Invite your first team member to get started."
-        action={
-          canEdit
-            ? {
-                label: 'Invite Worker',
-                onPress: onAddWorker,
-              }
-            : undefined
-        }
-      />
-    );
-  }
+  if (workers.length === 0) return null;
 
   return (
     <View className="px-6 mb-8">
