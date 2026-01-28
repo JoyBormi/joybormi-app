@@ -27,7 +27,7 @@ export default function HelpScreen() {
           },
           {
             id: 'msg-2',
-            sender: user?.name ?? 'You',
+            sender: user?.username ?? 'You',
             body: 'Thanks! Please keep me posted.',
             time: '09:20 AM',
           },
@@ -48,7 +48,7 @@ export default function HelpScreen() {
         ],
       },
     ],
-    [user?.name],
+    [user?.username],
   );
 
   const [activeInquiryId, setActiveInquiryId] = useState(
@@ -64,7 +64,6 @@ export default function HelpScreen() {
         title="Help & Support"
         subtitle="We are here to help with bookings, payouts, and account issues."
         animate={false}
-        className="px-2"
         variant="row"
       />
       <ScrollView
@@ -72,7 +71,7 @@ export default function HelpScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
       >
-        <View className="gap-6 px-5">
+        <View className="gap-6">
           <View className="gap-3">
             <Text className="text-sm text-muted-foreground font-subtitle uppercase tracking-wider">
               Quick help

@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { agent } from '@/lib/agent/client';
 import { storage } from '@/lib/mmkv';
 import { useUserStore } from '@/stores';
+import { usePreferencesStore } from '@/stores/use-preferences';
 
 import { AuthResponse, LoginCredentials } from './types';
 
@@ -19,7 +20,8 @@ const loginApi = async (credentials: LoginCredentials): Promise<AuthResponse> =>
  */
 export function useLogin() {
   const queryClient = useQueryClient();
-  const { setAppType, setIsLoggedIn, setUser, setLocation } = useUserStore();
+  const { setAppType, setIsLoggedIn, setUser } = useUserStore();
+  const { setLocation } = usePreferencesStore();
 
   return useMutation<AuthResponse, Error, LoginCredentials>({
     mutationFn: loginApi,

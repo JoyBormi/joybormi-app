@@ -142,16 +142,16 @@ const SettingsScreen: React.FC = () => {
               >
                 <View className="flex-row items-center justify-between p-5">
                   <View className="flex-1 pr-3">
-                    <Text className="text-white font-heading text-lg">
+                    <Text className="text-white font-heading">
                       {t('settings.userType.title')}
                     </Text>
 
-                    <Text className="text-white/85 font-body text-sm mt-1">
+                    <Text className="text-white/85 font-body mt-1">
                       {t('settings.userType.subtitle')}
                     </Text>
 
                     <View className="mt-3 self-end rounded-full bg-white/20 px-3 py-1">
-                      <Text className="text-white text-xs font-medium">
+                      <Text className="text-white font-base">
                         {t('settings.userType.current', { type: appType })}
                       </Text>
                     </View>

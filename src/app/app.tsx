@@ -41,6 +41,7 @@ export default function App() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(website)" />
         <Stack.Screen name="(dynamic-brand)" />
+        <Stack.Screen name="(settings)" />
         <Stack.Screen name="+not-found" />
         <Stack.Screen
           name="(auth)"

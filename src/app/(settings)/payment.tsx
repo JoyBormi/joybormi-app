@@ -62,7 +62,6 @@ export default function PaymentScreen() {
         title="Payments"
         subtitle="Manage your payment methods and billing activity."
         animate={false}
-        className="px-2"
         variant="row"
       />
       <ScrollView
@@ -70,7 +69,7 @@ export default function PaymentScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
       >
-        <View className="gap-6 px-5">
+        <View className="gap-6">
           <View className="gap-3">
             <View className="flex-row items-center justify-between">
               <Text className="text-sm text-muted-foreground font-subtitle uppercase tracking-wider">

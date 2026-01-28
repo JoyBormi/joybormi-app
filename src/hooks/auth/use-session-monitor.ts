@@ -17,6 +17,9 @@ export function useSessionMonitor() {
   const { mutate: refreshSession } = useRefreshSession();
   const { data: meData, isSuccess, isError } = useMe({ enabled: isLoggedIn });
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isRefreshingRef = useRef(false);
+
+  const expiresAt = meData?.session?.expiresAt;
 
   useEffect(() => {
     // Only run session monitor for logged-in users
@@ -31,11 +34,10 @@ export function useSessionMonitor() {
     }
 
     // Only set up refresh if we have session data
-    if (!isSuccess || isError || !meData?.session) {
+    if (!isSuccess || isError || !expiresAt) {
       return;
     }
 
-    const { expiresAt } = meData.session;
     const expiresAtDate = new Date(expiresAt);
     const now = new Date();
 
@@ -48,9 +50,19 @@ export function useSessionMonitor() {
 
     // If session expires in less than 5 minutes, refresh immediately
     if (timeUntilRefresh <= 0) {
+      if (isRefreshingRef.current) {
+        return;
+      }
       console.warn('[Session Monitor] Session expiring soon, refreshing now');
-      refreshSession();
-      setUser(meData.user);
+      isRefreshingRef.current = true;
+      refreshSession(undefined, {
+        onSettled: () => {
+          isRefreshingRef.current = false;
+        },
+      });
+      if (meData?.user) {
+        setUser(meData.user);
+      }
       return;
     }
 
@@ -61,9 +73,19 @@ export function useSessionMonitor() {
     });
 
     refreshTimerRef.current = setTimeout(() => {
+      if (isRefreshingRef.current) {
+        return;
+      }
       console.warn('[Session Monitor] Refreshing session');
-      refreshSession();
-      setUser(meData.user);
+      isRefreshingRef.current = true;
+      refreshSession(undefined, {
+        onSettled: () => {
+          isRefreshingRef.current = false;
+        },
+      });
+      if (meData?.user) {
+        setUser(meData.user);
+      }
     }, timeUntilRefresh);
 
     // Cleanup on unmount
@@ -73,5 +95,13 @@ export function useSessionMonitor() {
         refreshTimerRef.current = null;
       }
     };
-  }, [isLoggedIn, isSuccess, isError, meData, refreshSession]);
+  }, [
+    isLoggedIn,
+    isSuccess,
+    isError,
+    expiresAt,
+    refreshSession,
+    setUser,
+    meData?.user,
+  ]);
 }

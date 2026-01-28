@@ -57,7 +57,7 @@ export default function TabLayout() {
             <TabButton icon="Users">{t('common.tabs.profile')}</TabButton>
           </TabTrigger>
         )}
-        <TabTrigger name="settings" href="/(tabs)/(settings)/settings" asChild>
+        <TabTrigger name="settings" href="/(tabs)/settings" asChild>
           <TabButton icon="Settings">{t('common.tabs.settings')}</TabButton>
         </TabTrigger>
       </TabList>

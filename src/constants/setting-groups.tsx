@@ -30,7 +30,7 @@ export const settingsGroups = ({
                 icon: Icons.Heart,
                 iconColor: 'text-red-500',
                 iconBgColor: 'bg-red-500/10',
-                href: '/(tabs)/(settings)/profile/likes',
+                href: '/(settings)/profile/likes',
               },
               {
                 id: 'reviews',
@@ -40,7 +40,7 @@ export const settingsGroups = ({
                 icon: Icons.Star,
                 iconColor: 'text-yellow-500',
                 iconBgColor: 'bg-yellow-500/10',
-                href: '/(tabs)/(settings)/profile/reviews',
+                href: '/(settings)/profile/reviews',
               },
               {
                 id: 'security',
@@ -50,7 +50,7 @@ export const settingsGroups = ({
                 icon: Icons.Lock,
                 iconColor: 'text-green-500',
                 iconBgColor: 'bg-green-500/10',
-                href: '/(tabs)/(settings)/security',
+                href: '/(settings)/security',
               },
               {
                 id: 'payment',
@@ -60,7 +60,7 @@ export const settingsGroups = ({
                 icon: Icons.CreditCard,
                 iconColor: 'text-purple-500',
                 iconBgColor: 'bg-purple-500/10',
-                href: '/(tabs)/(settings)/payment',
+                href: '/(settings)/payment',
               },
             ],
           },
@@ -78,7 +78,7 @@ export const settingsGroups = ({
           icon: Icons.SlidersHorizontal,
           iconColor: 'text-indigo-500',
           iconBgColor: 'bg-indigo-500/10',
-          href: '/(tabs)/(settings)/preferences',
+          href: '/(settings)/preferences',
         },
       ],
     },
@@ -93,7 +93,7 @@ export const settingsGroups = ({
           icon: Icons.HelpCircle,
           iconColor: 'text-teal-500',
           iconBgColor: 'bg-teal-500/10',
-          href: '/(tabs)/(settings)/help',
+          href: '/(settings)/help',
         },
         {
           id: 'terms',
@@ -102,7 +102,7 @@ export const settingsGroups = ({
           icon: Icons.FileText,
           iconColor: 'text-gray-500',
           iconBgColor: 'bg-gray-500/10',
-          href: '/(tabs)/(settings)/legal/terms',
+          href: '/(settings)/legal/terms',
         },
         {
           id: 'privacy',
@@ -111,7 +111,7 @@ export const settingsGroups = ({
           icon: Icons.Shield,
           iconColor: 'text-gray-500',
           iconBgColor: 'bg-gray-500/10',
-          href: '/(tabs)/(settings)/legal/privacy',
+          href: '/(settings)/legal/privacy',
         },
         {
           id: 'version',

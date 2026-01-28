@@ -113,7 +113,6 @@ export default function SecurityScreen() {
         title="Security & Privacy"
         subtitle="Control how your account stays secure."
         animate={false}
-        className="px-2"
         variant="row"
       />
       <ScrollView
@@ -121,7 +120,7 @@ export default function SecurityScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
       >
-        <View className="gap-6 px-5">
+        <View className="gap-6">
           {groups.map((group) => (
             <View key={group.id} className="gap-2">
               <Text className="text-sm text-muted-foreground font-subtitle uppercase tracking-wider">

@@ -67,7 +67,7 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
               <View
                 key={day}
                 className={cn(
-                  'w-[12%] h-16 rounded-2xl items-center justify-center',
+                  'w-[12%] h-16 rounded-xl items-center justify-center',
                   isWorking
                     ? 'bg-success/20 border border-success/30'
                     : 'bg-muted/20',
@@ -86,9 +86,9 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
                 {/* Day of month */}
                 <Text
                   className={cn(
-                    'font-body text-sm mt-0.5',
+                    'font-caption mt-0.5',
                     isWorking ? 'text-success' : 'text-muted-foreground',
-                    isToday && 'text-primary',
+                    isToday && 'font-bold',
                   )}
                 >
                   {date.getDate()}
