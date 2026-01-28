@@ -1,15 +1,13 @@
-import {
-  BottomSheetModal,
-  useBottomSheetTimingConfigs,
-} from '@gorhom/bottom-sheet';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { Button, Text } from '@/components/ui';
 import { TimePicker } from '@/components/ui/time-picker';
 import { Feedback } from '@/lib/haptics';
+
+import { DetachedSheet } from '../bottom-sheet';
 
 interface TimePickerSheetProps {
   value: string;
@@ -27,10 +25,6 @@ export const TimePickerSheet = forwardRef<
 >(({ value, onChange, title = 'Select Time' }, ref) => {
   const insets = useSafeAreaInsets();
   const [selectedTime, setSelectedTime] = useState(value);
-  const animationConfigs = useBottomSheetTimingConfigs({
-    duration: 150,
-  });
-
   useEffect(() => {
     setSelectedTime(value);
   }, [value]);
@@ -43,29 +37,18 @@ export const TimePickerSheet = forwardRef<
   };
 
   return (
-    <CustomBottomSheet
-      ref={ref}
-      detached
-      index={0}
-      bottomInset={insets.bottom}
-      animationConfigs={animationConfigs}
-      style={{
-        paddingHorizontal: 12,
-      }}
-      bottomSheetViewConfig={{
-        className: 'rounded-b-3xl pb-6',
-      }}
-    >
+    <DetachedSheet ref={ref}>
       <View className="mb-6">
-        <Text className="font-heading text-xl text-foreground">{title}</Text>
+        <Text className="font-heading text-foreground">{title}</Text>
       </View>
 
       <TimePicker value={selectedTime} onChange={setSelectedTime} />
 
-      <View className="gap-3 flex-row mt-4">
+      <View className="gap-3 flex-row mt-4 mb-6">
         <Button
           variant="outline"
-          className="flex-[0.3] b h-14 rounded-2xl"
+          size="lg"
+          className="flex-[0.35] rounded-2xl"
           onPress={() => {
             Feedback.medium();
             if (ref && 'current' in ref) {
@@ -73,22 +56,21 @@ export const TimePickerSheet = forwardRef<
             }
           }}
         >
-          <Text className="text-foreground font-subtitle text-base">
-            Cancel
-          </Text>
+          <Text>Cancel</Text>
         </Button>
         <Button
           variant="default"
-          className="flex-[0.7] b h-14 rounded-2xl"
+          size="lg"
+          className="flex-[0.65] rounded-2xl"
           onPress={() => {
             Feedback.success();
             handleConfirm();
           }}
         >
-          <Text className="text-white font-subtitle text-base">Confirm</Text>
+          <Text>Confirm</Text>
         </Button>
       </View>
-    </CustomBottomSheet>
+    </DetachedSheet>
   );
 });
 

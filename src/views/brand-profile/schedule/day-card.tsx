@@ -40,9 +40,7 @@ export const DayCard: React.FC<DayCardProps> = ({
     <View
       className={cn(
         'rounded-2xl border transition-all shadow-sm backdrop-blur-xl',
-        isActive
-          ? 'bg-card/50 border-primary/20 '
-          : 'bg-muted/5 border-border/10',
+        isActive ? 'bg-card border-primary/20 ' : 'bg-muted/5 border-border/10',
       )}
     >
       <PressableBounce
@@ -67,14 +65,14 @@ export const DayCard: React.FC<DayCardProps> = ({
         </View>
         <View
           className={cn(
-            'px-3 py-1.5 rounded-full',
-            isActive ? 'bg-primary/10' : 'bg-muted/20',
+            'px-3 py-1.5 rounded-lg',
+            isActive ? 'bg-success/10' : 'bg-muted/20',
           )}
         >
           <Text
             className={cn(
-              'font-caption font-semibold',
-              isActive ? 'text-primary' : 'text-muted-foreground',
+              'font-caption min-w-12 text-center',
+              isActive ? 'text-success' : 'text-muted-foreground',
             )}
           >
             {isActive ? 'Active' : 'Off'}

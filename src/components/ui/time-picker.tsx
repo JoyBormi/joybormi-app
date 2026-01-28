@@ -203,7 +203,7 @@ const TimeItem = ({
       ]}
       className="items-center justify-center"
     >
-      <Text className="text-2xl font-bold text-foreground">{item}</Text>
+      <Text className="font-title text-foreground">{item}</Text>
     </Animated.View>
   );
 };
@@ -259,7 +259,7 @@ export const TimePicker = ({
 
         {/* Separator */}
         <View className="z-10 bg-transparent px-1">
-          <Text className="text-3xl font-bold text-muted-foreground/50">:</Text>
+          <Text className="font-title text-muted-foreground/50">:</Text>
         </View>
 
         {/* Minute wheel */}

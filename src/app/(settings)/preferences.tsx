@@ -241,7 +241,7 @@ const PreferencesScreen: React.FC = () => {
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        style={{ paddingBottom: insets.bottom + 100 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 50 }}
       >
         <View className="gap-6 mt-1">
           {preferenceGroups.map((group) => (

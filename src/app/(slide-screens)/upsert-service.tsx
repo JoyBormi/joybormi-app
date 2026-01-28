@@ -20,6 +20,7 @@ import {
   useGetServiceDetail,
   useUpdateService,
 } from '@/hooks/service';
+import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
 import { alert } from '@/stores/use-alert-store';
 import { validateFormErrors } from '@/utils/validation';
@@ -92,40 +93,42 @@ const UpsertServiceScreen = () => {
 
     if (isEdit && serviceId) {
       // Update existing service
-      await updateService({
-        serviceId,
-        payload: {
+      await updateService(
+        {
+          serviceId,
+          payload: {
+            name: data.name,
+            description: data.description,
+            durationMins: parseInt(data.durationMins),
+            price: parseFloat(data.price),
+          },
+        },
+        {
+          onSuccess(data) {
+            toast.success({ title: 'Service updated successfully' });
+            router.back();
+          },
+        },
+      );
+    } else if (brandId) {
+      // Create new service
+      await createService(
+        {
+          brandId,
           name: data.name,
           description: data.description,
           durationMins: parseInt(data.durationMins),
           price: parseFloat(data.price),
+          ownerId: user.id,
+          ownerType: user.role,
         },
-      }).then(() => {
-        alert({
-          title: 'Success',
-          subtitle: 'Service updated successfully',
-          confirmLabel: 'OK',
-          onConfirm: () => router.back(),
-        });
-      });
-    } else if (brandId) {
-      // Create new service
-      await createService({
-        brandId,
-        name: data.name,
-        description: data.description,
-        durationMins: parseInt(data.durationMins),
-        price: parseFloat(data.price),
-        ownerId: user.id,
-        ownerType: user.role,
-      }).then(() => {
-        alert({
-          title: 'Success',
-          subtitle: 'Service created successfully',
-          confirmLabel: 'OK',
-          onConfirm: () => router.back(),
-        });
-      });
+        {
+          onSuccess() {
+            toast.success({ title: 'Service created successfully' });
+            router.back();
+          },
+        },
+      );
     }
   });
 

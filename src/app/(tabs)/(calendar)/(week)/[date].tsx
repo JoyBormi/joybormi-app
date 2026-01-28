@@ -244,7 +244,7 @@ export default function TimelineCalendarScreen() {
           brand_name: 'Brand Name',
           service: 'Service',
           worker_name: 'Worker Name',
-          color: typeof event.color === 'string' ? event.color : undefined,
+          color: typeof event.color === 'string' ? event.color : '',
         };
         setSelectedReservation(reservation);
       },

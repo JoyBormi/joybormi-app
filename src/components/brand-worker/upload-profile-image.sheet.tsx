@@ -79,9 +79,6 @@ export const UploadProfileImageSheet = forwardRef<
           <Text className="font-heading text-xl text-foreground">
             Profile Image
           </Text>
-          <Pressable onPress={handleClose}>
-            <Icons.X size={24} className="text-muted-foreground" />
-          </Pressable>
         </View>
 
         {/* Image Preview */}

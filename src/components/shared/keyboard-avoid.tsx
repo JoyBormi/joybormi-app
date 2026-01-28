@@ -12,20 +12,15 @@ import { ScrollView } from 'react-native-gesture-handler';
 function KeyboardAvoid({
   children,
   scrollConfig,
-  iosHeight = 10,
-  androidHeight = 20,
   ...props
 }: {
   children: React.ReactNode;
   scrollConfig?: ScrollViewProps;
-  iosHeight?: number;
-  androidHeight?: number;
 } & KeyboardAvoidingViewProps) {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'height' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? iosHeight : androidHeight}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       enabled={true}
       {...props}
     >
