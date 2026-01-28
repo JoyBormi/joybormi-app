@@ -2,7 +2,7 @@ import {
   BottomSheetModal,
   useBottomSheetTimingConfigs,
 } from '@gorhom/bottom-sheet';
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -30,6 +30,10 @@ export const TimePickerSheet = forwardRef<
   const animationConfigs = useBottomSheetTimingConfigs({
     duration: 150,
   });
+
+  useEffect(() => {
+    setSelectedTime(value);
+  }, [value]);
 
   const handleConfirm = () => {
     onChange(selectedTime);

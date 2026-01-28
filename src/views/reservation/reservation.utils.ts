@@ -121,7 +121,7 @@ export const fetchReservations = async (
   filters: ReservationFilters,
 ): Promise<Reservation[]> => {
   // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 150));
 
   const reservations: Reservation[] = [];
   const pageSize = 15;
