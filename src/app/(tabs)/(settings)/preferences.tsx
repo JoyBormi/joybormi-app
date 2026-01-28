@@ -230,18 +230,18 @@ const PreferencesScreen: React.FC = () => {
   }, []);
 
   return (
-    <View className="main-area">
+    <View className="main-area" style={{ paddingTop: insets.top }}>
       <Header
         title={t('settings.preferencesScreen.title')}
         subtitle={t('settings.preferencesScreen.subtitle')}
+        animate={false}
         className="px-2"
+        variant="row"
       />
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{
-          paddingBottom: insets.bottom + 100,
-        }}
         showsVerticalScrollIndicator={false}
+        style={{ paddingBottom: insets.bottom + 100 }}
       >
         <View className="gap-6 mt-1">
           {preferenceGroups.map((group) => (

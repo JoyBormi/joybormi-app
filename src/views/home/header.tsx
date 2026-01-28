@@ -7,11 +7,13 @@ import { Image, Pressable, View } from 'react-native';
 import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
 import { useUserStore } from '@/stores';
+import { usePreferencesStore } from '@/stores/use-preferences';
 
 import { LocationPickerSheet } from './location-picker';
 
 export function Header() {
-  const { user, location } = useUserStore();
+  const { user } = useUserStore();
+  const { location } = usePreferencesStore();
   const sheetRef = useRef<BottomSheetModal>(null);
 
   const LocationDisplay = (

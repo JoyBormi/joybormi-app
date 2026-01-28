@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { RelativePathString, useRouter } from 'expo-router';
 import React from 'react';
 import { Pressable, Switch, Text, View } from 'react-native';
 
@@ -27,7 +27,7 @@ export const SettingsItem: React.FC<Props> = ({
   const content = (
     <View
       className={cn(
-        'flex-row items-center gap-3 px-3 py-2.5 bg-card/50 backdrop-blur-sm',
+        'flex-row items-center gap-3 px-3 py-2.5 bg-card/80 backdrop-blur-sm',
         isFirst && 'rounded-t-2xl',
         isLast && 'rounded-b-2xl',
         !isLast && 'border-b border-border/10',
@@ -38,7 +38,7 @@ export const SettingsItem: React.FC<Props> = ({
       {Icon && (
         <View
           className={cn(
-            'rounded-lg items-center justify-center p-1.5',
+            'rounded-md items-center justify-center p-1.5',
             item.iconBgColor || 'bg-primary/10',
           )}
         >
@@ -52,7 +52,7 @@ export const SettingsItem: React.FC<Props> = ({
       <View className="flex-1">
         <Text
           className={cn(
-            'text-base font-subtitle',
+            'font-body',
             item.destructive ? 'text-destructive' : 'text-foreground',
             item.withdraw ? 'font-caption text-center' : '',
           )}
@@ -60,7 +60,7 @@ export const SettingsItem: React.FC<Props> = ({
           {item.title}
         </Text>
         {item.subtitle && (
-          <Text className="text-sm text-muted-foreground font-body mt-0.5">
+          <Text className="font-caption text-muted-foreground mt-0.5">
             {item.subtitle}
           </Text>
         )}
@@ -103,10 +103,9 @@ export const SettingsItem: React.FC<Props> = ({
   if (item.type === 'navigation' && item.href) {
     return (
       <Pressable
-        activeOpacity={0.7}
         onPress={() => {
           Feedback.light();
-          router.push(item.href);
+          router.push(item.href as RelativePathString);
         }}
       >
         {content}
@@ -117,7 +116,6 @@ export const SettingsItem: React.FC<Props> = ({
   if (item.type === 'action' || item.type === 'userType') {
     return (
       <Pressable
-        activeOpacity={0.7}
         onPress={() => {
           Feedback.light();
           item.onPress?.();

@@ -149,6 +149,3 @@ export const toast = {
 export function ToastProvider() {
   return <Toast config={toastConfig} position="top" />;
 }
-
-// Default export = toast API
-export default toast;

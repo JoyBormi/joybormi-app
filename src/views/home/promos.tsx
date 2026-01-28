@@ -72,7 +72,7 @@ export function PromoOffers({ className }: { className?: string }) {
         <Text className="font-title text-lg text-foreground">
           Offers & Promotions
         </Text>
-        <Text className="font-subtitle font-regular text-muted-foreground">
+        <Text className="font-body text-muted-foreground">
           {offers.length} available
         </Text>
       </View>

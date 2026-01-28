@@ -14,22 +14,21 @@ interface Props {
 export const UserProfileCard: React.FC<Props> = ({ profile, onPress }) => {
   return (
     <Pressable
-      activeOpacity={0.7}
       onPress={() => {
         Feedback.light();
         onPress?.();
       }}
-      className="bg-card/50 backdrop-blur-sm rounded-2xl px-4 py-3 flex-row items-center gap-4 mb-8"
+      className="bg-card/90 backdrop-blur-sm rounded-2xl px-4 py-3 flex-row items-center gap-4 mb-8"
     >
       {/* Avatar */}
       <View className="relative">
         {profile?.image ? (
           <Image
             source={{ uri: profile.image }}
-            className="w-16 h-16 rounded-2xl"
+            className="w-16 h-16 rounded-xl"
           />
         ) : (
-          <View className="w-16 h-16 rounded-2xl bg-primary/10 items-center justify-center">
+          <View className="w-16 h-16 rounded-xl bg-primary/10 items-center justify-center">
             <Icons.User className="w-8 h-8 text-primary" />
           </View>
         )}

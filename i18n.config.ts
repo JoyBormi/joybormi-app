@@ -4,7 +4,6 @@ import { initReactI18next } from 'react-i18next';
 import { z } from 'zod/v4';
 
 import { storage } from '@/lib/mmkv';
-
 import en from '@/locales/en.json';
 import ru from '@/locales/ru.json';
 import uz from '@/locales/uz.json';

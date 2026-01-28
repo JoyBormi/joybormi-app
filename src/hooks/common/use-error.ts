@@ -5,7 +5,7 @@ import { ErrorCodes } from '@/constants/error-codes';
 import { ApiError } from '@/lib/agent';
 import { storage } from '@/lib/mmkv';
 import { queryClient } from '@/lib/tanstack-query';
-import toast from '@/providers/toaster';
+import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
 import { alert } from '@/stores/use-alert-store';
 import { EUserType } from '@/types/user.type';
@@ -50,6 +50,15 @@ export const useError = () => {
             cancelLabel: null,
           });
           return;
+        }
+
+        if (status === 0 || code === ErrorCodes.NETWORK_CONNECTION_ERROR) {
+          return alert({
+            title: t('common.error.title'),
+            subtitle: t('common.error.subtitle'),
+            confirmLabel: t('common.buttons.ok'),
+            cancelLabel: null,
+          });
         }
 
         if (status === 404) return;

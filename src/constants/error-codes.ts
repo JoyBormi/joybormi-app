@@ -9,6 +9,9 @@
  */
 
 export const ErrorCodes = {
+  // Network Module (00xxx)
+  NETWORK_CONNECTION_ERROR: 0,
+
   // Auth Module (10xxx)
   AUTH_VALIDATION_INVALID_EMAIL: 10001,
   AUTH_VALIDATION_INVALID_PHONE: 10002,
