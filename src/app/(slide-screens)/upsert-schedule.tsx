@@ -90,11 +90,17 @@ const ManageScheduleScreen = () => {
       breaks: [],
       createdAt: new Date().toISOString(),
     };
-    console.log(
-      '🚀 ~ file: upsert-schedule.tsx:75 ~ defaultWorkingDay:',
-      defaultWorkingDay,
-    );
-    setSchedule((prev) => [...prev, defaultWorkingDay]);
+    setSchedule((prev) => {
+      const isActive = prev.some((day) => day.dayOfWeek === dayOfWeek);
+      if (isActive) {
+        if (editingState?.day === dayOfWeek) {
+          setEditingState(null);
+          timePickerRef.current?.dismiss();
+        }
+        return prev.filter((day) => day.dayOfWeek !== dayOfWeek);
+      }
+      return [...prev, defaultWorkingDay];
+    });
   };
 
   const openTimePicker = (
@@ -264,12 +270,7 @@ const ManageScheduleScreen = () => {
         {DAY_ORDER.map((dayValue, localeIndex) => {
           const config = schedule.find((wd) => wd.dayOfWeek === dayValue);
           const isActive = !!config;
-          console.log(
-            '🚀 ~ file: upsert-schedule.tsx:258 ~ isActive:',
-            isActive,
-          );
           const label = dayNames[localeIndex];
-          console.log('🚀 ~ file: upsert-schedule.tsx:260 ~ label:', label);
 
           return (
             <View

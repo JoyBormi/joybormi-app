@@ -1,7 +1,14 @@
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import dayjs from 'dayjs';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { groupBy } from 'lodash';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { View } from 'react-native';
 import {
   CalendarProvider,
@@ -13,7 +20,6 @@ import {
 import { UpdateSources } from 'react-native-calendars/src/expandableCalendar/commons';
 import { PackedEvent } from 'react-native-calendars/src/timeline/EventBlock';
 
-import { ColorPickerModal } from '@/components/modals/color-picker-modal';
 import { useColorScheme } from '@/hooks/common';
 import {
   getTimelineTheme,
@@ -23,6 +29,7 @@ import {
 import { formatMonth } from '@/utils/date';
 import { getDate } from '@/utils/helpers';
 import { TimeEvent, TimelineEvent } from '@/views/calendars';
+import { Reservation, ReservationBottomSheet } from '@/views/reservation';
 
 /* ---------------------------------- */
 /* HELPER FUNCTIONS */
@@ -168,10 +175,11 @@ export default function TimelineCalendarScreen() {
     },
   ];
 
-  /* State for events and color picker */
-  const [events, setEvents] = useState<TimeEvent[]>(initialEvents);
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
-  const [colorPickerVisible, setColorPickerVisible] = useState(false);
+  /* State for events */
+  const [events] = useState<TimeEvent[]>(initialEvents);
+  const [selectedReservation, setSelectedReservation] =
+    useState<Reservation | null>(null);
+  const reservationSheetRef = useRef<BottomSheetModal>(null);
 
   /* Get theme-aware color */
   const getEventColor = useCallback(
@@ -224,11 +232,21 @@ export default function TimelineCalendarScreen() {
       scrollToFirst: false,
       scrollToNow: false,
       onEventPress: (event) => {
-        const eventId = event.id?.toString();
-        if (eventId) {
-          setSelectedEventId(eventId);
-          setColorPickerVisible(true);
-        }
+        const eventId = event.id?.toString() ?? 'event';
+        const reservation: Reservation = {
+          uuid: eventId,
+          title: event.title ?? 'Reservation',
+          start_time: dayjs(event.start).format('YYYY-MM-DD HH:mm:ss'),
+          end_time: dayjs(event.end).format('YYYY-MM-DD HH:mm:ss'),
+          avatar: `https://i.pravatar.cc/150?u=${eventId}`,
+          status: 'confirmed',
+          summary: event.summary ?? 'Calendar reservation details',
+          brand_name: 'Brand Name',
+          service: 'Service',
+          worker_name: 'Worker Name',
+          color: typeof event.color === 'string' ? event.color : undefined,
+        };
+        setSelectedReservation(reservation);
       },
     }),
     [renderEvent, theme],
@@ -244,29 +262,16 @@ export default function TimelineCalendarScreen() {
     [router],
   );
 
-  /* Handle color change */
-  const handleColorChange = useCallback(
-    (colorName: TimelineColorName) => {
-      if (!selectedEventId) return;
+  const handleReservationClose = useCallback(() => {
+    reservationSheetRef.current?.dismiss();
+    setSelectedReservation(null);
+  }, []);
 
-      setEvents((prevEvents) =>
-        prevEvents.map((event: TimeEvent) =>
-          event.id === selectedEventId || event.id === `${selectedEventId}-next`
-            ? { ...event, color: colorName }
-            : event,
-        ),
-      );
-      setSelectedEventId(null);
-    },
-    [selectedEventId],
-  );
-
-  /* Get current event color */
-  const currentEventColor = useMemo(() => {
-    if (!selectedEventId) return undefined;
-    const event = events.find((e) => e.id === selectedEventId);
-    return event?.color as TimelineColorName | undefined;
-  }, [selectedEventId, events]);
+  useEffect(() => {
+    if (selectedReservation) {
+      reservationSheetRef.current?.present();
+    }
+  }, [selectedReservation]);
 
   return (
     <CalendarProvider
@@ -287,15 +292,10 @@ export default function TimelineCalendarScreen() {
         />
         <TimelineList events={eventsByDate} timelineProps={timelineProps} />
       </View>
-
-      <ColorPickerModal
-        visible={colorPickerVisible}
-        onClose={() => {
-          setColorPickerVisible(false);
-          setSelectedEventId(null);
-        }}
-        onSelectColor={handleColorChange}
-        currentColor={currentEventColor}
+      <ReservationBottomSheet
+        ref={reservationSheetRef}
+        reservation={selectedReservation}
+        onClose={handleReservationClose}
       />
     </CalendarProvider>
   );

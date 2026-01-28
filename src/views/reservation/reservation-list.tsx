@@ -134,6 +134,17 @@ export const ReservationList = ({
     );
   }, [filters, onFilterPress, insets.top]);
 
+  const renderReservationItem = useCallback(
+    ({ item, index }: { item: Reservation; index: number }) => (
+      <ReservationItem
+        reservation={item}
+        onPress={onReservationPress}
+        index={index % 10}
+      />
+    ),
+    [onReservationPress],
+  );
+
   const renderSectionHeader = useCallback(
     ({ section }: { section: ReservationSection }) => {
       const isToday = dayjs(section.date).isSame(dayjs(), 'day');
@@ -238,13 +249,7 @@ export const ReservationList = ({
         scrollEventThrottle={16}
         sections={sections}
         keyExtractor={(item) => item.uuid}
-        renderItem={({ item, index }) => (
-          <ReservationItem
-            reservation={item}
-            onPress={onReservationPress}
-            index={index % 10}
-          />
-        )}
+        renderItem={renderReservationItem}
         renderSectionHeader={renderSectionHeader}
         ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
@@ -255,6 +260,10 @@ export const ReservationList = ({
         onRefresh={onRefresh}
         showsVerticalScrollIndicator={false}
         stickySectionHeadersEnabled
+        initialNumToRender={8}
+        maxToRenderPerBatch={10}
+        windowSize={7}
+        removeClippedSubviews
         contentContainerStyle={{
           paddingBottom: insets.bottom + 100,
         }}

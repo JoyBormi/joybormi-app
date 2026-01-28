@@ -86,7 +86,6 @@ export default function ReservationsScreen() {
 
   // Handlers
   const handleReservationPress = useCallback((reservation: Reservation) => {
-    detailSheetRef.current?.present();
     setSelectedReservation(reservation);
   }, []);
 
@@ -97,6 +96,12 @@ export default function ReservationsScreen() {
   const handleApplyFilters = useCallback((newFilters: ReservationFilters) => {
     setFilters(newFilters);
   }, []);
+
+  useEffect(() => {
+    if (selectedReservation) {
+      detailSheetRef.current?.present();
+    }
+  }, [selectedReservation]);
 
   return (
     <Fragment>

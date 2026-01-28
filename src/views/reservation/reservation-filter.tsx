@@ -1,6 +1,6 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import dayjs from 'dayjs';
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import Icons from '@/components/icons';
@@ -33,6 +33,10 @@ export const ReservationFilterSheet = forwardRef<BottomSheetModal, Props>(
   ({ filters, onApply, onClose }, ref) => {
     const [localFilters, setLocalFilters] =
       useState<ReservationFilters>(filters);
+
+    useEffect(() => {
+      setLocalFilters(filters);
+    }, [filters]);
 
     const toggleStatus = (status: ReservationStatus) => {
       Feedback.light();
