@@ -9,7 +9,7 @@ import {
 } from 'react-native-safe-area-context';
 
 import { Loading, NotFoundScreen } from '@/components/status-screens';
-import { useUploadFile } from '@/hooks/common';
+import { useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import {
   useCreateService,
@@ -23,6 +23,7 @@ import {
   useGetWorkerReviews,
   useUpdateWorkerProfile,
 } from '@/hooks/worker';
+import { getFileUrl } from '@/services/files';
 import { useUserStore } from '@/stores';
 import { ServiceOwnerType, type IService } from '@/types/service.type';
 import {
@@ -175,15 +176,29 @@ const WorkerProfileScreen: React.FC = () => {
   const handleAvatarChange = async (uri: string) => {
     if (!worker?.id) return;
     const file = buildUploadedFile(uri, 'worker-avatar');
-    const { url } = await uploadFileMutation.mutateAsync({ file });
-    updateWorkerMutation.mutate({ avatar: url });
+    const uploadedFile = await uploadFileMutation.mutateAsync({
+      file,
+      category: 'worker-avatar',
+      description: 'Worker profile image',
+    });
+    const avatarUrl = getFileUrl(uploadedFile);
+    if (avatarUrl) {
+      updateWorkerMutation.mutate({ avatar: avatarUrl });
+    }
   };
 
   const handleBannerChange = async (uri: string) => {
     if (!worker?.id) return;
     const file = buildUploadedFile(uri, 'worker-banner');
-    const { url } = await uploadFileMutation.mutateAsync({ file });
-    updateWorkerMutation.mutate({ coverImage: url });
+    const uploadedFile = await uploadFileMutation.mutateAsync({
+      file,
+      category: 'worker-banner',
+      description: 'Worker banner image',
+    });
+    const bannerUrl = getFileUrl(uploadedFile);
+    if (bannerUrl) {
+      updateWorkerMutation.mutate({ coverImage: bannerUrl });
+    }
   };
 
   const handleRefresh = () => {

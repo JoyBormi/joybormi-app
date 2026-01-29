@@ -120,4 +120,13 @@ export const queryKeys = {
     conversations: ['chat', 'conversations'],
     messages: ['chat', 'messages'],
   },
+
+  // ============================================
+  // FILES
+  // ============================================
+  files: {
+    all: ['files'],
+    detail: ['files', 'detail'],
+    category: ['files', 'category'],
+  },
 } as const;
