@@ -1,3 +1,4 @@
+export * from './file.service';
 export * from './use-delete-file';
 export * from './use-get-file';
 export * from './use-get-files-by-category';

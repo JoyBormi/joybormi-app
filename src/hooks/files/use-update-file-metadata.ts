@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { updateFileMetadata } from '@/hooks/files/file.service';
 import { queryKeys } from '@/lib/tanstack-query';
-import { updateFileMetadata } from '@/services/files';
 
 import type { IFile, UpdateFileMetadataPayload } from '@/types/file.type';
 

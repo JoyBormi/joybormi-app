@@ -22,7 +22,7 @@ type UploadMultipleFilesApiResponse =
 
 const appendMetadata = (
   formData: FormData,
-  metadata?: Record<string, string | number | boolean>,
+  metadata?: Record<string, string | number | boolean | undefined>,
 ) => {
   if (!metadata) return;
   Object.entries(metadata).forEach(([key, value]) => {

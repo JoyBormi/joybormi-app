@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { uploadMultipleFiles } from '@/services/files';
+import { uploadMultipleFiles } from '@/hooks/files/file.service';
 
 import type { FileUploadMultiplePayload, IFile } from '@/types/file.type';
 

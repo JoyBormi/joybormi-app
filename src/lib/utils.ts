@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 import { EUserType, UserTypeBlockReason } from '@/types/user.type';
+import { UploadedFile } from '@/utils/file-upload';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -59,3 +60,18 @@ export function validateUserTypeSwitch(
 
   return null;
 }
+
+/**
+ * Build uploaded file object
+ * @param uri - File URI
+ * @param label - File label
+ * @returns UploadedFile
+ */
+export const buildUploadedFile = (uri: string, label: string): UploadedFile => {
+  const name = uri.split('/').pop() || `${label}-${Date.now()}.jpg`;
+  return {
+    uri,
+    name,
+    type: 'image/jpeg',
+  };
+};

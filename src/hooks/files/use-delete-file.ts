@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { deleteFile } from '@/hooks/files/file.service';
 import { queryKeys } from '@/lib/tanstack-query';
-import { deleteFile } from '@/services/files';
 
 export const useDeleteFile = () => {
   const queryClient = useQueryClient();

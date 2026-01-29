@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { getFilesByCategory } from '@/hooks/files/file.service';
 import { queryKeys } from '@/lib/tanstack-query';
-import { getFilesByCategory } from '@/services/files';
 
 import type { IFile } from '@/types/file.type';
 

@@ -9,7 +9,7 @@ import {
 } from 'react-native-safe-area-context';
 
 import { Loading, NotFoundScreen } from '@/components/status-screens';
-import { useUploadFile } from '@/hooks/files';
+import { getFileUrl, useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import {
   useCreateService,
@@ -23,7 +23,6 @@ import {
   useGetWorkerReviews,
   useUpdateWorkerProfile,
 } from '@/hooks/worker';
-import { getFileUrl } from '@/services/files';
 import { useUserStore } from '@/stores';
 import { ServiceOwnerType, type IService } from '@/types/service.type';
 import {

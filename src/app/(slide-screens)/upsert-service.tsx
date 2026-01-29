@@ -286,14 +286,9 @@ const UpsertServiceScreen = () => {
             variant="ghost"
             size="lg"
             disabled={isDeletingService}
+            loading={isDeletingService}
           >
-            <Text className="text-destructive font-title">
-              {isDeletingService ? (
-                <ActivityIndicator size="small" className="text-destructive" />
-              ) : (
-                'Delete'
-              )}
-            </Text>
+            <Text className="text-destructive font-title">Delete</Text>
           </Button>
         )}
       </View>

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { replaceFile } from '@/hooks/files/file.service';
 import { queryKeys } from '@/lib/tanstack-query';
-import { replaceFile } from '@/services/files';
 
 import type { IFile } from '@/types/file.type';
 import type { UploadedFile } from '@/utils/file-upload';
