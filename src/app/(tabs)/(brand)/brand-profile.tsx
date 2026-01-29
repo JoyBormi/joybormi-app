@@ -29,9 +29,10 @@ import {
   useGetBrandTeam,
   useUpdateBrand,
 } from '@/hooks/brand';
-import { useUploadFile, useUploadMultipleFiles } from '@/hooks/common';
+import { useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
+import { getFileUrl } from '@/services/files';
 import { useUserStore } from '@/stores';
 import { BrandStatus, type IBrandPhoto } from '@/types/brand.type';
 import { EUserType } from '@/types/user.type';
@@ -79,7 +80,6 @@ const BrandProfileScreen: React.FC = () => {
   // Mutations
   const { mutateAsync: updateBrand } = useUpdateBrand();
   const { mutateAsync: uploadFile } = useUploadFile();
-  const { mutateAsync: uploadMultipleFiles } = useUploadMultipleFiles();
 
   // Local state for UI
   const [localPhotos, setLocalPhotos] = useState<IBrandPhoto[]>([]);
@@ -176,8 +176,16 @@ const BrandProfileScreen: React.FC = () => {
 
     try {
       const file = buildUploadedFile(uri, 'brand-banner');
-      const { url } = await uploadFile({ file });
-      await updateBrand({ brandId: brand.id, bannerImage: url });
+      const uploadedFile = await uploadFile({
+        file,
+        category: 'brand-banner',
+        description: 'Brand banner image',
+      });
+      const bannerUrl = getFileUrl(uploadedFile);
+      if (!bannerUrl) {
+        throw new Error('Upload did not return a banner URL');
+      }
+      await updateBrand({ brandId: brand.id, bannerImage: bannerUrl });
     } catch (error) {
       console.error('Failed to upload banner:', error);
     }
@@ -192,8 +200,16 @@ const BrandProfileScreen: React.FC = () => {
 
     try {
       const file = buildUploadedFile(uri, 'brand-avatar');
-      const { url } = await uploadFile({ file });
-      await updateBrand({ brandId: brand.id, profileImage: url });
+      const uploadedFile = await uploadFile({
+        file,
+        category: 'brand-avatar',
+        description: 'Brand profile image',
+      });
+      const profileUrl = getFileUrl(uploadedFile);
+      if (!profileUrl) {
+        throw new Error('Upload did not return a profile image URL');
+      }
+      await updateBrand({ brandId: brand.id, profileImage: profileUrl });
     } catch (error) {
       console.error('Failed to upload profile image:', error);
     }
@@ -221,18 +237,31 @@ const BrandProfileScreen: React.FC = () => {
     if (!brand?.id || newPhotos.length === 0) return;
 
     try {
-      const files = newPhotos.map((photo, index) =>
-        buildUploadedFile(photo.uri, `brand-photo-${index}`),
+      const uploadResults = await Promise.all(
+        newPhotos.map((photo, index) =>
+          uploadFile({
+            file: buildUploadedFile(photo.uri, `brand-photo-${index}`),
+            category: photo.category ?? 'other',
+            description: 'Brand gallery photo',
+          }),
+        ),
       );
-      const { urls } = await uploadMultipleFiles({ files });
-      const photosToAdd: IBrandPhoto[] = urls.map((url, index) => ({
-        id: `photo-${Date.now()}-${index}`,
-        url,
-        category: (newPhotos[index]?.category ??
-          'other') as IBrandPhoto['category'],
-        uploadedAt: new Date().toISOString(),
-      }));
-      setLocalPhotos((prev) => [...photosToAdd, ...prev]);
+      const photosToAdd: IBrandPhoto[] = uploadResults
+        .map((uploadedFile, index) => {
+          const url = getFileUrl(uploadedFile);
+          if (!url) return null;
+          return {
+            id: uploadedFile.id ?? `photo-${Date.now()}-${index}`,
+            url,
+            category: (newPhotos[index]?.category ??
+              'other') as IBrandPhoto['category'],
+            uploadedAt: new Date().toISOString(),
+          };
+        })
+        .filter((photo): photo is IBrandPhoto => Boolean(photo));
+      if (photosToAdd.length > 0) {
+        setLocalPhotos((prev) => [...photosToAdd, ...prev]);
+      }
     } catch (error) {
       console.error('Failed to upload photos:', error);
     }

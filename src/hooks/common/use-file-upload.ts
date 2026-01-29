@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { agent } from '@/lib/agent';
+import { getFileUrl, uploadFile, uploadMultipleFiles } from '@/services/files';
 
 import type { UploadedFile } from '@/utils/file-upload';
 
@@ -13,51 +13,33 @@ interface UploadMultipleResponse {
 }
 
 /**
- * Upload a single file to the server
+ * Upload a single file to the server (legacy wrapper)
  */
 const uploadSingleFile = async (
   file: UploadedFile,
-  fieldName: string = 'file',
 ): Promise<UploadResponse> => {
-  const formData = new FormData();
+  const uploadedFile = await uploadFile({ file });
+  const url = getFileUrl(uploadedFile);
 
-  // @ts-expect-error - FormData accepts this format in React Native
-  formData.append(fieldName, {
-    uri: file.uri,
-    name: file.name,
-    type: file.type,
-  });
+  if (!url) {
+    throw new Error('File upload did not return a URL');
+  }
 
-  return await agent.post('/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  return { url };
 };
 
 /**
- * Upload multiple files to the server
+ * Upload multiple files to the server (legacy wrapper)
  */
-const uploadMultipleFiles = async (
+const uploadMultipleFilesLegacy = async (
   files: UploadedFile[],
-  fieldName: string = 'files',
 ): Promise<UploadMultipleResponse> => {
-  const formData = new FormData();
+  const uploadedFiles = await uploadMultipleFiles({ files });
+  const urls = uploadedFiles
+    .map((file) => getFileUrl(file))
+    .filter((url): url is string => Boolean(url));
 
-  files.forEach((file, index) => {
-    // @ts-expect-error - FormData accepts this format in React Native
-    formData.append(`${fieldName}[${index}]`, {
-      uri: file.uri,
-      name: file.name,
-      type: file.type,
-    });
-  });
-
-  return await agent.post('/upload/multiple', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  return { urls };
 };
 
 /**
@@ -67,11 +49,11 @@ export const useUploadFile = () => {
   return useMutation({
     mutationFn: ({
       file,
-      fieldName,
+      fieldName: _fieldName,
     }: {
       file: UploadedFile;
       fieldName?: string;
-    }) => uploadSingleFile(file, fieldName),
+    }) => uploadSingleFile(file),
   });
 };
 
@@ -82,10 +64,10 @@ export const useUploadMultipleFiles = () => {
   return useMutation({
     mutationFn: ({
       files,
-      fieldName,
+      fieldName: _fieldName,
     }: {
       files: UploadedFile[];
       fieldName?: string;
-    }) => uploadMultipleFiles(files, fieldName),
+    }) => uploadMultipleFilesLegacy(files),
   });
 };
