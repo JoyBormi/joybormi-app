@@ -23,6 +23,7 @@ import {
   useGetWorkerReviews,
   useUpdateWorkerProfile,
 } from '@/hooks/worker';
+import { buildUploadedFile } from '@/lib/utils';
 import { useUserStore } from '@/stores';
 import { ServiceOwnerType, type IService } from '@/types/service.type';
 import {
@@ -36,8 +37,6 @@ import {
   UpsertServiceSheet,
 } from '@/views/worker-profile/components';
 import { type WorkerProfileFormData } from '@/views/worker-profile/utils/helpers';
-
-import type { UploadedFile } from '@/utils/file-upload';
 
 /**
  * Worker Profile View Screen
@@ -92,6 +91,23 @@ const WorkerProfileScreen: React.FC = () => {
   );
   const serviceList = services ?? [];
   const reviewList = reviews ?? [];
+  const reviewCount = reviewList.length;
+  const averageRating = useMemo(() => {
+    if (reviewCount === 0) return worker?.rating ?? 0;
+    const total = reviewList.reduce((sum, review) => sum + review.rating, 0);
+    return Number((total / reviewCount).toFixed(1));
+  }, [reviewCount, reviewList, worker?.rating]);
+  const profileWorker = useMemo(
+    () =>
+      worker
+        ? {
+            ...worker,
+            rating: averageRating,
+            reviewCount,
+          }
+        : null,
+    [averageRating, reviewCount, worker],
+  );
 
   // Bottom sheet refs
   const editProfileSheetRef = useRef<BottomSheetModal>(null);
@@ -163,40 +179,39 @@ const WorkerProfileScreen: React.FC = () => {
     }
   };
 
-  const buildUploadedFile = (uri: string, label: string): UploadedFile => {
-    const name = uri.split('/').pop() || `${label}-${Date.now()}.jpg`;
-    return {
-      uri,
-      name,
-      type: 'image/jpeg',
-    };
-  };
-
   const handleAvatarChange = async (uri: string) => {
     if (!worker?.id) return;
-    const file = buildUploadedFile(uri, 'worker-avatar');
-    const uploadedFile = await uploadFileMutation.mutateAsync({
-      file,
-      category: 'worker-avatar',
-      description: 'Worker profile image',
-    });
-    const avatarUrl = getFileUrl(uploadedFile);
-    if (avatarUrl) {
-      updateWorkerMutation.mutate({ avatar: avatarUrl });
+    try {
+      const file = buildUploadedFile(uri, 'worker-avatar');
+      const uploadedFile = await uploadFileMutation.mutateAsync({
+        file,
+        category: 'worker-avatar',
+        description: 'Worker profile image',
+      });
+      const avatarUrl = getFileUrl(uploadedFile);
+      if (avatarUrl) {
+        updateWorkerMutation.mutate({ avatar: avatarUrl });
+      }
+    } catch (error) {
+      console.error('Failed to upload worker avatar:', error);
     }
   };
 
   const handleBannerChange = async (uri: string) => {
     if (!worker?.id) return;
-    const file = buildUploadedFile(uri, 'worker-banner');
-    const uploadedFile = await uploadFileMutation.mutateAsync({
-      file,
-      category: 'worker-banner',
-      description: 'Worker banner image',
-    });
-    const bannerUrl = getFileUrl(uploadedFile);
-    if (bannerUrl) {
-      updateWorkerMutation.mutate({ coverImage: bannerUrl });
+    try {
+      const file = buildUploadedFile(uri, 'worker-banner');
+      const uploadedFile = await uploadFileMutation.mutateAsync({
+        file,
+        category: 'worker-banner',
+        description: 'Worker banner image',
+      });
+      const bannerUrl = getFileUrl(uploadedFile);
+      if (bannerUrl) {
+        updateWorkerMutation.mutate({ coverImage: bannerUrl });
+      }
+    } catch (error) {
+      console.error('Failed to upload worker banner:', error);
     }
   };
 
@@ -217,7 +232,7 @@ const WorkerProfileScreen: React.FC = () => {
     return <Loading />;
   }
 
-  if (!worker) {
+  if (!worker || !profileWorker) {
     return <NotFoundScreen />;
   }
 
@@ -233,10 +248,10 @@ const WorkerProfileScreen: React.FC = () => {
       >
         {/* Profile Card */}
         <ProfileCard
-          worker={worker}
+          worker={profileWorker}
           servicesCount={serviceList.length}
           workDaysCount={workingDays.length}
-          reviewsCount={reviewList.length}
+          reviewsCount={reviewCount}
           onEdit={handleEditProfile}
           onAvatarChange={handleAvatarChange}
           onBannerChange={handleBannerChange}
