@@ -307,7 +307,7 @@ const BrandProfileScreen: React.FC = () => {
 
             {/* Services Section */}
             <BrandServicesList
-              brandId={brand.id}
+              ownerId={brand.id}
               services={services}
               canEdit={canEdit}
             />

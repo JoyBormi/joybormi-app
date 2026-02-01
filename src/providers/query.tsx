@@ -58,9 +58,6 @@ export const QueryProvider = ({ children }: { children: React.ReactNode }) => {
           Math.min(1000 * 2 ** attemptIndex, 30000),
       },
       mutations: {
-        retry: shouldRetry,
-        retryDelay: (attemptIndex: number) =>
-          Math.min(1000 * 2 ** attemptIndex, 10000),
         onSuccess: (data: unknown) => {
           if (__DEV__) {
             // eslint-disable-next-line no-console

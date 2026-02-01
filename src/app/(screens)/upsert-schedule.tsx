@@ -238,16 +238,7 @@ const ManageScheduleScreen = () => {
         await updateSchedule(workingDaysPayload);
       } else {
         // Create new schedule first
-        const newSchedule = await createSchedule({ brandId });
-
-        // Then update with working days using the new schedule ID
-        // if (newSchedule?.id && schedule.length > 0) {
-        //   // Use agent API directly to update the newly created schedule
-        //   await agent.put(
-        //     `/schedule/${newSchedule.id}/working-days`,
-        //     workingDaysPayload,
-        //   );
-        // }
+        await createSchedule({ brandId });
       }
       router.back();
       toast.success({ title: t('common.success.scheduleSaved') });
@@ -300,7 +291,6 @@ const ManageScheduleScreen = () => {
           const dayConfig = schedule.find((s) => s.dayOfWeek === dayIndex);
           const isActive = !!dayConfig;
           const dayName = dayNames[dayIndex];
-          console.log('🚀 ~ ManageScheduleScreen ~ dayName:', dayName);
 
           return (
             <DayCard

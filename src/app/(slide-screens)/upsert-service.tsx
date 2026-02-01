@@ -9,7 +9,7 @@ import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Loading, NotFoundScreen } from '@/components/status-screens';
-import { Button, Text, Textarea } from '@/components/ui';
+import { Button, Select, SelectValue, Text, Textarea } from '@/components/ui';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import {
@@ -23,6 +23,7 @@ import {
 import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
 import { alert } from '@/stores/use-alert-store';
+import { normalizePrice } from '@/utils/helpers';
 import { validateFormErrors } from '@/utils/validation';
 
 /**
@@ -35,11 +36,11 @@ const UpsertServiceScreen = () => {
   const { user } = useUserStore();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{
-    brandId?: string;
+    ownerId?: string;
     serviceId?: string;
   }>();
 
-  const brandId = params.brandId;
+  const ownerId = params.ownerId;
   const serviceId = params.serviceId;
   const isEdit = !!serviceId;
 
@@ -61,8 +62,9 @@ const UpsertServiceScreen = () => {
     defaultValues: {
       name: '',
       description: '',
-      durationMins: '60',
+      durationMins: '',
       price: '',
+      currency: 'UZS',
       ownerType: user?.role,
     },
   });
@@ -101,6 +103,7 @@ const UpsertServiceScreen = () => {
             description: data.description,
             durationMins: parseInt(data.durationMins),
             price: parseFloat(data.price),
+            currency: data.currency,
           },
         },
         {
@@ -110,15 +113,18 @@ const UpsertServiceScreen = () => {
           },
         },
       );
-    } else if (brandId) {
+    } else if (ownerId) {
       // Create new service
       await createService(
         {
-          brandId,
+          brandId: ownerId,
           name: data.name,
           description: data.description,
           durationMins: parseInt(data.durationMins),
-          price: parseFloat(data.price),
+          price: normalizePrice(data.price)
+            ? Number(normalizePrice(data.price))
+            : 0,
+          currency: data.currency,
           ownerId: user.id,
           ownerType: user.role,
         },
@@ -161,12 +167,12 @@ const UpsertServiceScreen = () => {
     );
   }
 
-  // Missing brandId for new service
-  if (!isEdit && !brandId) {
+  // Missing ownerId for new service
+  if (!isEdit && !ownerId) {
     return (
       <NotFoundScreen
         title="Invalid Request"
-        message="Brand ID is required to create a new service."
+        message="ID is required to create a new service."
         actionLabel="Go Back"
         onAction={() => router.back()}
       />
@@ -233,12 +239,16 @@ const UpsertServiceScreen = () => {
           required
           message="How long does this service take?"
           render={({ field }) => (
-            <NumberInput
-              placeholder="60"
-              {...field}
-              maxDecimals={0}
-              returnKeyType="next"
-              onSubmitEditing={() => form.setFocus('price')}
+            <Select
+              value={field.value}
+              onChangeText={field.onChangeText as (value: SelectValue) => void}
+              placeholder="Select duration"
+              options={[
+                { label: '30 min', value: '30' },
+                { label: '60 min', value: '60' },
+                { label: '90 min', value: '90' },
+                { label: '120 min', value: '120' },
+              ]}
             />
           )}
         />
@@ -251,10 +261,30 @@ const UpsertServiceScreen = () => {
           message="Service price in your local currency"
           render={({ field }) => (
             <NumberInput
-              placeholder="80"
               {...field}
-              maxDecimals={1}
+              placeholder="80 000 so'm"
+              maxDecimals={0}
               returnKeyType="done"
+            />
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="currency"
+          label="Currency"
+          required
+          message="Select the currency for this service"
+          render={({ field }) => (
+            <Select
+              value={field.value}
+              onChangeText={field.onChangeText as (value: SelectValue) => void}
+              placeholder="Select currency"
+              options={[
+                { label: 'So`m', value: 'UZS' },
+                { label: 'Dollar', value: 'USD' },
+                { label: 'Ruble', value: 'RUB' },
+              ]}
             />
           )}
         />

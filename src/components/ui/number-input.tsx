@@ -7,6 +7,7 @@ interface NumberInputProps extends Omit<TextInputProps, 'keyboardType'> {
   onNumberChange?: (value: string) => void;
   maxDecimals?: number;
   allowNegative?: boolean;
+  thousandSeparator?: boolean;
 }
 
 const NumberInput = React.forwardRef<
@@ -21,6 +22,7 @@ const NumberInput = React.forwardRef<
       value,
       maxDecimals = 2,
       allowNegative = false,
+      thousandSeparator = true,
       ...props
     },
     ref,
@@ -45,6 +47,15 @@ const NumberInput = React.forwardRef<
         cleaned = parts[0] + '.' + parts[1].slice(0, maxDecimals);
       }
 
+      // Add space every 3 digits from right
+      if (thousandSeparator && cleaned.includes('.')) {
+        const [integer, decimal] = cleaned.split('.');
+        const formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        cleaned = formattedInteger + '.' + decimal;
+      } else if (thousandSeparator) {
+        cleaned = cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      }
+
       return cleaned;
     };
 
@@ -62,7 +73,7 @@ const NumberInput = React.forwardRef<
     return (
       <Input
         ref={ref}
-        keyboardType="decimal-pad"
+        keyboardType={maxDecimals === 0 ? 'numeric' : 'decimal-pad'}
         className={className}
         value={value}
         onChangeText={handleTextChange}

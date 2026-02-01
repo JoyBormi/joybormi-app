@@ -16,6 +16,7 @@ export interface IService {
   description?: string;
   durationMins: number;
   price: number;
+  currency: string;
   status: ServiceStatus;
   createdAt: string;
   updatedAt: string;
@@ -29,6 +30,7 @@ export interface CreateServicePayload {
   description?: string;
   durationMins: number;
   price: number;
+  currency: string;
   status?: ServiceStatus;
   ownerId: string;
   ownerType: string;
@@ -40,4 +42,5 @@ export interface UpdateServicePayload {
   durationMins?: number;
   price?: number;
   status?: ServiceStatus;
+  currency?: string;
 }

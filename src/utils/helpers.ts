@@ -32,8 +32,33 @@ export const formatPhoneNumber = (
   return parsed.formatInternational(); // "+998 93 455 25 65"
 };
 
+/**
+ * @param email Email to check
+ * @returns Empty string if email is local, otherwise returns the email
+ */
 export const emptyLocalEmail = (email: string) => {
   const isEmailLOcal = email.endsWith(LOCAL_EMAIL);
 
   return isEmailLOcal ? '' : email;
+};
+
+export const formatCurrency = (amount: number, currency: string) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 1,
+    currencyDisplay: 'symbol',
+    currencySign: 'standard',
+    useGrouping: true,
+    notation: 'standard',
+  }).format(amount);
+};
+
+/**
+ * @param price Raw input (any format)
+ * @returns formatted price or null
+ */
+export const normalizePrice = (price: string): string | null => {
+  return price.replace(/\s/g, '');
 };

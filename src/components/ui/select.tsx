@@ -79,14 +79,14 @@ export function Select({
     <Fragment>
       <Pressable
         onPress={() => setVisible(true)}
-        className="flex-row items-center justify-between gap-4 px-3 h-12 rounded-md border border-input bg-muted/20 active:bg-muted/30 focus:border-input focus:bg-muted/30"
+        className="h-14 bg-muted/50 rounded-md border border-input focus:border-border focus:bg-muted/70 px-3 flex-row items-center w-full justify-between"
       >
         <Text
           className={cn(
-            'text-base capitalize  native:leading-[1.25]  ',
-            value !== undefined
-              ? 'text-foreground lg:text-body native:text-caption font-medium '
-              : ' font-regular text-muted-foreground',
+            'font-body native:leading-[1.25]',
+            value !== undefined && value !== ''
+              ? 'text-foreground'
+              : 'text-muted-foreground',
           )}
         >
           {displayLabel}

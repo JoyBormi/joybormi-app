@@ -5,13 +5,14 @@ import { Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
+import { formatCurrency } from '@/utils/helpers';
 
 import type { IService } from '@/types/service.type';
 
 interface BrandServicesListProps {
   services?: IService[];
   canEdit: boolean;
-  brandId: string;
+  ownerId: string;
 }
 
 /**
@@ -21,8 +22,9 @@ interface BrandServicesListProps {
 export const BrandServicesList: React.FC<BrandServicesListProps> = ({
   services,
   canEdit,
-  brandId,
+  ownerId,
 }) => {
+  console.log('🚀 ~ BrandServicesList ~ services:', services);
   if (!services || services.length === 0) return null;
   return (
     <View className="px-6 mb-8">
@@ -33,7 +35,7 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
         {canEdit && (
           <Pressable
             onPress={() =>
-              router.push(`/(slide-screens)/upsert-service?brandId=${brandId}`)
+              router.push(`/(slide-screens)/upsert-service?ownerId=${ownerId}`)
             }
           >
             <Icons.Plus size={20} className="text-primary" />
@@ -51,7 +53,7 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
             <Pressable
               onPress={() =>
                 router.push(
-                  `/(slide-screens)/upsert-service?serviceId=${service.id}&brandId=${brandId}`,
+                  `/(slide-screens)/upsert-service?serviceId=${service.id}&ownerId=${ownerId}`,
                 )
               }
               className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50 active:scale-[0.98]"
@@ -61,7 +63,7 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
                   {service.name}
                 </Text>
                 <Text className="font-subtitle text-primary">
-                  ${service.price}
+                  {formatCurrency(service.price, service.currency)}
                 </Text>
               </View>
               <Text className="font-body text-muted-foreground mb-3">

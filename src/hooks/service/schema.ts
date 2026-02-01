@@ -11,6 +11,7 @@ export const serviceSchema = z.object({
     },
   }),
   price: required(z.string()),
+  currency: z.string(),
   ownerType: z.string(),
 });
 
