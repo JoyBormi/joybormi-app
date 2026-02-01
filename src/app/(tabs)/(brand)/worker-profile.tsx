@@ -1,51 +1,63 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
-import React, { useMemo, useRef, useState } from 'react';
-import { ScrollView } from 'react-native';
+import React, { Fragment, useCallback, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ScrollView, View } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-import { Loading, NotFoundScreen } from '@/components/status-screens';
-import { getFileUrl, useUploadFile } from '@/hooks/files';
+import {
+  UploadBannerSheet,
+  UploadPhotosSheet,
+  UploadProfileImageSheet,
+} from '@/components/brand-worker';
+import { NotFoundScreen, PendingScreen } from '@/components/status-screens';
+import { Skeleton } from '@/components/ui';
+import {
+  useGetBrandPhotos,
+  useGetBrandTeam,
+  useUpdateBrand,
+} from '@/hooks/brand';
+import { normalizeFileUrl, useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
-import {
-  useCreateService,
-  useDeleteService,
-  useGetServices,
-  useUpdateService,
-  type ServiceFormData,
-} from '@/hooks/service';
-import {
-  useGetWorkerProfile,
-  useGetWorkerReviews,
-  useUpdateWorkerProfile,
-} from '@/hooks/worker';
+import { useGetServices } from '@/hooks/service';
+import { useGetWorkerProfile } from '@/hooks/worker';
 import { buildUploadedFile } from '@/lib/utils';
 import { useUserStore } from '@/stores';
-import { ServiceOwnerType, type IService } from '@/types/service.type';
+import { type IBrandPhoto } from '@/types/brand.type';
+import { EUserType } from '@/types/user.type';
+import {
+  BrandMissing,
+  BrandPhotosGrid,
+  BrandQuickActions,
+  BrandServicesList,
+  BrandTeamList,
+} from '@/views/brand-profile/components';
 import {
   AboutSectionDisplay,
-  EditProfileSheet,
   ProfileCard,
-  QuickActionsSection,
-  ReviewsList,
   ScheduleDisplay,
-  ServicesList,
-  UpsertServiceSheet,
 } from '@/views/worker-profile/components';
-import { type WorkerProfileFormData } from '@/views/worker-profile/utils/helpers';
+
+import type { IWorker } from '@/types/worker.type';
 
 /**
- * Worker Profile View Screen
- * Main view for worker profile management
+ * Worker Profile Management Page - For creators/workers to manage their worker
+ * Route: /(tabs)/(worker)/worker-profile
+ * This page allows editing and managing worker information
  */
 const WorkerProfileScreen: React.FC = () => {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { user } = useUserStore();
+  const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  const { appType, user } = useUserStore();
+
+  // Check if user is creator or worker
+  const isCreator = appType === EUserType.CREATOR;
+  const canEdit = isCreator;
 
   const {
     data: worker,
@@ -62,241 +74,313 @@ const WorkerProfileScreen: React.FC = () => {
     brandId: worker?.brandId,
     ownerId: user?.id,
   });
-  const {
-    data: schedule,
-    refetch: refetchSchedule,
-    isLoading: isScheduleLoading,
-  } = useGetSchedule({
-    brandId: worker?.brandId,
+  const { data: team, refetch: refetchTeam } = useGetBrandTeam({
+    brandId: worker?.id,
   });
-  const {
-    data: reviews,
-    refetch: refetchReviews,
-    isLoading: isReviewsLoading,
-  } = useGetWorkerReviews({
-    workerId: worker?.id,
+  const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos({
+    brandId: worker?.id,
+  });
+  const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
+    brandId: worker?.id,
   });
 
-  const updateWorkerMutation = useUpdateWorkerProfile(worker?.id || '');
-  const uploadFileMutation = useUploadFile();
-  const createServiceMutation = useCreateService();
-  const updateServiceMutation = useUpdateService();
-  const deleteServiceMutation = useDeleteService();
+  // Mutations
+  const { mutateAsync: updateBrand } = useUpdateBrand();
+  const { mutateAsync: uploadFile, isPending: isUploadingFile } =
+    useUploadFile();
 
-  const [selectedService, setSelectedService] = useState<IService | null>(null);
-
-  const workingDays = useMemo(
-    () => schedule?.workingDays ?? [],
-    [schedule?.workingDays],
+  // Local state for UI
+  const [localPhotos, setLocalPhotos] = useState<IBrandPhoto[]>([]);
+  const mergedPhotos = useMemo(
+    () => [...localPhotos, ...(photos ?? [])],
+    [localPhotos, photos],
   );
-  const serviceList = services ?? [];
-  const reviewList = reviews ?? [];
-  const reviewCount = reviewList.length;
-  const averageRating = useMemo(() => {
-    if (reviewCount === 0) return worker?.rating ?? 0;
-    const total = reviewList.reduce((sum, review) => sum + review.rating, 0);
-    return Number((total / reviewCount).toFixed(1));
-  }, [reviewCount, reviewList, worker?.rating]);
-  const profileWorker = useMemo(
-    () =>
-      worker
-        ? {
-            ...worker,
-            rating: averageRating,
-            reviewCount,
-          }
-        : null,
-    [averageRating, reviewCount, worker],
-  );
+  const workers = team ?? [];
+  const workingDays = schedule?.workingDays ?? [];
 
-  // Bottom sheet refs
-  const editProfileSheetRef = useRef<BottomSheetModal>(null);
-  const upsertServiceSheetRef = useRef<BottomSheetModal>(null);
-
-  // Handlers
-  const handleEditProfile = () => {
-    editProfileSheetRef.current?.present();
-  };
-
-  const handleSaveProfile = (data: WorkerProfileFormData) => {
-    if (!worker?.id) return;
-    updateWorkerMutation.mutate({
-      name: data.name,
-      role: data.role,
-      bio: data.bio,
-      specialties: data.specialties,
-      email: data.email,
-      phone: data.phone,
-    });
-  };
-
-  const handleAddService = () => {
-    setSelectedService(null);
-    upsertServiceSheetRef.current?.present();
-  };
-
-  const handleServicePress = (service: IService) => {
-    setSelectedService(service);
-    upsertServiceSheetRef.current?.present();
-  };
-
-  const handleSaveService = async (
-    serviceId: string | null,
-    data: ServiceFormData,
-  ) => {
-    if (!worker?.brandId || !user?.id) return;
-
-    if (serviceId) {
-      await updateServiceMutation.mutateAsync({
-        serviceId,
-        payload: {
-          name: data.name,
-          description: data.description,
-          durationMins: parseInt(data.durationMins, 10),
-          price: parseFloat(data.price),
-        },
-      });
-    } else {
-      await createServiceMutation.mutateAsync({
-        brandId: worker.brandId,
-        name: data.name,
-        description: data.description,
-        durationMins: parseInt(data.durationMins, 10),
-        price: parseFloat(data.price),
-        ownerId: user.id,
-        ownerType: ServiceOwnerType.WORKER,
-      });
-    }
-  };
-
-  const handleDeleteService = async (serviceId: string) => {
-    await deleteServiceMutation.mutateAsync(serviceId);
-  };
-
-  const handleEditSchedule = () => {
-    if (worker?.brandId) {
-      router.push(`/(slide-screens)/upsert-schedule?brandId=${worker.brandId}`);
-    }
-  };
-
-  const handleAvatarChange = async (uri: string) => {
-    if (!worker?.id) return;
-    try {
-      const file = buildUploadedFile(uri, 'worker-avatar');
-      const uploadedFile = await uploadFileMutation.mutateAsync({
-        file,
-        category: 'worker-avatar',
-        description: 'Worker profile image',
-      });
-      const avatarUrl = getFileUrl(uploadedFile);
-      if (avatarUrl) {
-        updateWorkerMutation.mutate({ avatar: avatarUrl });
-      }
-    } catch (error) {
-      console.error('Failed to upload worker avatar:', error);
-    }
-  };
-
-  const handleBannerChange = async (uri: string) => {
-    if (!worker?.id) return;
-    try {
-      const file = buildUploadedFile(uri, 'worker-banner');
-      const uploadedFile = await uploadFileMutation.mutateAsync({
-        file,
-        category: 'worker-banner',
-        description: 'Worker banner image',
-      });
-      const bannerUrl = getFileUrl(uploadedFile);
-      if (bannerUrl) {
-        updateWorkerMutation.mutate({ coverImage: bannerUrl });
-      }
-    } catch (error) {
-      console.error('Failed to upload worker banner:', error);
-    }
-  };
-
-  const handleRefresh = () => {
+  const refetch = () => {
     refetchWorker();
     refetchServices();
+    refetchTeam();
+    refetchPhotos();
     refetchSchedule();
-    refetchReviews();
   };
 
-  const isRefreshing =
-    isWorkerLoading ||
-    isServicesLoading ||
-    isScheduleLoading ||
-    isReviewsLoading;
+  // Bottom sheet refs
+  const uploadBannerSheetRef = useRef<BottomSheetModal>(null);
+  const uploadProfileImageSheetRef = useRef<BottomSheetModal>(null);
+  const inviteTeamSheetRef = useRef<BottomSheetModal>(null);
+  const uploadPhotosSheetRef = useRef<BottomSheetModal>(null);
+
+  // Handlers
+  const handleEditBrand = useCallback(() => {
+    router.push('/(screens)/edit-worker-profile');
+  }, [router]);
+
+  const handleEditBanner = useCallback(() => {
+    uploadBannerSheetRef.current?.present();
+  }, [uploadBannerSheetRef]);
+
+  const handleUploadBanner = async (uri: string) => {
+    if (!worker?.id) return;
+
+    try {
+      const file = buildUploadedFile(uri, 'worker-banner');
+      const uploadedFile = await uploadFile({
+        file,
+        category: 'worker-banner',
+        description: 'Brand banner image',
+      });
+
+      if (!uploadedFile.url) {
+        throw new Error(t('errors.uploadFailed'));
+      }
+
+      const bannerUrl = normalizeFileUrl(uploadedFile.url);
+
+      if (!bannerUrl) {
+        throw new Error(t('errors.uploadFailed'));
+      }
+
+      console.log(
+        '🚀 ~ handleUploadBanner ~ bannerUrl:',
+        bannerUrl,
+        uploadedFile,
+      );
+
+      await updateBrand({ brandId: worker.id, bannerImage: bannerUrl });
+    } catch (error) {
+      console.error('Failed to upload banner:', error);
+    }
+  };
+
+  const handleEditProfileImage = useCallback(() => {
+    uploadProfileImageSheetRef.current?.present();
+  }, [uploadProfileImageSheetRef]);
+
+  const handleUploadProfileImage = async (uri: string) => {
+    if (!worker?.id) return;
+
+    try {
+      const file = buildUploadedFile(uri, 'worker-avatar');
+      const uploadedFile = await uploadFile({
+        file,
+        category: 'worker-avatar',
+        description: 'Brand profile image',
+      });
+      if (!uploadedFile.url) {
+        throw new Error(t('errors.uploadFailed'));
+      }
+
+      const profileUrl = normalizeFileUrl(uploadedFile.url);
+
+      if (!profileUrl) {
+        throw new Error(t('errors.uploadFailed'));
+      }
+      await updateBrand({ brandId: worker.id, profileImage: profileUrl });
+    } catch (error) {
+      console.error('Failed to upload profile image:', error);
+    }
+  };
+
+  const handleAddWorker = useCallback(() => {
+    inviteTeamSheetRef.current?.present();
+  }, [inviteTeamSheetRef]);
+
+  const handleWorkerPress = useCallback(
+    (worker: IWorker) => {
+      router.push(`/(dynamic-worker)/team/worker/${worker.id}`);
+    },
+    [router],
+  );
+
+  const handleAddPhoto = useCallback(() => {
+    uploadPhotosSheetRef.current?.present();
+  }, [uploadPhotosSheetRef]);
+
+  const handlePhotoPress = () => {
+    uploadPhotosSheetRef.current?.present();
+  };
+
+  const handleUploadPhotos = async (
+    newPhotos: { uri: string; category: string }[],
+  ) => {
+    if (!worker?.id || newPhotos.length === 0) return;
+
+    try {
+      const uploadResults = await Promise.all(
+        newPhotos.map((photo, index) =>
+          uploadFile({
+            file: buildUploadedFile(photo.uri, `worker-photo-${index}`),
+            category: photo.category ?? 'other',
+            description: 'Brand gallery photo',
+          }),
+        ),
+      );
+      const photosToAdd: IBrandPhoto[] = uploadResults
+        .map((uploadedFile, index) => {
+          const url = normalizeFileUrl(uploadedFile.url!);
+          if (!url) return null;
+          return {
+            id: uploadedFile.id ?? `photo-${Date.now()}-${index}`,
+            url,
+            category: (newPhotos[index]?.category ??
+              'other') as IBrandPhoto['category'],
+            uploadedAt: new Date().toISOString(),
+          };
+        })
+        .filter((photo): photo is IBrandPhoto => Boolean(photo));
+      if (photosToAdd.length > 0) {
+        setLocalPhotos((prev) => [...photosToAdd, ...prev]);
+      }
+    } catch (error) {
+      console.error('Failed to upload photos:', error);
+    }
+  };
+
+  // Early return if no worker data
 
   if (isWorkerLoading) {
-    return <Loading />;
+    return (
+      <SafeAreaView className="main-area" edges={['top']}>
+        <View className="gap-6 pt-4">
+          <Skeleton className="h-48 rounded-3xl" />
+          <View className="gap-3">
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-16 rounded-2xl" />
+            <Skeleton className="h-16 rounded-2xl" />
+            <Skeleton className="h-16 rounded-2xl" />
+          </View>
+          <View className="gap-3">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-24 rounded-2xl" />
+          </View>
+          <View className="gap-3">
+            <Skeleton className="h-5 w-36" />
+            <Skeleton className="h-32 rounded-2xl" />
+          </View>
+        </View>
+      </SafeAreaView>
+    );
   }
-
-  if (!worker || !profileWorker) {
-    return <NotFoundScreen />;
-  }
+  if (!worker) return <NotFoundScreen />;
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-        }
-      >
-        {/* Profile Card */}
-        <ProfileCard
-          worker={profileWorker}
-          servicesCount={serviceList.length}
-          workDaysCount={workingDays.length}
-          reviewsCount={reviewCount}
-          onEdit={handleEditProfile}
-          onAvatarChange={handleAvatarChange}
-          onBannerChange={handleBannerChange}
-        />
+    <Fragment>
+      {worker?.status === 'pending' ? (
+        <PendingScreen />
+      ) : worker?.status === 'inactive' ? (
+        <NotFoundScreen />
+      ) : (
+        <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+          <ScrollView
+            className="flex-1"
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={isWorkerLoading}
+                onRefresh={refetch}
+              />
+            }
+          >
+            {/* Profile Card */}
+            <ProfileCard
+              worker={worker}
+              servicesCount={services?.length || 0}
+              workDaysCount={workingDays.length}
+              reviewsCount={0}
+              // onEdit={handleEditProfile}
+              // onAvatarChange={handleAvatarChange}
+              // onBannerChange={handleBannerChange}
+            />
 
-        {/* Quick Actions */}
-        <QuickActionsSection
-          onAddService={handleAddService}
-          onEditSchedule={handleEditSchedule}
-        />
+            {/* Quick Actions */}
+            {canEdit && (
+              <BrandQuickActions
+                onAddService={() =>
+                  router.push(
+                    `/(slide-screens)/upsert-service?ownerId=${worker.id}&ownerType=worker`,
+                  )
+                }
+                onAddWorker={handleAddWorker}
+                onManageHours={() =>
+                  router.push(`/(screens)/upsert-schedule?brandId=${worker.id}`)
+                }
+              />
+            )}
 
-        {/* About Section */}
-        <AboutSectionDisplay worker={worker} onEdit={handleEditProfile} />
+            <BrandMissing
+              canEdit={canEdit}
+              worker={worker}
+              workers={workers}
+              services={services}
+              mergedPhotos={mergedPhotos}
+              workingDays={workingDays}
+              handleAddPhoto={handleAddPhoto}
+              handleAddWorker={handleAddWorker}
+              handleEditBrand={handleEditBrand}
+              handleEditProfileImage={handleEditProfileImage}
+              handleEditBanner={handleEditBanner}
+            />
 
-        {/* Services Section */}
-        <ServicesList
-          services={serviceList}
-          onAddService={handleAddService}
-          onServicePress={handleServicePress}
-        />
+            {/* About Section */}
+            <AboutSectionDisplay worker={worker} onEdit={handleEditBrand} />
 
-        {/* Schedule Overview */}
-        <ScheduleDisplay
-          workingDays={workingDays}
-          onEditSchedule={handleEditSchedule}
-        />
+            {/* Services Section */}
+            <BrandServicesList
+              ownerId={worker.id}
+              services={services}
+              canEdit={canEdit}
+            />
 
-        {/* Reviews Section */}
-        <ReviewsList reviews={reviewList} maxDisplay={2} />
-      </ScrollView>
+            <ScheduleDisplay
+              workingDays={workingDays}
+              onEditSchedule={() =>
+                router.push(`/(screens)/upsert-schedule?brandId=${worker.id}`)
+              }
+            />
 
-      {/* Bottom Sheets */}
-      <EditProfileSheet
-        ref={editProfileSheetRef}
-        worker={worker}
-        onSave={handleSaveProfile}
-      />
+            {/* Team Section */}
+            <BrandTeamList
+              workers={workers}
+              canEdit={canEdit}
+              onAddWorker={handleAddWorker}
+              onWorkerPress={handleWorkerPress}
+            />
 
-      <UpsertServiceSheet
-        ref={upsertServiceSheetRef}
-        service={selectedService}
-        onSave={handleSaveService}
-        onDelete={handleDeleteService}
-      />
-    </SafeAreaView>
+            {/* Photos Section */}
+            <BrandPhotosGrid
+              photos={mergedPhotos}
+              canEdit={canEdit}
+              onAddPhoto={handleAddPhoto}
+              onPhotoPress={handlePhotoPress}
+            />
+
+            {/* Reviews Section */}
+            {/* <BrandReviewsList reviews={reviews} maxDisplay={2} /> */}
+          </ScrollView>
+
+          {/* Bottom Sheets */}
+          <UploadBannerSheet
+            ref={uploadBannerSheetRef}
+            currentBanner={worker.coverImage || ''}
+            onUpload={handleUploadBanner}
+          />
+
+          <UploadProfileImageSheet
+            ref={uploadProfileImageSheetRef}
+            currentImage={worker.avatar || ''}
+            onUpload={handleUploadProfileImage}
+          />
+
+          <UploadPhotosSheet
+            ref={uploadPhotosSheetRef}
+            onUpload={handleUploadPhotos}
+          />
+        </SafeAreaView>
+      )}
+    </Fragment>
   );
 };
 

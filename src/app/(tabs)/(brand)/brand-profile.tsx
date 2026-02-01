@@ -177,8 +177,6 @@ const BrandProfileScreen: React.FC = () => {
     }
   };
 
-  console.log('profileImage', brand?.profileImage);
-
   const handleAddWorker = useCallback(() => {
     inviteTeamSheetRef.current?.present();
   }, [inviteTeamSheetRef]);
@@ -298,7 +296,7 @@ const BrandProfileScreen: React.FC = () => {
               <BrandQuickActions
                 onAddService={() =>
                   router.push(
-                    `/(slide-screens)/upsert-service?brandId=${brand.id}`,
+                    `/(slide-screens)/upsert-service?ownerId=${brand.id}&ownerType=brand`,
                   )
                 }
                 onAddWorker={handleAddWorker}
