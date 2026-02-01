@@ -63,7 +63,7 @@ export const QueryProvider = ({ children }: { children: React.ReactNode }) => {
             // eslint-disable-next-line no-console
             console.info(
               `Mutation Success ✅:`,
-              JSON.stringify({ hasData: !!data }, null, 2),
+              JSON.stringify({ data }, null, 2),
             );
           }
         },

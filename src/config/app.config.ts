@@ -34,10 +34,18 @@ const getApiBaseUrl = (): string => {
   return url;
 };
 
+const getR2BaseUrl = (): string => {
+  if (process.env.EXPO_PUBLIC_R2_BASE_URL) {
+    return process.env.EXPO_PUBLIC_R2_BASE_URL;
+  }
+  throw new Error('R2 base URL is not set');
+};
+
 export const appConfig = {
   // API Configuration
   api: {
     baseURL: getApiBaseUrl(),
+    r2BaseUrl: getR2BaseUrl(),
     timeout: Number(process.env.EXPO_PUBLIC_API_TIMEOUT) || 30000, // 30 seconds
   },
 

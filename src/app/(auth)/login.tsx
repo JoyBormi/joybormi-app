@@ -72,7 +72,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoid className="main-area">
+    <KeyboardAvoid className="main-area" scrollEnabled={false}>
       <Header
         title={t('auth.login.title')}
         subtitle={t('auth.login.subtitle')}

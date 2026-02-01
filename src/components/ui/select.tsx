@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FlashList } from '@shopify/flash-list';
-import { BlurView } from 'expo-blur';
 import { ChevronDown, X } from 'lucide-react-native';
 import React, { Fragment, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Platform, Pressable, View } from 'react-native';
+import { Modal, Pressable, View } from 'react-native';
 import Animated, {
   FadeIn,
   FadeOut,
@@ -114,78 +113,72 @@ export function Select({
           <Animated.View
             entering={ZoomIn.duration(250)}
             exiting={ZoomOut.duration(200)}
-            className="w-full max-w-sm max-h-[60%] min-h-[400px] overflow-hidden rounded-[32px] border border-border shadow-2xl bg-background"
+            className="w-full max-w-sm max-h-[60%] min-h-[400px] overflow-hidden rounded-xl border border-border shadow-2xl bg-card"
           >
-            <BlurView
-              intensity={Platform.OS === 'ios' ? 40 : 80}
-              tint="default"
-              className={cn('flex-1 relative', multi ? 'pb-16' : 'pb-1')}
-            >
-              {/* Header */}
-              <View className="flex-row items-center justify-between px-6 py-5 border-b border-border/50">
-                <Text className="text-lg font-semibold text-foreground">
-                  {title || placeholder}
-                </Text>
-                <Pressable
-                  onPress={() => setVisible(false)}
-                  className="p-2 rounded-full bg-secondary active:bg-secondary/80"
-                >
-                  <X size={16} className="text-foreground" />
-                </Pressable>
-              </View>
+            {/* Header */}
+            <View className="flex-row items-center justify-between px-6 py-5">
+              <Text className="text-lg font-semibold text-foreground">
+                {title || placeholder}
+              </Text>
+              <Pressable
+                onPress={() => setVisible(false)}
+                className="p-2 rounded-full bg-secondary active:bg-secondary/80"
+              >
+                <X size={16} className="text-foreground" />
+              </Pressable>
+            </View>
 
-              {/* List: Uses flex-1 to ensure it fills available space */}
-              <View className="flex-1">
-                <FlashList
-                  data={options}
-                  contentContainerStyle={{ padding: 16 }}
-                  keyExtractor={(item) => item.value.toString()}
-                  showsVerticalScrollIndicator={false}
-                  extraData={value}
-                  renderItem={({ item }) => {
-                    const isSelected = multi
-                      ? Array.isArray(value) && value.includes(item.value)
-                      : value === item.value;
+            {/* List: Uses flex-1 to ensure it fills available space */}
+            <View className="flex-1">
+              <FlashList
+                data={options}
+                contentContainerStyle={{ padding: 16 }}
+                keyExtractor={(item) => item.value.toString()}
+                showsVerticalScrollIndicator={false}
+                extraData={value}
+                renderItem={({ item }) => {
+                  const isSelected = multi
+                    ? Array.isArray(value) && value.includes(item.value)
+                    : value === item.value;
 
-                    return (
-                      <PressableBounce
-                        onPress={() => toggleOption(item.value)}
+                  return (
+                    <PressableBounce
+                      onPress={() => toggleOption(item.value)}
+                      className={cn(
+                        'flex-1 p-4 mb-2 rounded-2xl border',
+                        isSelected
+                          ? 'bg-primary/40 border-primary/20'
+                          : 'bg-secondary/40 border-transparent active:bg-secondary/40',
+                      )}
+                    >
+                      <Text
                         className={cn(
-                          'flex-1 p-4 mb-2 rounded-2xl border',
+                          'text-base capitalize w-full',
                           isSelected
-                            ? 'bg-primary/40 border-primary/20'
-                            : 'bg-secondary/30 border-transparent active:bg-secondary/40',
+                            ? 'font-semibold text-primary-foreground'
+                            : 'text-foreground',
                         )}
                       >
-                        <Text
-                          className={cn(
-                            'text-base capitalize w-full',
-                            isSelected
-                              ? 'font-semibold text-primary-foreground'
-                              : 'text-foreground',
-                          )}
-                        >
-                          {item.label}
-                        </Text>
-                      </PressableBounce>
-                    );
-                  }}
-                />
-              </View>
+                        {item.label}
+                      </Text>
+                    </PressableBounce>
+                  );
+                }}
+              />
+            </View>
 
-              {multi && (
-                <View className="p-4 pt-2 absolute bottom-2 left-0 right-0 w-fit">
-                  <Pressable
-                    onPress={() => setVisible(false)}
-                    className="w-full bg-primary py-4 rounded-2xl items-center active:opacity-90"
-                  >
-                    <Text className="text-primary-foreground font-semibold">
-                      {t('common.buttons.done')}
-                    </Text>
-                  </Pressable>
-                </View>
-              )}
-            </BlurView>
+            {multi && (
+              <View className="p-4 pt-2 absolute bottom-2 left-0 right-0 w-fit">
+                <Pressable
+                  onPress={() => setVisible(false)}
+                  className="w-full bg-primary py-4 rounded-2xl items-center active:opacity-90"
+                >
+                  <Text className="text-primary-foreground font-semibold">
+                    {t('common.buttons.done')}
+                  </Text>
+                </Pressable>
+              </View>
+            )}
           </Animated.View>
         </View>
       </Modal>

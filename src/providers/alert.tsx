@@ -49,14 +49,14 @@ export function GlobalAlert() {
         <Animated.View
           entering={FadeIn.duration(120)}
           exiting={FadeOut.duration(150)}
-          className="absolute inset-0 bg-purple-950/10"
+          className="absolute inset-0 bg-white/40"
         />
 
         {/* Modal content with linear-style Zoom for a "system" feel */}
         <Animated.View
           entering={ZoomIn.duration(250)}
           exiting={ZoomOut.duration(200)}
-          className="w-full max-w-sm overflow-hidden rounded-[32px] border border-white/60 shadow-2xl shadow-primary/10"
+          className="w-full max-w-sm overflow-hidden rounded-[32px] border border-border shadow-2xl shadow-primary/10"
         >
           <BlurView
             intensity={Platform.OS === 'ios' ? 45 : 80}

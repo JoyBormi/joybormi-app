@@ -72,7 +72,7 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
 
       Feedback.success();
       setAppType(selectedType);
-      router.replace('/(tabs)/(settings)/settings');
+      router.replace('/(tabs)/settings');
       onClose();
     };
 

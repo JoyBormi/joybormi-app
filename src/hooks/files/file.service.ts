@@ -1,3 +1,4 @@
+import { appConfig } from '@/config/app.config';
 import { agent, agentClass } from '@/lib/agent';
 
 import type {
@@ -90,8 +91,25 @@ const normalizeFilesResponse = (
   return [];
 };
 
-export const getFileUrl = (file?: IFile | null): string | null =>
-  file?.url ?? file?.path ?? null;
+export const normalizeFileUrl = (url: string): string => {
+  const r2Url = appConfig.api.r2BaseUrl;
+
+  // If backend already returns an absolute URL (R2 public URL), keep it as-is.
+  if (/^https?:\/\//i.test(url)) {
+    return url;
+  }
+
+  const base = r2Url.endsWith('/') ? r2Url.slice(0, -1) : r2Url;
+  const path = url.startsWith('/') ? url : `/${url}`;
+
+  return `${base}${path}`;
+};
+
+export const getFileUrl = (file: IFile): string | undefined => {
+  const candidate = file.url ?? file.path;
+  if (!candidate) return undefined;
+  return normalizeFileUrl(candidate);
+};
 
 export const uploadFile = async ({
   file,
@@ -137,7 +155,7 @@ export const uploadMultipleFiles = async ({
 };
 
 export const getFileMetadata = async (id: string): Promise<IFile> =>
-  await agent.get(`/files/${id}`);
+  await agent.get(`/files/meta/${id}`);
 
 export const getFilesByCategory = async (category: string): Promise<IFile[]> =>
   await agent.get(`/files/category/${category}`);

@@ -102,7 +102,9 @@ const UpsertServiceScreen = () => {
             name: data.name,
             description: data.description,
             durationMins: parseInt(data.durationMins),
-            price: parseFloat(data.price),
+            price: normalizePrice(data.price)
+              ? Number(normalizePrice(data.price))
+              : 0,
             currency: data.currency,
           },
         },
@@ -263,6 +265,7 @@ const UpsertServiceScreen = () => {
             <NumberInput
               {...field}
               placeholder="80 000 so'm"
+              thousandSeparator
               maxDecimals={0}
               returnKeyType="done"
             />

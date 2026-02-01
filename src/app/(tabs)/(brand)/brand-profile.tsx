@@ -1,6 +1,7 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { Fragment, useCallback, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import {
@@ -27,7 +28,7 @@ import {
   useGetBrandTeam,
   useUpdateBrand,
 } from '@/hooks/brand';
-import { getFileUrl, useUploadFile } from '@/hooks/files';
+import { normalizeFileUrl, useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
 import { buildUploadedFile } from '@/lib/utils';
@@ -54,6 +55,7 @@ import type { IWorker } from '@/types/worker.type';
  */
 const BrandProfileScreen: React.FC = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { appType } = useUserStore();
 
@@ -62,6 +64,7 @@ const BrandProfileScreen: React.FC = () => {
   const canEdit = isCreator;
 
   const { data: brand, refetch: refetchBrand, isLoading } = useGetBrand();
+
   const { data: services, refetch: refetchServices } = useGetServices({
     brandId: brand?.id,
   });
@@ -77,7 +80,8 @@ const BrandProfileScreen: React.FC = () => {
 
   // Mutations
   const { mutateAsync: updateBrand } = useUpdateBrand();
-  const { mutateAsync: uploadFile } = useUploadFile();
+  const { mutateAsync: uploadFile, isPending: isUploadingFile } =
+    useUploadFile();
 
   // Local state for UI
   const [localPhotos, setLocalPhotos] = useState<IBrandPhoto[]>([]);
@@ -121,10 +125,23 @@ const BrandProfileScreen: React.FC = () => {
         category: 'brand-banner',
         description: 'Brand banner image',
       });
-      const bannerUrl = getFileUrl(uploadedFile);
-      if (!bannerUrl) {
-        throw new Error('Upload did not return a banner URL');
+
+      if (!uploadedFile.url) {
+        throw new Error(t('errors.uploadFailed'));
       }
+
+      const bannerUrl = normalizeFileUrl(uploadedFile.url);
+
+      if (!bannerUrl) {
+        throw new Error(t('errors.uploadFailed'));
+      }
+
+      console.log(
+        '🚀 ~ handleUploadBanner ~ bannerUrl:',
+        bannerUrl,
+        uploadedFile,
+      );
+
       await updateBrand({ brandId: brand.id, bannerImage: bannerUrl });
     } catch (error) {
       console.error('Failed to upload banner:', error);
@@ -145,15 +162,22 @@ const BrandProfileScreen: React.FC = () => {
         category: 'brand-avatar',
         description: 'Brand profile image',
       });
-      const profileUrl = getFileUrl(uploadedFile);
+      if (!uploadedFile.url) {
+        throw new Error(t('errors.uploadFailed'));
+      }
+
+      const profileUrl = normalizeFileUrl(uploadedFile.url);
+
       if (!profileUrl) {
-        throw new Error('Upload did not return a profile image URL');
+        throw new Error(t('errors.uploadFailed'));
       }
       await updateBrand({ brandId: brand.id, profileImage: profileUrl });
     } catch (error) {
       console.error('Failed to upload profile image:', error);
     }
   };
+
+  console.log('profileImage', brand?.profileImage);
 
   const handleAddWorker = useCallback(() => {
     inviteTeamSheetRef.current?.present();
@@ -191,7 +215,7 @@ const BrandProfileScreen: React.FC = () => {
       );
       const photosToAdd: IBrandPhoto[] = uploadResults
         .map((uploadedFile, index) => {
-          const url = getFileUrl(uploadedFile);
+          const url = normalizeFileUrl(uploadedFile.url!);
           if (!url) return null;
           return {
             id: uploadedFile.id ?? `photo-${Date.now()}-${index}`,

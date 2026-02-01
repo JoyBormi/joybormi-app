@@ -24,7 +24,6 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
   canEdit,
   ownerId,
 }) => {
-  console.log('🚀 ~ BrandServicesList ~ services:', services);
   if (!services || services.length === 0) return null;
   return (
     <View className="px-6 mb-8">
