@@ -1,23 +1,31 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { router } from 'expo-router';
 
 import { agent } from '@/lib/agent';
 import { queryKeys } from '@/lib/tanstack-query';
-
-const deleteBrand = async (brandId: string): Promise<void> =>
-  await agent.delete(`/brand/${brandId}`);
+import { useUserStore } from '@/stores';
+import { EUserType } from '@/types/user.type';
 
 export const useDeleteBrand = () => {
+  const { setAppType } = useUserStore();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (brandId: string) => deleteBrand(brandId),
+    mutationFn: () => agent.delete(`/brand/me`),
     onSuccess: () => {
+      router.replace('/');
+
+      setAppType(EUserType.USER);
+
       // Clear all brand-related queries
       queryClient.invalidateQueries({
         queryKey: queryKeys.creator.brand,
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.creator.all,
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.worker.all,
       });
     },
   });

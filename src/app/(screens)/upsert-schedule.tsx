@@ -7,6 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -22,14 +23,16 @@ import {
   useGetSchedule,
   useUpdateSchedule,
 } from '@/hooks/schedule';
-import { agent } from '@/lib/agent';
+import { toast } from '@/providers/toaster';
 import { alert } from '@/stores/use-alert-store';
 import { DayCard } from '@/views/brand-profile/schedule';
 
 import type { IWorkingDay } from '@/types/schedule.type';
 
 const ManageScheduleScreen = () => {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+
   const params = useLocalSearchParams<{ brandId?: string }>();
   const brandId = params?.brandId;
 
@@ -39,6 +42,8 @@ const ManageScheduleScreen = () => {
   const { data: scheduleData, isLoading: isLoadingSchedule } = useGetSchedule({
     brandId,
   });
+
+  console.log('scheduleData', JSON.stringify(scheduleData, null, 2));
 
   // Mutations
   const { mutateAsync: createSchedule, isPending: isCreatingSchedule } =
@@ -223,37 +228,29 @@ const ManageScheduleScreen = () => {
           })),
         })),
       };
+      console.log(
+        'workingDaysPayload',
+        JSON.stringify(workingDaysPayload, null, 2),
+      );
 
       if (scheduleData?.id) {
         // Update existing schedule
-        await updateSchedule(workingDaysPayload).then(() => {
-          alert({
-            title: 'Success',
-            subtitle: 'Working hours updated successfully',
-            confirmLabel: 'OK',
-            onConfirm: () => router.back(),
-          });
-        });
+        await updateSchedule(workingDaysPayload);
       } else {
         // Create new schedule first
         const newSchedule = await createSchedule({ brandId });
 
         // Then update with working days using the new schedule ID
-        if (newSchedule?.id && schedule.length > 0) {
-          // Use agent API directly to update the newly created schedule
-          await agent.put(
-            `/schedule/${newSchedule.id}/working-days`,
-            workingDaysPayload,
-          );
-        }
-
-        alert({
-          title: 'Success',
-          subtitle: 'Schedule created successfully',
-          confirmLabel: 'OK',
-          onConfirm: () => router.back(),
-        });
+        // if (newSchedule?.id && schedule.length > 0) {
+        //   // Use agent API directly to update the newly created schedule
+        //   await agent.put(
+        //     `/schedule/${newSchedule.id}/working-days`,
+        //     workingDaysPayload,
+        //   );
+        // }
       }
+      router.back();
+      toast.success({ title: t('common.success.scheduleSaved') });
     } catch (error) {
       console.error('Failed to save schedule:', error);
     }
@@ -299,15 +296,17 @@ const ManageScheduleScreen = () => {
           paddingBottom: insets.bottom + 100,
         }}
       >
-        {DAY_ORDER.map((dayOfWeek) => {
-          const dayConfig = schedule.find((s) => s.dayOfWeek === dayOfWeek);
+        {DAY_ORDER.map((dayIndex) => {
+          const dayConfig = schedule.find((s) => s.dayOfWeek === dayIndex);
           const isActive = !!dayConfig;
+          const dayName = dayNames[dayIndex];
+          console.log('🚀 ~ ManageScheduleScreen ~ dayName:', dayName);
 
           return (
             <DayCard
-              key={dayOfWeek}
-              dayValue={dayOfWeek}
-              label={dayNames[dayOfWeek]}
+              key={dayIndex}
+              dayValue={dayIndex}
+              label={dayName}
               config={dayConfig}
               isActive={isActive}
               onToggle={toggleDay}

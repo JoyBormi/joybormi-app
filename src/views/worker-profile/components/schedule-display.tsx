@@ -3,6 +3,7 @@ import { Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
+import { DAY_ORDER } from '@/constants/global.constants';
 import { useLocaleData } from '@/hooks/common/use-locale-data';
 import { cn } from '@/lib/utils';
 
@@ -54,14 +55,13 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
 
         {/* Days grid */}
         <View className="flex-row flex-wrap justify-between gap-1">
-          {dayNamesShort.map((day: string, index: number) => {
-            const isWorking = workingDays.some((wd) => {
-              const uiIndex = (wd.dayOfWeek + 6) % 7;
-              return uiIndex === index;
-            });
-
-            const date = getDateForWeekday(index);
+          {DAY_ORDER.map((day) => {
+            const date = getDateForWeekday(day);
             const isToday = date.toDateString() === today.toDateString();
+            const isWorking = workingDays.some((dayObj) => {
+              const uiIndex = dayObj.dayOfWeek;
+              return uiIndex === day;
+            });
 
             return (
               <View
@@ -80,7 +80,7 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
                     isWorking ? 'text-success' : 'text-muted-foreground',
                   )}
                 >
-                  {day}
+                  {dayNamesShort[day]}
                 </Text>
 
                 {/* Day of month */}

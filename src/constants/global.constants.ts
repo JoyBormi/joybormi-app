@@ -1,3 +1,7 @@
+/**
+ * @description
+ * Local email suffix for phone-based authentication
+ */
 const LOCAL_EMAIL = '@phone.local';
 
 /**
@@ -7,6 +11,6 @@ const LOCAL_EMAIL = '@phone.local';
  * Database dayOfWeek: [Sun=0, Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6]
  * Map LocaleConfig index to database dayOfWeek
  */
-const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0]; // Mon-Sun
+const DAY_ORDER = [0, 1, 2, 3, 4, 5, 6]; // Mon-Sun
 
 export { DAY_ORDER, LOCAL_EMAIL };

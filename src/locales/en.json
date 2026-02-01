@@ -42,6 +42,9 @@
       "searching": "Searching...",
       "today": "Today"
     },
+    "success": {
+      "scheduleSaved": "Schedule saved successfully"
+    },
     "error": {
       "title": "Oh, no!",
       "subtitle": "Something went wrong",
