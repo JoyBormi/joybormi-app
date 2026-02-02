@@ -43,8 +43,6 @@ const ManageScheduleScreen = () => {
     brandId,
   });
 
-  console.log('scheduleData', JSON.stringify(scheduleData, null, 2));
-
   // Mutations
   const { mutateAsync: createSchedule, isPending: isCreatingSchedule } =
     useCreateSchedule();
@@ -228,10 +226,6 @@ const ManageScheduleScreen = () => {
           })),
         })),
       };
-      console.log(
-        'workingDaysPayload',
-        JSON.stringify(workingDaysPayload, null, 2),
-      );
 
       if (scheduleData?.id) {
         // Update existing schedule

@@ -13,4 +13,20 @@ const LOCAL_EMAIL = '@phone.local';
  */
 const DAY_ORDER = [0, 1, 2, 3, 4, 5, 6]; // Mon-Sun
 
-export { DAY_ORDER, LOCAL_EMAIL };
+/**
+ * @description
+ * Image categories for file upload
+ */
+const IMAGE_CATEGORIES = {
+  brand_avatar: 'brand-avatar',
+  brand_banner: 'brand-banner',
+  worker_avatar: 'worker-avatar',
+  worker_cover: 'worker-cover',
+  interior: 'interior',
+  exterior: 'exterior',
+  service: 'service',
+  team: 'team',
+  other: 'other',
+};
+
+export { DAY_ORDER, IMAGE_CATEGORIES, LOCAL_EMAIL };

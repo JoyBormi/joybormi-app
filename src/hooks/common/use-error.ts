@@ -38,8 +38,8 @@ export const useError = () => {
           // Determine title based on error code
           const title =
             code === ErrorCodes.AUTH_SESSION_EXPIRED
-              ? t('common.error.sessionExpired')
-              : t('common.error.unauthorized');
+              ? t('common.errors.sessionExpired')
+              : t('common.errors.unauthorized');
 
           // Show alert to inform user
           alert({
@@ -54,8 +54,8 @@ export const useError = () => {
 
         if (status === 0 || code === ErrorCodes.NETWORK_CONNECTION_ERROR) {
           return alert({
-            title: t('common.error.title'),
-            subtitle: t('common.error.subtitle'),
+            title: t('common.errors.ohNo'),
+            subtitle: t('common.errors.somethingWentWrong'),
             confirmLabel: t('common.buttons.ok'),
             cancelLabel: null,
           });
@@ -65,7 +65,7 @@ export const useError = () => {
 
         // Show error message from backend (backend provides localized messages)
         toast.error({
-          title: message ?? t('common.error.title'),
+          title: message ?? t('common.errors.somethingWentWrong'),
         });
 
         return;
@@ -73,8 +73,8 @@ export const useError = () => {
 
       // If it's not an ApiError, show a generic error
       alert({
-        title: t('common.error.title'),
-        subtitle: t('common.error.subtitle'),
+        title: t('common.errors.ohNo'),
+        subtitle: t('common.errors.somethingWentWrong'),
         confirmLabel: t('common.buttons.ok'),
         cancelLabel: null,
       });

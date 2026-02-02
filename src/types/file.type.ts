@@ -1,31 +1,40 @@
 import type { UploadedFile } from '@/utils/file-upload';
 
 export interface IFile {
+  category: string;
+  createdAt: string;
+  description: string;
+  filename: string;
+  id: string;
+  mimeType: string;
+  originalName: string;
+  size: number;
+  updatedAt: string;
+  url: string;
+}
+
+export interface IFileUpload extends Omit<
+  IFile,
+  'id' | 'createdAt' | 'updatedAt'
+> {
   id?: string;
-  url?: string;
-  path?: string;
-  filename?: string;
-  originalName?: string;
-  mimeType?: string;
-  size?: number;
-  category?: string;
-  description?: string;
-  createdAt?: string;
-  updatedAt?: string;
 }
 
 export interface FileUploadPayload {
   file: UploadedFile;
-  description?: string;
   category?: string;
+  description?: string;
+  userId?: string;
 }
 
 export interface FileUploadMultiplePayload {
   files: UploadedFile[];
   category?: string;
+  userId?: string;
 }
 
 export interface UpdateFileMetadataPayload {
   description?: string;
   category?: string;
+  userId?: string;
 }

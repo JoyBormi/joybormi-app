@@ -21,75 +21,84 @@ import {
   PendingScreen,
   SuspendedScreen,
 } from '@/components/status-screens';
+import { IMAGE_CATEGORIES } from '@/constants/global.constants';
 import {
   useGetBrand,
   useGetBrandPhotos,
   useGetBrandTeam,
   useUpdateBrand,
 } from '@/hooks/brand';
-import { normalizeFileUrl, useUploadFile } from '@/hooks/files';
+import {
+  normalizeFileUrl,
+  useDeleteFile,
+  useUpdateFileMetadata,
+  useUploadFile,
+} from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
 import { buildUploadedFile } from '@/lib/utils';
+import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
-import { BrandStatus, type IBrandPhoto } from '@/types/brand.type';
+import { BrandStatus } from '@/types/brand.type';
+import { IFile } from '@/types/file.type';
 import { EUserType } from '@/types/user.type';
 import {
   BrandAbout,
   BrandCard,
   BrandMissing,
-  BrandPhotosGrid,
   BrandQuickActions,
   BrandServicesList,
   BrandTeamList,
 } from '@/views/brand-profile/components';
-import { ProfileSkeleton } from '@/views/profile/components';
+import { ProfilePhotosGrid, ProfileSkeleton } from '@/views/profile/components';
 import { ScheduleDisplay } from '@/views/worker-profile/components';
 
 import type { IWorker } from '@/types/worker.type';
 
 /**
- * Brand Profile Management Page - For creators/workers to manage their brand
- * Route: /(tabs)/(brand)/brand-profile
- * This page allows editing and managing brand information
+ * @description Brand Profile Management Page - For creators to manage their brand
+ * @author Salah
+ * @date 2026-02-02
  */
 const BrandProfileScreen: React.FC = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const { appType } = useUserStore();
+  const { appType, user } = useUserStore();
 
-  // Check if user is creator or worker
-  const isCreator = appType === EUserType.CREATOR;
-  const canEdit = isCreator;
+  // Check if user is creator
+  const canEdit = appType === EUserType.CREATOR;
+
+  // ───────────────── Queries ────────────────── //
 
   const { data: brand, refetch: refetchBrand, isLoading } = useGetBrand();
+  const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos(user?.id);
 
   const { data: services, refetch: refetchServices } = useGetServices({
     brandId: brand?.id,
   });
+
   const { data: team, refetch: refetchTeam } = useGetBrandTeam({
     brandId: brand?.id,
   });
-  const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos({
-    brandId: brand?.id,
-  });
+
   const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
     brandId: brand?.id,
   });
 
-  // Mutations
+  // ───────────────── Mutations ────────────────── //
   const { mutateAsync: updateBrand } = useUpdateBrand();
   const { mutateAsync: uploadFile } = useUploadFile();
+  const { mutateAsync: deleteFile } = useDeleteFile();
+  const { mutateAsync: updateFileMetadata } = useUpdateFileMetadata();
 
-  // Local state for UI
-  const [localPhotos, setLocalPhotos] = useState<IBrandPhoto[]>([]);
+  // ───────────────── Local state ────────────────── //
+  const [selectedPhoto, setSelectedPhoto] = useState<IFile | null>(null);
+  const [localPhotos, setLocalPhotos] = useState<IFile[]>([]);
   const mergedPhotos = useMemo(
     () => [...localPhotos, ...(photos ?? [])],
     [localPhotos, photos],
   );
-  const workers = team ?? [];
-  const workingDays = schedule?.workingDays ?? [];
 
   const refetch = () => {
     refetchBrand();
@@ -99,13 +108,13 @@ const BrandProfileScreen: React.FC = () => {
     refetchSchedule();
   };
 
-  // Bottom sheet refs
+  // ───────────────── Bottom sheet refs ────────────────── //
   const uploadBannerSheetRef = useRef<BottomSheetModal>(null);
   const uploadProfileImageSheetRef = useRef<BottomSheetModal>(null);
   const inviteTeamSheetRef = useRef<BottomSheetModal>(null);
   const uploadPhotosSheetRef = useRef<BottomSheetModal>(null);
 
-  // Handlers
+  // ───────────────── Handlers ────────────────── //
   const handleEditBrand = useCallback(() => {
     router.push('/(screens)/edit-brand-profile');
   }, [router]);
@@ -118,29 +127,29 @@ const BrandProfileScreen: React.FC = () => {
     if (!brand?.id) return;
 
     try {
-      const file = buildUploadedFile(uri, 'brand-banner');
+      const file = buildUploadedFile(uri, IMAGE_CATEGORIES.brand_banner);
       const uploadedFile = await uploadFile({
         file,
-        category: 'brand-banner',
+        userId: user?.id,
+        category: IMAGE_CATEGORIES.brand_banner,
         description: 'Brand banner image',
       });
 
       if (!uploadedFile.url) {
-        throw new Error(t('errors.uploadFailed'));
+        throw new Error(t('common.errors.somethingWentWrong'));
       }
 
       const bannerUrl = normalizeFileUrl(uploadedFile.url);
 
       if (!bannerUrl) {
-        throw new Error(t('errors.uploadFailed'));
+        throw new Error(t('common.errors.somethingWentWrong'));
       }
 
       await updateBrand({ brandId: brand.id, bannerImage: bannerUrl });
-    } catch (error) {
-      console.error('Failed to upload banner:', error);
+    } catch {
+      toast.error({ title: t('common.errors.somethingWentWrong') });
     }
   };
-
   const handleEditProfileImage = useCallback(() => {
     uploadProfileImageSheetRef.current?.present();
   }, [uploadProfileImageSheetRef]);
@@ -149,24 +158,27 @@ const BrandProfileScreen: React.FC = () => {
     if (!brand?.id) return;
 
     try {
-      const file = buildUploadedFile(uri, 'brand-avatar');
+      const file = buildUploadedFile(uri, IMAGE_CATEGORIES.brand_avatar);
       const uploadedFile = await uploadFile({
         file,
-        category: 'brand-avatar',
+        userId: user?.id,
+        category: IMAGE_CATEGORIES.brand_avatar,
         description: 'Brand profile image',
       });
+
       if (!uploadedFile.url) {
-        throw new Error(t('errors.uploadFailed'));
+        throw new Error(t('common.errors.somethingWentWrong'));
       }
 
       const profileUrl = normalizeFileUrl(uploadedFile.url);
 
       if (!profileUrl) {
-        throw new Error(t('errors.uploadFailed'));
+        throw new Error(t('common.errors.somethingWentWrong'));
       }
+
       await updateBrand({ brandId: brand.id, profileImage: profileUrl });
-    } catch (error) {
-      console.error('Failed to upload profile image:', error);
+    } catch {
+      toast.error({ title: t('common.errors.somethingWentWrong') });
     }
   };
 
@@ -185,26 +197,32 @@ const BrandProfileScreen: React.FC = () => {
     uploadPhotosSheetRef.current?.present();
   }, [uploadPhotosSheetRef]);
 
-  const handlePhotoPress = () => {
+  const handlePhotoPress = (photo: IFile) => {
+    setSelectedPhoto(photo);
     uploadPhotosSheetRef.current?.present();
   };
 
+  /**
+   * @description Uploads new photos to the brand
+   * @param newPhotos The new photos to upload
+   */
   const handleUploadPhotos = async (
     newPhotos: { uri: string; category: string }[],
   ) => {
-    if (!brand?.id || newPhotos.length === 0) return;
+    if (!brand?.id || newPhotos.length === 0 || !user) return;
 
     try {
       const uploadResults = await Promise.all(
         newPhotos.map((photo, index) =>
           uploadFile({
+            userId: user.id,
             file: buildUploadedFile(photo.uri, `brand-photo-${index}`),
-            category: photo.category ?? 'other',
+            category: photo.category ?? IMAGE_CATEGORIES.other,
             description: 'Brand gallery photo',
           }),
         ),
       );
-      const photosToAdd: IBrandPhoto[] = uploadResults
+      const photosToAdd = uploadResults
         .map((uploadedFile, index) => {
           const url = normalizeFileUrl(uploadedFile.url!);
           if (!url) return null;
@@ -212,24 +230,56 @@ const BrandProfileScreen: React.FC = () => {
             id: uploadedFile.id ?? `photo-${Date.now()}-${index}`,
             url,
             category: (newPhotos[index]?.category ??
-              'other') as IBrandPhoto['category'],
+              'other') as IFile['category'],
             uploadedAt: new Date().toISOString(),
           };
         })
-        .filter((photo): photo is IBrandPhoto => Boolean(photo));
+        .filter((photo) => Boolean(photo));
       if (photosToAdd.length > 0) {
-        setLocalPhotos((prev) => [...photosToAdd, ...prev]);
+        setLocalPhotos((prev) => [...photosToAdd, ...prev] as IFile[]);
       }
-    } catch (error) {
-      console.error('Failed to upload photos:', error);
+    } catch {
+      toast.error({ title: t('common.errors.somethingWentWrong') });
+    }
+  };
+
+  /**
+   * @description Deletes a photo
+   * @param fileId The ID of the photo to delete
+   */
+  const handleDeletePhoto = async (fileId: string) => {
+    if (!brand?.id || !fileId) return;
+    try {
+      await deleteFile(fileId);
+      refetchPhotos();
+    } catch {
+      toast.error({ title: t('common.errors.somethingWentWrong') });
+    }
+  };
+
+  /**
+   * @description Replaces a photo with a new one
+   * @param fileId The ID of the photo to replace
+   */
+  const handleReplacePhoto = async (fileId: string) => {
+    if (!brand?.id || !fileId || !user) return;
+    try {
+      await updateFileMetadata({
+        id: fileId,
+        payload: {
+          category: IMAGE_CATEGORIES.other,
+          description: 'Brand gallery photo',
+          userId: user.id,
+        },
+      });
+      refetchPhotos();
+    } catch {
+      toast.error({ title: t('common.errors.somethingWentWrong') });
     }
   };
 
   // Early return if no brand data
-
-  if (isLoading) {
-    return <ProfileSkeleton />;
-  }
+  if (isLoading) return <ProfileSkeleton />;
   if (!brand) return <NotFoundScreen />;
 
   return (
@@ -256,7 +306,7 @@ const BrandProfileScreen: React.FC = () => {
             <BrandCard
               brand={brand}
               servicesCount={services?.length || 0}
-              workersCount={workers.length}
+              workersCount={team?.length || 0}
               photosCount={mergedPhotos.length}
               canEdit={canEdit}
               onEditAvatar={handleEditProfileImage}
@@ -282,10 +332,10 @@ const BrandProfileScreen: React.FC = () => {
             <BrandMissing
               canEdit={canEdit}
               brand={brand}
-              workers={workers}
+              workers={team || []}
               services={services}
               mergedPhotos={mergedPhotos}
-              workingDays={workingDays}
+              workingDays={schedule?.workingDays ?? []}
               handleAddPhoto={handleAddPhoto}
               handleAddWorker={handleAddWorker}
               handleEditBrand={handleEditBrand}
@@ -308,7 +358,7 @@ const BrandProfileScreen: React.FC = () => {
             />
 
             <ScheduleDisplay
-              workingDays={workingDays}
+              workingDays={schedule?.workingDays ?? []}
               canEdit={canEdit}
               onEditSchedule={() =>
                 router.push(`/(screens)/upsert-schedule?brandId=${brand.id}`)
@@ -317,14 +367,14 @@ const BrandProfileScreen: React.FC = () => {
 
             {/* Team Section */}
             <BrandTeamList
-              workers={workers}
+              workers={team || []}
               canEdit={canEdit}
               onAddWorker={handleAddWorker}
               onWorkerPress={handleWorkerPress}
             />
 
             {/* Photos Section */}
-            <BrandPhotosGrid
+            <ProfilePhotosGrid
               photos={mergedPhotos}
               canEdit={canEdit}
               onAddPhoto={handleAddPhoto}
@@ -355,8 +405,12 @@ const BrandProfileScreen: React.FC = () => {
           />
 
           <UploadPhotosSheet
+            value={selectedPhoto}
             ref={uploadPhotosSheetRef}
+            setValue={setSelectedPhoto}
             onUpload={handleUploadPhotos}
+            onDelete={handleDeletePhoto}
+            onReplace={handleReplacePhoto}
           />
         </SafeAreaView>
       )}

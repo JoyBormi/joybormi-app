@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
+import { type Edge } from 'react-native-safe-area-context';
 
 import { Skeleton } from '@/components/ui';
 
@@ -12,10 +12,10 @@ export const ProfileSkeleton: React.FC<ProfileSkeletonProps> = ({
   edges = ['top'],
 }) => {
   return (
-    <SafeAreaView className="main-area" edges={edges}>
+    <View className="safe-area">
       <View className="gap-6 pt-4">
         <View>
-          <Skeleton className="h-48 rounded-3xl" />
+          <Skeleton className="h-56 rounded-3xl" />
           <View className="px-6 -mt-16">
             <View className="items-center gap-3">
               <Skeleton className="h-32 w-32 rounded-3xl" />
@@ -48,6 +48,6 @@ export const ProfileSkeleton: React.FC<ProfileSkeletonProps> = ({
           <Skeleton className="h-32 rounded-2xl" />
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };

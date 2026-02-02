@@ -4,13 +4,13 @@ import { CountryCode } from 'libphonenumber-js';
 
 import { LOCAL_EMAIL } from '@/constants/global.constants';
 
+// TODO: remove this function used for dummy data
 export const getDate = (offset = 0) => {
   const date = new Date();
   date.setDate(date.getDate() + offset);
   return dayjs(date).format('YYYY-MM-DD');
 };
 
-/*
 /**
  * @param phoneNumber Raw input (any format)
  * @param defaultCountry ISO-2 country code, e.g. "UZ"
@@ -42,17 +42,22 @@ export const emptyLocalEmail = (email: string) => {
   return isEmailLOcal ? '' : email;
 };
 
-export const formatCurrency = (amount: number, currency: string) => {
+/**
+ * @param amount Amount to format
+ * @param currency Currency to use
+ * @returns formatted currency
+ */
+export const formatCurrency = (amount?: number, currency?: string) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency,
+    currency: currency ?? 'UZS',
     minimumFractionDigits: 0,
     maximumFractionDigits: 1,
     currencyDisplay: 'symbol',
     currencySign: 'standard',
     useGrouping: true,
     notation: 'standard',
-  }).format(amount);
+  }).format(amount ?? 0);
 };
 
 /**

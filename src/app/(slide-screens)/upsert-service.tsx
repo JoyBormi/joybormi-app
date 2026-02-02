@@ -86,7 +86,7 @@ const UpsertServiceScreen = () => {
   useEffect(() => {
     const firstError = validateFormErrors(form.formState.errors);
     if (firstError) {
-      form.setFocus(firstError);
+      form.setFocus(firstError as keyof ServiceFormData);
     }
   }, [form.formState.errors, form]);
 

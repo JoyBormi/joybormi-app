@@ -14,7 +14,7 @@ export const validatePasswordMatch = () => {};
  */
 export const validateFormErrors = <T extends Record<string, any>>(
   errors: T,
-): any => {
+) => {
   const firstError = Object.keys(errors)[0];
   if (firstError) {
     return firstError;

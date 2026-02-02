@@ -56,14 +56,6 @@ export interface IBrandWorker {
   isAvailable: boolean;
 }
 
-export interface IBrandPhoto {
-  id: string;
-  url: string;
-  category: 'interior' | 'exterior' | 'service' | 'team' | 'other';
-  uploadedAt: string;
-  caption?: string;
-}
-
 export interface IBrandReview {
   id: string;
   userId: string;

@@ -2,14 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 
 import { agent } from '@/lib/agent';
 import { queryKeys } from '@/lib/tanstack-query';
-import { IBrandPhoto } from '@/types/brand.type';
+import { IFile } from '@/types/file.type';
 
-const getBrandPhotos = async (brandId: string): Promise<IBrandPhoto[]> =>
-  await agent.get(`/brand/${brandId}/photos`);
+const getBrandPhotos = async (id?: string): Promise<IFile[]> =>
+  await agent.get(`/brand/${id}/photos`);
 
-export const useGetBrandPhotos = ({ brandId }: { brandId?: string }) =>
+export const useGetBrandPhotos = (id?: string) =>
   useQuery({
-    queryKey: [...queryKeys.creator.photos, { brandId }],
-    queryFn: () => getBrandPhotos(brandId!),
-    enabled: !!brandId,
+    queryKey: [...queryKeys.creator.photos, { id }],
+    queryFn: () => getBrandPhotos(id),
+    enabled: !!id,
   });

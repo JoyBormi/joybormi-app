@@ -21,15 +21,10 @@ type UploadMultipleFilesApiResponse =
   | { data: IFile[] }
   | { urls: string[] };
 
-const appendMetadata = (
-  formData: FormData,
-  metadata?: Record<string, string | number | boolean | undefined>,
-) => {
-  if (!metadata) return;
-  Object.entries(metadata).forEach(([key, value]) => {
-    if (value === undefined || value === null) return;
-    formData.append(key, String(value));
-  });
+const normalizeUri = (uri: string) => {
+  if (uri.startsWith('file://')) return uri;
+  if (uri.startsWith('/')) return `file://${uri}`;
+  return uri;
 };
 
 const appendFile = (
@@ -37,11 +32,13 @@ const appendFile = (
   fieldName: string,
   file: UploadedFile,
 ) => {
-  // @ts-expect-error - FormData accepts this format in React Native
+  const uri = normalizeUri(file.uri);
+
+  // @ts-expect-error RN FormData
   formData.append(fieldName, {
-    uri: file.uri,
-    name: file.name,
-    type: file.type,
+    uri,
+    name: file.name ?? `upload-${Date.now()}`,
+    type: file.type ?? 'application/octet-stream',
   });
 };
 
@@ -51,16 +48,20 @@ const appendFiles = (
   files: UploadedFile[],
 ) => {
   files.forEach((file) => {
-    // @ts-expect-error - FormData accepts this format in React Native
+    const uri = normalizeUri(file.uri);
+
+    // @ts-expect-error RN FormData
     formData.append(fieldName, {
-      uri: file.uri,
-      name: file.name,
-      type: file.type,
+      uri,
+      name: file.name ?? `upload-${Date.now()}`,
+      type: file.type ?? 'application/octet-stream',
     });
   });
 };
 
-const normalizeFileResponse = (response: UploadFileApiResponse): IFile => {
+const normalizeFileResponse = (
+  response: UploadFileApiResponse,
+): UploadFileApiResponse => {
   if ('file' in response) {
     return response.file;
   }
@@ -75,7 +76,7 @@ const normalizeFileResponse = (response: UploadFileApiResponse): IFile => {
 
 const normalizeFilesResponse = (
   response: UploadMultipleFilesApiResponse,
-): IFile[] => {
+): UploadFileApiResponse[] => {
   if (Array.isArray(response)) {
     return response;
   }
@@ -106,7 +107,7 @@ export const normalizeFileUrl = (url: string): string => {
 };
 
 export const getFileUrl = (file: IFile): string | undefined => {
-  const candidate = file.url ?? file.path;
+  const candidate = file.url;
   if (!candidate) return undefined;
   return normalizeFileUrl(candidate);
 };
@@ -115,13 +116,30 @@ export const uploadFile = async ({
   file,
   description,
   category,
+  userId,
 }: FileUploadPayload): Promise<IFile> => {
   const formData = new FormData();
+
+  // Append the actual file to FormData
   appendFile(formData, 'file', file);
-  appendMetadata(formData, { description, category });
+
+  // Build query parameters for metadata
+  const params = new URLSearchParams();
+
+  if (userId) {
+    params.append('userId', userId);
+  }
+
+  if (category) {
+    params.append('category', category);
+  }
+
+  if (description) {
+    params.append('description', description);
+  }
 
   const response = await agentClass.post<UploadFileApiResponse>(
-    '/files/upload',
+    `/files/upload?${params.toString()}`,
     formData,
     {
       headers: {
@@ -130,19 +148,30 @@ export const uploadFile = async ({
     },
   );
 
-  return normalizeFileResponse(response.data);
+  return normalizeFileResponse(response.data) as IFile;
 };
 
 export const uploadMultipleFiles = async ({
   files,
   category,
+  userId,
 }: FileUploadMultiplePayload): Promise<IFile[]> => {
   const formData = new FormData();
+
   appendFiles(formData, 'files', files);
-  appendMetadata(formData, { category });
+
+  const params = new URLSearchParams();
+
+  if (userId) {
+    params.append('userId', userId);
+  }
+
+  if (category) {
+    params.append('category', category);
+  }
 
   const response = await agentClass.post<UploadMultipleFilesApiResponse>(
-    '/files/upload/multiple',
+    `/files/upload/multiple?${params.toString()}`,
     formData,
     {
       headers: {
@@ -151,7 +180,7 @@ export const uploadMultipleFiles = async ({
     },
   );
 
-  return normalizeFilesResponse(response.data);
+  return normalizeFilesResponse(response.data) as IFile[];
 };
 
 export const getFileMetadata = async (id: string): Promise<IFile> =>
@@ -182,7 +211,7 @@ export const replaceFile = async (
     },
   );
 
-  return normalizeFileResponse(response.data);
+  return normalizeFileResponse(response.data) as IFile;
 };
 
 export const deleteFile = async (id: string): Promise<void> => {
