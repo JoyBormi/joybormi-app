@@ -2,7 +2,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { Fragment, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import {
   SafeAreaView,
@@ -21,7 +21,6 @@ import {
   PendingScreen,
   SuspendedScreen,
 } from '@/components/status-screens';
-import { Skeleton } from '@/components/ui';
 import {
   useGetBrand,
   useGetBrandPhotos,
@@ -44,6 +43,7 @@ import {
   BrandServicesList,
   BrandTeamList,
 } from '@/views/brand-profile/components';
+import { ProfileSkeleton } from '@/views/profile/components';
 import { ScheduleDisplay } from '@/views/worker-profile/components';
 
 import type { IWorker } from '@/types/worker.type';
@@ -80,8 +80,7 @@ const BrandProfileScreen: React.FC = () => {
 
   // Mutations
   const { mutateAsync: updateBrand } = useUpdateBrand();
-  const { mutateAsync: uploadFile, isPending: isUploadingFile } =
-    useUploadFile();
+  const { mutateAsync: uploadFile } = useUploadFile();
 
   // Local state for UI
   const [localPhotos, setLocalPhotos] = useState<IBrandPhoto[]>([]);
@@ -135,12 +134,6 @@ const BrandProfileScreen: React.FC = () => {
       if (!bannerUrl) {
         throw new Error(t('errors.uploadFailed'));
       }
-
-      console.log(
-        '🚀 ~ handleUploadBanner ~ bannerUrl:',
-        bannerUrl,
-        uploadedFile,
-      );
 
       await updateBrand({ brandId: brand.id, bannerImage: bannerUrl });
     } catch (error) {
@@ -235,27 +228,7 @@ const BrandProfileScreen: React.FC = () => {
   // Early return if no brand data
 
   if (isLoading) {
-    return (
-      <SafeAreaView className="main-area" edges={['top']}>
-        <View className="gap-6 pt-4">
-          <Skeleton className="h-48 rounded-3xl" />
-          <View className="gap-3">
-            <Skeleton className="h-5 w-40" />
-            <Skeleton className="h-16 rounded-2xl" />
-            <Skeleton className="h-16 rounded-2xl" />
-            <Skeleton className="h-16 rounded-2xl" />
-          </View>
-          <View className="gap-3">
-            <Skeleton className="h-5 w-32" />
-            <Skeleton className="h-24 rounded-2xl" />
-          </View>
-          <View className="gap-3">
-            <Skeleton className="h-5 w-36" />
-            <Skeleton className="h-32 rounded-2xl" />
-          </View>
-        </View>
-      </SafeAreaView>
-    );
+    return <ProfileSkeleton />;
   }
   if (!brand) return <NotFoundScreen />;
 
@@ -336,6 +309,7 @@ const BrandProfileScreen: React.FC = () => {
 
             <ScheduleDisplay
               workingDays={workingDays}
+              canEdit={canEdit}
               onEditSchedule={() =>
                 router.push(`/(screens)/upsert-schedule?brandId=${brand.id}`)
               }

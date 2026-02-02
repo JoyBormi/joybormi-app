@@ -9,8 +9,9 @@ import type { IService } from '@/types/service.type';
 
 interface ServicesListProps {
   services: IService[];
-  onAddService: () => void;
-  onServicePress: (service: IService) => void;
+  onAddService?: () => void;
+  onServicePress?: (service: IService) => void;
+  canEdit?: boolean;
 }
 
 /**
@@ -21,16 +22,21 @@ export const ServicesList: React.FC<ServicesListProps> = ({
   services,
   onAddService,
   onServicePress,
+  canEdit = true,
 }) => {
   if (services.length === 0) {
     return (
       <NoData
         title="No Services"
         message="Create your first service to start accepting bookings."
-        action={{
-          label: 'Add Service',
-          onPress: onAddService,
-        }}
+        action={
+          canEdit && onAddService
+            ? {
+                label: 'Add Service',
+                onPress: onAddService,
+              }
+            : undefined
+        }
       />
     );
   }
@@ -41,15 +47,18 @@ export const ServicesList: React.FC<ServicesListProps> = ({
         <Text className="font-title text-lg text-foreground">
           My Services ({services.length})
         </Text>
-        <Pressable onPress={onAddService}>
-          <Icons.Plus size={20} className="text-primary" />
-        </Pressable>
+        {canEdit && onAddService && (
+          <Pressable onPress={onAddService}>
+            <Icons.Plus size={20} className="text-primary" />
+          </Pressable>
+        )}
       </View>
       <View className="gap-3">
         {services.map((service) => (
           <Pressable
             key={service.id}
-            onPress={() => onServicePress(service)}
+            onPress={() => onServicePress?.(service)}
+            disabled={!onServicePress}
             className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50"
           >
             <View className="flex-row items-start justify-between mb-3">

@@ -2,7 +2,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { Fragment, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import {
   SafeAreaView,
@@ -15,34 +15,28 @@ import {
   UploadProfileImageSheet,
 } from '@/components/brand-worker';
 import { NotFoundScreen, PendingScreen } from '@/components/status-screens';
-import { Skeleton } from '@/components/ui';
-import {
-  useGetBrandPhotos,
-  useGetBrandTeam,
-  useUpdateBrand,
-} from '@/hooks/brand';
+import { useGetBrandPhotos } from '@/hooks/brand';
 import { normalizeFileUrl, useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
-import { useGetWorkerProfile } from '@/hooks/worker';
+import {
+  useGetWorkerProfile,
+  useGetWorkerReviews,
+  useUpdateWorkerProfile,
+} from '@/hooks/worker';
 import { buildUploadedFile } from '@/lib/utils';
 import { useUserStore } from '@/stores';
 import { type IBrandPhoto } from '@/types/brand.type';
 import { EUserType } from '@/types/user.type';
-import {
-  BrandMissing,
-  BrandPhotosGrid,
-  BrandQuickActions,
-  BrandServicesList,
-  BrandTeamList,
-} from '@/views/brand-profile/components';
+import { ProfilePhotosGrid, ProfileSkeleton } from '@/views/profile/components';
 import {
   AboutSectionDisplay,
   ProfileCard,
+  QuickActionsSection,
+  ReviewsList,
   ScheduleDisplay,
+  ServicesList,
 } from '@/views/worker-profile/components';
-
-import type { IWorker } from '@/types/worker.type';
 
 /**
  * Worker Profile Management Page - For creators/workers to manage their worker
@@ -66,28 +60,25 @@ const WorkerProfileScreen: React.FC = () => {
   } = useGetWorkerProfile({
     userId: user?.id,
   });
-  const {
-    data: services,
-    refetch: refetchServices,
-    isLoading: isServicesLoading,
-  } = useGetServices({
+  const { data: services, refetch: refetchServices } = useGetServices({
     brandId: worker?.brandId,
-    ownerId: user?.id,
-  });
-  const { data: team, refetch: refetchTeam } = useGetBrandTeam({
-    brandId: worker?.id,
+    ownerId: worker?.id,
   });
   const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos({
-    brandId: worker?.id,
+    brandId: worker?.brandId,
   });
   const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
-    brandId: worker?.id,
+    brandId: worker?.brandId,
+  });
+  const { data: reviews, refetch: refetchReviews } = useGetWorkerReviews({
+    workerId: worker?.id,
   });
 
   // Mutations
-  const { mutateAsync: updateBrand } = useUpdateBrand();
-  const { mutateAsync: uploadFile, isPending: isUploadingFile } =
-    useUploadFile();
+  const { mutateAsync: uploadFile } = useUploadFile();
+  const { mutateAsync: updateWorkerProfile } = useUpdateWorkerProfile(
+    worker?.id ?? '',
+  );
 
   // Local state for UI
   const [localPhotos, setLocalPhotos] = useState<IBrandPhoto[]>([]);
@@ -95,25 +86,24 @@ const WorkerProfileScreen: React.FC = () => {
     () => [...localPhotos, ...(photos ?? [])],
     [localPhotos, photos],
   );
-  const workers = team ?? [];
   const workingDays = schedule?.workingDays ?? [];
+  const workerReviews = reviews ?? [];
 
   const refetch = () => {
     refetchWorker();
     refetchServices();
-    refetchTeam();
     refetchPhotos();
     refetchSchedule();
+    refetchReviews();
   };
 
   // Bottom sheet refs
   const uploadBannerSheetRef = useRef<BottomSheetModal>(null);
   const uploadProfileImageSheetRef = useRef<BottomSheetModal>(null);
-  const inviteTeamSheetRef = useRef<BottomSheetModal>(null);
   const uploadPhotosSheetRef = useRef<BottomSheetModal>(null);
 
   // Handlers
-  const handleEditBrand = useCallback(() => {
+  const handleEditProfile = useCallback(() => {
     router.push('/(screens)/edit-worker-profile');
   }, [router]);
 
@@ -129,7 +119,7 @@ const WorkerProfileScreen: React.FC = () => {
       const uploadedFile = await uploadFile({
         file,
         category: 'worker-banner',
-        description: 'Brand banner image',
+        description: 'Worker banner image',
       });
 
       if (!uploadedFile.url) {
@@ -142,13 +132,7 @@ const WorkerProfileScreen: React.FC = () => {
         throw new Error(t('errors.uploadFailed'));
       }
 
-      console.log(
-        '🚀 ~ handleUploadBanner ~ bannerUrl:',
-        bannerUrl,
-        uploadedFile,
-      );
-
-      await updateBrand({ brandId: worker.id, bannerImage: bannerUrl });
+      await updateWorkerProfile({ coverImage: bannerUrl });
     } catch (error) {
       console.error('Failed to upload banner:', error);
     }
@@ -166,7 +150,7 @@ const WorkerProfileScreen: React.FC = () => {
       const uploadedFile = await uploadFile({
         file,
         category: 'worker-avatar',
-        description: 'Brand profile image',
+        description: 'Worker profile image',
       });
       if (!uploadedFile.url) {
         throw new Error(t('errors.uploadFailed'));
@@ -177,22 +161,11 @@ const WorkerProfileScreen: React.FC = () => {
       if (!profileUrl) {
         throw new Error(t('errors.uploadFailed'));
       }
-      await updateBrand({ brandId: worker.id, profileImage: profileUrl });
+      await updateWorkerProfile({ avatar: profileUrl });
     } catch (error) {
       console.error('Failed to upload profile image:', error);
     }
   };
-
-  const handleAddWorker = useCallback(() => {
-    inviteTeamSheetRef.current?.present();
-  }, [inviteTeamSheetRef]);
-
-  const handleWorkerPress = useCallback(
-    (worker: IWorker) => {
-      router.push(`/(dynamic-worker)/team/worker/${worker.id}`);
-    },
-    [router],
-  );
 
   const handleAddPhoto = useCallback(() => {
     uploadPhotosSheetRef.current?.present();
@@ -241,27 +214,7 @@ const WorkerProfileScreen: React.FC = () => {
   // Early return if no worker data
 
   if (isWorkerLoading) {
-    return (
-      <SafeAreaView className="main-area" edges={['top']}>
-        <View className="gap-6 pt-4">
-          <Skeleton className="h-48 rounded-3xl" />
-          <View className="gap-3">
-            <Skeleton className="h-5 w-40" />
-            <Skeleton className="h-16 rounded-2xl" />
-            <Skeleton className="h-16 rounded-2xl" />
-            <Skeleton className="h-16 rounded-2xl" />
-          </View>
-          <View className="gap-3">
-            <Skeleton className="h-5 w-32" />
-            <Skeleton className="h-24 rounded-2xl" />
-          </View>
-          <View className="gap-3">
-            <Skeleton className="h-5 w-36" />
-            <Skeleton className="h-32 rounded-2xl" />
-          </View>
-        </View>
-      </SafeAreaView>
-    );
+    return <ProfileSkeleton />;
   }
   if (!worker) return <NotFoundScreen />;
 
@@ -289,76 +242,73 @@ const WorkerProfileScreen: React.FC = () => {
               worker={worker}
               servicesCount={services?.length || 0}
               workDaysCount={workingDays.length}
-              reviewsCount={0}
-              // onEdit={handleEditProfile}
-              // onAvatarChange={handleAvatarChange}
-              // onBannerChange={handleBannerChange}
+              reviewsCount={workerReviews.length}
+              canEdit={canEdit}
+              onEdit={handleEditProfile}
+              onEditAvatar={handleEditProfileImage}
+              onEditBanner={handleEditBanner}
             />
 
             {/* Quick Actions */}
             {canEdit && (
-              <BrandQuickActions
+              <QuickActionsSection
                 onAddService={() =>
                   router.push(
                     `/(slide-screens)/upsert-service?ownerId=${worker.id}&ownerType=worker`,
                   )
                 }
-                onAddWorker={handleAddWorker}
-                onManageHours={() =>
-                  router.push(`/(screens)/upsert-schedule?brandId=${worker.id}`)
+                onEditSchedule={() =>
+                  router.push(
+                    `/(screens)/upsert-schedule?brandId=${worker.brandId}`,
+                  )
                 }
               />
             )}
 
-            <BrandMissing
-              canEdit={canEdit}
+            {/* About Section */}
+            <AboutSectionDisplay
               worker={worker}
-              workers={workers}
-              services={services}
-              mergedPhotos={mergedPhotos}
-              workingDays={workingDays}
-              handleAddPhoto={handleAddPhoto}
-              handleAddWorker={handleAddWorker}
-              handleEditBrand={handleEditBrand}
-              handleEditProfileImage={handleEditProfileImage}
-              handleEditBanner={handleEditBanner}
+              onEdit={handleEditProfile}
+              canEdit={canEdit}
             />
 
-            {/* About Section */}
-            <AboutSectionDisplay worker={worker} onEdit={handleEditBrand} />
-
             {/* Services Section */}
-            <BrandServicesList
-              ownerId={worker.id}
-              services={services}
+            <ServicesList
+              services={services ?? []}
               canEdit={canEdit}
+              onAddService={() =>
+                router.push(
+                  `/(slide-screens)/upsert-service?ownerId=${worker.id}&ownerType=worker`,
+                )
+              }
+              onServicePress={(service) =>
+                router.push(
+                  `/(slide-screens)/upsert-service?serviceId=${service.id}&ownerId=${worker.id}`,
+                )
+              }
             />
 
             <ScheduleDisplay
               workingDays={workingDays}
+              canEdit={canEdit}
               onEditSchedule={() =>
-                router.push(`/(screens)/upsert-schedule?brandId=${worker.id}`)
+                router.push(
+                  `/(screens)/upsert-schedule?brandId=${worker.brandId}`,
+                )
               }
             />
 
-            {/* Team Section */}
-            <BrandTeamList
-              workers={workers}
-              canEdit={canEdit}
-              onAddWorker={handleAddWorker}
-              onWorkerPress={handleWorkerPress}
-            />
+            {/* Reviews Section */}
+            <ReviewsList reviews={workerReviews} maxDisplay={2} />
 
             {/* Photos Section */}
-            <BrandPhotosGrid
+            <ProfilePhotosGrid
               photos={mergedPhotos}
               canEdit={canEdit}
               onAddPhoto={handleAddPhoto}
               onPhotoPress={handlePhotoPress}
+              title="Portfolio"
             />
-
-            {/* Reviews Section */}
-            {/* <BrandReviewsList reviews={reviews} maxDisplay={2} /> */}
           </ScrollView>
 
           {/* Bottom Sheets */}

@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react';
-import { Image, Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
-import { placeholder } from '@/constants/images';
+import { ProfileAvatar, ProfileCover } from '@/views/profile/components';
 
 import type { IBrand } from '@/types/brand.type';
 
@@ -34,48 +34,22 @@ export const BrandCard: React.FC<BrandCardProps> = ({
 }) => {
   return (
     <Fragment>
-      <View className="relative h-60 mb-4">
-        {/* Cover Image */}
-
-        <Image
-          source={
-            brand.bannerImage ? { uri: brand.bannerImage } : placeholder.banner
-          }
-          className="w-full h-full object-contain"
-        />
-
-        {canEdit && (
-          <Pressable
-            onPress={onEditBanner}
-            className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-primary/60 items-center justify-center border border-card shadow-lg"
-          >
-            <Icons.Pencil size={16} className="text-primary-foreground" />
-          </Pressable>
-        )}
-      </View>
+      <ProfileCover
+        imageUri={brand.bannerImage ?? undefined}
+        canEdit={canEdit}
+        onEdit={onEditBanner}
+      />
 
       <View className="main-area">
         <View className="bg-card/50 backdrop-blur-xl px-6 pb-6">
           {/* Avatar and Basic Info */}
           <View className="items-center mb-6">
-            <View className="relative mb-4 -mt-20">
-              <Image
-                source={
-                  brand.profileImage
-                    ? { uri: brand.profileImage }
-                    : placeholder.avatar
-                }
-                className="w-32 h-32 rounded-3xl border-4 border-card"
-              />
-              {canEdit && (
-                <Pressable
-                  onPress={onEditAvatar}
-                  className="absolute -bottom-2 -right-2 w-12 h-12 rounded-full bg-primary/60 items-center justify-center border-2 border-card shadow-lg"
-                >
-                  <Icons.Pencil size={20} className="text-primary-foreground" />
-                </Pressable>
-              )}
-            </View>
+            <ProfileAvatar
+              imageUri={brand.profileImage ?? undefined}
+              canEdit={canEdit}
+              onEdit={onEditAvatar}
+              containerClassName="mb-4 -mt-20"
+            />
 
             <Text className="font-title text-center text-foreground mb-1">
               {brand.brandName}
