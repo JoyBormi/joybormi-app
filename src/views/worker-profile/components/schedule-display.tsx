@@ -12,6 +12,7 @@ import type { IWorkingDay } from '@/types/schedule.type';
 interface ScheduleDisplayProps {
   workingDays: IWorkingDay[];
   onEditSchedule: () => void;
+  canEdit?: boolean;
 }
 
 /**
@@ -21,6 +22,7 @@ interface ScheduleDisplayProps {
 export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
   workingDays,
   onEditSchedule,
+  canEdit = true,
 }) => {
   const { dayNamesShort } = useLocaleData();
 
@@ -42,9 +44,11 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
         <Text className="font-title text-lg text-foreground">
           Schedule Overview
         </Text>
-        <Pressable onPress={onEditSchedule} hitSlop={10}>
-          <Icons.Calendar size={20} className="text-primary" />
-        </Pressable>
+        {canEdit && (
+          <Pressable onPress={onEditSchedule} hitSlop={10}>
+            <Icons.Calendar size={20} className="text-primary" />
+          </Pressable>
+        )}
       </View>
 
       {/* Card */}
