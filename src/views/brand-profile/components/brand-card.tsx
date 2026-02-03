@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
+import { formatNumber } from '@/utils/helpers';
 import { ProfileAvatar, ProfileCover } from '@/views/profile/components';
 
 import type { IBrand } from '@/types/brand.type';
@@ -41,7 +42,7 @@ export const BrandCard: React.FC<BrandCardProps> = ({
       />
 
       <View className="main-area">
-        <View className="bg-card/50 backdrop-blur-xl px-6 pb-6">
+        <View className="bg-card/50 backdrop-blur-xl px-2 pb-6">
           {/* Avatar and Basic Info */}
           <View className="items-center mb-6">
             <ProfileAvatar
@@ -54,20 +55,20 @@ export const BrandCard: React.FC<BrandCardProps> = ({
             <Text className="font-title text-center text-foreground mb-1">
               {brand.brandName}
             </Text>
-            <Text className="font-subtitle text-muted-foreground mb-3">
+            <Text className="font-subtitle text-muted-foreground capitalize mb-2">
               {brand.businessCategory}
             </Text>
 
             {/* Rating Badge */}
-            <View className="flex-row items-center gap-2 bg-warning/10 px-4 py-2 rounded-full">
+            {/* <View className="flex-row items-center gap-2 bg-warning/10 px-4 py-2 rounded-full">
               <Icons.Star size={16} className="text-warning" fill="#f59e0b" />
               <Text className="font-subtitle text-foreground">
                 {brand.verifiedAt ? 'Verified' : 'Not Verified'}
               </Text>
-              {/* <Text className="font-caption text-muted-foreground">
+              <Text className="font-caption text-muted-foreground">
                 • {brand.reviewCount} reviews
-              </Text> */}
-            </View>
+              </Text>
+            </View> */}
           </View>
 
           {/* Quick Stats */}
@@ -91,7 +92,9 @@ export const BrandCard: React.FC<BrandCardProps> = ({
             <View className="flex-1 bg-muted/20 rounded-2xl p-4 items-center">
               <Icons.Image size={20} className="text-warning mb-2" />
               <Text className="font-heading text-lg text-foreground">
-                {photosCount}
+                {formatNumber(photosCount, {
+                  useCompactNotation: true,
+                })}
               </Text>
               <Text className="font-caption text-muted-foreground">Photos</Text>
             </View>

@@ -23,7 +23,7 @@ import {
 import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
 import { alert } from '@/stores/use-alert-store';
-import { normalizePrice } from '@/utils/helpers';
+import { normalizeNumber } from '@/utils/helpers';
 import { validateFormErrors } from '@/utils/validation';
 
 /**
@@ -102,8 +102,8 @@ const UpsertServiceScreen = () => {
             name: data.name,
             description: data.description,
             durationMins: parseInt(data.durationMins),
-            price: normalizePrice(data.price)
-              ? Number(normalizePrice(data.price))
+            price: normalizeNumber(data.price)
+              ? Number(normalizeNumber(data.price))
               : 0,
             currency: data.currency,
           },
@@ -123,8 +123,8 @@ const UpsertServiceScreen = () => {
           name: data.name,
           description: data.description,
           durationMins: parseInt(data.durationMins),
-          price: normalizePrice(data.price)
-            ? Number(normalizePrice(data.price))
+          price: normalizeNumber(data.price)
+            ? Number(normalizeNumber(data.price))
             : 0,
           currency: data.currency,
           ownerId: user.id,

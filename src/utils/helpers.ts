@@ -61,9 +61,67 @@ export const formatCurrency = (amount?: number, currency?: string) => {
 };
 
 /**
- * @param price Raw input (any format)
- * @returns formatted price or null
+ * @param num Raw input (any format)
+ * @returns formatted  or null
  */
-export const normalizePrice = (price: string): string | null => {
-  return price.replace(/\s/g, '');
+export const normalizeNumber = (num: string): string | null => {
+  return num.replace(/\s/g, '');
 };
+
+type FormatNumberOptions = {
+  useThousandsSeparator?: boolean;
+  useCompactNotation?: boolean; // 1.2K, 3.4M
+  maxDecimalPlaces?: number;
+  compactFrom?: number;
+};
+/**
+ * @description format any number
+ * @param value number
+ * @param options FormatNumberOptions
+ * @returns formatted string
+ */
+export function formatNumber(
+  value?: number,
+  {
+    useThousandsSeparator = true,
+    useCompactNotation = false,
+    maxDecimalPlaces = 1,
+    compactFrom = 1_000,
+  }: FormatNumberOptions = {},
+): string {
+  if (value === null || value === undefined) return '0';
+
+  const abs = Math.abs(value);
+  const shouldCompact = useCompactNotation && abs >= compactFrom;
+
+  if (shouldCompact) {
+    const sign = value < 0 ? '-' : '';
+
+    if (abs >= 1_000_000_000) {
+      return (
+        sign +
+        (abs / 1_000_000_000).toFixed(maxDecimalPlaces).replace(/\.?0+$/, '') +
+        'B'
+      );
+    }
+    if (abs >= 1_000_000) {
+      return (
+        sign +
+        (abs / 1_000_000).toFixed(maxDecimalPlaces).replace(/\.?0+$/, '') +
+        'M'
+      );
+    }
+    if (abs >= 1_000) {
+      return (
+        sign +
+        (abs / 1_000).toFixed(maxDecimalPlaces).replace(/\.?0+$/, '') +
+        'K'
+      );
+    }
+  }
+
+  return Intl.NumberFormat('en', {
+    useGrouping: useThousandsSeparator,
+    maximumFractionDigits: maxDecimalPlaces,
+  }).format(value);
+}

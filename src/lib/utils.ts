@@ -39,7 +39,7 @@ export function validateUserTypeSwitch(
   }
 
   // User → Worker needs invite code
-  if (from === EUserType.USER && to === EUserType.WORKER) {
+  if (from === EUserType.USER && to === EUserType.WORKER && !hasBrand) {
     return 'NEED_CODE';
   }
 

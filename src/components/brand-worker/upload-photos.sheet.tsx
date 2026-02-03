@@ -229,7 +229,7 @@ export const UploadPhotosSheet = forwardRef<
             <View className="relative">
               <Image
                 source={{ uri: selectedPhoto.uri }}
-                className="w-52 h-52 rounded-2xl"
+                className="w-52 h-52 rounded-2xl object-contain"
               />
               {/* Pen icon */}
               <View className="absolute bottom-2 right-2 bg-black/60 rounded-full p-2">

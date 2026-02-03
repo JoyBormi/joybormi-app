@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -22,8 +22,6 @@ const EditProfileScreen = () => {
   const { user } = useUserStore();
   const insets = useSafeAreaInsets();
   const blockedSheetRef = useRef<BlockModalRef>(null);
-
-  const [identifier, setIdentifier] = useState<string>('');
 
   const { mutate: updateProfile, isPending } = useUpdateProfile();
 

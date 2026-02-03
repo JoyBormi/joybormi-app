@@ -90,6 +90,9 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
         bottomSheetViewConfig={{
           className: 'rounded-b-3xl',
         }}
+        onDismiss={() => {
+          setSelectedType(appType);
+        }}
       >
         <View className="gap-5 pb-6">
           <View>
