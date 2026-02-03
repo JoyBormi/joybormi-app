@@ -64,7 +64,7 @@ const BrandProfileScreen: React.FC = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const { appType, user } = useUserStore();
+  const { appType, setAppType, user } = useUserStore();
 
   // Check if user is creator
   const canEdit = appType === EUserType.CREATOR;
@@ -185,6 +185,11 @@ const BrandProfileScreen: React.FC = () => {
   const handleAddWorker = useCallback(() => {
     inviteTeamSheetRef.current?.present();
   }, [inviteTeamSheetRef]);
+
+  const handleSetupWorkerProfile = useCallback(() => {
+    setAppType(EUserType.WORKER);
+    router.replace('/(tabs)/(brand)/worker-profile');
+  }, [router, setAppType]);
 
   const handleWorkerPress = useCallback(
     (worker: IWorker) => {
@@ -326,6 +331,7 @@ const BrandProfileScreen: React.FC = () => {
                 onManageHours={() =>
                   router.push(`/(screens)/upsert-schedule?brandId=${brand.id}`)
                 }
+                onSetupWorkerProfile={handleSetupWorkerProfile}
               />
             )}
 

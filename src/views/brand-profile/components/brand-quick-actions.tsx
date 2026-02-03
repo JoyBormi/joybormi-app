@@ -7,6 +7,7 @@ interface BrandQuickActionsProps {
   onAddService: () => void;
   onAddWorker: () => void;
   onManageHours: () => void;
+  onSetupWorkerProfile: () => void;
 }
 
 /**
@@ -17,6 +18,7 @@ export const BrandQuickActions: React.FC<BrandQuickActionsProps> = ({
   onAddService,
   onAddWorker,
   onManageHours,
+  onSetupWorkerProfile,
 }) => {
   return (
     <ProfileQuickActions
@@ -47,6 +49,15 @@ export const BrandQuickActions: React.FC<BrandQuickActionsProps> = ({
           icon: Icons.Calendar,
           iconClassName: 'text-warning',
           iconContainerClassName: 'bg-warning/10',
+        },
+        {
+          id: 'setup-worker-profile',
+          title: 'Set up worker profile',
+          description: 'Switch to your worker profile setup',
+          onPress: onSetupWorkerProfile,
+          icon: Icons.Users,
+          iconClassName: 'text-primary',
+          iconContainerClassName: 'bg-primary/10',
         },
       ]}
     />
