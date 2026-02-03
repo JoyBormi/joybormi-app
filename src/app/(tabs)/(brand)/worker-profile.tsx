@@ -15,28 +15,50 @@ import {
   UploadProfileImageSheet,
 } from '@/components/brand-worker';
 import { NotFoundScreen, PendingScreen } from '@/components/status-screens';
+import { IMAGE_CATEGORIES } from '@/constants/global.constants';
 import { useGetBrandPhotos } from '@/hooks/brand';
-import { normalizeFileUrl, useUploadFile } from '@/hooks/files';
+import {
+  normalizeFileUrl,
+  useDeleteFile,
+  useUpdateFileMetadata,
+  useUploadFile,
+} from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
-import {
-  useGetWorkerProfile,
-  useGetWorkerReviews,
-  useUpdateWorkerProfile,
-} from '@/hooks/worker';
+import { useGetWorkerProfile, useUpdateWorkerProfile } from '@/hooks/worker';
 import { buildUploadedFile } from '@/lib/utils';
+import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
-import { type IBrandPhoto } from '@/types/brand.type';
+import { IFile } from '@/types/file.type';
 import { EUserType } from '@/types/user.type';
 import { ProfilePhotosGrid, ProfileSkeleton } from '@/views/profile/components';
 import {
   AboutSectionDisplay,
   ProfileCard,
   QuickActionsSection,
-  ReviewsList,
   ScheduleDisplay,
   ServicesList,
+  WorkerMissing,
 } from '@/views/worker-profile/components';
+
+const WORKER_PHOTO_CATEGORIES = [
+  {
+    value: IMAGE_CATEGORIES.worker_portfolio,
+    label: 'Portfolio',
+    icon: 'Camera',
+  },
+  {
+    value: IMAGE_CATEGORIES.worker_certificates,
+    label: 'Certificates',
+    icon: 'Shield',
+  },
+  {
+    value: IMAGE_CATEGORIES.worker_workspace,
+    label: 'Workspace',
+    icon: 'Home',
+  },
+  { value: IMAGE_CATEGORIES.other, label: 'Other', icon: 'Image' },
+];
 
 /**
  * Worker Profile Management Page - For creators/workers to manage their worker
@@ -49,9 +71,7 @@ const WorkerProfileScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const { appType, user } = useUserStore();
 
-  // Check if user is creator or worker
-  const isCreator = appType === EUserType.CREATOR;
-  const canEdit = isCreator;
+  const canEdit = appType === EUserType.CREATOR || appType === EUserType.WORKER;
 
   const {
     data: worker,
@@ -64,37 +84,35 @@ const WorkerProfileScreen: React.FC = () => {
     brandId: worker?.brandId,
     ownerId: worker?.id,
   });
-  const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos({
-    brandId: worker?.brandId,
-  });
+  const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos(
+    worker?.brandId,
+  );
   const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
     brandId: worker?.brandId,
-  });
-  const { data: reviews, refetch: refetchReviews } = useGetWorkerReviews({
-    workerId: worker?.id,
   });
 
   // Mutations
   const { mutateAsync: uploadFile } = useUploadFile();
+  const { mutateAsync: deleteFile } = useDeleteFile();
+  const { mutateAsync: updateFileMetadata } = useUpdateFileMetadata();
   const { mutateAsync: updateWorkerProfile } = useUpdateWorkerProfile(
     worker?.id ?? '',
   );
 
   // Local state for UI
-  const [localPhotos, setLocalPhotos] = useState<IBrandPhoto[]>([]);
+  const [selectedPhoto, setSelectedPhoto] = useState<IFile | null>(null);
+  const [localPhotos, setLocalPhotos] = useState<IFile[]>([]);
   const mergedPhotos = useMemo(
     () => [...localPhotos, ...(photos ?? [])],
     [localPhotos, photos],
   );
   const workingDays = schedule?.workingDays ?? [];
-  const workerReviews = reviews ?? [];
 
   const refetch = () => {
     refetchWorker();
     refetchServices();
     refetchPhotos();
     refetchSchedule();
-    refetchReviews();
   };
 
   // Bottom sheet refs
@@ -115,11 +133,12 @@ const WorkerProfileScreen: React.FC = () => {
     if (!worker?.id) return;
 
     try {
-      const file = buildUploadedFile(uri, 'worker-banner');
+      const file = buildUploadedFile(uri, IMAGE_CATEGORIES.worker_cover);
       const uploadedFile = await uploadFile({
         file,
-        category: 'worker-banner',
+        category: IMAGE_CATEGORIES.worker_cover,
         description: 'Worker banner image',
+        userId: user?.id,
       });
 
       if (!uploadedFile.url) {
@@ -133,8 +152,8 @@ const WorkerProfileScreen: React.FC = () => {
       }
 
       await updateWorkerProfile({ coverImage: bannerUrl });
-    } catch (error) {
-      console.error('Failed to upload banner:', error);
+    } catch {
+      toast.error({ title: t('common.errors.somethingWentWrong') });
     }
   };
 
@@ -146,11 +165,12 @@ const WorkerProfileScreen: React.FC = () => {
     if (!worker?.id) return;
 
     try {
-      const file = buildUploadedFile(uri, 'worker-avatar');
+      const file = buildUploadedFile(uri, IMAGE_CATEGORIES.worker_avatar);
       const uploadedFile = await uploadFile({
         file,
-        category: 'worker-avatar',
+        category: IMAGE_CATEGORIES.worker_avatar,
         description: 'Worker profile image',
+        userId: user?.id,
       });
       if (!uploadedFile.url) {
         throw new Error(t('errors.uploadFailed'));
@@ -162,8 +182,8 @@ const WorkerProfileScreen: React.FC = () => {
         throw new Error(t('errors.uploadFailed'));
       }
       await updateWorkerProfile({ avatar: profileUrl });
-    } catch (error) {
-      console.error('Failed to upload profile image:', error);
+    } catch {
+      toast.error({ title: t('common.errors.somethingWentWrong') });
     }
   };
 
@@ -171,26 +191,28 @@ const WorkerProfileScreen: React.FC = () => {
     uploadPhotosSheetRef.current?.present();
   }, [uploadPhotosSheetRef]);
 
-  const handlePhotoPress = () => {
+  const handlePhotoPress = (photo: IFile) => {
+    setSelectedPhoto(photo);
     uploadPhotosSheetRef.current?.present();
   };
 
   const handleUploadPhotos = async (
     newPhotos: { uri: string; category: string }[],
   ) => {
-    if (!worker?.id || newPhotos.length === 0) return;
+    if (!worker?.id || !user || newPhotos.length === 0) return;
 
     try {
       const uploadResults = await Promise.all(
         newPhotos.map((photo, index) =>
           uploadFile({
             file: buildUploadedFile(photo.uri, `worker-photo-${index}`),
-            category: photo.category ?? 'other',
-            description: 'Brand gallery photo',
+            category: photo.category ?? IMAGE_CATEGORIES.other,
+            description: 'Worker gallery photo',
+            userId: user.id,
           }),
         ),
       );
-      const photosToAdd: IBrandPhoto[] = uploadResults
+      const photosToAdd = uploadResults
         .map((uploadedFile, index) => {
           const url = normalizeFileUrl(uploadedFile.url!);
           if (!url) return null;
@@ -198,16 +220,43 @@ const WorkerProfileScreen: React.FC = () => {
             id: uploadedFile.id ?? `photo-${Date.now()}-${index}`,
             url,
             category: (newPhotos[index]?.category ??
-              'other') as IBrandPhoto['category'],
+              IMAGE_CATEGORIES.other) as IFile['category'],
             uploadedAt: new Date().toISOString(),
           };
         })
-        .filter((photo): photo is IBrandPhoto => Boolean(photo));
+        .filter((photo): photo is IFile => Boolean(photo));
       if (photosToAdd.length > 0) {
         setLocalPhotos((prev) => [...photosToAdd, ...prev]);
       }
-    } catch (error) {
-      console.error('Failed to upload photos:', error);
+    } catch {
+      toast.error({ title: t('common.errors.somethingWentWrong') });
+    }
+  };
+
+  const handleDeletePhoto = async (fileId: string) => {
+    if (!worker?.id || !fileId) return;
+    try {
+      await deleteFile(fileId);
+      refetchPhotos();
+    } catch {
+      toast.error({ title: t('common.errors.somethingWentWrong') });
+    }
+  };
+
+  const handleReplacePhoto = async (fileId: string) => {
+    if (!worker?.id || !fileId || !user) return;
+    try {
+      await updateFileMetadata({
+        id: fileId,
+        payload: {
+          category: IMAGE_CATEGORIES.other,
+          description: 'Worker gallery photo',
+          userId: user.id,
+        },
+      });
+      refetchPhotos();
+    } catch {
+      toast.error({ title: t('common.errors.somethingWentWrong') });
     }
   };
 
@@ -242,7 +291,7 @@ const WorkerProfileScreen: React.FC = () => {
               worker={worker}
               servicesCount={services?.length || 0}
               workDaysCount={workingDays.length}
-              reviewsCount={workerReviews.length}
+              photosCount={mergedPhotos.length}
               canEdit={canEdit}
               onEdit={handleEditProfile}
               onEditAvatar={handleEditProfileImage}
@@ -264,6 +313,18 @@ const WorkerProfileScreen: React.FC = () => {
                 }
               />
             )}
+
+            <WorkerMissing
+              canEdit={canEdit}
+              worker={worker}
+              services={services}
+              mergedPhotos={mergedPhotos}
+              workingDays={workingDays}
+              handleAddPhoto={handleAddPhoto}
+              handleEditWorker={handleEditProfile}
+              handleEditProfileImage={handleEditProfileImage}
+              handleEditBanner={handleEditBanner}
+            />
 
             {/* About Section */}
             <AboutSectionDisplay
@@ -298,16 +359,12 @@ const WorkerProfileScreen: React.FC = () => {
               }
             />
 
-            {/* Reviews Section */}
-            <ReviewsList reviews={workerReviews} maxDisplay={2} />
-
             {/* Photos Section */}
             <ProfilePhotosGrid
               photos={mergedPhotos}
               canEdit={canEdit}
               onAddPhoto={handleAddPhoto}
               onPhotoPress={handlePhotoPress}
-              title="Portfolio"
             />
           </ScrollView>
 
@@ -326,7 +383,12 @@ const WorkerProfileScreen: React.FC = () => {
 
           <UploadPhotosSheet
             ref={uploadPhotosSheetRef}
+            value={selectedPhoto}
+            setValue={setSelectedPhoto}
             onUpload={handleUploadPhotos}
+            onDelete={handleDeletePhoto}
+            onReplace={handleReplacePhoto}
+            categories={WORKER_PHOTO_CATEGORIES}
           />
         </SafeAreaView>
       )}

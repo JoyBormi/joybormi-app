@@ -22,6 +22,11 @@ import { cn } from '@/lib/utils';
 import { IFile } from '@/types/file.type';
 
 type PhotoCategory = (typeof IMAGE_CATEGORIES)[keyof typeof IMAGE_CATEGORIES];
+type PhotoCategoryOption = {
+  value: PhotoCategory;
+  label: string;
+  icon: string;
+};
 
 interface UploadPhotosSheetProps {
   onUpload: (photos: { uri: string; category: PhotoCategory }[]) => void;
@@ -29,16 +34,33 @@ interface UploadPhotosSheetProps {
   onReplace?: (fileId: string) => void;
   value?: IFile | null;
   setValue?: (photo: IFile) => void;
+  categories?: PhotoCategoryOption[];
 }
+
+const DEFAULT_CATEGORIES: PhotoCategoryOption[] = [
+  { value: IMAGE_CATEGORIES.interior, label: 'Interior', icon: 'Home' },
+  { value: IMAGE_CATEGORIES.exterior, label: 'Exterior', icon: 'Store' },
+  { value: IMAGE_CATEGORIES.service, label: 'Service', icon: 'Scissors' },
+  { value: IMAGE_CATEGORIES.team, label: 'Team', icon: 'Users' },
+  { value: IMAGE_CATEGORIES.other, label: 'Other', icon: 'Image' },
+];
 
 export const UploadPhotosSheet = forwardRef<
   BottomSheetModal,
   UploadPhotosSheetProps
->(({ onUpload, onDelete, onReplace, value }, ref) => {
+>(({ onUpload, onDelete, onReplace, value, categories }, ref) => {
   const insets = useSafeAreaInsets();
   const animationConfigs = useBottomSheetTimingConfigs({ duration: 150 });
 
   const isEditMode = Boolean(value);
+
+  const resolvedCategories = categories ?? DEFAULT_CATEGORIES;
+  const defaultCategory =
+    resolvedCategories.find(
+      (category) => category.value === IMAGE_CATEGORIES.other,
+    )?.value ??
+    resolvedCategories[0]?.value ??
+    IMAGE_CATEGORIES.other;
 
   const [selectedPhotos, setSelectedPhotos] = useState<
     { uri: string; category: PhotoCategory }[]
@@ -49,17 +71,8 @@ export const UploadPhotosSheet = forwardRef<
     category: PhotoCategory;
   } | null>(null);
 
-  const [selectedCategory, setSelectedCategory] = useState<PhotoCategory>(
-    IMAGE_CATEGORIES.other,
-  );
-
-  const categories = [
-    { value: IMAGE_CATEGORIES.interior, label: 'Interior', icon: 'Home' },
-    { value: IMAGE_CATEGORIES.exterior, label: 'Exterior', icon: 'Store' },
-    { value: IMAGE_CATEGORIES.service, label: 'Service', icon: 'Scissors' },
-    { value: IMAGE_CATEGORIES.team, label: 'Team', icon: 'Users' },
-    { value: IMAGE_CATEGORIES.other, label: 'Other', icon: 'Image' },
-  ];
+  const [selectedCategory, setSelectedCategory] =
+    useState<PhotoCategory>(defaultCategory);
 
   /* -------------------- sync value -------------------- */
 
@@ -74,9 +87,9 @@ export const UploadPhotosSheet = forwardRef<
     } else {
       setSelectedPhoto(null);
       setSelectedPhotos([]);
-      setSelectedCategory(IMAGE_CATEGORIES.other);
+      setSelectedCategory(defaultCategory);
     }
-  }, [value]);
+  }, [value, defaultCategory]);
 
   /* -------------------- handlers -------------------- */
 
@@ -84,8 +97,8 @@ export const UploadPhotosSheet = forwardRef<
     (ref as React.RefObject<BottomSheetModal>).current?.dismiss();
     setSelectedPhotos([]);
     setSelectedPhoto(null);
-    setSelectedCategory(IMAGE_CATEGORIES.other);
-  }, [ref]);
+    setSelectedCategory(defaultCategory);
+  }, [defaultCategory, ref]);
 
   const pickImages = useCallback(async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -235,7 +248,7 @@ export const UploadPhotosSheet = forwardRef<
 
         {/* Category (ALWAYS visible) */}
         <View className="flex-row flex-wrap gap-2">
-          {categories.map((cat) => {
+          {resolvedCategories.map((cat) => {
             const Icon = Icons[
               cat.icon as keyof typeof Icons
             ] as React.ComponentType<{ size: number; className: string }>;

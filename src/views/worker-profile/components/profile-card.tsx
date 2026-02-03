@@ -11,7 +11,7 @@ interface ProfileCardProps {
   worker: IWorker;
   servicesCount: number;
   workDaysCount: number;
-  reviewsCount: number;
+  photosCount: number;
   canEdit: boolean;
   onEdit: () => void;
   onEditAvatar: () => void;
@@ -26,7 +26,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   worker,
   servicesCount,
   workDaysCount,
-  reviewsCount,
+  photosCount,
   canEdit,
   onEdit,
   onEditAvatar,
@@ -66,7 +66,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                 {worker.rating}
               </Text>
               <Text className="font-caption text-muted-foreground">
-                • {reviewsCount} reviews
+                • {worker.reviewCount} reviews
               </Text>
             </View>
           </View>
@@ -94,11 +94,9 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
             <View className="flex-1 bg-muted/20 rounded-2xl p-4 items-center">
               <Icons.Star size={20} className="text-warning mb-2" />
               <Text className="font-heading text-lg text-foreground">
-                {reviewsCount}
+                {photosCount}
               </Text>
-              <Text className="font-caption text-muted-foreground">
-                Reviews
-              </Text>
+              <Text className="font-caption text-muted-foreground">Photos</Text>
             </View>
           </View>
 
