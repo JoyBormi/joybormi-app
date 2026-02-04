@@ -2,6 +2,8 @@ import * as Application from 'expo-application';
 
 import Icons from '@/components/icons';
 
+import { routes } from './routes';
+
 import type { TFunction } from 'i18next';
 
 export const settingsGroups = ({
@@ -30,7 +32,7 @@ export const settingsGroups = ({
                 icon: Icons.Heart,
                 iconColor: 'text-red-500',
                 iconBgColor: 'bg-red-500/10',
-                href: '/(settings)/profile/likes',
+                href: routes.settings.profile.likes,
               },
               {
                 id: 'reviews',
@@ -40,7 +42,7 @@ export const settingsGroups = ({
                 icon: Icons.Star,
                 iconColor: 'text-yellow-500',
                 iconBgColor: 'bg-yellow-500/10',
-                href: '/(settings)/profile/reviews',
+                href: routes.settings.profile.reviews,
               },
               {
                 id: 'security',
@@ -50,7 +52,7 @@ export const settingsGroups = ({
                 icon: Icons.Lock,
                 iconColor: 'text-green-500',
                 iconBgColor: 'bg-green-500/10',
-                href: '/(settings)/security',
+                href: routes.settings.security,
               },
               {
                 id: 'payment',
@@ -60,7 +62,7 @@ export const settingsGroups = ({
                 icon: Icons.CreditCard,
                 iconColor: 'text-purple-500',
                 iconBgColor: 'bg-purple-500/10',
-                href: '/(settings)/payment',
+                href: routes.settings.payment,
               },
             ],
           },
@@ -78,7 +80,7 @@ export const settingsGroups = ({
           icon: Icons.SlidersHorizontal,
           iconColor: 'text-indigo-500',
           iconBgColor: 'bg-indigo-500/10',
-          href: '/(settings)/preferences',
+          href: routes.settings.preferences,
         },
       ],
     },
@@ -93,7 +95,7 @@ export const settingsGroups = ({
           icon: Icons.HelpCircle,
           iconColor: 'text-teal-500',
           iconBgColor: 'bg-teal-500/10',
-          href: '/(settings)/help',
+          href: routes.settings.help,
         },
         {
           id: 'terms',
@@ -102,7 +104,7 @@ export const settingsGroups = ({
           icon: Icons.FileText,
           iconColor: 'text-gray-500',
           iconBgColor: 'bg-gray-500/10',
-          href: '/(settings)/legal/terms',
+          href: routes.settings.legal.terms,
         },
         {
           id: 'privacy',
@@ -111,7 +113,7 @@ export const settingsGroups = ({
           icon: Icons.Shield,
           iconColor: 'text-gray-500',
           iconBgColor: 'bg-gray-500/10',
-          href: '/(settings)/legal/privacy',
+          href: routes.settings.legal.privacy,
         },
         {
           id: 'version',

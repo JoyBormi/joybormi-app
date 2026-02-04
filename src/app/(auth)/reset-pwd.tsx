@@ -8,6 +8,7 @@ import { View } from 'react-native';
 import FormField from '@/components/shared/form-field';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Button, PasswordInput, Text } from '@/components/ui';
+import { routes } from '@/constants/routes';
 import { useResetPassword } from '@/hooks/auth';
 import { AuthHeader, ResetPwdFormType, resetPwdSchema } from '@/views/auth';
 
@@ -40,7 +41,7 @@ export default function ResetPwdScreen() {
       },
       {
         onSuccess: () => {
-          router.replace('/(auth)/login');
+          router.replace(routes.auth.login);
         },
       },
     );

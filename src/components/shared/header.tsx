@@ -49,7 +49,7 @@ export function Header({
         from={animate ? { opacity: 0, translateY: 10 } : undefined}
         animate={animate ? { opacity: 1, translateY: 0 } : undefined}
         transition={{ type: 'timing', duration: 900 }}
-        className={cn('pb-5', variant === 'default' && 'pt-20', className)}
+        className={cn(variant === 'default' && 'pt-20', className)}
       >
         {/* DEFAULT — unchanged */}
         {variant === 'default' && (
@@ -72,7 +72,7 @@ export function Header({
               <Text className="font-heading">{title}</Text>
             </View>
 
-            <Text className="font-body text-card-foreground pl-0.5 mt-1">
+            <Text className="font-subtitle text-card-foreground pl-3.5 mt-1.5">
               {subtitle}
             </Text>
           </View>

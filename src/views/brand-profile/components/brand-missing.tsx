@@ -5,6 +5,7 @@ import { Pressable, View } from 'react-native';
 import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
 import { AnimatedProgress } from '@/components/ui/progress';
+import { routes } from '@/constants/routes';
 import { IBrand, IBrandPhoto } from '@/types/brand.type';
 import { IWorkingDay } from '@/types/schedule.type';
 import { IService } from '@/types/service.type';
@@ -160,7 +161,7 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
         action: {
           label: 'Add service',
           onPress: () =>
-            router.push(`/((screens))/upsert-service?brandId=${brand?.id}`),
+            router.push(routes.screens.upsert_service({ brandId: brand?.id })),
         },
       });
     }
@@ -200,7 +201,7 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
         action: {
           label: 'Add hours',
           onPress: () =>
-            router.push(`/(screens)/upsert-schedule?brandId=${brand?.id}`),
+            brand?.id && router.push(routes.screens.upsert_schedule(brand.id)),
         },
       });
     }

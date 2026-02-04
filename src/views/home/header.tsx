@@ -6,6 +6,7 @@ import { Image, Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
+import { routes } from '@/constants/routes';
 import { useUserStore } from '@/stores';
 import { usePreferencesStore } from '@/stores/use-preferences';
 
@@ -77,7 +78,7 @@ export function Header() {
               <View className="mt-1">{LocationDisplay}</View>
             </View>
 
-            <Link href="/(auth)/login" asChild>
+            <Link href={routes.auth.login} asChild>
               <Button role="link" className="px-10 py-2.5 rounded-full" haptic>
                 <Text>Login</Text>
               </Button>

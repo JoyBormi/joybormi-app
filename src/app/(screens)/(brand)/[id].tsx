@@ -8,6 +8,7 @@ import {
 
 import { Text } from '@/components/ui';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { routes } from '@/constants/routes';
 import { BrandTabType } from '@/types/brand.type';
 import {
   AboutTab,
@@ -63,7 +64,7 @@ const BrandDetailScreen: React.FC = () => {
   const handleWorkerPress = (worker: (typeof workers)[0]) => {
     console.log('Worker pressed:', worker.id);
     // Navigate to worker profile
-    router.push(`/(dynamic-brand)/team/worker/${worker.id}`);
+    router.push(routes.dynamic_brand.team_worker(worker.id));
   };
 
   const handlePhotoPress = (photo: (typeof photos)[0], index: number) => {

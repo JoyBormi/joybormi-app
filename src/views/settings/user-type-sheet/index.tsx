@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Icons from '@/components/icons';
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
+import { routes } from '@/constants/routes';
 import { Feedback } from '@/lib/haptics';
 import { queryKeys } from '@/lib/tanstack-query';
 import { cn, validateUserTypeSwitch } from '@/lib/utils';
@@ -81,7 +82,7 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
       queryClient.invalidateQueries({ queryKey: queryKeys.files.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.service.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.reservations.all });
-      router.replace('/(tabs)/settings');
+      router.replace(routes.tabs.profile);
       onClose();
     };
 
@@ -177,10 +178,10 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
             actionSheetRef.current?.dismiss();
 
             if (actionReason === 'NEED_CODE')
-              return router.push('/((screens))/invite-code');
+              return router.push(routes.worker.invite_code);
 
             if (actionReason === 'NEED_BRAND')
-              return router.push('/((screens))/create-brand');
+              return router.push(routes.brand.create);
           }}
         />
       </CustomBottomSheet>

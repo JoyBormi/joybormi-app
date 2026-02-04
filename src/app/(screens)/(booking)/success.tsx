@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
+import { routes } from '@/constants/routes';
 
 const SuccessScreen: React.FC = () => {
   const router = useRouter();
@@ -20,11 +21,11 @@ const SuccessScreen: React.FC = () => {
   }>();
 
   const handleGoHome = () => {
-    router.replace('/(tabs)');
+    router.replace(routes.tabs.home);
   };
 
   const handleViewReservation = () => {
-    router.replace('/(tabs)/reservations');
+    router.replace(routes.tabs.reservations);
   };
 
   return (

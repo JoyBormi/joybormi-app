@@ -47,9 +47,7 @@ export const ThemeSheet = forwardRef<BottomSheetModal, ThemeSheetProps>(
     const handleSelect = (theme: ThemeMode) => {
       Feedback.light();
       changeTheme(theme);
-      setTimeout(() => {
-        onClose();
-      }, 300);
+      onClose();
     };
 
     return (

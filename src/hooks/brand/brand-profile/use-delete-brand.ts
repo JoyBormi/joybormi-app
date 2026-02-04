@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 
+import { routes } from '@/constants/routes';
 import { agent } from '@/lib/agent';
 import { queryKeys } from '@/lib/tanstack-query';
 import { useUserStore } from '@/stores';
@@ -13,7 +14,7 @@ export const useDeleteBrand = () => {
   return useMutation({
     mutationFn: () => agent.delete(`/brand/me`),
     onSuccess: () => {
-      router.replace('/');
+      router.replace(routes.root);
 
       setAppType(EUserType.USER);
 

@@ -12,6 +12,7 @@ import Animated, {
 import Icons from '@/components/icons';
 import { Input, PressableBounce } from '@/components/ui';
 import { Major } from '@/constants/enum';
+import { routes } from '@/constants/routes';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -44,7 +45,7 @@ export function SearchBar({ className }: Props) {
     if (!search.trim()) return;
 
     router.push({
-      pathname: '/(category)/[category]',
+      pathname: routes.category.view('all').pathname,
       params: {
         category: 'all',
         query: search,

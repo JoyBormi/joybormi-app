@@ -9,6 +9,7 @@ import {
 import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { routes } from '@/constants/routes';
 import {
   MemberAboutTab,
   MemberReviewsTab,
@@ -141,9 +142,7 @@ const WorkerDetailScreen: React.FC = () => {
   const handleServicePress = (service: (typeof services)[0]) => {
     console.log('Book service:', service.id);
     // Navigate to booking page with service and worker pre-selected
-    router.push(
-      `/(screens)/(booking)${worker.brandId}/${worker.id}/${service.id}`,
-    );
+    router.push(routes.booking.service(worker.brandId, worker.id, service.id));
   };
 
   return (

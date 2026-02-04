@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TabButton } from '@/components/shared/tab-button';
+import { routes } from '@/constants/routes';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores';
 import { EUserType } from '@/types/user.type';
@@ -44,20 +45,24 @@ export default function TabLayout() {
           <TabButton icon="List">{t('common.tabs.reservations')}</TabButton>
         </TabTrigger>
         {appType === EUserType.CREATOR && (
-          <TabTrigger name="brand" href="/(tabs)/(brand)/brand-profile" asChild>
+          <TabTrigger
+            name="brand"
+            href={routes.tabs.brand.brand_profile}
+            asChild
+          >
             <TabButton icon="Store">{t('common.tabs.store')}</TabButton>
           </TabTrigger>
         )}
         {appType === EUserType.WORKER && (
           <TabTrigger
             name="brand"
-            href="/(tabs)/(brand)/worker-profile"
+            href={routes.tabs.brand.worker_profile}
             asChild
           >
             <TabButton icon="Users">{t('common.tabs.profile')}</TabButton>
           </TabTrigger>
         )}
-        <TabTrigger name="settings" href="/(tabs)/settings" asChild>
+        <TabTrigger name="settings" href={routes.tabs.profile} asChild>
           <TabButton icon="Settings">{t('common.tabs.settings')}</TabButton>
         </TabTrigger>
       </TabList>

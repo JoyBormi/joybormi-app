@@ -7,6 +7,7 @@ import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DeleteModal, DeleteModalRef } from '@/components/modals';
+import { routes } from '@/constants/routes';
 import { settingsGroups } from '@/constants/setting-groups';
 import { useLogout, useWithdraw } from '@/hooks/auth';
 import { Feedback } from '@/lib/haptics';
@@ -31,7 +32,7 @@ const SettingsScreen: React.FC = () => {
 
   const handleUserTypeSwitch = useCallback(() => {
     if (!isLoggedIn) {
-      router.push('/(auth)/login');
+      router.push(routes.auth.login);
       return;
     }
     userTypeSheetRef.current?.present();
@@ -39,16 +40,16 @@ const SettingsScreen: React.FC = () => {
 
   const handleProfilePress = useCallback(() => {
     if (!isLoggedIn) {
-      router.push('/(auth)/login');
+      router.push(routes.auth.login);
 
       return;
     }
-    router.push('/((screens))/(user)/edit-profile');
+    router.push(routes.user.edit_profile);
   }, [isLoggedIn]);
 
   const handleLogout = useCallback(() => {
     if (!isLoggedIn) {
-      router.push('/(auth)/login');
+      router.push(routes.auth.login);
       return;
     }
     Alert.alert(
@@ -75,7 +76,7 @@ const SettingsScreen: React.FC = () => {
 
   const handleDeleteAccount = useCallback(() => {
     if (!isLoggedIn) {
-      router.push('/(auth)/login');
+      router.push(routes.auth.login);
       return;
     }
     deleteModalRef.current?.show();

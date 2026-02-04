@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { Image, Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
+import { routes } from '@/constants/routes';
 
 import { Text } from '../ui';
 
@@ -24,7 +25,7 @@ export function ServiceCard({
   const router = useRouter();
   return (
     <Pressable
-      onPress={() => id && router.push(`/(screens)/(worker)/event/${id}`)}
+      onPress={() => id && router.push(routes.worker.event(id))}
       className="w-[180px] aspect-[3/4] bg-popover border border-ring/10 relative overflow-hidden rounded-xl mr-4"
     >
       <Image

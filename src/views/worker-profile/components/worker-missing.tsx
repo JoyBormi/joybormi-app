@@ -5,6 +5,7 @@ import { Pressable, View } from 'react-native';
 import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
 import { AnimatedProgress } from '@/components/ui/progress';
+import { routes } from '@/constants/routes';
 import { IFile } from '@/types/file.type';
 import { IWorkingDay } from '@/types/schedule.type';
 import { IService } from '@/types/service.type';
@@ -151,7 +152,10 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
           label: 'Add service',
           onPress: () =>
             router.push(
-              `/((screens))/upsert-service?ownerId=${worker?.id}&ownerType=worker`,
+              routes.screens.upsert_service({
+                ownerId: worker?.id,
+                ownerType: 'worker',
+              }),
             ),
         },
       });
@@ -178,10 +182,10 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
         icon: Icons.CalendarDays,
         action: {
           label: 'Add hours',
-          onPress: () =>
-            router.push(
-              `/(screens)/upsert-schedule?brandId=${worker?.brandId}`,
-            ),
+          onPress: () => {
+            if (!worker?.brandId) return;
+            router.push(routes.screens.upsert_schedule(worker.brandId));
+          },
         },
       });
     }

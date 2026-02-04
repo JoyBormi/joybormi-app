@@ -7,6 +7,7 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { PressableBounce, Text } from '@/components/ui';
 import { Major } from '@/constants/enum';
+import { routes } from '@/constants/routes';
 import { cn } from '@/lib/utils';
 
 const emojiMap = ['💇‍♂️', '🧖‍♀️', '🦷', '🏋️', '🧘‍♂️', '🎨', '👨‍⚕️', '🧪'];
@@ -38,7 +39,7 @@ export function CategoryPills({ className }: Props) {
             className="w-[22%]"
           >
             <Pressable
-              onPress={() => router.push(`/(category)/${category.id}`)}
+              onPress={() => router.push(routes.category.view(category.id))}
               className="aspect-square items-center justify-center bg-card/50 rounded-xl border border-border active:opacity-80"
             >
               <Animated.View
@@ -62,7 +63,7 @@ export function CategoryPills({ className }: Props) {
       >
         <PressableBounce
           haptic
-          onPress={() => router.push('/(category)/all')}
+          onPress={() => router.push(routes.category.view('all'))}
           className="py-2.5 mt-4 items-center justify-center bg-card/50 rounded-2xl border border-border active:opacity-80"
         >
           <Text>{t('categories.seeAll')}</Text>

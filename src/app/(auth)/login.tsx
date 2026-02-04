@@ -19,6 +19,7 @@ import {
   TabsTrigger,
   Text,
 } from '@/components/ui';
+import { routes } from '@/constants/routes';
 import { useLogin } from '@/hooks/auth/use-login';
 import { Feedback } from '@/lib/haptics';
 import { normalizePhone } from '@/lib/utils';
@@ -57,9 +58,9 @@ export default function LoginScreen() {
       password: data.password,
     };
     login(credentials, {
-      onSuccess: (data) => {
+      onSuccess: () => {
         // Navigate to home after successful login
-        router.replace('/');
+        router.replace(routes.tabs.home);
       },
     });
   };
@@ -174,7 +175,7 @@ export default function LoginScreen() {
           variant="link"
           onPress={() => {
             Feedback.medium();
-            router.push('/(auth)/register');
+            router.push(routes.auth.register);
           }}
         >
           <Text className="font-body">{t('auth.login.register')}</Text>
@@ -185,7 +186,7 @@ export default function LoginScreen() {
         <Pressable
           onPress={() => {
             Feedback.soft();
-            router.push('/(auth)/forgot-pwd');
+            router.push(routes.auth.forgot_password);
           }}
         >
           <Text className="font-caption underline">

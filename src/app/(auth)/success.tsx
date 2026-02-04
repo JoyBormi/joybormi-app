@@ -6,6 +6,7 @@ import { View } from 'react-native';
 
 import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
+import { routes } from '@/constants/routes';
 import { Feedback } from '@/lib/haptics';
 
 export default function SuccessScreen() {
@@ -65,7 +66,7 @@ export default function SuccessScreen() {
           size="lg"
           onPress={() => {
             Feedback.success(); // Changed to success haptic
-            router.dismissTo('/(tabs)');
+            router.dismissTo(routes.tabs.home);
           }}
           className="w-full shadow-lg active:scale-95 transition-transform"
         >

@@ -4,6 +4,7 @@ import { Dimensions, Image, Pressable, ScrollView, View } from 'react-native';
 
 import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
+import { routes } from '@/constants/routes';
 import { cn } from '@/lib/utils';
 
 const { width } = Dimensions.get('window');
@@ -100,7 +101,7 @@ export function PromoOffers({ className }: { className?: string }) {
             }}
           >
             <Pressable
-              onPress={() => router.push(`/(screens)/(brand)/${item.id}`)}
+              onPress={() => router.push(routes.brand.details(item.id))}
               className="bg-popover rounded-xl border border-border overflow-hidden p-2.5 w-full h-[320px] justify-between"
             >
               <Image

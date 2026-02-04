@@ -14,6 +14,7 @@ import { LanguageToggle } from '@/components/shared/language-toggle';
 import { ThemeToggle } from '@/components/shared/theme-toggle';
 import { Button, Text } from '@/components/ui';
 import { HERO } from '@/constants/images';
+import { routes } from '@/constants/routes';
 import { useOnboarding } from '@/stores/use-onboarding';
 import { FAQItem, FeatureItem, PlanCard } from '@/views/website';
 import { faqs, features, plans, useCases } from '@/views/website/data';
@@ -29,7 +30,7 @@ export default function WebsiteScreen() {
   const handleGetStarted = useCallback(() => {
     setVisited();
     setCanVisitAgain(false);
-    router.replace('/(tabs)');
+    router.replace(routes.tabs.home);
   }, [router, setVisited, setCanVisitAgain]);
 
   return (

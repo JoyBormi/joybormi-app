@@ -11,6 +11,7 @@ import React, {
 import { View } from 'react-native';
 import { CalendarList, DateData } from 'react-native-calendars';
 
+import { routes } from '@/constants/routes';
 import { useHeaderMonthControls } from '@/hooks/calendar';
 import { useColorScheme, useLanguage } from '@/hooks/common';
 import { getMonthTheme } from '@/styles/calendar';
@@ -79,7 +80,7 @@ const MonthScreen = () => {
   const onDayPress = useCallback(
     (day: DateData) => {
       setSelected(day.dateString);
-      router.push(`/(calendar)/(week)/${day.dateString}`);
+      router.push(routes.tabs.calendar.week(day.dateString));
       router.setParams({
         hideTabBarInWeek: 'true',
       });

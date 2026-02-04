@@ -4,7 +4,6 @@ import {
 } from '@gorhom/bottom-sheet';
 import React, { forwardRef } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DetachedSheet } from '@/components/bottom-sheet';
 import Icons from '@/components/icons';
@@ -16,8 +15,6 @@ interface Props {
 
 export const UserTypeActionRequiredSheet = forwardRef<BottomSheetModal, Props>(
   ({ type, onPrimary }, ref) => {
-    const insets = useSafeAreaInsets();
-
     const content =
       type === 'NEED_CODE'
         ? {

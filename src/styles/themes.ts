@@ -7,89 +7,86 @@ export const THEME_COLORS = {
   light: vars({
     /* Base */
     '--background': '0 0% 100%',
-    '--foreground': '0 0% 8%',
+    '--foreground': '222 25% 12%',
 
     /* Surfaces */
     '--card': '0 0% 98%',
-    '--card-foreground': '0 0% 10%',
+    '--card-foreground': '222 25% 12%',
 
-    /* Brand / Primary */
-    '--primary': '268 55% 48%', // premium purple
+    /* Brand */
+    '--primary': '268 55% 48%', // purple
     '--primary-foreground': '0 0% 100%',
 
     /* Secondary (neutral only) */
-    '--secondary': '0 0% 94%',
-    '--secondary-foreground': '0 0% 22%',
+    '--secondary': '0 0% 96%',
+    '--secondary-foreground': '222 20% 20%',
 
     /* Muted */
-    '--muted': '0 0% 90%',
-    '--muted-foreground': '0 0% 45%',
+    '--muted': '0 0% 94%',
+    '--muted-foreground': '222 10% 45%',
 
-    /* Accent = Primary (no extra color) */
+    /* Accent = Primary */
     '--accent': '268 55% 48%',
     '--accent-foreground': '0 0% 100%',
 
-    /* Status (kept neutral-dominant) */
-    '--success': '0 0% 20%',
-    '--warning': '0 0% 35%',
+    /* Status */
+    '--success': '222 20% 20%',
+    '--warning': '222 20% 20%',
     '--destructive': '0 70% 50%',
     '--destructive-foreground': '0 0% 100%',
 
     /* Borders & inputs */
-    '--border': '0 0% 85%',
+    '--border': '0 0% 88%',
     '--input': '0 0% 96%',
     '--ring': '268 55% 48%',
 
-    // Radius
-    '--radius': '12px',
+    '--radius': '10px',
   }),
 
   dark: vars({
     /* Base */
-    '--background': '0 0% 0%',
+    '--background': '222 30% 6%',
     '--foreground': '0 0% 96%',
 
     /* Surfaces */
-    '--card': '0 0% 6%',
-    '--card-foreground': '0 0% 94%',
+    '--card': '222 25% 10%',
+    '--card-foreground': '0 0% 96%',
 
-    /* Brand / Primary */
+    /* Brand */
     '--primary': '268 60% 62%',
-    '--primary-foreground': '0 0% 6%',
+    '--primary-foreground': '222 35% 8%',
 
     /* Secondary */
-    '--secondary': '0 0% 12%',
+    '--secondary': '222 18% 14%',
     '--secondary-foreground': '0 0% 96%',
 
     /* Muted */
-    '--muted': '0 0% 16%',
+    '--muted': '222 14% 18%',
     '--muted-foreground': '0 0% 65%',
 
     /* Accent = Primary */
     '--accent': '268 60% 62%',
-    '--accent-foreground': '0 0% 6%',
+    '--accent-foreground': '222 35% 8%',
 
     /* Status */
     '--success': '0 0% 70%',
-    '--warning': '0 0% 55%',
+    '--warning': '0 0% 70%',
     '--destructive': '0 65% 55%',
     '--destructive-foreground': '0 0% 100%',
 
     /* Borders & inputs */
-    '--border': '0 0% 18%',
-    '--input': '0 0% 14%',
+    '--border': '222 14% 20%',
+    '--input': '222 14% 14%',
     '--ring': '268 60% 62%',
 
-    // Radius
-    '--radius': '12px',
+    '--radius': '10px',
   }),
 };
 
 export const STATUSBAR_COLORS = {
   light: { style: 'dark', background: '#ffffff' },
-  dark: { style: 'light', background: '#000000' },
+  dark: { style: 'light', background: '#0a0a0a' },
 };
-
 export const THEMES_HEX = {
   light: {
     dark: false,
@@ -97,8 +94,9 @@ export const THEMES_HEX = {
       primary: '#6b3fd6',
       background: '#ffffff',
       card: '#fafafa',
-      text: '#141414',
-      border: '#d9d9d9',
+      text: '#1b1f23',
+      muted: '#6b7280',
+      border: '#e5e7eb',
       notification: '#6b3fd6',
     },
   },
@@ -106,9 +104,10 @@ export const THEMES_HEX = {
     dark: true,
     colors: {
       primary: '#9b7bff',
-      background: '#000000',
-      card: '#0f0f0f',
+      background: '#0a0a0a',
+      card: '#111111',
       text: '#f5f5f5',
+      muted: '#9ca3af',
       border: '#262626',
       notification: '#9b7bff',
     },

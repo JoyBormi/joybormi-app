@@ -8,6 +8,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
+import { routes } from '@/constants/routes';
 import { Feedback } from '@/lib/haptics';
 import {
   CategoryFooter,
@@ -38,9 +39,9 @@ export default function CategoryScreen() {
 
   const handleCategoryChange = (newCategory: string) => {
     if (newCategory === 'all') {
-      router.replace('/(category)/all');
+      router.replace(routes.category.view('all'));
     } else {
-      router.replace(`/(category)/${newCategory}`);
+      router.replace(routes.category.view(newCategory));
     }
   };
 
@@ -80,7 +81,7 @@ export default function CategoryScreen() {
           if (!filters.search.trim()) return;
           Feedback.light();
           router.push({
-            pathname: '/(category)/[category]',
+            pathname: routes.category.view(category || 'all').pathname,
             params: {
               category: category || 'all',
               query: filters.search,

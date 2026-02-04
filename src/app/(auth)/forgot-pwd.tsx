@@ -18,6 +18,7 @@ import {
   TabsTrigger,
   Text,
 } from '@/components/ui';
+import { routes } from '@/constants/routes';
 import { useForgotPassword, useVerifyResetCode } from '@/hooks/auth';
 import { Feedback } from '@/lib/haptics';
 import {
@@ -142,7 +143,7 @@ export default function ForgotPwdScreen() {
           // Store reset token and navigate to reset password screen
           setState((prev) => ({ ...prev, resetToken: response.resetToken }));
           router.push({
-            pathname: '/(auth)/reset-pwd',
+            pathname: routes.auth.reset_password,
             params: { resetToken: response.resetToken },
           });
         },
@@ -248,7 +249,9 @@ export default function ForgotPwdScreen() {
             disabled={isSending}
           >
             <Text>
-              {isSending ? t('common.loading') : t('auth.forgotPwd.sendCode')}
+              {isSending
+                ? t('common.buttons.loading')
+                : t('auth.forgotPwd.sendCode')}
             </Text>
           </Button>
         ) : (
@@ -271,7 +274,9 @@ export default function ForgotPwdScreen() {
               disabled={!isCodeValid || isVerifying}
             >
               <Text>
-                {isVerifying ? t('common.loading') : t('auth.forgotPwd.verify')}
+                {isVerifying
+                  ? t('common.buttons.loading')
+                  : t('auth.forgotPwd.verify')}
               </Text>
             </Button>
           </>

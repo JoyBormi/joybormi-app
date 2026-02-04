@@ -18,6 +18,7 @@ import {
   TabsTrigger,
   Text,
 } from '@/components/ui';
+import { routes } from '@/constants/routes';
 import { useRegister } from '@/hooks/auth';
 import { Feedback } from '@/lib/haptics';
 import { normalizePhone } from '@/lib/utils';
@@ -58,7 +59,10 @@ export default function RegisterScreen() {
       username: data.username,
     };
     await register(payload).then(() => {
-      router.replace('/(auth)/success?type=register');
+      router.replace({
+        pathname: routes.auth.success,
+        params: { type: 'register' },
+      });
     });
   };
 
@@ -227,7 +231,7 @@ export default function RegisterScreen() {
             variant="link"
             onPress={() => {
               Feedback.soft();
-              router.dismissTo('/(auth)/login');
+              router.dismissTo(routes.auth.login);
             }}
           >
             <Text className="font-body">{t('auth.register.login')}</Text>

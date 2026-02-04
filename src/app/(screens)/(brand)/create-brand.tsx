@@ -10,6 +10,7 @@ import Icons from '@/components/icons';
 import { BlockModal, BlockModalRef } from '@/components/modals/block-modal';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Button, Text } from '@/components/ui';
+import { routes } from '@/constants/routes';
 import { useBecomeCreator } from '@/hooks/user/use-become-creator';
 import { Feedback } from '@/lib/haptics';
 import { createBrandSchema, TCreateBrandInput } from '@/lib/validations/brand';
@@ -177,7 +178,7 @@ const CreateBrand: React.FC = () => {
           title: t('brand.setup.success.title'),
           subtitle: t('brand.setup.success.message'),
           onConfirm: () => {
-            router.replace('/(tabs)/(brand)/brand-profile');
+            router.replace(routes.tabs.brand.brand_profile);
             clearDraft();
             reset();
           },

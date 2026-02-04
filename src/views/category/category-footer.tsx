@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Icons from '@/components/icons';
 import { Input, PressableBounce } from '@/components/ui';
+import { routes } from '@/constants/routes';
 import { useKeyboardHeight } from '@/hooks/common';
 import { cn } from '@/lib/utils';
 
@@ -56,7 +57,7 @@ export const CategoryFooter = memo(function CategoryFooter({
                 haptic
                 hitSlop={24}
                 onPress={() => router.back()}
-                onLongPress={() => router.dismissTo('/(tabs)')}
+                onLongPress={() => router.dismissTo(routes.tabs.home)}
                 className="p-3 items-center justify-center rounded-full active:opacity-60"
               >
                 <Icons.ChevronLeft size={24} className="text-foreground" />

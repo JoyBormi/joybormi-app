@@ -1,35 +1,51 @@
 import { Theme } from 'react-native-calendars/src/types';
 
-import { ThemeHex } from './themes';
+import { THEMES_HEX } from './themes';
 
-export const getMonthTheme = (colors: ThemeHex['dark']['colors']): Theme => {
-  return {
-    calendarBackground: colors.background,
-    textSectionTitleColor: colors.text,
-    dayTextColor: colors.text,
-    todayTextColor: colors.primary,
-    selectedDayTextColor: colors.text,
-    selectedDayBackgroundColor: colors.primary,
-    dotColor: colors.primary,
-    selectedDotColor: colors.primary,
-    textDisabledColor: colors.border,
-    monthTextColor: colors.primary,
-    textMonthFontWeight: '600',
-    textMonthFontSize: 14,
-    textMonthFontFamily: 'Montserrat-Bold',
-    textDayFontFamily: 'Montserrat-Regular',
-    todayButtonFontFamily: 'Montserrat-Regular',
-    todayButtonFontWeight: '600',
-    todayButtonFontSize: 14,
-    todayButtonPosition: 'center',
-    textDayStyle: {
-      fontFamily: 'Montserrat-Regular',
-      fontSize: 14,
-      fontWeight: '600',
-      textAlign: 'center',
-    },
-  };
-};
+type ThemeHex = typeof THEMES_HEX;
+
+export const getMonthTheme = (colors: ThemeHex['dark']['colors']): Theme => ({
+  calendarBackground: colors.background,
+
+  backgroundColor: colors.background,
+
+  // Month header
+  monthTextColor: colors.text,
+  textMonthFontFamily: 'Montserrat-Bold',
+  textMonthFontSize: 15,
+  textMonthFontWeight: '700',
+
+  // Weekday labels
+  textSectionTitleColor: colors.muted,
+  textDayHeaderFontFamily: 'Montserrat-Medium',
+  textDayHeaderFontSize: 11,
+  textDayHeaderFontWeight: '500',
+
+  // Days
+  dayTextColor: colors.text,
+  textDisabledColor: colors.muted,
+
+  // Today
+  todayTextColor: colors.primary,
+
+  // Selected day
+  selectedDayBackgroundColor: colors.primary,
+  selectedDayTextColor: colors.text,
+
+  // Dots
+  dotColor: colors.border,
+  selectedDotColor: colors.background,
+
+  textDayStyle: {
+    fontFamily: 'Montserrat-Regular',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
+    letterSpacing: 0.2,
+  },
+
+  arrowColor: colors.text,
+});
 
 export const getTimelineTheme = (colors: ThemeHex['dark']['colors']): Theme => {
   return {
@@ -37,16 +53,16 @@ export const getTimelineTheme = (colors: ThemeHex['dark']['colors']): Theme => {
     textSectionTitleColor: colors.text,
     dayTextColor: colors.text,
     todayTextColor: colors.primary,
-    selectedDayTextColor: colors.background,
+    selectedDayTextColor: colors.text,
     selectedDayBackgroundColor: colors.primary,
     todayDotColor: colors.primary,
-    dotColor: colors.primary,
+    dotColor: colors.border,
     selectedDotColor: colors.background,
     textDisabledColor: colors.border,
     weekVerticalMargin: 6,
-    monthTextColor: colors.primary,
+    monthTextColor: colors.text,
     textMonthFontWeight: '700',
-    textMonthFontSize: 18,
+    textMonthFontSize: 16,
     textMonthFontFamily: 'Montserrat-Bold',
     todayButtonPosition: 'center',
     line: {
@@ -67,9 +83,9 @@ export const getTimelineTheme = (colors: ThemeHex['dark']['colors']): Theme => {
       backgroundColor: colors.background,
     },
     event: {
-      borderRadius: 4,
-      paddingHorizontal: 1.5,
-      paddingVertical: 0.5,
+      borderRadius: 8,
+      paddingHorizontal: 2,
+      paddingVertical: 1,
       overflow: 'hidden',
       border: 1,
     },

@@ -21,6 +21,7 @@ import {
   SuspendedScreen,
 } from '@/components/status-screens';
 import { IMAGE_CATEGORIES } from '@/constants/global.constants';
+import { routes } from '@/constants/routes';
 import {
   useGetBrand,
   useGetBrandPhotos,
@@ -107,7 +108,7 @@ const BrandProfileScreen: React.FC = () => {
 
   // ───────────────── Handlers ────────────────── //
   const handleEditBrand = useCallback(() => {
-    router.push('/(screens)/edit-brand-profile');
+    router.push(routes.brand.edit_profile);
   }, [router]);
 
   const handleEditBanner = useCallback(() => {
@@ -179,12 +180,12 @@ const BrandProfileScreen: React.FC = () => {
 
   const handleSetupWorkerProfile = useCallback(() => {
     setAppType(EUserType.WORKER);
-    router.replace('/(tabs)/(brand)/worker-profile');
+    router.replace(routes.tabs.brand.worker_profile);
   }, [router, setAppType]);
 
   const handleWorkerPress = useCallback(
     (worker: IWorker) => {
-      router.push(`/(screens)/(worker)/worker/${worker.id}`);
+      router.push(routes.worker.details(worker.id));
     },
     [router],
   );
@@ -299,12 +300,15 @@ const BrandProfileScreen: React.FC = () => {
               <BrandQuickActions
                 onAddService={() =>
                   router.push(
-                    `/((screens))/upsert-service?ownerId=${brand.id}&ownerType=brand`,
+                    routes.screens.upsert_service({
+                      ownerId: brand.id,
+                      ownerType: 'brand',
+                    }),
                   )
                 }
                 onAddWorker={handleAddWorker}
                 onManageHours={() =>
-                  router.push(`/(screens)/upsert-schedule?brandId=${brand.id}`)
+                  router.push(routes.screens.upsert_schedule(brand.id))
                 }
                 onSetupWorkerProfile={handleSetupWorkerProfile}
               />
@@ -342,7 +346,7 @@ const BrandProfileScreen: React.FC = () => {
               workingDays={schedule?.workingDays ?? []}
               canEdit={canEdit}
               onEditSchedule={() =>
-                router.push(`/(screens)/upsert-schedule?brandId=${brand.id}`)
+                router.push(routes.screens.upsert_schedule(brand.id))
               }
             />
 

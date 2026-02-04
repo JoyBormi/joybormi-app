@@ -16,6 +16,7 @@ import {
 } from '@/components/brand-worker';
 import { NotFoundScreen, PendingScreen } from '@/components/status-screens';
 import { IMAGE_CATEGORIES } from '@/constants/global.constants';
+import { routes } from '@/constants/routes';
 import { useGetBrandPhotos } from '@/hooks/brand';
 import { normalizeFileUrl, useDeleteFile, useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
@@ -111,7 +112,7 @@ const WorkerProfileScreen: React.FC = () => {
 
   // Handlers
   const handleEditProfile = useCallback(() => {
-    router.push('/(screens)/edit-worker-profile');
+    router.push(routes.worker.edit_profile);
   }, []);
 
   const handleEditBanner = useCallback(() => {
@@ -281,13 +282,14 @@ const WorkerProfileScreen: React.FC = () => {
               <QuickActionsSection
                 onAddService={() =>
                   router.push(
-                    `/((screens))/upsert-service?ownerId=${worker.id}&ownerType=worker`,
+                    routes.screens.upsert_service({
+                      ownerId: worker.id,
+                      ownerType: 'worker',
+                    }),
                   )
                 }
                 onEditSchedule={() =>
-                  router.push(
-                    `/(screens)/upsert-schedule?brandId=${worker.brandId}`,
-                  )
+                  router.push(routes.screens.upsert_schedule(worker.brandId))
                 }
               />
             )}
@@ -317,12 +319,18 @@ const WorkerProfileScreen: React.FC = () => {
               canEdit={canEdit}
               onAddService={() =>
                 router.push(
-                  `/((screens))/upsert-service?ownerId=${worker.id}&ownerType=worker`,
+                  routes.screens.upsert_service({
+                    ownerId: worker.id,
+                    ownerType: 'worker',
+                  }),
                 )
               }
               onServicePress={(service) =>
                 router.push(
-                  `/((screens))/upsert-service?serviceId=${service.id}&ownerId=${worker.id}`,
+                  routes.screens.upsert_service({
+                    serviceId: service.id,
+                    ownerId: worker.id,
+                  }),
                 )
               }
             />
@@ -331,9 +339,7 @@ const WorkerProfileScreen: React.FC = () => {
               workingDays={workingDays}
               canEdit={canEdit}
               onEditSchedule={() =>
-                router.push(
-                  `/(screens)/upsert-schedule?brandId=${worker.brandId}`,
-                )
+                router.push(routes.screens.upsert_schedule(worker.brandId))
               }
             />
 

@@ -18,6 +18,7 @@ import {
   Text,
   Textarea,
 } from '@/components/ui';
+import { routes } from '@/constants/routes';
 import { useDeleteBrand, useGetBrand, useUpdateBrand } from '@/hooks/brand';
 import { toast } from '@/providers/toaster';
 
@@ -303,7 +304,7 @@ const EditBrandProfileScreen = () => {
       <DeleteModal
         ref={deleteModalRef}
         onConfirm={async () => {
-          await deleteBrand().then(() => router.replace('/(tabs)/home'));
+          await deleteBrand().then(() => router.replace(routes.tabs.home));
         }}
       />
     </KeyboardAvoid>

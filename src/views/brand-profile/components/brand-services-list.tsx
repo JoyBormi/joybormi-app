@@ -5,6 +5,7 @@ import { Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
+import { routes } from '@/constants/routes';
 import { formatCurrency } from '@/utils/helpers';
 
 import type { IService } from '@/types/service.type';
@@ -34,7 +35,7 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
         {canEdit && (
           <Pressable
             onPress={() =>
-              router.push(`/((screens))/upsert-service?ownerId=${ownerId}`)
+              router.push(routes.screens.upsert_service({ ownerId }))
             }
           >
             <Icons.Plus size={20} className="text-primary" />
@@ -52,7 +53,10 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
             <Pressable
               onPress={() =>
                 router.push(
-                  `/((screens))/upsert-service?serviceId=${service.id}&ownerId=${ownerId}`,
+                  routes.screens.upsert_service({
+                    serviceId: service.id,
+                    ownerId,
+                  }),
                 )
               }
               className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50 active:scale-[0.98]"

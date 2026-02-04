@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
+import { routes } from '@/constants/routes';
 import { IBrandWorker } from '@/types/brand.type';
 
 interface WorkersTabProps {
@@ -34,9 +35,7 @@ export const WorkersTab: React.FC<WorkersTabProps> = ({
           transition={{ type: 'timing', duration: 400, delay: index * 100 }}
         >
           <Pressable
-            onPress={() =>
-              router.push(`/(screens)/(worker)/worker/${worker.id}`)
-            }
+            onPress={() => router.push(routes.worker.details(worker.id))}
             className="bg-card/30 backdrop-blur-sm rounded-2xl p-4 border border-border/50 mb-3"
           >
             <View className="flex-row gap-3">

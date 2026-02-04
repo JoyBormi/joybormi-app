@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
+import { routes } from '@/constants/routes';
 import { cn } from '@/lib/utils';
 
 const images = [
@@ -131,7 +132,9 @@ export default function ProfessionalDetailsScreen() {
         <Button
           style={{ marginBottom: insets.bottom }}
           className="rounded-none mt-4"
-          onPress={() => router.push(`/(dynamic-brand)/team/member/${id}`)}
+          onPress={() =>
+            router.push(routes.dynamic_brand.team_member(String(id)))
+          }
         >
           <Text>Book Your Seat</Text>
         </Button>

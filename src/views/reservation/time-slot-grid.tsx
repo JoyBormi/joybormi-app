@@ -3,6 +3,7 @@ import React from 'react';
 import { Pressable, View } from 'react-native';
 
 import { Text } from '@/components/ui';
+import { cn } from '@/lib/utils';
 
 interface TimeSlotGridProps {
   slots: string[];
@@ -49,16 +50,18 @@ export const TimeSlotGrid: React.FC<TimeSlotGridProps> = ({
           >
             <Pressable
               onPress={() => onSlotSelect(slot)}
-              className={`py-3 rounded-2xl border items-center justify-center ${
+              className={cn(
+                'py-3 rounded-2xl border items-center justify-center',
                 isSelected
                   ? 'bg-primary border-primary'
-                  : 'bg-card border-border/50'
-              }`}
+                  : 'bg-card border-border/50',
+              )}
             >
               <Text
-                className={`font-subtitle text-sm ${
-                  isSelected ? 'text-primary-foreground' : 'text-foreground'
-                }`}
+                className={cn(
+                  'font-subtitle',
+                  isSelected ? 'text-primary-foreground' : 'text-foreground',
+                )}
               >
                 {slot}
               </Text>
