@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { DeleteModal, DeleteModalRef } from '@/components/modals';
 import { settingsGroups } from '@/constants/setting-groups';
 import { useLogout, useWithdraw } from '@/hooks/auth';
 import { Feedback } from '@/lib/haptics';
@@ -23,6 +24,7 @@ const SettingsScreen: React.FC = () => {
   const { user, appType, isLoggedIn } = useUserStore();
 
   const userTypeSheetRef = useRef<BottomSheetModal>(null);
+  const deleteModalRef = useRef<DeleteModalRef>(null);
 
   const { mutateAsync: logout } = useLogout();
   const { mutateAsync: withdraw } = useWithdraw();
@@ -76,27 +78,8 @@ const SettingsScreen: React.FC = () => {
       router.push('/(auth)/login');
       return;
     }
-    Alert.alert(
-      t('settings.items.deleteAccount.title'),
-      t('settings.alerts.deleteAccount'),
-      [
-        {
-          text: t('common.buttons.cancel'),
-          style: 'cancel',
-          onPress: () => Feedback.light(),
-        },
-        {
-          text: t('settings.items.deleteAccount.title'),
-          style: 'destructive',
-          onPress: () => {
-            Feedback.medium();
-            withdraw();
-          },
-        },
-      ],
-      { cancelable: true },
-    );
-  }, [isLoggedIn, t, withdraw]);
+    deleteModalRef.current?.show();
+  }, [isLoggedIn]);
 
   const settings = useMemo(
     () =>
@@ -189,6 +172,13 @@ const SettingsScreen: React.FC = () => {
       <UserTypeSheet
         ref={userTypeSheetRef}
         onClose={() => userTypeSheetRef.current?.dismiss()}
+      />
+
+      <DeleteModal
+        ref={deleteModalRef}
+        onConfirm={() => {
+          withdraw();
+        }}
       />
     </View>
   );

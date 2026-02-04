@@ -10,6 +10,7 @@ import { setupOnlineManager } from '@/lib/tanstack-query/online-manager';
 
 import { GlobalAlert } from './alert';
 import { I18nProvider } from './intl';
+import { NotificationProvider } from './notification-provider';
 import { QueryProvider } from './query';
 import { ThemeProvider } from './theme';
 import { ToastProvider } from './toaster';
@@ -27,7 +28,7 @@ const RootProvider = ({ children }: { children: React.ReactNode }) => {
         <QueryProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
             <BottomSheetModalProvider>
-              {children}
+              <NotificationProvider>{children}</NotificationProvider>
               <OfflineModal />
               <GlobalAlert />
               <ToastProvider />

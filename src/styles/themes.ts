@@ -89,6 +89,7 @@ export const STATUSBAR_COLORS = {
   light: { style: 'dark', background: '#ffffff' },
   dark: { style: 'light', background: '#000000' },
 };
+
 export const THEMES_HEX = {
   light: {
     dark: false,

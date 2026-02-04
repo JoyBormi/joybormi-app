@@ -21,6 +21,14 @@ export class Feedback {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   }
 
+  static warning() {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+  }
+
+  static error() {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+  }
+
   static selection() {
     Haptics.selectionAsync();
   }

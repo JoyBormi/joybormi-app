@@ -1,10 +1,11 @@
 import { router } from 'expo-router';
 import { RefreshCcw } from 'lucide-react-native';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { DeleteModal, DeleteModalRef } from '@/components/modals';
 import { KeyboardAvoid } from '@/components/shared';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
@@ -19,7 +20,6 @@ import {
 } from '@/components/ui';
 import { useDeleteBrand, useGetBrand, useUpdateBrand } from '@/hooks/brand';
 import { toast } from '@/providers/toaster';
-import { alert } from '@/stores/use-alert-store';
 
 export interface BrandForm {
   brand_name: string;
@@ -43,6 +43,7 @@ const EditBrandProfileScreen = () => {
   const { data: brand, isLoading } = useGetBrand();
   const { mutateAsync: updateBrand, isPending: isUpdating } = useUpdateBrand();
   const { mutateAsync: deleteBrand, isPending: isDeleting } = useDeleteBrand();
+  const deleteModalRef = useRef<DeleteModalRef>(null);
 
   // Form state matching backend schema
   const form = useForm<BrandForm>({
@@ -116,17 +117,8 @@ const EditBrandProfileScreen = () => {
 
   const handleDelete = useCallback(() => {
     if (!brand) return;
-
-    alert({
-      title: 'Delete Brand',
-      subtitle:
-        'Are you sure you want to delete your brand? This action cannot be undone.',
-      cancelLabel: 'Cancel',
-      confirmLabel: 'Delete',
-      onConfirm: async () =>
-        await deleteBrand().then(() => router.replace('/(tabs)/home')),
-    });
-  }, [brand, deleteBrand]);
+    deleteModalRef.current?.show();
+  }, [brand]);
 
   if (isLoading || !brand) return <Loading />;
 
@@ -308,6 +300,12 @@ const EditBrandProfileScreen = () => {
           )}
         </Button>
       </View>
+      <DeleteModal
+        ref={deleteModalRef}
+        onConfirm={async () => {
+          await deleteBrand().then(() => router.replace('/(tabs)/home'));
+        }}
+      />
     </KeyboardAvoid>
   );
 };

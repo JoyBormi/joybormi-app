@@ -78,6 +78,23 @@
     "codePlaceholder": "6 xonali kodni kiriting",
     "phone": "Telefon raqami",
     "phonePlaceholder": "Telefon raqamingizni kiriting",
+    "errors": {
+      "ohNo": "Voy, yo'q!",
+      "somethingWentWrong": "Xatolik yuz berdi",
+      "unauthorized": "Avtorizatsiyadan o'tilmagan",
+      "unauthorizedSubtitle": "Kechirasiz, ushbu sahifaga kirish huquqingiz yo'q",
+      "sessionExpired": "Seans muddati tugadi",
+      "sessionExpiredSubtitle": "Seans muddati tugadi. Davom etish uchun qaytadan tizimga kiring.",
+      "accountSuspended": "Hisob bloklangan",
+      "accountSuspendedSubtitle": "Hisobingiz bloklangan. Qo'shimcha ma'lumot uchun qo'llab-quvvatlash xizmatiga murojaat qiling."
+    },
+    "deleteModal": {
+      "title": "O'chirishni tasdiqlash",
+      "description": "Ushbu amalni ortga qaytarib bo'lmaydi. Tasdiqlash uchun \"{{keyword}}\" deb yozing.",
+      "keyword": "O'CHIRISH",
+      "placeholder": "Kalit so'zni kiriting",
+      "button": "Butunlay o'chirish"
+    },
     "login": {
       "title": "Kirish",
       "subtitle": "Kirish uchun ma'lumotlaringizni kiriting",
