@@ -4,12 +4,8 @@ import { agent } from '@/lib/agent';
 import { queryKeys } from '@/lib/tanstack-query';
 import { IWorker } from '@/types/worker.type';
 
-const getWorkerProfile = async (userId: string): Promise<IWorker> =>
-  await agent.get(`/workers/me`);
-
-export const useGetWorkerProfile = ({ userId }: { userId?: string }) =>
+export const useGetWorkerProfile = () =>
   useQuery({
-    queryKey: [...queryKeys.worker.profile, { userId }],
-    queryFn: () => getWorkerProfile(userId!),
-    enabled: !!userId,
+    queryKey: [...queryKeys.worker.profile],
+    queryFn: async (): Promise<IWorker> => await agent.get(`/workers/me`),
   });

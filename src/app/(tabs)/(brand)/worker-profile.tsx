@@ -1,5 +1,5 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 import React, { Fragment, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
@@ -61,10 +61,9 @@ const WORKER_PHOTO_CATEGORIES = [
  * This page allows editing and managing worker information
  */
 const WorkerProfileScreen: React.FC = () => {
-  const router = useRouter();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const { appType, user } = useUserStore();
+  const { appType } = useUserStore();
 
   const canEdit = appType === EUserType.CREATOR || appType === EUserType.WORKER;
 
@@ -72,9 +71,7 @@ const WorkerProfileScreen: React.FC = () => {
     data: worker,
     refetch: refetchWorker,
     isLoading: isWorkerLoading,
-  } = useGetWorkerProfile({
-    userId: user?.id,
-  });
+  } = useGetWorkerProfile();
   const { data: services, refetch: refetchServices } = useGetServices({
     brandId: worker?.brandId,
     ownerId: worker?.id,
@@ -89,9 +86,7 @@ const WorkerProfileScreen: React.FC = () => {
   // Mutations
   const { mutateAsync: uploadFile } = useUploadFile();
   const { mutateAsync: deleteFile } = useDeleteFile();
-  const { mutateAsync: updateWorkerProfile } = useUpdateWorkerProfile(
-    worker?.id ?? '',
-  );
+  const { mutateAsync: updateWorkerProfile } = useUpdateWorkerProfile();
 
   // Local state for UI
   const [selectedPhoto, setSelectedPhoto] = useState<IFile | null>(null);
@@ -117,7 +112,7 @@ const WorkerProfileScreen: React.FC = () => {
   // Handlers
   const handleEditProfile = useCallback(() => {
     router.push('/(screens)/edit-worker-profile');
-  }, [router]);
+  }, []);
 
   const handleEditBanner = useCallback(() => {
     uploadBannerSheetRef.current?.present();
@@ -218,9 +213,9 @@ const WorkerProfileScreen: React.FC = () => {
             uploadedAt: new Date().toISOString(),
           };
         })
-        .filter((photo): photo is IFile => Boolean(photo));
+        .filter((photo) => Boolean(photo));
       if (photosToAdd.length > 0) {
-        setLocalPhotos((prev) => [...photosToAdd, ...prev]);
+        setLocalPhotos((prev) => [...photosToAdd, ...prev] as IFile[]);
       }
 
       if (selectedPhoto?.id) {
@@ -253,7 +248,7 @@ const WorkerProfileScreen: React.FC = () => {
   return (
     <Fragment>
       {worker?.status === 'pending' ? (
-        <PendingScreen />
+        <PendingScreen onRefresh={refetchWorker} />
       ) : worker?.status === 'inactive' ? (
         <NotFoundScreen />
       ) : (
@@ -286,7 +281,7 @@ const WorkerProfileScreen: React.FC = () => {
               <QuickActionsSection
                 onAddService={() =>
                   router.push(
-                    `/(slide-screens)/upsert-service?ownerId=${worker.id}&ownerType=worker`,
+                    `/((screens))/upsert-service?ownerId=${worker.id}&ownerType=worker`,
                   )
                 }
                 onEditSchedule={() =>
@@ -322,12 +317,12 @@ const WorkerProfileScreen: React.FC = () => {
               canEdit={canEdit}
               onAddService={() =>
                 router.push(
-                  `/(slide-screens)/upsert-service?ownerId=${worker.id}&ownerType=worker`,
+                  `/((screens))/upsert-service?ownerId=${worker.id}&ownerType=worker`,
                 )
               }
               onServicePress={(service) =>
                 router.push(
-                  `/(slide-screens)/upsert-service?serviceId=${service.id}&ownerId=${worker.id}`,
+                  `/((screens))/upsert-service?serviceId=${service.id}&ownerId=${worker.id}`,
                 )
               }
             />

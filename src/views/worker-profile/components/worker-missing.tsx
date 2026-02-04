@@ -151,7 +151,7 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
           label: 'Add service',
           onPress: () =>
             router.push(
-              `/(slide-screens)/upsert-service?ownerId=${worker?.id}&ownerType=worker`,
+              `/((screens))/upsert-service?ownerId=${worker?.id}&ownerType=worker`,
             ),
         },
       });

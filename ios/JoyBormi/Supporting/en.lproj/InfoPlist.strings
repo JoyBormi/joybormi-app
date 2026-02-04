@@ -3,7 +3,6 @@ NSContactsUsageDescription = "Allow $(CFBundleDisplayName) to access your contac
 common = "[object Object]";
 major = "[object Object]";
 auth = "[object Object]";
-website = "[object Object]";
 home = "[object Object]";
 categories = "[object Object]";
 brand = "[object Object]";

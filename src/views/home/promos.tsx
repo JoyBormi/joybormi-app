@@ -100,7 +100,7 @@ export function PromoOffers({ className }: { className?: string }) {
             }}
           >
             <Pressable
-              onPress={() => router.push(`/(dynamic-brand)/brand/${item.id}`)}
+              onPress={() => router.push(`/(screens)/(brand)/${item.id}`)}
               className="bg-popover rounded-xl border border-border overflow-hidden p-2.5 w-full h-[320px] justify-between"
             >
               <Image

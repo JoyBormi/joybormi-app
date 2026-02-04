@@ -115,16 +115,10 @@ export const ReservationList = ({
 
         {/* Quick Filter Chips */}
         <View className="flex-row items-center gap-2">
-          <Pressable
-            activeOpacity={0.7}
-            className="bg-primary/10 dark:bg-primary/20 px-4 py-2 rounded-full border border-primary/20"
-          >
+          <Pressable className="bg-primary/10 dark:bg-primary/20 px-4 py-2 rounded-full border border-primary/20">
             <Text className="text-primary font-subtitle text-xs">Today</Text>
           </Pressable>
-          <Pressable
-            activeOpacity={0.7}
-            className="bg-card/50 px-4 py-2 rounded-full border border-border/20 backdrop-blur-sm"
-          >
+          <Pressable className="bg-card/50 px-4 py-2 rounded-full border border-border/20 backdrop-blur-sm">
             <Text className="text-muted-foreground font-subtitle text-xs">
               Upcoming
             </Text>

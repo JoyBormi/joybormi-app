@@ -2,9 +2,9 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import React, { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { OfflineModal } from '@/components/modals';
 import { LocationPermissionModal } from '@/components/modals/location-modal';
 import { NotificationPermissionModal } from '@/components/modals/notification-modal';
-import { OfflineModal } from '@/components/shared';
 import { setupFocusManager } from '@/lib/tanstack-query/focus-manager';
 import { setupOnlineManager } from '@/lib/tanstack-query/online-manager';
 

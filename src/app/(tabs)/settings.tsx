@@ -43,7 +43,7 @@ const SettingsScreen: React.FC = () => {
 
       return;
     }
-    router.push('/(slide-screens)/(user)/edit-profile');
+    router.push('/((screens))/(user)/edit-profile');
   }, [isLoggedIn]);
 
   const handleLogout = useCallback(() => {

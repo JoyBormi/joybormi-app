@@ -28,7 +28,7 @@ import { validateFormErrors } from '@/utils/validation';
 
 /**
  * Add/Edit Service Screen
- * Route: /(slide-screens)/add-service?id={brandId}&serviceId={serviceId}
+ * Route: /((screens))/add-service?id={brandId}&serviceId={serviceId}
  * - id: brandId (required for creating new service)
  * - serviceId: service id (optional, for editing existing service)
  */

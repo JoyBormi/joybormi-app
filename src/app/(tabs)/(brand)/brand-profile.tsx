@@ -184,7 +184,7 @@ const BrandProfileScreen: React.FC = () => {
 
   const handleWorkerPress = useCallback(
     (worker: IWorker) => {
-      router.push(`/(dynamic-brand)/team/worker/${worker.id}`);
+      router.push(`/(screens)/(worker)/worker/${worker.id}`);
     },
     [router],
   );
@@ -299,7 +299,7 @@ const BrandProfileScreen: React.FC = () => {
               <BrandQuickActions
                 onAddService={() =>
                   router.push(
-                    `/(slide-screens)/upsert-service?ownerId=${brand.id}&ownerType=brand`,
+                    `/((screens))/upsert-service?ownerId=${brand.id}&ownerType=brand`,
                   )
                 }
                 onAddWorker={handleAddWorker}

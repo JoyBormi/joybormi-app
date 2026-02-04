@@ -40,20 +40,11 @@ export default function App() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(website)" />
-        <Stack.Screen name="(dynamic-brand)" />
+        <Stack.Screen name="(screens)" />
         <Stack.Screen name="(settings)" />
         <Stack.Screen name="+not-found" />
         <Stack.Screen
           name="(auth)"
-          options={{
-            presentation: 'modal',
-            animation: 'slide_from_bottom',
-            statusBarAnimation: 'slide',
-            keyboardHandlingEnabled: true,
-          }}
-        />
-        <Stack.Screen
-          name="(slide-screens)"
           options={{
             presentation: 'modal',
             animation: 'slide_from_bottom',

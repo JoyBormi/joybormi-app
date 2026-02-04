@@ -24,7 +24,6 @@ export function useBecomeCreator() {
     mutationFn: becomeCreatorApi,
 
     onSuccess: (message) => {
-      console.log(`🚀 ~ message:`, message);
       // Invalidate all queries to refetch with new user context
       queryClient.invalidateQueries({
         queryKey: queryKeys.auth.me,

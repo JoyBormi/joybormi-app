@@ -1,4 +1,5 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import React, { forwardRef, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
@@ -7,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icons from '@/components/icons';
 import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { Feedback } from '@/lib/haptics';
+import { queryKeys } from '@/lib/tanstack-query';
 import { cn, validateUserTypeSwitch } from '@/lib/utils';
 import { useUserStore } from '@/stores';
 import { EUserType } from '@/types/user.type';
@@ -46,6 +48,7 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
     const { user, appType, setAppType } = useUserStore();
     const insets = useSafeAreaInsets();
     const actionSheetRef = useRef<BottomSheetModal>(null);
+    const queryClient = useQueryClient();
 
     // States
     const [selectedType, setSelectedType] = useState<EUserType>(appType);
@@ -72,6 +75,12 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
 
       Feedback.success();
       setAppType(selectedType);
+      queryClient.invalidateQueries({ queryKey: queryKeys.creator.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.worker.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.schedule.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.files.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.service.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.reservations.all });
       router.replace('/(tabs)/settings');
       onClose();
     };
@@ -168,10 +177,10 @@ export const UserTypeSheet = forwardRef<BottomSheetModal, UserTypeSheetProps>(
             actionSheetRef.current?.dismiss();
 
             if (actionReason === 'NEED_CODE')
-              return router.push('/(slide-screens)/invite-code');
+              return router.push('/((screens))/invite-code');
 
             if (actionReason === 'NEED_BRAND')
-              return router.push('/(slide-screens)/create-brand');
+              return router.push('/((screens))/create-brand');
           }}
         />
       </CustomBottomSheet>

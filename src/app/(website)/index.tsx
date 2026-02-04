@@ -9,7 +9,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-import Icons, { Icon } from '@/components/icons';
+import Icons, { type TIcon } from '@/components/icons';
 import { LanguageToggle } from '@/components/shared/language-toggle';
 import { ThemeToggle } from '@/components/shared/theme-toggle';
 import { Button, Text } from '@/components/ui';
@@ -132,7 +132,7 @@ export default function WebsiteScreen() {
                 key={id}
                 title={t(`website.features.${id}.title`)}
                 description={t(`website.features.${id}.description`)}
-                icon={icon as Icon}
+                icon={icon as TIcon}
               />
             ))}
           </View>
@@ -177,7 +177,7 @@ export default function WebsiteScreen() {
           </Text>
           <View className="gap-4">
             {useCases.map(({ id, icon }) => {
-              const Icon = Icons[icon as Icon];
+              const Icon = Icons[icon as TIcon];
               return (
                 <View
                   key={id}

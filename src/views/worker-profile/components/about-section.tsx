@@ -7,7 +7,7 @@ import { Text } from '@/components/ui';
 import type { IWorker } from '@/types/worker.type';
 
 interface AboutSectionDisplayProps {
-  worker: IWorker;
+  worker?: IWorker;
   onEdit?: () => void;
   canEdit?: boolean;
 }
@@ -33,11 +33,11 @@ export const AboutSectionDisplay: React.FC<AboutSectionDisplayProps> = ({
       </View>
       <View className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50">
         <Text className="font-body text-muted-foreground leading-6 mb-4">
-          {worker.bio || 'Tell clients about your experience and style.'}
+          {worker?.bio || 'Tell clients about your experience and style.'}
         </Text>
-        {worker.specialties.length > 0 ? (
+        {worker?.specialties?.length ? (
           <View className="flex-row flex-wrap gap-2">
-            {worker.specialties.map((specialty) => (
+            {worker?.specialties.map((specialty) => (
               <View
                 key={specialty}
                 className="bg-primary/10 px-3 py-2 rounded-full"

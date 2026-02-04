@@ -46,6 +46,12 @@ const phoneSchema = z
  */
 const optionalString = z.string().optional().or(z.literal(''));
 
+const otpSchema = z
+  .string()
+  .regex(/^\d{6}$/, { message: 'custom.otp_invalid' })
+  .optional()
+  .or(z.literal(''));
+
 /**
  * Profile edit form schema
  * Handles validation for user profile updates
@@ -56,6 +62,8 @@ export const profileSchema = z.object({
   lastName: optionalString,
   email: emailSchema,
   phone: phoneSchema,
+  emailOtp: otpSchema,
+  phoneOtp: otpSchema,
   language: optionalString,
   country: optionalString,
   state: optionalString,

@@ -61,7 +61,7 @@ const BookingScreen: React.FC = () => {
 
     // Navigate to success screen with data
     router.push({
-      pathname: '/booking/success',
+      pathname: '/(screens)/(booking)/success',
       params: {
         serviceName: service.name,
         date: selectedDate,

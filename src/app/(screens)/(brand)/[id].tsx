@@ -57,7 +57,7 @@ const BrandDetailScreen: React.FC = () => {
   const handleServicePress = (service: (typeof services)[0]) => {
     console.log('Service pressed:', service.id);
     // Navigate to booking page
-    // router.push(`/booking/${service.id}`);
+    // router.push(`/(screens)/(booking)${service.id}`);
   };
 
   const handleWorkerPress = (worker: (typeof workers)[0]) => {

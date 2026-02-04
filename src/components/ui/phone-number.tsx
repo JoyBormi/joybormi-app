@@ -13,38 +13,47 @@ interface PhoneInputProps extends Omit<
   defaultCountry?: CountryCode;
 }
 
+const COUNTRY_PREFIX = '+998';
+
 const PhoneInput = React.forwardRef<
   React.ComponentRef<typeof TextInput>,
   PhoneInputProps
 >(
   (
-    { className, value = '', onChangeText, defaultCountry = 'US', ...props },
+    { className, value = '', onChangeText, defaultCountry = 'UZ', ...props },
     ref,
   ) => {
-    const isTherePlus = value.startsWith('+');
-
     const formatter = React.useRef(new AsYouType(defaultCountry));
 
     const handleTextChange = (text: string) => {
+      // Strip everything except digits
+      const digits = text.replace(/\D/g, '');
+
+      // Ensure country prefix ONCE
+      const e164 = digits.startsWith('998')
+        ? `+${digits}`
+        : `${COUNTRY_PREFIX}${digits}`;
+
       formatter.current.reset();
-      let formatted = formatter.current.input(text);
-      if (!isTherePlus) {
-        formatted = `+998 ${formatted}`;
+      const formatted = formatter.current.input(e164);
+
+      // Prevent deleting country code
+      if (!formatted.startsWith(COUNTRY_PREFIX)) {
+        onChangeText?.(COUNTRY_PREFIX);
+        return;
       }
 
-      if (onChangeText) {
-        onChangeText(formatted);
-      }
+      onChangeText?.(formatted);
     };
 
     return (
       <Input
         ref={ref}
-        keyboardType="number-pad"
+        keyboardType="phone-pad" // allows +
         className={className}
         value={value}
         onChangeText={handleTextChange}
-        placeholder="+(99) 123 45 67"
+        placeholder="99 123 45 67"
         {...props}
       />
     );

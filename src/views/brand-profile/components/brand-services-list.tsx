@@ -34,7 +34,7 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
         {canEdit && (
           <Pressable
             onPress={() =>
-              router.push(`/(slide-screens)/upsert-service?ownerId=${ownerId}`)
+              router.push(`/((screens))/upsert-service?ownerId=${ownerId}`)
             }
           >
             <Icons.Plus size={20} className="text-primary" />
@@ -52,7 +52,7 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
             <Pressable
               onPress={() =>
                 router.push(
-                  `/(slide-screens)/upsert-service?serviceId=${service.id}&ownerId=${ownerId}`,
+                  `/((screens))/upsert-service?serviceId=${service.id}&ownerId=${ownerId}`,
                 )
               }
               className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50 active:scale-[0.98]"

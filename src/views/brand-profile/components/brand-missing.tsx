@@ -160,7 +160,7 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
         action: {
           label: 'Add service',
           onPress: () =>
-            router.push(`/(slide-screens)/upsert-service?brandId=${brand?.id}`),
+            router.push(`/((screens))/upsert-service?brandId=${brand?.id}`),
         },
       });
     }

@@ -68,7 +68,6 @@ export const ReservationItem = ({ reservation, onPress, index }: Props) => {
       className="mb-4"
     >
       <Pressable
-        activeOpacity={0.8}
         onPress={() => {
           Feedback.light();
           onPress(reservation);

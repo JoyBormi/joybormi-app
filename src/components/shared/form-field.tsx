@@ -25,7 +25,7 @@ type FormFieldProps<T extends FieldValues> = {
   loading?: boolean;
   render: (params: {
     field: ControllerRenderProps<T, FieldPath<T>> & {
-      onChangeText: (value: string) => void;
+      onChangeText: (value: string | number) => void;
     };
     fieldState: { error?: { message?: string } };
     formState: any;

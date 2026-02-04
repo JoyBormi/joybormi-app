@@ -6,7 +6,7 @@ import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { animations } from '@/constants/animations';
 import { cn } from '@/lib/utils';
-import { BrandStatus, IBrand } from '@/types/brand.type';
+import { BrandStatus } from '@/types/brand.type';
 
 function rand(min: number, max: number) {
   return Math.random() * (max - min) + min;
@@ -37,10 +37,10 @@ const BackgroundBlob = ({
   />
 );
 
-export function PendingScreen({
+export function PendingScreen<T extends { status: string }>({
   onRefresh,
 }: {
-  onRefresh: () => Promise<QueryObserverResult<IBrand, Error>>;
+  onRefresh: () => Promise<QueryObserverResult<T, Error>>;
 }) {
   const [refreshing, setRefreshing] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);

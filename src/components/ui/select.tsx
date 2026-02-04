@@ -28,6 +28,7 @@ type SelectProps = {
   options: Option[];
   placeholder?: string;
   title?: string;
+  onBlur?: () => void;
 } & (
   | {
       multi: true;

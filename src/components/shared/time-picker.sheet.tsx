@@ -1,7 +1,6 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, Text } from '@/components/ui';
 import { TimePicker } from '@/components/ui/time-picker';
@@ -23,7 +22,6 @@ export const TimePickerSheet = forwardRef<
   BottomSheetModal,
   TimePickerSheetProps
 >(({ value, onChange, title = 'Select Time' }, ref) => {
-  const insets = useSafeAreaInsets();
   const [selectedTime, setSelectedTime] = useState(value);
   useEffect(() => {
     setSelectedTime(value);

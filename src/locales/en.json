@@ -26,7 +26,10 @@
       "save": "Save",
       "saving": "Saving...",
       "backToLogin": "Back to Login",
-      "logout": "Logout"
+      "logout": "Logout",
+      "verify": "Verify",
+      "resend": "Resend",
+      "resending": "Resending..."
     },
     "tabs": {
       "home": "Home",
@@ -192,7 +195,7 @@
       },
       "success": {
         "title": "Success!",
-        "message": "Your brand has been created successfully. You can now manage your brand profile."
+        "message": "Your brand has been created successfully and sent for approval. Please wait for approval."
       },
       "error": {
         "message": "Failed to create brand. Please try again."
@@ -216,8 +219,10 @@
       "lastName": "Last name",
       "lastNamePlaceholder": "Enter your last name",
       "email": "Email address",
+      "emailOtp": "Email OTP",
       "emailPlaceholder": "Enter your email",
       "phone": "Phone number",
+      "phoneOtp": "Phone OTP",
       "phonePlaceholder": "Enter your phone number",
       "street": "Street address",
       "streetPlaceholder": "Enter your street",

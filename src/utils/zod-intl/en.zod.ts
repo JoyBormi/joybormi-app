@@ -18,6 +18,8 @@ export const enLocale = (): z.ZodErrorMap => {
           return 'Invalid password format';
         case 'custom.working_fields_limit':
           return 'You can select up to 3 working fields';
+        case 'custom.otp_invalid':
+          return 'Invalid OTP';
       }
     }
 

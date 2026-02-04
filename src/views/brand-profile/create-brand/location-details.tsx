@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import Icons from '@/components/icons';
 import FormField from '@/components/shared/form-field';
-import { Input, Text } from '@/components/ui';
+import { Input, Select, Text } from '@/components/ui';
 
 interface LocationDetailsProps<T extends FieldValues> {
   control: Control<T>;
@@ -37,10 +37,9 @@ export function LocationDetails<T extends FieldValues>({
           required
           className="gap-2"
           render={({ field }) => (
-            <Input
-              placeholder="e.g., United States"
-              returnKeyType="next"
-              onSubmitEditing={() => setFocus('state' as Path<T>)}
+            <Select
+              placeholder="Select country"
+              options={[{ label: 'Uzbekistan', value: 'UZB' }]}
               {...field}
             />
           )}
@@ -54,10 +53,13 @@ export function LocationDetails<T extends FieldValues>({
             required
             className="flex-1 gap-2"
             render={({ field }) => (
-              <Input
-                placeholder="State"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus('city' as Path<T>)}
+              <Select
+                placeholder="Select state"
+                options={[
+                  { label: 'Tashkent', value: 'Tashkent' },
+                  { label: 'Bukhara', value: 'Bukhara' },
+                  { label: 'Samarqand', value: 'Samarqand' },
+                ]}
                 {...field}
               />
             )}

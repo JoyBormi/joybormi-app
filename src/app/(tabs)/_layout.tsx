@@ -23,7 +23,7 @@ export default function TabLayout() {
   const isTabBarHidden = SCREENS_WITHOUT_TAB.some((s) => segments.includes(s));
 
   return (
-    <Tabs>
+    <Tabs key={appType}>
       <TabSlot />
       <TabList
         className={cn(

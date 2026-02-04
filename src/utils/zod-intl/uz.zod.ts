@@ -97,6 +97,9 @@ export const uzLocale = (): z.ZodErrorMap => {
           case 'custom.working_fields_limit':
             return { message: 'Iltimos, faqat 3 ta tanlang' };
 
+          case 'custom.otp_invalid':
+            return { message: 'Noto‘g‘ri OTP' };
+
           default:
             return { message: 'Noto‘g‘ri qiymat' };
         }

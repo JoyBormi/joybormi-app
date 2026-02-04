@@ -1,9 +1,11 @@
 import { Control, FieldValues, Path, UseFormSetFocus } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import Icons from '@/components/icons';
 import FormField from '@/components/shared/form-field';
 import { Input, PhoneInput, Text } from '@/components/ui';
+import { emptyLocalEmail } from '@/utils/helpers';
 
 interface ContactsInfoProps<T extends FieldValues> {
   control: Control<T>;
@@ -14,6 +16,7 @@ export function ContactsInfo<T extends FieldValues>({
   control,
   setFocus,
 }: ContactsInfoProps<T>) {
+  const { t } = useTranslation();
   return (
     <View className="gap-6 flex-1">
       {/* Header */}
@@ -50,12 +53,13 @@ export function ContactsInfo<T extends FieldValues>({
           message="This will be used for account verification and customer inquiries"
           render={({ field }) => (
             <Input
-              placeholder="business@example.com"
+              value={emptyLocalEmail(field.value ?? '')}
+              onChangeText={field.onChangeText}
+              placeholder={t('settings.profile.emailPlaceholder')}
               keyboardType="email-address"
+              autoCapitalize="none"
               returnKeyType="next"
               onSubmitEditing={() => setFocus('phone' as Path<T>)}
-              autoCapitalize="none"
-              {...field}
             />
           )}
         />

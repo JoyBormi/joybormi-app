@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
+import { emptyLocalEmail } from '@/utils/helpers';
 
 interface ReviewProps<T extends FieldValues> {
   control: Control<T>;
@@ -99,7 +100,7 @@ export function Review<T extends FieldValues>({ control }: ReviewProps<T>) {
             </Text>
           </View>
           <View className="p-4">
-            <InfoRow label="Email" value={formData.email} />
+            <InfoRow label="Email" value={emptyLocalEmail(formData.email)} />
             <InfoRow label="Phone" value={formData.phone} />
             <InfoRow label="First Name" value={formData.ownerFirstName} />
             <InfoRow label="Last Name" value={formData.ownerLastName} />
