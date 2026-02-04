@@ -1,22 +1,106 @@
-import { Control, FieldValues, Path, UseFormSetFocus } from 'react-hook-form';
+import { useCallback, useMemo } from 'react';
+import {
+  Control,
+  FieldValues,
+  Path,
+  UseFormSetFocus,
+  UseFormSetValue,
+  useWatch,
+} from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import Icons from '@/components/icons';
 import FormField from '@/components/shared/form-field';
-import { Input, PhoneInput, Text } from '@/components/ui';
-import { emptyLocalEmail } from '@/utils/helpers';
+import { Button, Input, NumberInput, PhoneInput, Text } from '@/components/ui';
+import { useSendPhoneOtp, useVerifyPhoneOtp } from '@/hooks/auth';
+import { useOtpVerification } from '@/hooks/common';
+import { useTimer } from '@/hooks/common/use-timer';
+import { toast } from '@/providers/toaster';
+import { useUserStore } from '@/stores';
+import { emptyLocalEmail, normalizeNumber } from '@/utils/helpers';
 
 interface ContactsInfoProps<T extends FieldValues> {
   control: Control<T>;
   setFocus: UseFormSetFocus<T>;
+  setValue: UseFormSetValue<T>;
 }
 
 export function ContactsInfo<T extends FieldValues>({
   control,
   setFocus,
+  setValue,
 }: ContactsInfoProps<T>) {
+  const { user } = useUserStore();
   const { t } = useTranslation();
+
+  const phoneTimer = useTimer();
+
+  const { mutateAsync: sendPhoneOtp, isPending: isSendingPhoneOtp } =
+    useSendPhoneOtp();
+  const { mutateAsync: verifyPhoneOtp, isPending: isVerifyingPhoneOtp } =
+    useVerifyPhoneOtp();
+
+  const watched = useWatch({
+    control,
+    name: ['phone', 'phoneOtp'] as [Path<T>, Path<T>],
+  });
+
+  const [phoneValue, phoneOtpValue] = watched.map((value) => value ?? '') as [
+    string,
+    string,
+  ];
+
+  // Normalize and compare values
+  const normalized = useMemo(() => {
+    const currentPhone = normalizeNumber(phoneValue) || '';
+    const userPhone = normalizeNumber(user?.phone ?? '') || '';
+
+    return {
+      currentPhone,
+      userPhone,
+    };
+  }, [phoneValue, user?.phone]);
+
+  const phoneVerification = useOtpVerification<T>({
+    currentValue: normalized.currentPhone,
+    originalValue: normalized.userPhone,
+    otpValue: phoneOtpValue,
+    otpFieldName: 'phoneOtp' as Path<T>,
+    setValue,
+    timer: phoneTimer,
+  });
+
+  const needsPhoneVerification = phoneVerification.needsVerification;
+  const isPhoneVerified = phoneVerification.isVerified;
+
+  const handleSendPhoneOtp = useCallback(async () => {
+    if (!normalized.currentPhone) {
+      toast.error({ title: 'Enter a valid phone number first.' });
+      return;
+    }
+    await sendPhoneOtp({ phoneNumber: normalized.currentPhone });
+    phoneTimer.start(60);
+    toast.success({ title: 'Verification code sent.' });
+  }, [normalized.currentPhone, sendPhoneOtp, phoneTimer]);
+
+  const handleVerifyPhone = useCallback(async () => {
+    if (!normalized.currentPhone || !phoneOtpValue) return;
+    await verifyPhoneOtp({
+      phoneNumber: normalized.currentPhone,
+      code: phoneOtpValue,
+      disableSession: false,
+      updatePhoneNumber: true,
+    });
+    phoneVerification.markVerified();
+    toast.success({ title: 'Phone verified.' });
+  }, [
+    normalized.currentPhone,
+    phoneOtpValue,
+    phoneVerification,
+    verifyPhoneOtp,
+  ]);
+
   return (
     <View className="gap-6 flex-1">
       {/* Header */}
@@ -67,17 +151,77 @@ export function ContactsInfo<T extends FieldValues>({
         <FormField
           control={control}
           name="phone"
-          label="Business Phone"
-          required
-          message="Customers will use this to contact you"
+          label={t('settings.profile.phone')}
           render={({ field }) => (
-            <PhoneInput
-              {...field}
-              returnKeyType="next"
-              onSubmitEditing={() => setFocus('ownerFirstName' as Path<T>)}
-            />
+            <View className="flex-row items-center gap-2">
+              <PhoneInput
+                {...field}
+                placeholder={t('settings.profile.phonePlaceholder')}
+                value={field.value ?? ''}
+                returnKeyType="next"
+                className="flex-1"
+                onSubmitEditing={() => setFocus('country' as Path<T>)}
+              />
+
+              {isPhoneVerified && needsPhoneVerification ? (
+                <View className="h-12 items-center justify-center px-4">
+                  <Icons.CheckCircle size={24} className="text-success" />
+                </View>
+              ) : (
+                <Button
+                  size="lg"
+                  onPress={handleSendPhoneOtp}
+                  disabled={
+                    !needsPhoneVerification ||
+                    !normalized.currentPhone ||
+                    phoneTimer.seconds > 0 ||
+                    isSendingPhoneOtp
+                  }
+                >
+                  <Text>
+                    {phoneTimer.seconds > 0
+                      ? phoneTimer.formatted
+                      : phoneTimer.hasStarted
+                        ? t('common.buttons.resend')
+                        : t('common.buttons.send')}
+                  </Text>
+                </Button>
+              )}
+            </View>
           )}
         />
+
+        {needsPhoneVerification &&
+          !isPhoneVerified &&
+          phoneTimer.hasStarted && (
+            <FormField
+              control={control}
+              name="phoneOtp"
+              label={t('settings.profile.phoneOtp')}
+              render={({ field }) => (
+                <View className="flex-row items-center gap-2">
+                  <NumberInput
+                    {...field}
+                    onSubmitEditing={handleVerifyPhone}
+                    returnKeyType="done"
+                    className="flex-1"
+                    placeholder="Enter phone code"
+                  />
+                  <Button
+                    size="lg"
+                    onPress={handleVerifyPhone}
+                    disabled={!phoneOtpValue || isVerifyingPhoneOtp}
+                  >
+                    <Text>
+                      {isVerifyingPhoneOtp
+                        ? t('common.buttons.loading')
+                        : t('common.buttons.verify')}
+                    </Text>
+                  </Button>
+                </View>
+              )}
+            />
+          )}
 
         {/* Divider */}
         <View className="h-px bg-border my-2" />

@@ -194,13 +194,19 @@ const CreateBrand: React.FC = () => {
       case 1:
         return <LocationDetails control={control} setFocus={setFocus} />;
       case 2:
-        return <ContactsInfo control={control} setFocus={setFocus} />;
+        return (
+          <ContactsInfo
+            control={control}
+            setFocus={setFocus}
+            setValue={setValue}
+          />
+        );
       case 3:
         return <Review control={control} />;
       default:
         return null;
     }
-  }, [currentStep, control, setFocus]);
+  }, [currentStep, control, setFocus, setValue]);
 
   // Check if current step is valid
   const isCurrentStepValid = () => {

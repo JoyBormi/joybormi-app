@@ -35,7 +35,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
             selected: true,
             disableTouchEvent: true,
             selectedColor: colors.primary,
-            selectedTextColor: '#FFFFFF',
+            selectedTextColor: colors.background,
           },
         }}
         theme={theme}

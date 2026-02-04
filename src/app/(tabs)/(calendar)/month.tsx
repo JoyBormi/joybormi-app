@@ -62,7 +62,7 @@ const MonthScreen = () => {
         marked: true,
         dotColor: colors.primary,
         selected: selected === date,
-        selectedTextColor: colors.text,
+        selectedTextColor: colors.background,
       };
     }
 
@@ -71,11 +71,11 @@ const MonthScreen = () => {
       selected: true,
       disableTouchEvent: true,
       selectedColor: colors.primary,
-      selectedTextColor: colors.text,
+      selectedTextColor: colors.background,
     };
 
     return entries;
-  }, [selected, colors.primary, colors.text]);
+  }, [selected, colors.primary, colors.background]);
 
   const onDayPress = useCallback(
     (day: DateData) => {

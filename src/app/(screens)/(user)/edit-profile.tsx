@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -17,6 +17,7 @@ import {
   useVerifyEmail,
   useVerifyPhoneOtp,
 } from '@/hooks/auth';
+import { useOtpVerification } from '@/hooks/common';
 import { useTimer } from '@/hooks/common/use-timer';
 import { useUpdateProfile } from '@/hooks/user/use-update-profile';
 import { toast } from '@/providers/toaster';
@@ -39,9 +40,6 @@ const EditProfileScreen = () => {
   const { mutateAsync: verifyEmail, isPending: isVerifyingEmail } =
     useVerifyEmail();
 
-  // Verification state
-  const verifiedPhoneRef = useRef<string | null>(null);
-  const verifiedEmailRef = useRef<string | null>(null);
   const phoneTimer = useTimer();
   const emailTimer = useTimer();
 
@@ -94,42 +92,28 @@ const EditProfileScreen = () => {
     };
   }, [emailValue, phoneValue, user?.email, user?.phone]);
 
-  const needsEmailVerification =
-    normalized.currentEmail.length > 0 &&
-    normalized.currentEmail !== normalized.userEmail;
-  const needsPhoneVerification =
-    normalized.currentPhone.length > 0 &&
-    normalized.currentPhone !== normalized.userPhone;
+  const emailVerification = useOtpVerification<ProfileFormData>({
+    currentValue: normalized.currentEmail,
+    originalValue: normalized.userEmail,
+    otpValue: emailOtp,
+    otpFieldName: 'emailOtp',
+    setValue: form.setValue,
+    timer: emailTimer,
+  });
 
-  const isEmailVerified =
-    !needsEmailVerification ||
-    verifiedEmailRef.current === normalized.currentEmail;
-  const isPhoneVerified =
-    !needsPhoneVerification ||
-    verifiedPhoneRef.current === normalized.currentPhone;
+  const phoneVerification = useOtpVerification<ProfileFormData>({
+    currentValue: normalized.currentPhone,
+    originalValue: normalized.userPhone,
+    otpValue: phoneOtp,
+    otpFieldName: 'phoneOtp',
+    setValue: form.setValue,
+    timer: phoneTimer,
+  });
 
-  // Reset verification when user changes email/phone
-  useEffect(() => {
-    if (
-      verifiedEmailRef.current &&
-      verifiedEmailRef.current !== normalized.currentEmail
-    ) {
-      verifiedEmailRef.current = null;
-      form.setValue('emailOtp', '');
-      emailTimer.reset();
-    }
-  }, [normalized.currentEmail, form, emailTimer]);
-
-  useEffect(() => {
-    if (
-      verifiedPhoneRef.current &&
-      verifiedPhoneRef.current !== normalized.currentPhone
-    ) {
-      verifiedPhoneRef.current = null;
-      form.setValue('phoneOtp', '');
-      phoneTimer.reset();
-    }
-  }, [normalized.currentPhone, form, phoneTimer]);
+  const needsEmailVerification = emailVerification.needsVerification;
+  const needsPhoneVerification = phoneVerification.needsVerification;
+  const isEmailVerified = emailVerification.isVerified;
+  const isPhoneVerified = phoneVerification.isVerified;
 
   const handleSave = useCallback(
     (data: ProfileFormData) => {
@@ -194,9 +178,9 @@ const EditProfileScreen = () => {
       disableSession: false,
       updatePhoneNumber: true,
     });
-    verifiedPhoneRef.current = normalized.currentPhone;
+    phoneVerification.markVerified();
     toast.success({ title: 'Phone verified.' });
-  }, [normalized.currentPhone, phoneOtp, verifyPhoneOtp]);
+  }, [normalized.currentPhone, phoneOtp, phoneVerification, verifyPhoneOtp]);
 
   const handleVerifyEmail = useCallback(async () => {
     if (!normalized.currentEmail || !emailOtp) return;
@@ -206,9 +190,9 @@ const EditProfileScreen = () => {
       disableSession: false,
       updateEmail: true,
     });
-    verifiedEmailRef.current = normalized.currentEmail;
+    emailVerification.markVerified();
     toast.success({ title: 'Email verified.' });
-  }, [normalized.currentEmail, emailOtp, verifyEmail]);
+  }, [emailOtp, emailVerification, normalized.currentEmail, verifyEmail]);
 
   return (
     <KeyboardAvoid
