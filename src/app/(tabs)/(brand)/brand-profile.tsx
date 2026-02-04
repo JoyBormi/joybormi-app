@@ -16,7 +16,6 @@ import {
   UploadProfileImageSheet,
 } from '@/components/brand-worker';
 import {
-  BlockedScreen,
   NotFoundScreen,
   PendingScreen,
   SuspendedScreen,
@@ -28,12 +27,7 @@ import {
   useGetBrandTeam,
   useUpdateBrand,
 } from '@/hooks/brand';
-import {
-  normalizeFileUrl,
-  useDeleteFile,
-  useUpdateFileMetadata,
-  useUploadFile,
-} from '@/hooks/files';
+import { normalizeFileUrl, useDeleteFile, useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
 import { buildUploadedFile } from '@/lib/utils';
@@ -64,7 +58,7 @@ const BrandProfileScreen: React.FC = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const { appType, setAppType, user } = useUserStore();
+  const { appType, setAppType } = useUserStore();
 
   // Check if user is creator
   const canEdit = appType === EUserType.CREATOR;
@@ -72,25 +66,22 @@ const BrandProfileScreen: React.FC = () => {
   // ───────────────── Queries ────────────────── //
 
   const { data: brand, refetch: refetchBrand, isLoading } = useGetBrand();
-  const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos(user?.id);
+  const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos(brand?.id);
 
   const { data: services, refetch: refetchServices } = useGetServices({
     brandId: brand?.id,
   });
 
-  const { data: team, refetch: refetchTeam } = useGetBrandTeam({
-    brandId: brand?.id,
-  });
+  const { data: team, refetch: refetchTeam } = useGetBrandTeam(brand?.id);
 
-  const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
-    brandId: brand?.id,
-  });
+  const { data: schedule, refetch: refetchSchedule } = useGetSchedule(
+    brand?.id,
+  );
 
   // ───────────────── Mutations ────────────────── //
   const { mutateAsync: updateBrand } = useUpdateBrand();
   const { mutateAsync: uploadFile } = useUploadFile();
   const { mutateAsync: deleteFile } = useDeleteFile();
-  const { mutateAsync: updateFileMetadata } = useUpdateFileMetadata();
 
   // ───────────────── Local state ────────────────── //
   const [selectedPhoto, setSelectedPhoto] = useState<IFile | null>(null);
@@ -130,9 +121,9 @@ const BrandProfileScreen: React.FC = () => {
       const file = buildUploadedFile(uri, IMAGE_CATEGORIES.brand_banner);
       const uploadedFile = await uploadFile({
         file,
-        userId: user?.id,
+        ownerId: brand.id,
+        ownerType: 'BRAND',
         category: IMAGE_CATEGORIES.brand_banner,
-        description: 'Brand banner image',
       });
 
       if (!uploadedFile.url) {
@@ -161,9 +152,9 @@ const BrandProfileScreen: React.FC = () => {
       const file = buildUploadedFile(uri, IMAGE_CATEGORIES.brand_avatar);
       const uploadedFile = await uploadFile({
         file,
-        userId: user?.id,
+        ownerId: brand.id,
+        ownerType: 'BRAND',
         category: IMAGE_CATEGORIES.brand_avatar,
-        description: 'Brand profile image',
       });
 
       if (!uploadedFile.url) {
@@ -214,16 +205,16 @@ const BrandProfileScreen: React.FC = () => {
   const handleUploadPhotos = async (
     newPhotos: { uri: string; category: string }[],
   ) => {
-    if (!brand?.id || newPhotos.length === 0 || !user) return;
+    if (!brand?.id || newPhotos.length === 0) return;
 
     try {
       const uploadResults = await Promise.all(
         newPhotos.map((photo, index) =>
           uploadFile({
-            userId: user.id,
+            ownerId: brand.id,
+            ownerType: 'BRAND',
             file: buildUploadedFile(photo.uri, `brand-photo-${index}`),
             category: photo.category ?? IMAGE_CATEGORIES.other,
-            description: 'Brand gallery photo',
           }),
         ),
       );
@@ -242,6 +233,12 @@ const BrandProfileScreen: React.FC = () => {
         .filter((photo) => Boolean(photo));
       if (photosToAdd.length > 0) {
         setLocalPhotos((prev) => [...photosToAdd, ...prev] as IFile[]);
+      }
+
+      if (selectedPhoto?.id) {
+        await deleteFile(selectedPhoto.id);
+        setSelectedPhoto(null);
+        refetchPhotos();
       }
     } catch {
       toast.error({ title: t('common.errors.somethingWentWrong') });
@@ -262,27 +259,6 @@ const BrandProfileScreen: React.FC = () => {
     }
   };
 
-  /**
-   * @description Replaces a photo with a new one
-   * @param fileId The ID of the photo to replace
-   */
-  const handleReplacePhoto = async (fileId: string) => {
-    if (!brand?.id || !fileId || !user) return;
-    try {
-      await updateFileMetadata({
-        id: fileId,
-        payload: {
-          category: IMAGE_CATEGORIES.other,
-          description: 'Brand gallery photo',
-          userId: user.id,
-        },
-      });
-      refetchPhotos();
-    } catch {
-      toast.error({ title: t('common.errors.somethingWentWrong') });
-    }
-  };
-
   // Early return if no brand data
   if (isLoading) return <ProfileSkeleton />;
   if (!brand) return <NotFoundScreen />;
@@ -293,9 +269,8 @@ const BrandProfileScreen: React.FC = () => {
         <PendingScreen onRefresh={refetchBrand} />
       ) : brand?.status === BrandStatus.SUSPENDED ? (
         <SuspendedScreen />
-      ) : brand?.status === BrandStatus.WITHDRAWN ? (
-        <BlockedScreen />
-      ) : brand?.status === BrandStatus.REJECTED ? (
+      ) : brand?.status === BrandStatus.REJECTED ||
+        brand?.status === BrandStatus.WITHDRAWN ? (
         <NotFoundScreen />
       ) : (
         <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
@@ -416,7 +391,6 @@ const BrandProfileScreen: React.FC = () => {
             setValue={setSelectedPhoto}
             onUpload={handleUploadPhotos}
             onDelete={handleDeletePhoto}
-            onReplace={handleReplacePhoto}
           />
         </SafeAreaView>
       )}

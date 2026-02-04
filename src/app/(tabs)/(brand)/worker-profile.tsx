@@ -17,12 +17,7 @@ import {
 import { NotFoundScreen, PendingScreen } from '@/components/status-screens';
 import { IMAGE_CATEGORIES } from '@/constants/global.constants';
 import { useGetBrandPhotos } from '@/hooks/brand';
-import {
-  normalizeFileUrl,
-  useDeleteFile,
-  useUpdateFileMetadata,
-  useUploadFile,
-} from '@/hooks/files';
+import { normalizeFileUrl, useDeleteFile, useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
 import { useGetWorkerProfile, useUpdateWorkerProfile } from '@/hooks/worker';
@@ -87,14 +82,13 @@ const WorkerProfileScreen: React.FC = () => {
   const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos(
     worker?.brandId,
   );
-  const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
-    brandId: worker?.brandId,
-  });
+  const { data: schedule, refetch: refetchSchedule } = useGetSchedule(
+    worker?.brandId,
+  );
 
   // Mutations
   const { mutateAsync: uploadFile } = useUploadFile();
   const { mutateAsync: deleteFile } = useDeleteFile();
-  const { mutateAsync: updateFileMetadata } = useUpdateFileMetadata();
   const { mutateAsync: updateWorkerProfile } = useUpdateWorkerProfile(
     worker?.id ?? '',
   );
@@ -137,8 +131,8 @@ const WorkerProfileScreen: React.FC = () => {
       const uploadedFile = await uploadFile({
         file,
         category: IMAGE_CATEGORIES.worker_cover,
-        description: 'Worker banner image',
-        userId: user?.id,
+        ownerId: worker.id,
+        ownerType: 'WORKER',
       });
 
       if (!uploadedFile.url) {
@@ -169,8 +163,8 @@ const WorkerProfileScreen: React.FC = () => {
       const uploadedFile = await uploadFile({
         file,
         category: IMAGE_CATEGORIES.worker_avatar,
-        description: 'Worker profile image',
-        userId: user?.id,
+        ownerId: worker.id,
+        ownerType: 'WORKER',
       });
       if (!uploadedFile.url) {
         throw new Error(t('errors.uploadFailed'));
@@ -199,7 +193,7 @@ const WorkerProfileScreen: React.FC = () => {
   const handleUploadPhotos = async (
     newPhotos: { uri: string; category: string }[],
   ) => {
-    if (!worker?.id || !user || newPhotos.length === 0) return;
+    if (!worker?.id || newPhotos.length === 0) return;
 
     try {
       const uploadResults = await Promise.all(
@@ -207,8 +201,8 @@ const WorkerProfileScreen: React.FC = () => {
           uploadFile({
             file: buildUploadedFile(photo.uri, `worker-photo-${index}`),
             category: photo.category ?? IMAGE_CATEGORIES.other,
-            description: 'Worker gallery photo',
-            userId: user.id,
+            ownerId: worker.id,
+            ownerType: 'WORKER',
           }),
         ),
       );
@@ -228,6 +222,12 @@ const WorkerProfileScreen: React.FC = () => {
       if (photosToAdd.length > 0) {
         setLocalPhotos((prev) => [...photosToAdd, ...prev]);
       }
+
+      if (selectedPhoto?.id) {
+        await deleteFile(selectedPhoto.id);
+        setSelectedPhoto(null);
+        refetchPhotos();
+      }
     } catch {
       toast.error({ title: t('common.errors.somethingWentWrong') });
     }
@@ -237,23 +237,6 @@ const WorkerProfileScreen: React.FC = () => {
     if (!worker?.id || !fileId) return;
     try {
       await deleteFile(fileId);
-      refetchPhotos();
-    } catch {
-      toast.error({ title: t('common.errors.somethingWentWrong') });
-    }
-  };
-
-  const handleReplacePhoto = async (fileId: string) => {
-    if (!worker?.id || !fileId || !user) return;
-    try {
-      await updateFileMetadata({
-        id: fileId,
-        payload: {
-          category: IMAGE_CATEGORIES.other,
-          description: 'Worker gallery photo',
-          userId: user.id,
-        },
-      });
       refetchPhotos();
     } catch {
       toast.error({ title: t('common.errors.somethingWentWrong') });
@@ -387,7 +370,6 @@ const WorkerProfileScreen: React.FC = () => {
             setValue={setSelectedPhoto}
             onUpload={handleUploadPhotos}
             onDelete={handleDeletePhoto}
-            onReplace={handleReplacePhoto}
             categories={WORKER_PHOTO_CATEGORIES}
           />
         </SafeAreaView>

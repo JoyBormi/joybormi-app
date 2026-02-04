@@ -53,18 +53,25 @@ export default function SuccessScreen() {
         className="items-center"
       >
         <Text className="font-heading text-center mb-2">{title}</Text>
-        <Text className="text-muted-foreground text-center mb-10">
-          {subtitle}
-        </Text>
-
+        <Text className="text-muted-foreground text-center">{subtitle}</Text>
+      </MotiView>
+      <MotiView
+        from={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 600, type: 'spring' }}
+        className="w-full absolute bottom-24"
+      >
         <Button
+          size="lg"
           onPress={() => {
-            Feedback.soft();
+            Feedback.success(); // Changed to success haptic
             router.dismissTo('/(tabs)');
           }}
-          className="w-full"
+          className="w-full shadow-lg active:scale-95 transition-transform"
         >
-          <Text>{t('auth.success.enterApp')}</Text>
+          <Text className="font-semibold text-lg">
+            {t('auth.success.enterApp')}
+          </Text>
         </Button>
       </MotiView>
     </View>

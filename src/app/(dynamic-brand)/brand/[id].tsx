@@ -63,7 +63,7 @@ const BrandDetailScreen: React.FC = () => {
   const handleWorkerPress = (worker: (typeof workers)[0]) => {
     console.log('Worker pressed:', worker.id);
     // Navigate to worker profile
-    // router.push(`/(tabs)/(brand)/worker/${worker.id}`);
+    router.push(`/(dynamic-brand)/team/worker/${worker.id}`);
   };
 
   const handlePhotoPress = (photo: (typeof photos)[0], index: number) => {

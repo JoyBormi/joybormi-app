@@ -43,7 +43,7 @@ export const SettingsItem: React.FC<Props> = ({
           )}
         >
           <Icon
-            className={cn('w-4.5 h-4.5', item.iconColor || 'text-primary')}
+            className={cn('w-3.5 h-3.5', item.iconColor || 'text-primary')}
           />
         </View>
       )}
@@ -54,7 +54,9 @@ export const SettingsItem: React.FC<Props> = ({
           className={cn(
             'font-body',
             item.destructive ? 'text-destructive' : 'text-foreground',
-            item.withdraw ? 'font-caption text-center' : '',
+            item.withdraw
+              ? 'font-caption text-center underline underline-offset-4'
+              : '',
           )}
         >
           {item.title}

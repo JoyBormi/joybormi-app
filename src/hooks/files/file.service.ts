@@ -2,6 +2,7 @@ import { appConfig } from '@/config/app.config';
 import { agent, agentClass } from '@/lib/agent';
 
 import type {
+  FileOwnerType,
   FileUploadMultiplePayload,
   FileUploadPayload,
   IFile,
@@ -39,23 +40,6 @@ const appendFile = (
     uri,
     name: file.name ?? `upload-${Date.now()}`,
     type: file.type ?? 'application/octet-stream',
-  });
-};
-
-const appendFiles = (
-  formData: FormData,
-  fieldName: string,
-  files: UploadedFile[],
-) => {
-  files.forEach((file) => {
-    const uri = normalizeUri(file.uri);
-
-    // @ts-expect-error RN FormData
-    formData.append(fieldName, {
-      uri,
-      name: file.name ?? `upload-${Date.now()}`,
-      type: file.type ?? 'application/octet-stream',
-    });
   });
 };
 
@@ -114,9 +98,9 @@ export const getFileUrl = (file: IFile): string | undefined => {
 
 export const uploadFile = async ({
   file,
-  description,
   category,
-  userId,
+  ownerId,
+  ownerType,
 }: FileUploadPayload): Promise<IFile> => {
   const formData = new FormData();
 
@@ -126,16 +110,16 @@ export const uploadFile = async ({
   // Build query parameters for metadata
   const params = new URLSearchParams();
 
-  if (userId) {
-    params.append('userId', userId);
+  if (ownerId) {
+    params.append('ownerId', ownerId);
+  }
+
+  if (ownerType) {
+    params.append('ownerType', ownerType);
   }
 
   if (category) {
     params.append('category', category);
-  }
-
-  if (description) {
-    params.append('description', description);
   }
 
   const response = await agentClass.post<UploadFileApiResponse>(
@@ -154,64 +138,66 @@ export const uploadFile = async ({
 export const uploadMultipleFiles = async ({
   files,
   category,
-  userId,
+  ownerId,
+  ownerType,
 }: FileUploadMultiplePayload): Promise<IFile[]> => {
-  const formData = new FormData();
-
-  appendFiles(formData, 'files', files);
-
-  const params = new URLSearchParams();
-
-  if (userId) {
-    params.append('userId', userId);
-  }
-
-  if (category) {
-    params.append('category', category);
-  }
-
-  const response = await agentClass.post<UploadMultipleFilesApiResponse>(
-    `/files/upload/multiple?${params.toString()}`,
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    },
+  const uploads = await Promise.all(
+    files.map((file) =>
+      uploadFile({
+        file,
+        category,
+        ownerId,
+        ownerType,
+      }),
+    ),
   );
 
-  return normalizeFilesResponse(response.data) as IFile[];
+  return normalizeFilesResponse(uploads as UploadMultipleFilesApiResponse);
 };
 
 export const getFileMetadata = async (id: string): Promise<IFile> =>
-  await agent.get(`/files/meta/${id}`);
+  await agent.get(`/files/${id}`);
 
-export const getFilesByCategory = async (category: string): Promise<IFile[]> =>
-  await agent.get(`/files/category/${category}`);
+export const getFilesByCategory = async ({
+  ownerId,
+  category,
+}: {
+  ownerId: string;
+  category?: string;
+}): Promise<IFile[]> => {
+  const files = await agent.get<IFile[]>(`/brand/${ownerId}/photos`);
+  if (!category) return files;
+  return files.filter((file) => file.category === category);
+};
 
 export const updateFileMetadata = async (
   id: string,
   payload: UpdateFileMetadataPayload,
-): Promise<IFile> => await agent.patch(`/files/${id}/metadata`, payload);
+): Promise<IFile> => await agent.patch(`/files/${id}`, payload);
 
-export const replaceFile = async (
-  id: string,
-  file: UploadedFile,
-): Promise<IFile> => {
-  const formData = new FormData();
-  appendFile(formData, 'file', file);
+export const replaceFile = async ({
+  id,
+  file,
+  ownerId,
+  ownerType,
+  category,
+}: {
+  id: string;
+  file: UploadedFile;
+  ownerId: string;
+  ownerType: FileOwnerType;
+  category?: string;
+}): Promise<IFile> => {
+  const uploadedFile = await uploadFile({
+    file,
+    ownerId,
+    ownerType,
+    category,
+  });
 
-  const response = await agentClass.patch<UploadFileApiResponse>(
-    `/files/${id}/replace`,
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    },
-  );
+  await deleteFile(id);
 
-  return normalizeFileResponse(response.data) as IFile;
+  return uploadedFile;
 };
 
 export const deleteFile = async (id: string): Promise<void> => {

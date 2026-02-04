@@ -146,7 +146,8 @@
         "title": "Registration Successful",
         "subtitle": "Your account has been created. You can now login with your credentials."
       },
-      "backToLogin": "Back to Login"
+      "backToLogin": "Back to Login",
+      "enterApp": "Enter App"
     }
   },
   "home": {

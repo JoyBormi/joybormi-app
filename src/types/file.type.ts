@@ -13,6 +13,8 @@ export interface IFile {
   url: string;
 }
 
+export type FileOwnerType = 'BRAND' | 'WORKER' | 'USER' | 'CREATOR';
+
 export interface IFileUpload extends Omit<
   IFile,
   'id' | 'createdAt' | 'updatedAt'
@@ -22,19 +24,21 @@ export interface IFileUpload extends Omit<
 
 export interface FileUploadPayload {
   file: UploadedFile;
+  ownerId?: string;
+  ownerType?: FileOwnerType;
   category?: string;
-  description?: string;
-  userId?: string;
 }
 
 export interface FileUploadMultiplePayload {
   files: UploadedFile[];
+  ownerId?: string;
+  ownerType?: FileOwnerType;
   category?: string;
-  userId?: string;
 }
 
 export interface UpdateFileMetadataPayload {
   description?: string;
   category?: string;
-  userId?: string;
+  ownerId?: string;
+  ownerType?: FileOwnerType;
 }

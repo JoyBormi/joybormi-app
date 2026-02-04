@@ -7,7 +7,7 @@ import { IWorker } from '@/types/worker.type';
 const getBrandTeam = async (brandId: string): Promise<IWorker[]> =>
   await agent.get(`/brand/${brandId}/workers`);
 
-export const useGetBrandTeam = ({ brandId }: { brandId?: string }) =>
+export const useGetBrandTeam = (brandId?: string) =>
   useQuery({
     queryKey: [...queryKeys.creator.team, { brandId }],
     queryFn: () => getBrandTeam(brandId!),

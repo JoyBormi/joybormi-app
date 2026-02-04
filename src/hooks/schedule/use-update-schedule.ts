@@ -6,20 +6,20 @@ import { queryKeys } from '@/lib/tanstack-query';
 import type { ISchedule, UpdateSchedulePayload } from '@/types/schedule.type';
 
 const updateSchedule = async (
-  scheduleId: string,
+  brandId: string,
   payload: UpdateSchedulePayload,
 ): Promise<ISchedule> =>
-  await agent.put(`/schedule/${scheduleId}/working-days`, payload);
+  await agent.put(`/brands/${brandId}/schedule`, payload);
 
-export const useUpdateSchedule = (scheduleId?: string) => {
+export const useUpdateSchedule = (brandId?: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: UpdateSchedulePayload) => {
-      if (!scheduleId) {
-        throw new Error('Schedule ID is required');
+      if (!brandId) {
+        throw new Error('Brand ID is required');
       }
-      return updateSchedule(scheduleId, payload);
+      return updateSchedule(brandId, payload);
     },
     onSuccess: () => {
       // Invalidate schedule queries to refetch

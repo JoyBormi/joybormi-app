@@ -18,11 +18,7 @@ import { Loading } from '@/components/status-screens';
 import { Button, Text } from '@/components/ui';
 import { DAY_ORDER } from '@/constants/global.constants';
 import { useLocaleData } from '@/hooks/common/use-locale-data';
-import {
-  useCreateSchedule,
-  useGetSchedule,
-  useUpdateSchedule,
-} from '@/hooks/schedule';
+import { useGetSchedule, useUpdateSchedule } from '@/hooks/schedule';
 import { toast } from '@/providers/toaster';
 import { alert } from '@/stores/use-alert-store';
 import { DayCard } from '@/views/brand-profile/schedule';
@@ -39,15 +35,12 @@ const ManageScheduleScreen = () => {
   const { dayNames, dayNamesShort } = useLocaleData();
 
   // Fetch existing schedule
-  const { data: scheduleData, isLoading: isLoadingSchedule } = useGetSchedule({
-    brandId,
-  });
+  const { data: scheduleData, isLoading: isLoadingSchedule } =
+    useGetSchedule(brandId);
 
   // Mutations
-  const { mutateAsync: createSchedule, isPending: isCreatingSchedule } =
-    useCreateSchedule();
   const { mutateAsync: updateSchedule, isPending: isUpdatingSchedule } =
-    useUpdateSchedule(scheduleData?.id);
+    useUpdateSchedule(brandId);
 
   const [schedule, setSchedule] = useState<IWorkingDay[]>([]);
   const [editingState, setEditingState] = useState<{
@@ -216,7 +209,7 @@ const ManageScheduleScreen = () => {
 
     try {
       const workingDaysPayload = {
-        days: schedule.map((day) => ({
+        workingDays: schedule.map((day) => ({
           dayOfWeek: day.dayOfWeek,
           startTime: day.startTime,
           endTime: day.endTime,
@@ -227,13 +220,7 @@ const ManageScheduleScreen = () => {
         })),
       };
 
-      if (scheduleData?.id) {
-        // Update existing schedule
-        await updateSchedule(workingDaysPayload);
-      } else {
-        // Create new schedule first
-        await createSchedule({ brandId });
-      }
+      await updateSchedule(workingDaysPayload);
       router.back();
       toast.success({ title: t('common.success.scheduleSaved') });
     } catch (error) {
@@ -308,11 +295,7 @@ const ManageScheduleScreen = () => {
         style={{ paddingBottom: insets.bottom }}
         className="absolute bottom-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-t border-border/50 px-5 py-4"
       >
-        <Button
-          size="lg"
-          onPress={handleSave}
-          loading={isCreatingSchedule || isUpdatingSchedule}
-        >
+        <Button size="lg" onPress={handleSave} loading={isUpdatingSchedule}>
           <Text>Save Changes</Text>
         </Button>
       </View>

@@ -141,6 +141,7 @@ const WorkerDetailScreen: React.FC = () => {
   const handleServicePress = (service: (typeof services)[0]) => {
     console.log('Book service:', service.id);
     // Navigate to booking page with service and worker pre-selected
+    router.push(`/booking/${worker.brandId}/${worker.id}/${service.id}`);
   };
 
   return (

@@ -38,7 +38,7 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
   };
 
   return (
-    <View className="px-6 my-12">
+    <View className="px-6 mb-12">
       {/* Header */}
       <View className="flex-row items-center justify-between mb-4">
         <Text className="font-title text-lg text-foreground">
@@ -58,7 +58,7 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
         </Text>
 
         {/* Days grid */}
-        <View className="flex-row flex-wrap justify-between gap-1">
+        <View className="flex-row flex-wrap justify-between gap-1 px-1">
           {DAY_ORDER.map((day) => {
             const date = getDateForWeekday(day);
             const isToday = date.toDateString() === today.toDateString();
