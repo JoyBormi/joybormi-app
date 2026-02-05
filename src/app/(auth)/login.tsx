@@ -23,7 +23,7 @@ import { routes } from '@/constants/routes';
 import { useLogin } from '@/hooks/auth/use-login';
 import { Feedback } from '@/lib/haptics';
 import { normalizePhone } from '@/lib/utils';
-import { LoginFormType, loginSchema } from '@/views/auth';
+import { LoginFormType, loginSchema } from '@/lib/validation';
 
 export default function LoginScreen() {
   const { t } = useTranslation();

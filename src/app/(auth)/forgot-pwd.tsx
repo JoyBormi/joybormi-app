@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
 import FormField from '@/components/shared/form-field';
+import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import {
   Button,
@@ -21,15 +22,8 @@ import {
 import { routes } from '@/constants/routes';
 import { useForgotPassword, useVerifyResetCode } from '@/hooks/auth';
 import { Feedback } from '@/lib/haptics';
-import {
-  AuthHeader,
-  ForgotPwdEmailFormType,
-  ForgotPwdPhoneFormType,
-  forgotPwdCodeSchema,
-  forgotPwdEmailSchema,
-  forgotPwdPhoneCodeSchema,
-  forgotPwdPhoneSchema,
-} from '@/views/auth';
+import { normalizePhone } from '@/lib/utils';
+import { ForgotPasswordFormType, forgotPasswordSchema } from '@/lib/validation';
 
 interface ForgotPwdState {
   tab: 'email' | 'phone';
@@ -53,21 +47,19 @@ export default function ForgotPwdScreen() {
   const { mutate: sendCode, isPending: isSending } = useForgotPassword();
   const { mutate: verifyCode, isPending: isVerifying } = useVerifyResetCode();
 
-  const emailForm = useForm<ForgotPwdEmailFormType>({
-    resolver: zodResolver(
-      state.emailCodeSent ? forgotPwdCodeSchema : forgotPwdEmailSchema,
-    ),
+  const emailForm = useForm<ForgotPasswordFormType>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
+      method: 'email',
       email: '',
       code: '',
     },
   });
 
-  const phoneForm = useForm<ForgotPwdPhoneFormType>({
-    resolver: zodResolver(
-      state.phoneCodeSent ? forgotPwdPhoneCodeSchema : forgotPwdPhoneSchema,
-    ),
+  const phoneForm = useForm<ForgotPasswordFormType>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
+      method: 'phone',
       phone: '',
       code: '',
     },
@@ -80,10 +72,9 @@ export default function ForgotPwdScreen() {
     state.tab === 'email' ? emailForm.watch('code') : phoneForm.watch('code');
   const isCodeValid = code?.length === 6;
 
-  const handleSendCode = async (
-    data: ForgotPwdEmailFormType | ForgotPwdPhoneFormType,
-  ) => {
-    const identifier = state.tab === 'email' ? data.email : data.phone;
+  const handleSendCode = async (data: ForgotPasswordFormType) => {
+    const identifier =
+      state.tab === 'email' ? data.email : normalizePhone(data.phone ?? '');
     if (!identifier) return;
 
     sendCode(
@@ -105,7 +96,8 @@ export default function ForgotPwdScreen() {
   const handleResendCode = async () => {
     const data =
       state.tab === 'email' ? emailForm.getValues() : phoneForm.getValues();
-    const identifier = state.tab === 'email' ? data.email : data.phone;
+    const identifier =
+      state.tab === 'email' ? data.email : normalizePhone(data.phone ?? '');
     if (!identifier) return;
 
     setState((prev) => ({ ...prev, isResending: true }));
@@ -125,10 +117,9 @@ export default function ForgotPwdScreen() {
     );
   };
 
-  const handleVerifyCode = async (
-    data: ForgotPwdEmailFormType | ForgotPwdPhoneFormType,
-  ) => {
-    const identifier = state.tab === 'email' ? data.email : data.phone;
+  const handleVerifyCode = async (data: ForgotPasswordFormType) => {
+    const identifier =
+      state.tab === 'email' ? data.email : normalizePhone(data.phone ?? '');
     const code = data.code;
     if (!identifier || !code) return;
 
@@ -153,13 +144,18 @@ export default function ForgotPwdScreen() {
 
   const handleTabChange = (value: string) => {
     setState((prev) => ({ ...prev, tab: value as 'email' | 'phone' }));
+    if (value === 'email') {
+      emailForm.setValue('method', 'email');
+    } else {
+      phoneForm.setValue('method', 'phone');
+    }
   };
 
   return (
     <KeyboardAvoid>
       <View className="main-area">
         <View className="pt-20">
-          <AuthHeader
+          <Header
             title={t('auth.forgotPwd.title')}
             subtitle={t('auth.forgotPwd.subtitle')}
           />

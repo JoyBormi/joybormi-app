@@ -18,7 +18,7 @@ import { useOtpVerification } from '@/hooks/common';
 import { useTimer } from '@/hooks/common/use-timer';
 import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
-import { emptyLocalEmail, normalizeNumber } from '@/utils/helpers';
+import { emptyLocalEmail, normalizeInput } from '@/utils/helpers';
 
 interface ContactsInfoProps<T extends FieldValues> {
   control: Control<T>;
@@ -53,8 +53,8 @@ export function ContactsInfo<T extends FieldValues>({
 
   // Normalize and compare values
   const normalized = useMemo(() => {
-    const currentPhone = normalizeNumber(phoneValue) || '';
-    const userPhone = normalizeNumber(user?.phone ?? '') || '';
+    const currentPhone = normalizeInput(phoneValue) || '';
+    const userPhone = normalizeInput(user?.phone ?? '') || '';
 
     return {
       currentPhone,

@@ -6,11 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import FormField from '@/components/shared/form-field';
+import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Button, PasswordInput, Text } from '@/components/ui';
 import { routes } from '@/constants/routes';
 import { useResetPassword } from '@/hooks/auth';
-import { AuthHeader, ResetPwdFormType, resetPwdSchema } from '@/views/auth';
+import { ResetPasswordFormType, resetPasswordSchema } from '@/lib/validation';
 
 export default function ResetPwdScreen() {
   const { t } = useTranslation();
@@ -18,15 +19,15 @@ export default function ResetPwdScreen() {
   const params = useLocalSearchParams<{ resetToken?: string }>();
   const { mutate: resetPassword, isPending } = useResetPassword();
 
-  const { control, handleSubmit } = useForm<ResetPwdFormType>({
-    resolver: zodResolver(resetPwdSchema),
+  const { control, handleSubmit } = useForm<ResetPasswordFormType>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       password: '',
       confirmPassword: '',
     },
   });
 
-  const handleResetPassword = async (data: ResetPwdFormType) => {
+  const handleResetPassword = async (data: ResetPasswordFormType) => {
     const resetToken = params.resetToken;
     if (!resetToken) {
       console.error('[Reset Password] No reset token provided');
@@ -50,7 +51,7 @@ export default function ResetPwdScreen() {
   return (
     <KeyboardAvoid className="main-area">
       <View className="pt-20">
-        <AuthHeader
+        <Header
           title={t('auth.resetPwd.title')}
           subtitle={t('auth.resetPwd.subtitle')}
         />

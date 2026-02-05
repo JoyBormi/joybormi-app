@@ -1,30 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
-import React, { useCallback, useMemo, useRef } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import React, { useCallback, useRef } from 'react';
+import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import Icons from '@/components/icons';
 import { BlockModal, BlockModalRef } from '@/components/modals/block-modal';
 import { KeyboardAvoid } from '@/components/shared';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
-import { Button, Input, NumberInput, PhoneInput, Text } from '@/components/ui';
-import {
-  useSendPhoneOtp,
-  useVerifyEmail,
-  useVerifyPhoneOtp,
-} from '@/hooks/auth';
-import { useOtpVerification } from '@/hooks/common';
-import { useTimer } from '@/hooks/common/use-timer';
+import { Button, Input, PhoneInput, Text } from '@/components/ui';
 import { useUpdateProfile } from '@/hooks/user/use-update-profile';
-import { toast } from '@/providers/toaster';
+import { ProfileFormData, profileSchema } from '@/lib/validation';
 import { useUserStore } from '@/stores';
 import { EUserMethod } from '@/types/user.type';
-import { emptyLocalEmail, normalizeNumber } from '@/utils/helpers';
-import { ProfileFormData, profileSchema } from '@/views/user/profile-schema';
+import { emptyLocalEmail } from '@/utils/helpers';
 
 const EditProfileScreen = () => {
   const { t } = useTranslation();
@@ -33,15 +24,6 @@ const EditProfileScreen = () => {
   const blockedSheetRef = useRef<BlockModalRef>(null);
 
   const { mutate: updateProfile, isPending } = useUpdateProfile();
-  const { mutateAsync: sendPhoneOtp, isPending: isSendingPhoneOtp } =
-    useSendPhoneOtp();
-  const { mutateAsync: verifyPhoneOtp, isPending: isVerifyingPhoneOtp } =
-    useVerifyPhoneOtp();
-  const { mutateAsync: verifyEmail, isPending: isVerifyingEmail } =
-    useVerifyEmail();
-
-  const phoneTimer = useTimer();
-  const emailTimer = useTimer();
 
   // Form state
   const form = useForm<ProfileFormData>({
@@ -52,8 +34,6 @@ const EditProfileScreen = () => {
       lastName: user?.lastName ?? '',
       email: user?.email ?? '',
       phone: user?.phone ?? '',
-      emailOtp: '',
-      phoneOtp: '',
       language: user?.language ?? '',
       country: user?.country ?? '',
       state: user?.state ?? '',
@@ -67,65 +47,8 @@ const EditProfileScreen = () => {
 
   const isFormDirty = form.formState.isDirty;
 
-  // Watch form values
-  const watched = useWatch({
-    control: form.control,
-    name: ['email', 'phone', 'emailOtp', 'phoneOtp'],
-  });
-
-  const [emailValue, phoneValue, emailOtp, phoneOtp] = watched.map(
-    (value) => value ?? '',
-  ) as [string, string, string, string];
-
-  // Normalize and compare values
-  const normalized = useMemo(() => {
-    const currentEmail = emptyLocalEmail(emailValue);
-    const currentPhone = normalizeNumber(phoneValue) || '';
-    const userEmail = emptyLocalEmail(user?.email ?? '');
-    const userPhone = normalizeNumber(user?.phone ?? '') || '';
-
-    return {
-      currentEmail,
-      currentPhone,
-      userEmail,
-      userPhone,
-    };
-  }, [emailValue, phoneValue, user?.email, user?.phone]);
-
-  const emailVerification = useOtpVerification<ProfileFormData>({
-    currentValue: normalized.currentEmail,
-    originalValue: normalized.userEmail,
-    otpValue: emailOtp,
-    otpFieldName: 'emailOtp',
-    setValue: form.setValue,
-    timer: emailTimer,
-  });
-
-  const phoneVerification = useOtpVerification<ProfileFormData>({
-    currentValue: normalized.currentPhone,
-    originalValue: normalized.userPhone,
-    otpValue: phoneOtp,
-    otpFieldName: 'phoneOtp',
-    setValue: form.setValue,
-    timer: phoneTimer,
-  });
-
-  const needsEmailVerification = emailVerification.needsVerification;
-  const needsPhoneVerification = phoneVerification.needsVerification;
-  const isEmailVerified = emailVerification.isVerified;
-  const isPhoneVerified = phoneVerification.isVerified;
-
   const handleSave = useCallback(
     (data: ProfileFormData) => {
-      if (!isEmailVerified) {
-        toast.error({ title: 'Please verify your email to continue.' });
-        return;
-      }
-      if (!isPhoneVerified) {
-        toast.error({ title: 'Please verify your phone number to continue.' });
-        return;
-      }
-
       // Only send changed fields
       const changedFields: Partial<ProfileFormData> = {};
       Object.keys(data).forEach((key) => {
@@ -142,57 +65,8 @@ const EditProfileScreen = () => {
         },
       });
     },
-    [
-      form.formState.defaultValues,
-      isEmailVerified,
-      isPhoneVerified,
-      updateProfile,
-    ],
+    [form.formState.defaultValues, updateProfile],
   );
-
-  const handleSendPhoneOtp = useCallback(async () => {
-    if (!normalized.currentPhone) {
-      toast.error({ title: 'Enter a valid phone number first.' });
-      return;
-    }
-    await sendPhoneOtp({ phoneNumber: normalized.currentPhone });
-    phoneTimer.start(60);
-    toast.success({ title: 'Verification code sent.' });
-  }, [normalized.currentPhone, sendPhoneOtp, phoneTimer]);
-
-  const handleSendEmailOtp = useCallback(async () => {
-    if (!normalized.currentEmail) {
-      toast.error({ title: 'Enter a valid email first.' });
-      return;
-    }
-    // TODO: wire to email send endpoint if/when available
-    emailTimer.start(60);
-    toast.success({ title: 'Verification code sent.' });
-  }, [normalized.currentEmail, emailTimer]);
-
-  const handleVerifyPhone = useCallback(async () => {
-    if (!normalized.currentPhone || !phoneOtp) return;
-    await verifyPhoneOtp({
-      phoneNumber: normalized.currentPhone,
-      code: phoneOtp,
-      disableSession: false,
-      updatePhoneNumber: true,
-    });
-    phoneVerification.markVerified();
-    toast.success({ title: 'Phone verified.' });
-  }, [normalized.currentPhone, phoneOtp, phoneVerification, verifyPhoneOtp]);
-
-  const handleVerifyEmail = useCallback(async () => {
-    if (!normalized.currentEmail || !emailOtp) return;
-    await verifyEmail({
-      email: normalized.currentEmail,
-      code: emailOtp,
-      disableSession: false,
-      updateEmail: true,
-    });
-    emailVerification.markVerified();
-    toast.success({ title: 'Email verified.' });
-  }, [emailOtp, emailVerification, normalized.currentEmail, verifyEmail]);
 
   return (
     <KeyboardAvoid
@@ -286,152 +160,33 @@ const EditProfileScreen = () => {
           name="email"
           label={t('settings.profile.email')}
           render={({ field }) => (
-            <View className="flex-row items-center gap-2">
-              <Input
-                value={emptyLocalEmail(field.value ?? '')}
-                onChangeText={field.onChangeText}
-                editable={user?.userMethod === EUserMethod.PHONE}
-                placeholder={t('settings.profile.emailPlaceholder')}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                returnKeyType="next"
-                className="flex-1"
-                onSubmitEditing={() => form.setFocus('phone')}
-              />
-              {isEmailVerified && needsEmailVerification ? (
-                <View className="h-12 items-center justify-center px-4">
-                  <Icons.CheckCircle size={24} className="text-success" />
-                </View>
-              ) : (
-                <Button
-                  size="lg"
-                  onPress={handleSendEmailOtp}
-                  disabled={
-                    !needsEmailVerification ||
-                    !normalized.currentEmail ||
-                    emailTimer.seconds > 0 ||
-                    isSendingPhoneOtp
-                  }
-                >
-                  <Text>
-                    {emailTimer.seconds > 0
-                      ? emailTimer.formatted
-                      : emailTimer.hasStarted
-                        ? t('common.buttons.resend')
-                        : t('common.buttons.send')}
-                  </Text>
-                </Button>
-              )}
-            </View>
-          )}
-        />
-
-        {needsEmailVerification &&
-          !isEmailVerified &&
-          emailTimer.hasStarted && (
-            <FormField
-              control={form.control}
-              name="emailOtp"
-              label={t('settings.profile.emailOtp')}
-              render={({ field }) => (
-                <View className="flex-row items-center gap-2">
-                  <NumberInput
-                    {...field}
-                    onSubmitEditing={handleVerifyEmail}
-                    returnKeyType="done"
-                    className="flex-1"
-                    placeholder="Enter email code"
-                  />
-                  <Button
-                    size="lg"
-                    onPress={handleVerifyEmail}
-                    disabled={!emailOtp || isVerifyingEmail}
-                  >
-                    <Text>
-                      {isVerifyingEmail
-                        ? t('common.buttons.loading')
-                        : t('common.buttons.verify')}
-                    </Text>
-                  </Button>
-                </View>
-              )}
+            <Input
+              value={emptyLocalEmail(field.value ?? '')}
+              onChangeText={field.onChangeText}
+              editable={user?.userMethod === EUserMethod.PHONE}
+              placeholder={t('settings.profile.emailPlaceholder')}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              returnKeyType="next"
+              onSubmitEditing={() => form.setFocus('phone')}
             />
           )}
+        />
 
         <FormField
           control={form.control}
           name="phone"
           label={t('settings.profile.phone')}
           render={({ field }) => (
-            <View className="flex-row items-center gap-2">
-              <PhoneInput
-                {...field}
-                placeholder={t('settings.profile.phonePlaceholder')}
-                value={field.value ?? ''}
-                returnKeyType="next"
-                className="flex-1"
-                onSubmitEditing={() => form.setFocus('street')}
-              />
-
-              {isPhoneVerified && needsPhoneVerification ? (
-                <View className="h-12 items-center justify-center px-4">
-                  <Icons.CheckCircle size={24} className="text-success" />
-                </View>
-              ) : (
-                <Button
-                  size="lg"
-                  onPress={handleSendPhoneOtp}
-                  disabled={
-                    !needsPhoneVerification ||
-                    !normalized.currentPhone ||
-                    phoneTimer.seconds > 0 ||
-                    isSendingPhoneOtp
-                  }
-                >
-                  <Text>
-                    {phoneTimer.seconds > 0
-                      ? phoneTimer.formatted
-                      : phoneTimer.hasStarted
-                        ? t('common.buttons.resend')
-                        : t('common.buttons.send')}
-                  </Text>
-                </Button>
-              )}
-            </View>
-          )}
-        />
-
-        {needsPhoneVerification &&
-          !isPhoneVerified &&
-          phoneTimer.hasStarted && (
-            <FormField
-              control={form.control}
-              name="phoneOtp"
-              label={t('settings.profile.phoneOtp')}
-              render={({ field }) => (
-                <View className="flex-row items-center gap-2">
-                  <NumberInput
-                    {...field}
-                    onSubmitEditing={handleVerifyPhone}
-                    returnKeyType="done"
-                    className="flex-1"
-                    placeholder="Enter phone code"
-                  />
-                  <Button
-                    size="lg"
-                    onPress={handleVerifyPhone}
-                    disabled={!phoneOtp || isVerifyingPhoneOtp}
-                  >
-                    <Text>
-                      {isVerifyingPhoneOtp
-                        ? t('common.buttons.loading')
-                        : t('common.buttons.verify')}
-                    </Text>
-                  </Button>
-                </View>
-              )}
+            <PhoneInput
+              {...field}
+              placeholder={t('settings.profile.phonePlaceholder')}
+              value={field.value ?? ''}
+              returnKeyType="next"
+              onSubmitEditing={() => form.setFocus('street')}
             />
           )}
+        />
       </View>
 
       {/* Address */}

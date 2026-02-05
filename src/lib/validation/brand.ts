@@ -3,16 +3,10 @@ import { z } from 'zod';
 import { Major } from '@/constants/enum';
 import { required } from '@/utils/zod-intl';
 
-import { normalizePhone, PHONE_REGEX } from '../utils';
+import { emailSchema, phoneSchema } from './auth';
 
 // Keep this in sync with your Prisma enum BrandCategory
 export const BrandCategoryEnum = z.enum(Major);
-
-const phoneSchema = required(
-  z.string().refine((v) => PHONE_REGEX.test(normalizePhone(v)), {
-    params: { customCode: 'custom.phone_invalid' },
-  }),
-);
 
 export const createBrandSchema = z.object({
   brandName: required(z.string()),
@@ -25,7 +19,7 @@ export const createBrandSchema = z.object({
   ownerFirstName: required(z.string()),
   ownerLastName: required(z.string()),
 
-  email: z.email().optional(),
+  email: emailSchema,
   phone: phoneSchema,
 
   country: required(z.string()),

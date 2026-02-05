@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import FormField from '@/components/shared/form-field';
+import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import {
   Button,
@@ -22,11 +23,7 @@ import { routes } from '@/constants/routes';
 import { useRegister } from '@/hooks/auth';
 import { Feedback } from '@/lib/haptics';
 import { normalizePhone } from '@/lib/utils';
-import {
-  AuthHeader,
-  RegisterUserFormType,
-  registerUserSchema,
-} from '@/views/auth';
+import { RegisterUserFormType, registerUserSchema } from '@/lib/validation';
 
 type RegisterMethod = 'email' | 'phone' | string;
 
@@ -75,7 +72,7 @@ export default function RegisterScreen() {
   return (
     <KeyboardAvoid className="main-area">
       <View className="pt-20">
-        <AuthHeader
+        <Header
           title={t('auth.register.title')}
           subtitle={t('auth.register.subtitle')}
         />

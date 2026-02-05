@@ -64,7 +64,8 @@ export const formatCurrency = (amount?: number, currency?: string) => {
  * @param num Raw input (any format)
  * @returns formatted  or null
  */
-export const normalizeNumber = (num: string): string | null => {
+export const normalizeInput = (num?: string): string => {
+  if (!num) return '';
   return num.replace(/\s/g, '');
 };
 

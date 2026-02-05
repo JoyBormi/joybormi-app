@@ -13,7 +13,7 @@ import { Button, Text } from '@/components/ui';
 import { routes } from '@/constants/routes';
 import { useBecomeCreator } from '@/hooks/user/use-become-creator';
 import { Feedback } from '@/lib/haptics';
-import { createBrandSchema, TCreateBrandInput } from '@/lib/validations/brand';
+import { createBrandSchema, TCreateBrandInput } from '@/lib/validation';
 import { useUserStore } from '@/stores';
 import { alert } from '@/stores/use-alert-store';
 import { useBrandDraftStore } from '@/stores/use-brand-draft-store';

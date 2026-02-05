@@ -1,30 +1,36 @@
 import { z } from 'zod';
 
-import { normalizePhone, PASSWORD_REGEX, PHONE_REGEX } from '@/lib/utils';
+import { PASSWORD_REGEX, PHONE_REGEX } from '@/lib/regex';
+import { normalizePhone } from '@/lib/utils';
 import { required } from '@/utils/zod-intl';
 
-const usernameSchema = required(
+export const usernameSchema = required(
   z.string().refine((v) => /^[a-zA-Z0-9_ ]+$/.test(v), {
     params: { customCode: 'custom.username_invalid' },
   }),
 );
 
-const emailSchema = z.email();
-const phoneSchema = required(
+export const emailSchema = z.email();
+export const phoneSchema = required(
   z.string().refine((v) => PHONE_REGEX.test(normalizePhone(v)), {
     params: { customCode: 'custom.phone_invalid' },
   }),
 );
-
-const passwordSchema = required(
+export const passwordSchema = required(
   z.string().refine((v) => PASSWORD_REGEX.test(v), {
     params: { customCode: 'custom.password_invalid' },
   }),
 );
+export const confirmPasswordSchema = required(z.string());
 
-const confirmPasswordSchema = required(z.string());
+export const otpSchema = z
+  .string()
+  .regex(/^\d{6}$/, { message: 'custom.otp_invalid' })
+  .optional()
+  .or(z.literal(''));
 
-// Login schema
+// ───────────────── SCHEMAS ────────────────── //
+
 export const loginSchema = z
   .object({
     method: z.enum(['email', 'phone']),
@@ -61,59 +67,56 @@ export const loginSchema = z
       }
     }
   });
-export type LoginFormType = z.infer<typeof loginSchema>;
 
-// Forgot password schema
-export const forgotPwdEmailSchema = z.object({
-  email: z.email(),
-  code: z.string().optional(),
-});
+export const forgotPasswordSchema = z
+  .object({
+    method: z.enum(['email', 'phone']),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    codeSent: z.boolean().optional(),
+    code: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.method === 'email') {
+      const result = emailSchema.safeParse(data.email);
+      if (!result.success) {
+        ctx.addIssue({
+          path: ['email'],
+          code: 'custom',
+          params: { customCode: 'custom.email_invalid' },
+        });
+      }
+    }
 
-export const forgotPwdCodeSchema = z.object({
-  email: z.email(),
-  code: z.string().length(6),
-});
+    if (data.method === 'phone') {
+      const result = phoneSchema.safeParse(data.phone);
+      if (!result.success) {
+        ctx.addIssue({
+          path: ['phone'],
+          code: 'custom',
+          params: { customCode: 'custom.phone_invalid' },
+        });
+      }
+    }
 
-export type ForgotPwdEmailFormType = z.infer<typeof forgotPwdEmailSchema>;
-export type ForgotPwdCodeFormType = z.infer<typeof forgotPwdCodeSchema>;
+    if (data.codeSent && !otpSchema.safeParse(data.code).success) {
+      ctx.addIssue({
+        path: ['code'],
+        code: 'custom',
+        params: { customCode: 'custom.otp_invalid' },
+      });
+    }
+  });
 
-export const forgotPwdPhoneSchema = z.object({
-  phone: z.string().refine((data) => data.match(/^\+?[1-9]\d{1,14}$/), {
-    params: {
-      customCode: 'custom.required',
-    },
-  }),
-  code: z.string().optional(),
-});
-
-export const forgotPwdPhoneCodeSchema = z.object({
-  phone: z.string().refine((data) => data.match(/^\+?[1-9]\d{1,14}$/), {
-    params: {
-      customCode: 'custom.required',
-    },
-  }),
-  code: z.string().length(6),
-});
-
-export type ForgotPwdPhoneFormType = z.infer<typeof forgotPwdPhoneSchema>;
-export type ForgotPwdPhoneCodeFormType = z.infer<
-  typeof forgotPwdPhoneCodeSchema
->;
-
-export const resetPwdSchema = z
+export const resetPasswordSchema = z
   .object({
     password: z.string().min(6),
     confirmPassword: z.string().min(6),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
-
-    params: {
-      customCode: 'custom.required',
-    },
+    params: { customCode: 'custom.required' },
   });
-
-export type ResetPwdFormType = z.infer<typeof resetPwdSchema>;
 
 export const registerUserSchema = z
   .object({
@@ -151,4 +154,7 @@ export const registerUserSchema = z
     }
   });
 
+export type LoginFormType = z.infer<typeof loginSchema>;
 export type RegisterUserFormType = z.infer<typeof registerUserSchema>;
+export type ForgotPasswordFormType = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordFormType = z.infer<typeof resetPasswordSchema>;
