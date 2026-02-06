@@ -3,10 +3,12 @@ import { TextInput, type TextInputProps } from 'react-native';
 
 import { cn } from '@/lib/utils';
 
+import { TFieldValue } from '../shared/form-field';
+
 const Input = React.forwardRef<
   React.ComponentRef<typeof TextInput>,
   Omit<TextInputProps, 'value'> & {
-    value: string | string[] | undefined;
+    value: TFieldValue;
   }
 >(({ className, value, ...props }, ref) => {
   return (

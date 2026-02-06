@@ -27,7 +27,7 @@ export const SettingsItem: React.FC<Props> = ({
   const content = (
     <View
       className={cn(
-        'flex-row items-center gap-3 px-3 py-2.5 bg-card/80 backdrop-blur-sm',
+        'flex-row items-center gap-3 px-1 py-2.5 bg-card/80 backdrop-blur-sm',
         isFirst && 'rounded-t-2xl',
         isLast && 'rounded-b-2xl',
         !isLast && 'border-b border-border/10',

@@ -1,6 +1,12 @@
-import { AsYouType, CountryCode } from 'libphonenumber-js';
+import {
+  AsYouType,
+  CountryCode,
+  getCountryCallingCode,
+} from 'libphonenumber-js';
 import * as React from 'react';
-import { TextInput, type TextInputProps } from 'react-native';
+import { TextInput, TextInputProps } from 'react-native';
+
+import { TFieldValue } from '../shared/form-field';
 
 import { Input } from './input';
 
@@ -8,52 +14,74 @@ interface PhoneInputProps extends Omit<
   TextInputProps,
   'keyboardType' | 'value' | 'onChangeText'
 > {
-  value?: string;
+  value?: TFieldValue;
   onChangeText?: (value: string) => void;
   defaultCountry?: CountryCode;
 }
 
-const COUNTRY_PREFIX = '+998';
+function getPrefix(country: CountryCode) {
+  return `+${getCountryCallingCode(country)}`;
+}
+
+function normalize(input: string, country: CountryCode) {
+  const digits = input.replace(/\D/g, '');
+  const code = getCountryCallingCode(country);
+
+  if (!digits) return `+${code}`;
+  if (digits.startsWith(code)) return `+${digits}`;
+  return `+${code}${digits}`;
+}
 
 const PhoneInput = React.forwardRef<
   React.ComponentRef<typeof TextInput>,
   PhoneInputProps
 >(
   (
-    { className, value = '', onChangeText, defaultCountry = 'UZ', ...props },
+    { className, value, onChangeText, defaultCountry = 'UZ', ...props },
     ref,
   ) => {
-    const formatter = React.useRef(new AsYouType(defaultCountry));
+    const prefix = React.useMemo(
+      () => getPrefix(defaultCountry),
+      [defaultCountry],
+    );
 
-    const handleTextChange = (text: string) => {
-      // Strip everything except digits
-      const digits = text.replace(/\D/g, '');
+    const [text, setText] = React.useState(prefix);
 
-      // Ensure country prefix ONCE
-      const e164 = digits.startsWith('998')
-        ? `+${digits}`
-        : `${COUNTRY_PREFIX}${digits}`;
-
-      formatter.current.reset();
-      const formatted = formatter.current.input(e164);
-
-      // Prevent deleting country code
-      if (!formatted.startsWith(COUNTRY_PREFIX)) {
-        onChangeText?.(COUNTRY_PREFIX);
+    // Sync backend → UI (formatted)
+    React.useEffect(() => {
+      if (!value) {
+        setText(prefix);
         return;
       }
 
-      onChangeText?.(formatted);
-    };
+      const formatter = new AsYouType(defaultCountry);
+      setText(formatter.input(normalize(String(value), defaultCountry)));
+    }, [value, defaultCountry, prefix]);
+
+    const handleChange = React.useCallback(
+      (input: string) => {
+        if (!input.startsWith(prefix)) {
+          setText(prefix);
+          return;
+        }
+
+        const formatter = new AsYouType(defaultCountry);
+        const formatted = formatter.input(input);
+
+        setText(formatted);
+        onChangeText?.(normalize(formatted, defaultCountry));
+      },
+      [defaultCountry, prefix, onChangeText],
+    );
 
     return (
       <Input
         ref={ref}
-        keyboardType="phone-pad" // allows +
-        className={className}
-        value={value}
-        onChangeText={handleTextChange}
+        keyboardType="phone-pad"
+        value={text}
+        onChangeText={handleChange}
         placeholder="99 123 45 67"
+        className={className}
         {...props}
       />
     );

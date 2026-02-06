@@ -59,19 +59,20 @@ export default function HelpScreen() {
   );
 
   return (
-    <View className="main-area" style={{ paddingTop: insets.top }}>
+    <View style={{ paddingTop: insets.top, flex: 1 }}>
       <Header
         title="Help & Support"
         subtitle="We are here to help with bookings, payouts, and account issues."
         animate={false}
         variant="row"
+        className="px-2 pb-2"
       />
       <ScrollView
-        className="flex-1"
+        className="main-area"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
       >
-        <View className="gap-6">
+        <View className="gap-6 mt-5">
           <View className="gap-3">
             <Text className="text-sm text-muted-foreground font-subtitle uppercase tracking-wider">
               Quick help

@@ -152,144 +152,140 @@ export default function ForgotPwdScreen() {
   };
 
   return (
-    <KeyboardAvoid>
-      <View className="main-area">
-        <View className="pt-20">
-          <Header
-            title={t('auth.forgotPwd.title')}
-            subtitle={t('auth.forgotPwd.subtitle')}
+    <KeyboardAvoid className="main-area">
+      <Header
+        title={t('auth.forgotPwd.title')}
+        subtitle={t('auth.forgotPwd.subtitle')}
+      />
+      <Tabs
+        value={state.tab}
+        onValueChange={handleTabChange}
+        className="w-full gap-y-6 mt-10"
+      >
+        <TabsList>
+          <TabsTrigger value="phone">
+            <Text>{t('auth.register.phoneTab')}</Text>
+          </TabsTrigger>
+          <TabsTrigger value="email">
+            <Text>{t('auth.register.emailTab')}</Text>
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="email">
+          <FormField
+            control={emailForm.control}
+            name="email"
+            label={t('auth.email')}
+            render={({ field }) => (
+              <Input
+                placeholder={t('auth.emailPlaceholder')}
+                returnKeyType="done"
+                disabled={state.emailCodeSent}
+                {...field}
+              />
+            )}
+            required
           />
-          <Tabs
-            value={state.tab}
-            onValueChange={handleTabChange}
-            className="w-full gap-y-6 mt-10"
-          >
-            <TabsList>
-              <TabsTrigger value="phone">
-                <Text>{t('auth.register.phoneTab')}</Text>
-              </TabsTrigger>
-              <TabsTrigger value="email">
-                <Text>{t('auth.register.emailTab')}</Text>
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="email">
-              <FormField
-                control={emailForm.control}
-                name="email"
-                label={t('auth.email')}
-                render={({ field }) => (
-                  <Input
-                    placeholder={t('auth.emailPlaceholder')}
-                    returnKeyType="done"
-                    disabled={state.emailCodeSent}
-                    {...field}
-                  />
-                )}
-                required
+          {state.emailCodeSent && (
+            <FormField
+              control={emailForm.control}
+              name="code"
+              label={t('auth.verificationCode')}
+              render={({ field }) => (
+                <OtpInput length={6} {...field} disabled={isVerifying} />
+              )}
+              className="mt-6"
+              required
+            />
+          )}
+        </TabsContent>
+        <TabsContent value="phone">
+          <FormField
+            control={phoneForm.control}
+            name="phone"
+            label={t('auth.phone')}
+            render={({ field }) => (
+              <PhoneInput
+                placeholder={t('auth.phonePlaceholder')}
+                returnKeyType="done"
+                value={field.value}
+                onChangeText={field.onChange}
+                onBlur={field.onBlur}
+                defaultCountry="UZ"
               />
-              {state.emailCodeSent && (
-                <FormField
-                  control={emailForm.control}
-                  name="code"
-                  label={t('auth.verificationCode')}
-                  render={({ field }) => (
-                    <OtpInput length={6} {...field} disabled={isVerifying} />
-                  )}
-                  className="mt-6"
-                  required
+            )}
+            required
+          />
+          {state.phoneCodeSent && (
+            <FormField
+              control={phoneForm.control}
+              name="code"
+              label={t('auth.verificationCode')}
+              render={({ field }) => (
+                <OtpInput
+                  length={6}
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  disabled={isVerifying}
                 />
               )}
-            </TabsContent>
-            <TabsContent value="phone">
-              <FormField
-                control={phoneForm.control}
-                name="phone"
-                label={t('auth.phone')}
-                render={({ field }) => (
-                  <PhoneInput
-                    placeholder={t('auth.phonePlaceholder')}
-                    returnKeyType="done"
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
-                    defaultCountry="UZ"
-                  />
-                )}
-                required
-              />
-              {state.phoneCodeSent && (
-                <FormField
-                  control={phoneForm.control}
-                  name="code"
-                  label={t('auth.verificationCode')}
-                  render={({ field }) => (
-                    <OtpInput
-                      length={6}
-                      value={field.value}
-                      onChangeText={field.onChange}
-                      disabled={isVerifying}
-                    />
-                  )}
-                  className="mt-6"
-                  required
-                />
-              )}
-            </TabsContent>
-          </Tabs>
-        </View>
+              className="mt-6"
+              required
+            />
+          )}
+        </TabsContent>
+      </Tabs>
 
-        {!isCodeSent ? (
+      {!isCodeSent ? (
+        <Button
+          className="my-10"
+          onPress={activeForm.handleSubmit(handleSendCode)}
+          disabled={isSending}
+        >
+          <Text>
+            {isSending
+              ? t('common.buttons.loading')
+              : t('auth.forgotPwd.sendCode')}
+          </Text>
+        </Button>
+      ) : (
+        <>
           <Button
-            className="my-10"
-            onPress={activeForm.handleSubmit(handleSendCode)}
-            disabled={isSending}
+            variant="outline"
+            className="mt-5"
+            onPress={handleResendCode}
+            disabled={state.isResending || isCodeValid || isSending}
           >
             <Text>
-              {isSending
-                ? t('common.buttons.loading')
-                : t('auth.forgotPwd.sendCode')}
+              {state.isResending
+                ? t('auth.forgotPwd.resending')
+                : t('auth.forgotPwd.resend')}
             </Text>
           </Button>
-        ) : (
-          <>
-            <Button
-              variant="outline"
-              className="mt-5"
-              onPress={handleResendCode}
-              disabled={state.isResending || isCodeValid || isSending}
-            >
-              <Text>
-                {state.isResending
-                  ? t('auth.forgotPwd.resending')
-                  : t('auth.forgotPwd.resend')}
-              </Text>
-            </Button>
-            <Button
-              className="my-5"
-              onPress={activeForm.handleSubmit(handleVerifyCode)}
-              disabled={!isCodeValid || isVerifying}
-            >
-              <Text>
-                {isVerifying
-                  ? t('common.buttons.loading')
-                  : t('auth.forgotPwd.verify')}
-              </Text>
-            </Button>
-          </>
-        )}
-
-        <View className="justify-center items-center">
-          <Pressable
-            onPress={() => {
-              Feedback.soft();
-              router.back();
-            }}
+          <Button
+            className="my-5"
+            onPress={activeForm.handleSubmit(handleVerifyCode)}
+            disabled={!isCodeValid || isVerifying}
           >
-            <Text className="font-primary underline text-sm">
-              {t('auth.forgotPwd.backToLogin')}
+            <Text>
+              {isVerifying
+                ? t('common.buttons.loading')
+                : t('auth.forgotPwd.verify')}
             </Text>
-          </Pressable>
-        </View>
+          </Button>
+        </>
+      )}
+
+      <View className="justify-center items-center">
+        <Pressable
+          onPress={() => {
+            Feedback.soft();
+            router.back();
+          }}
+        >
+          <Text className="font-subbody underline">
+            {t('auth.forgotPwd.backToLogin')}
+          </Text>
+        </Pressable>
       </View>
     </KeyboardAvoid>
   );

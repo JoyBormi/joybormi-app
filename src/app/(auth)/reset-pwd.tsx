@@ -50,41 +50,39 @@ export default function ResetPwdScreen() {
 
   return (
     <KeyboardAvoid className="main-area">
-      <View className="pt-20">
-        <Header
-          title={t('auth.resetPwd.title')}
-          subtitle={t('auth.resetPwd.subtitle')}
+      <Header
+        title={t('auth.resetPwd.title')}
+        subtitle={t('auth.resetPwd.subtitle')}
+      />
+      <View className="gap-y-6 mt-10">
+        <FormField
+          control={control}
+          name="password"
+          label={t('auth.password')}
+          render={({ field }) => (
+            <PasswordInput
+              {...field}
+              placeholder={t('auth.newPasswordPlaceholder')}
+              returnKeyType="next"
+            />
+          )}
+          required
         />
-        <View className="gap-y-6 mt-10">
-          <FormField
-            control={control}
-            name="password"
-            label={t('auth.password')}
-            render={({ field }) => (
-              <PasswordInput
-                {...field}
-                placeholder={t('auth.newPasswordPlaceholder')}
-                returnKeyType="next"
-              />
-            )}
-            required
-          />
 
-          <FormField
-            control={control}
-            name="confirmPassword"
-            label={t('auth.confirmPassword')}
-            render={({ field }) => (
-              <PasswordInput
-                {...field}
-                placeholder={t('auth.confirmPasswordPlaceholder')}
-                returnKeyType="done"
-                onSubmitEditing={handleSubmit(handleResetPassword)}
-              />
-            )}
-            required
-          />
-        </View>
+        <FormField
+          control={control}
+          name="confirmPassword"
+          label={t('auth.confirmPassword')}
+          render={({ field }) => (
+            <PasswordInput
+              {...field}
+              placeholder={t('auth.confirmPasswordPlaceholder')}
+              returnKeyType="done"
+              onSubmitEditing={handleSubmit(handleResetPassword)}
+            />
+          )}
+          required
+        />
       </View>
 
       <Button

@@ -230,23 +230,23 @@ const PreferencesScreen: React.FC = () => {
   }, []);
 
   return (
-    <View className="main-area" style={{ paddingTop: insets.top }}>
+    <View style={{ paddingTop: insets.top, flex: 1 }}>
       <Header
         title={t('settings.preferencesScreen.title')}
         subtitle={t('settings.preferencesScreen.subtitle')}
         animate={false}
-        className="px-2"
         variant="row"
+        className="px-2 pb-2"
       />
       <ScrollView
-        className="flex-1"
+        className="main-area"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: insets.bottom + 50 }}
       >
-        <View className="gap-6 mt-1">
+        <View className="gap-6 mt-5">
           {preferenceGroups.map((group) => (
             <View key={group.id} className="gap-2">
-              <Text className="text-sm text-muted-foreground font-subtitle uppercase tracking-wider px-4">
+              <Text className="text-sm text-muted-foreground font-subtitle uppercase tracking-wider ">
                 {group.title}
               </Text>
               <View className="overflow-hidden rounded-2xl">

@@ -1,7 +1,6 @@
 import { BlurView } from 'expo-blur';
-import { AlertCircle } from 'lucide-react-native';
 import React from 'react';
-import { Modal, Platform, Pressable, View } from 'react-native';
+import { Modal, Platform, View } from 'react-native';
 import Animated, {
   FadeIn,
   FadeOut,
@@ -9,7 +8,8 @@ import Animated, {
   ZoomOut,
 } from 'react-native-reanimated';
 
-import { Text } from '@/components/ui';
+import Icons from '@/components/icons';
+import { Button, Text } from '@/components/ui';
 import { useAlertStore } from '@/stores/use-alert-store';
 
 export function GlobalAlert() {
@@ -49,34 +49,34 @@ export function GlobalAlert() {
         <Animated.View
           entering={FadeIn.duration(120)}
           exiting={FadeOut.duration(150)}
-          className="absolute inset-0 bg-white/40"
+          className="absolute inset-0  bg-black/10"
         />
 
         {/* Modal content with linear-style Zoom for a "system" feel */}
         <Animated.View
           entering={ZoomIn.duration(250)}
           exiting={ZoomOut.duration(200)}
-          className="w-full max-w-sm overflow-hidden rounded-[32px] border border-border shadow-2xl shadow-primary/10"
+          className="w-full z-50 max-w-sm overflow-hidden rounded-xl border border-foreground/20 shadow-2xl shadow-primary/10"
         >
           <BlurView
-            intensity={Platform.OS === 'ios' ? 45 : 80}
+            intensity={Platform.OS === 'ios' ? 55 : 80}
             tint="light"
-            className="p-7 bg-white/80"
+            className="px-4 py-8"
           >
             <View className="items-center">
               {/* Creative Icon Housing */}
-              <View className="w-14 h-14 bg-primary/10 rounded-full items-center justify-center mb-5">
+              <View className="p-4 bg-primary/15 rounded-full items-center justify-center mb-5">
                 {options.icon || (
-                  <AlertCircle size={28} color="#8A70D6" strokeWidth={2} />
+                  <Icons.AlertCircle size={28} className="text-primary" />
                 )}
               </View>
 
-              <Text className="text-xl font-semibold text-foreground text-center mb-2 tracking-tight">
+              <Text className="font-title text-foreground text-center mb-2 tracking-tight">
                 {options.title}
               </Text>
 
               {options.subtitle && (
-                <Text className="text-[15px] text-muted-foreground text-center leading-5 px-1 mb-8">
+                <Text className="font-body text-muted-foreground text-center leading-5 px-1 mb-8">
                   {options.subtitle}
                 </Text>
               )}
@@ -85,24 +85,16 @@ export function GlobalAlert() {
             {/* Actions: Clean hierarchy */}
             <View className="flex-row gap-3">
               {options.cancelLabel !== null && (
-                <Pressable
-                  onPress={handleCancel}
-                  className="flex-1 h-12 items-center justify-center rounded-2xl  active:bg-black/10"
-                >
-                  <Text className="font-caption text-primary">
-                    {options.cancelLabel || 'Cancel'}
-                  </Text>
-                </Pressable>
+                <Button onPress={handleCancel} className="w-full">
+                  <Text>{options.cancelLabel || 'Cancel'}</Text>
+                </Button>
               )}
 
-              <Pressable
-                onPress={handleConfirm}
-                className="flex-1 h-12 items-center justify-center rounded-2xl bg-primary active:bg-primary shadow-sm"
-              >
-                <Text className="text-sm font-semibold text-white">
+              <Button onPress={handleConfirm} className="w-full" size="lg">
+                <Text className="font-semibold text-white">
                   {options.confirmLabel || 'Confirm'}
                 </Text>
-              </Pressable>
+              </Button>
             </View>
           </BlurView>
         </Animated.View>

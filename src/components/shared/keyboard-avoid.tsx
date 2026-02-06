@@ -1,50 +1,19 @@
 import React from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  KeyboardAvoidingViewProps,
-  Platform,
-  ScrollViewProps,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import { ScrollViewProps } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
-function KeyboardAvoid({
-  children,
-  scrollConfig,
-  scrollEnabled = true,
-  ...props
-}: {
-  children: React.ReactNode;
-  scrollConfig?: ScrollViewProps;
-  scrollEnabled?: boolean;
-} & KeyboardAvoidingViewProps) {
+function KeyboardAvoid({ ...props }: ScrollViewProps) {
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      enabled={true}
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
+      automaticallyAdjustKeyboardInsets
+      className="bg-background"
+      decelerationRate="fast"
       {...props}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        {scrollEnabled ? (
-          <ScrollView
-            contentContainerStyle={{ flexGrow: 1 }}
-            keyboardShouldPersistTaps="handled"
-            keyboardDismissMode="on-drag"
-            showsVerticalScrollIndicator={false}
-            className="bg-background"
-            decelerationRate="fast"
-            {...scrollConfig}
-          >
-            {children}
-          </ScrollView>
-        ) : (
-          <View className="flex-1">{children}</View>
-        )}
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+    />
   );
 }
 

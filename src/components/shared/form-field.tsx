@@ -13,6 +13,8 @@ import { View } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 
+export type TFieldValue = string | number | boolean | undefined | null;
+
 type FormFieldProps<T extends FieldValues> = {
   control: Control<T>;
   name: string;
@@ -25,7 +27,7 @@ type FormFieldProps<T extends FieldValues> = {
   loading?: boolean;
   render: (params: {
     field: ControllerRenderProps<T, FieldPath<T>> & {
-      onChangeText: (value: string | number) => void;
+      onChangeText: (value: TFieldValue) => void;
     };
     fieldState: { error?: { message?: string } };
     formState: any;

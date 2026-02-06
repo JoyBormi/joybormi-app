@@ -72,7 +72,7 @@ export function Header({
               <Text className="font-heading">{title}</Text>
             </View>
 
-            <Text className="font-subtitle text-card-foreground pl-3.5 mt-1.5">
+            <Text className="font-body text-card-foreground pl-3.5 mt-1.5">
               {subtitle}
             </Text>
           </View>

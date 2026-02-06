@@ -7,10 +7,10 @@ import { Controller, useForm } from 'react-hook-form';
 import { Modal, Pressable, View } from 'react-native';
 import { z } from 'zod';
 
+import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Button, OtpInput, Text } from '@/components/ui';
 import { Feedback } from '@/lib/haptics';
-import { AuthHeader } from '@/views/auth';
 
 /* ================= SCHEMA ================= */
 
@@ -103,7 +103,7 @@ function InviteCodeScreen() {
   return (
     <KeyboardAvoid>
       <View className="flex-1 px-5 pt-20">
-        <AuthHeader
+        <Header
           title="Enter Invite Code"
           subtitle="Enter the 6-digit code provided by the creator brand"
         />

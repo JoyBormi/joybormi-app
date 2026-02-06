@@ -73,7 +73,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoid className="main-area" scrollEnabled={false}>
+    <KeyboardAvoid className="main-area">
       <Header
         title={t('auth.login.title')}
         subtitle={t('auth.login.subtitle')}
@@ -87,19 +87,18 @@ export default function LoginScreen() {
             <Text>{t('auth.register.emailTab')}</Text>
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="email" className="gap-y-6 mt-10">
+        <TabsContent value="phone" className="gap-y-6 mt-10">
           <FormField
             control={control}
-            name="email"
-            label={t('auth.email')}
+            name="phone"
+            label={t('auth.phone')}
             required
             render={({ field }) => (
-              <Input
+              <PhoneInput
                 {...field}
-                placeholder={t('auth.emailPlaceholder')}
-                keyboardType="email-address"
+                placeholder={t('auth.phonePlaceholder')}
                 returnKeyType="next"
-                autoCapitalize="none"
+                defaultCountry="UZ"
                 onSubmitEditing={() => setFocus('password')}
               />
             )}
@@ -121,18 +120,19 @@ export default function LoginScreen() {
             )}
           />
         </TabsContent>
-        <TabsContent value="phone" className="gap-y-6 mt-10">
+        <TabsContent value="email" className="gap-y-6 mt-10">
           <FormField
             control={control}
-            name="phone"
-            label={t('auth.phone')}
+            name="email"
+            label={t('auth.email')}
             required
             render={({ field }) => (
-              <PhoneInput
+              <Input
                 {...field}
-                placeholder={t('auth.phonePlaceholder')}
+                placeholder={t('auth.emailPlaceholder')}
+                keyboardType="email-address"
                 returnKeyType="next"
-                defaultCountry="UZ"
+                autoCapitalize="none"
                 onSubmitEditing={() => setFocus('password')}
               />
             )}
@@ -189,7 +189,7 @@ export default function LoginScreen() {
             router.push(routes.auth.forgot_password);
           }}
         >
-          <Text className="font-caption underline">
+          <Text className="font-subbody underline">
             {t('auth.login.forgotPassword')}
           </Text>
         </Pressable>

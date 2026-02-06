@@ -126,13 +126,11 @@ const EditBrandProfileScreen = () => {
   return (
     <KeyboardAvoid
       className="main-area"
-      scrollConfig={{
-        showsVerticalScrollIndicator: false,
-        contentContainerStyle: {
-          paddingBottom: insets.bottom + 80,
-          paddingTop: 12,
-          rowGap: 24,
-        },
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{
+        paddingBottom: insets.bottom + 20,
+        paddingTop: 12,
+        rowGap: 24,
       }}
     >
       <Header

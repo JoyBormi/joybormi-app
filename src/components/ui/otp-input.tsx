@@ -3,9 +3,11 @@ import { TextInput, View } from 'react-native';
 
 import { cn } from '@/lib/utils';
 
+import { TFieldValue } from '../shared/form-field';
+
 interface OtpInputProps {
   length?: number;
-  value?: string;
+  value: TFieldValue;
   onChangeText?: (value: string) => void;
   onComplete?: (value: string) => void;
   className?: string;
@@ -46,7 +48,7 @@ const OtpInput = React.forwardRef<View, OtpInputProps>(
 
     // Sync external value with internal state
     React.useEffect(() => {
-      const digits = value.split('').slice(0, length);
+      const digits = String(value)?.split('').slice(0, length);
       const newValues = [...Array(length).fill(''), ...digits].slice(0, length);
       setOtpValues(newValues);
     }, [value, length]);
