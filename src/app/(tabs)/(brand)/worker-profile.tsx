@@ -15,6 +15,8 @@ import {
   UploadProfileImageSheet,
 } from '@/components/brand-worker';
 import { NotFoundScreen, PendingScreen } from '@/components/status-screens';
+import { Text } from '@/components/ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IMAGE_CATEGORIES } from '@/constants/global.constants';
 import { routes } from '@/constants/routes';
 import { useGetBrandPhotos } from '@/hooks/brand';
@@ -36,6 +38,8 @@ import {
   ServicesList,
   WorkerMissing,
 } from '@/views/worker-profile/components';
+
+type WorkerProfileTab = 'setup' | 'about' | 'services' | 'schedule' | 'photos';
 
 const WORKER_PHOTO_CATEGORIES = [
   {
@@ -66,13 +70,14 @@ const WorkerProfileScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const { appType } = useUserStore();
 
-  const canEdit = appType === EUserType.CREATOR || appType === EUserType.WORKER;
+  const canEdit = appType === EUserType.WORKER;
 
   const {
     data: worker,
     refetch: refetchWorker,
     isLoading: isWorkerLoading,
   } = useGetWorkerProfile();
+  console.log(`🚀 ~ worker:`, worker);
   const { data: services, refetch: refetchServices } = useGetServices({
     brandId: worker?.brandId,
     ownerId: worker?.id,
@@ -90,13 +95,14 @@ const WorkerProfileScreen: React.FC = () => {
   const { mutateAsync: updateWorkerProfile } = useUpdateWorkerProfile();
 
   // Local state for UI
+  const [activeTab, setActiveTab] = useState<WorkerProfileTab>('setup');
   const [selectedPhoto, setSelectedPhoto] = useState<IFile | null>(null);
   const [localPhotos, setLocalPhotos] = useState<IFile[]>([]);
   const mergedPhotos = useMemo(
     () => [...localPhotos, ...(photos ?? [])],
     [localPhotos, photos],
   );
-  const workingDays = schedule?.workingDays ?? [];
+  const workingDays = useMemo(() => schedule?.workingDays, [schedule]);
 
   const refetch = () => {
     refetchWorker();
@@ -239,6 +245,52 @@ const WorkerProfileScreen: React.FC = () => {
     }
   };
 
+  const missingProps = useMemo(
+    () => ({
+      canEdit,
+      worker,
+      services,
+      mergedPhotos,
+      workingDays,
+      handleAddPhoto,
+      handleEditWorker: handleEditProfile,
+      handleEditProfileImage,
+      handleEditBanner,
+    }),
+    [
+      canEdit,
+      worker,
+      services,
+      mergedPhotos,
+      workingDays,
+      handleAddPhoto,
+      handleEditProfile,
+      handleEditProfileImage,
+      handleEditBanner,
+    ],
+  );
+
+  const renderMissing = useCallback(
+    (
+      filterIds?: (
+        | 'details'
+        | 'description'
+        | 'images'
+        | 'services'
+        | 'photos'
+        | 'schedule'
+      )[],
+      variant: 'inline' | 'full' = 'inline',
+    ) => (
+      <WorkerMissing
+        {...missingProps}
+        filterIds={filterIds as string[] | undefined}
+        variant={variant}
+      />
+    ),
+    [missingProps],
+  );
+
   // Early return if no worker data
 
   if (isWorkerLoading) {
@@ -269,7 +321,7 @@ const WorkerProfileScreen: React.FC = () => {
             <ProfileCard
               worker={worker}
               servicesCount={services?.length || 0}
-              workDaysCount={workingDays.length}
+              workDaysCount={workingDays?.length ?? 0}
               photosCount={mergedPhotos.length}
               canEdit={canEdit}
               onEdit={handleEditProfile}
@@ -277,79 +329,114 @@ const WorkerProfileScreen: React.FC = () => {
               onEditBanner={handleEditBanner}
             />
 
-            {/* Quick Actions */}
-            {canEdit && (
-              <QuickActionsSection
-                onAddService={() =>
-                  router.push(
-                    routes.screens.upsert_service({
-                      ownerId: worker.id,
-                      ownerType: 'worker',
-                    }),
-                  )
-                }
-                onEditSchedule={() =>
-                  router.push(routes.screens.upsert_schedule(worker.brandId))
-                }
-              />
-            )}
+            <Tabs
+              value={activeTab}
+              onValueChange={(value) => setActiveTab(value as WorkerProfileTab)}
+              className="flex-1"
+            >
+              <TabsList className="bg-background/95 backdrop-blur-xl border-b border-border mt-4 mb-2">
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerClassName="gap-2 px-6"
+                >
+                  <TabsTrigger value="setup">
+                    <Text>Setup</Text>
+                  </TabsTrigger>
+                  <TabsTrigger value="about">
+                    <Text>About</Text>
+                  </TabsTrigger>
+                  <TabsTrigger value="services">
+                    <Text>Services</Text>
+                  </TabsTrigger>
+                  <TabsTrigger value="schedule">
+                    <Text>Schedule</Text>
+                  </TabsTrigger>
+                  <TabsTrigger value="photos">
+                    <Text>Photos</Text>
+                  </TabsTrigger>
+                </ScrollView>
+              </TabsList>
 
-            <WorkerMissing
-              canEdit={canEdit}
-              worker={worker}
-              services={services}
-              mergedPhotos={mergedPhotos}
-              workingDays={workingDays}
-              handleAddPhoto={handleAddPhoto}
-              handleEditWorker={handleEditProfile}
-              handleEditProfileImage={handleEditProfileImage}
-              handleEditBanner={handleEditBanner}
-            />
+              <TabsContent value="setup" className="flex-1">
+                {/* Quick Actions */}
+                {canEdit && (
+                  <QuickActionsSection
+                    onAddService={() =>
+                      router.push(
+                        routes.screens.upsert_service({
+                          ownerId: worker.id,
+                          ownerType: 'worker',
+                        }),
+                      )
+                    }
+                    onEditSchedule={() =>
+                      router.push(
+                        routes.screens.upsert_schedule(worker.brandId),
+                      )
+                    }
+                  />
+                )}
+                {renderMissing(undefined, 'full')}
+              </TabsContent>
 
-            {/* About Section */}
-            <AboutSectionDisplay
-              worker={worker}
-              onEdit={handleEditProfile}
-              canEdit={canEdit}
-            />
+              {/* About Section */}
+              <TabsContent value="about" className="flex-1">
+                {renderMissing(['details', 'description', 'images'])}
+                <AboutSectionDisplay
+                  worker={worker}
+                  onEdit={handleEditProfile}
+                  canEdit={canEdit}
+                />
+              </TabsContent>
 
-            {/* Services Section */}
-            <ServicesList
-              services={services ?? []}
-              canEdit={canEdit}
-              onAddService={() =>
-                router.push(
-                  routes.screens.upsert_service({
-                    ownerId: worker.id,
-                    ownerType: 'worker',
-                  }),
-                )
-              }
-              onServicePress={(service) =>
-                router.push(
-                  routes.screens.upsert_service({
-                    serviceId: service.id,
-                    ownerId: worker.id,
-                  }),
-                )
-              }
-            />
+              {/* Services Section */}
+              <TabsContent value="services" className="flex-1">
+                {renderMissing(['services'])}
+                <ServicesList
+                  services={services ?? []}
+                  canEdit={canEdit}
+                  onAddService={() =>
+                    router.push(
+                      routes.screens.upsert_service({
+                        ownerId: worker.id,
+                        ownerType: 'worker',
+                      }),
+                    )
+                  }
+                  onServicePress={(service) =>
+                    router.push(
+                      routes.screens.upsert_service({
+                        serviceId: service.id,
+                        ownerId: worker.id,
+                      }),
+                    )
+                  }
+                />
+              </TabsContent>
 
-            <ScheduleDisplay
-              workingDays={workingDays}
-              canEdit={canEdit}
-              onEditSchedule={() =>
-                router.push(routes.screens.upsert_schedule(worker.brandId))
-              }
-            />
+              <TabsContent value="schedule" className="flex-1">
+                {renderMissing(['schedule'])}
+                <ScheduleDisplay
+                  workingDays={workingDays ?? []}
+                  canEdit={canEdit}
+                  onEditSchedule={() =>
+                    router.push(routes.screens.upsert_schedule(worker.brandId))
+                  }
+                />
+              </TabsContent>
 
-            {/* Photos Section */}
-            <ProfilePhotosGrid
-              photos={mergedPhotos}
-              canEdit={canEdit}
-              onAddPhoto={handleAddPhoto}
-              onPhotoPress={handlePhotoPress}
-            />
+              {/* Photos Section */}
+              <TabsContent value="photos" className="flex-1">
+                {renderMissing(['photos'])}
+                <ProfilePhotosGrid
+                  photos={mergedPhotos}
+                  canEdit={canEdit}
+                  onAddPhoto={handleAddPhoto}
+                  onPhotoPress={handlePhotoPress}
+                />
+              </TabsContent>
+            </Tabs>
           </ScrollView>
 
           {/* Bottom Sheets */}

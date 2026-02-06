@@ -13,14 +13,16 @@ import { IWorker } from '@/types/worker.type';
 
 type WorkerMissingProps = {
   canEdit: boolean;
-  worker: IWorker;
+  worker?: IWorker;
   services?: IService[];
-  handleEditWorker: () => void;
-  handleEditProfileImage: () => void;
-  handleEditBanner: () => void;
-  handleAddPhoto: () => void;
-  mergedPhotos: IFile[];
-  workingDays: IWorkingDay[];
+  handleEditWorker?: () => void;
+  handleEditProfileImage?: () => void;
+  handleEditBanner?: () => void;
+  handleAddPhoto?: () => void;
+  mergedPhotos?: IFile[];
+  workingDays?: IWorkingDay[];
+  filterIds?: string[];
+  variant?: 'full' | 'inline';
 };
 
 const WorkerMissing: React.FC<WorkerMissingProps> = ({
@@ -31,8 +33,10 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
   handleEditProfileImage,
   handleEditBanner,
   handleAddPhoto,
-  mergedPhotos,
-  workingDays,
+  mergedPhotos = [],
+  workingDays = [],
+  filterIds,
+  variant = 'full',
 }) => {
   const profileCompletion = useMemo(() => {
     const steps = [
@@ -94,10 +98,12 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
         title: 'Add profile details',
         description: 'Share your name and role with clients.',
         icon: Icons.User,
-        action: {
-          label: 'Edit details',
-          onPress: handleEditWorker,
-        },
+        action: handleEditWorker
+          ? {
+              label: 'Edit details',
+              onPress: handleEditWorker,
+            }
+          : undefined,
       });
     }
 
@@ -107,10 +113,12 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
         title: 'Write your story',
         description: 'Let clients know what makes your work special.',
         icon: Icons.Notebook,
-        action: {
-          label: 'Add bio',
-          onPress: handleEditWorker,
-        },
+        action: handleEditWorker
+          ? {
+              label: 'Add bio',
+              onPress: handleEditWorker,
+            }
+          : undefined,
       });
     }
 
@@ -124,16 +132,20 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
         description: 'Add a profile photo and banner to stand out.',
         icon: Icons.Image,
         action: isMissingAvatar
-          ? {
-              label: 'Add photo',
-              onPress: handleEditProfileImage,
-            }
-          : {
-              label: 'Add banner',
-              onPress: handleEditBanner,
-            },
+          ? handleEditProfileImage
+            ? {
+                label: 'Add photo',
+                onPress: handleEditProfileImage,
+              }
+            : undefined
+          : handleEditBanner
+            ? {
+                label: 'Add banner',
+                onPress: handleEditBanner,
+              }
+            : undefined,
         secondaryAction:
-          isMissingAvatar && isMissingBanner
+          isMissingAvatar && isMissingBanner && handleEditBanner
             ? {
                 label: 'Add banner',
                 onPress: handleEditBanner,
@@ -167,10 +179,12 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
         title: 'Showcase your work',
         description: 'Upload photos to highlight your best work.',
         icon: Icons.Camera,
-        action: {
-          label: 'Add photos',
-          onPress: handleAddPhoto,
-        },
+        action: handleAddPhoto
+          ? {
+              label: 'Add photos',
+              onPress: handleAddPhoto,
+            }
+          : undefined,
       });
     }
 
@@ -208,7 +222,69 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
     workingDays.length,
   ]);
 
-  if (!canEdit) return null;
+  const filteredItems = useMemo(() => {
+    if (!filterIds || filterIds.length === 0) return missingSetupItems;
+    return missingSetupItems.filter((item) => filterIds.includes(item.id));
+  }, [filterIds, missingSetupItems]);
+
+  if (!canEdit || filteredItems.length === 0) return null;
+
+  const cards = (
+    <View className="mt-4 gap-3">
+      {filteredItems.map((item) => {
+        const Icon = item.icon;
+
+        return (
+          <View
+            key={item.id}
+            className="rounded-2xl border border-border/50 bg-card/50 p-4"
+          >
+            <View className="flex-row items-start gap-3">
+              <View className="h-10 w-10 rounded-xl bg-primary/10 items-center justify-center">
+                <Icon className="text-primary" size={20} />
+              </View>
+              <View className="flex-1">
+                <Text className="font-subtitle text-foreground">
+                  {item.title}
+                </Text>
+                <Text className="font-caption text-muted-foreground mt-1">
+                  {item.description}
+                </Text>
+              </View>
+            </View>
+
+            <View className="flex-row gap-3 mt-4">
+              {item.action && (
+                <Pressable
+                  onPress={item.action.onPress}
+                  className="flex-1 rounded-xl border border-primary/20 bg-primary/10 px-3 py-2"
+                >
+                  <Text className="text-primary text-center font-subtitle">
+                    {item.action.label}
+                  </Text>
+                </Pressable>
+              )}
+              {item.secondaryAction && (
+                <Pressable
+                  onPress={item.secondaryAction.onPress}
+                  className="flex-1 rounded-xl border border-border/50 bg-muted/20 px-3 py-2"
+                >
+                  <Text className="text-foreground text-center font-subtitle">
+                    {item.secondaryAction.label}
+                  </Text>
+                </Pressable>
+              )}
+            </View>
+          </View>
+        );
+      })}
+    </View>
+  );
+
+  if (variant === 'inline') {
+    return <View className="px-6 mb-6">{cards}</View>;
+  }
+
   return (
     <View className="px-6 mb-8">
       <View className="flex-row items-center justify-between">
@@ -219,63 +295,13 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
           {profileCompletion.completedCount}/{profileCompletion.total}
         </Text>
       </View>
-      <View className="mt-3 h-3 rounded-full bg-muted/30 overflow-hidden">
+      <View className="mt-3 h-3 rounded-full bg-muted/80 overflow-hidden">
         <AnimatedProgress
           currentStep={profileCompletion.completedCount}
           totalSteps={profileCompletion.total}
-          className="bg-primary"
         />
       </View>
-
-      <View className="mt-4 gap-3">
-        {missingSetupItems.map((item) => {
-          const Icon = item.icon;
-
-          return (
-            <View
-              key={item.id}
-              className="rounded-2xl border border-border/50 bg-card/50 p-4"
-            >
-              <View className="flex-row items-start gap-3">
-                <View className="h-10 w-10 rounded-xl bg-primary/10 items-center justify-center">
-                  <Icon className="text-primary" size={20} />
-                </View>
-                <View className="flex-1">
-                  <Text className="font-subtitle text-foreground">
-                    {item.title}
-                  </Text>
-                  <Text className="font-caption text-muted-foreground mt-1">
-                    {item.description}
-                  </Text>
-                </View>
-              </View>
-
-              <View className="flex-row gap-3 mt-4">
-                {item.action && (
-                  <Pressable
-                    onPress={item.action.onPress}
-                    className="flex-1 rounded-xl border border-primary/20 bg-primary/10 px-3 py-2"
-                  >
-                    <Text className="text-primary text-center font-subtitle">
-                      {item.action.label}
-                    </Text>
-                  </Pressable>
-                )}
-                {item.secondaryAction && (
-                  <Pressable
-                    onPress={item.secondaryAction.onPress}
-                    className="flex-1 rounded-xl border border-border/50 bg-muted/20 px-3 py-2"
-                  >
-                    <Text className="text-foreground text-center font-subtitle">
-                      {item.secondaryAction.label}
-                    </Text>
-                  </Pressable>
-                )}
-              </View>
-            </View>
-          );
-        })}
-      </View>
+      {cards}
     </View>
   );
 };

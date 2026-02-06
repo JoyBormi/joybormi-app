@@ -1,12 +1,13 @@
 import { router } from 'expo-router';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
 import { AnimatedProgress } from '@/components/ui/progress';
 import { routes } from '@/constants/routes';
-import { IBrand, IBrandPhoto } from '@/types/brand.type';
+import { IBrand } from '@/types/brand.type';
+import { IFile } from '@/types/file.type';
 import { IWorkingDay } from '@/types/schedule.type';
 import { IService } from '@/types/service.type';
 
@@ -14,31 +15,38 @@ import type { IWorker } from '@/types/worker.type';
 
 type BrandMissingProps = {
   canEdit: boolean;
-  brand: IBrand;
-  workers: IWorker[];
+  brand?: IBrand;
+  workers?: IWorker[];
   services?: IService[];
-  handleEditBrand: () => void;
-  handleEditProfileImage: () => void;
-  handleEditBanner: () => void;
-  handleAddWorker: () => void;
-  handleAddPhoto: () => void;
-  mergedPhotos: IBrandPhoto[];
-  workingDays: IWorkingDay[];
+  handleEditBrand?: () => void;
+  handleEditProfileImage?: () => void;
+  handleEditBanner?: () => void;
+  handleAddWorker?: () => void;
+  handleAddPhoto?: () => void;
+  mergedPhotos?: IFile[];
+  workingDays?: IWorkingDay[];
+  filterIds?: string[];
+  variant?: 'full' | 'inline';
+  expandAll?: boolean;
 };
 
 const BrandMissing: React.FC<BrandMissingProps> = ({
   canEdit,
   brand,
-  workers,
+  workers = [],
   services,
   handleEditBrand,
   handleEditProfileImage,
   handleEditBanner,
   handleAddWorker,
   handleAddPhoto,
-  mergedPhotos,
-  workingDays,
+  mergedPhotos = [],
+  workingDays = [],
+  filterIds,
+  variant = 'full',
+  expandAll = false,
 }) => {
+  const [expanded, setExpanded] = useState(expandAll);
   const profileCompletion = useMemo(() => {
     const steps = [
       {
@@ -104,10 +112,12 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
         title: 'Add brand details',
         description: 'Share your business name, category, and location.',
         icon: Icons.Store,
-        action: {
-          label: 'Edit details',
-          onPress: handleEditBrand,
-        },
+        action: handleEditBrand
+          ? {
+              label: 'Edit details',
+              onPress: handleEditBrand,
+            }
+          : undefined,
       });
     }
 
@@ -117,10 +127,12 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
         title: 'Write your story',
         description: 'Let clients know what makes your brand special.',
         icon: Icons.Notebook,
-        action: {
-          label: 'Add description',
-          onPress: handleEditBrand,
-        },
+        action: handleEditBrand
+          ? {
+              label: 'Add description',
+              onPress: handleEditBrand,
+            }
+          : undefined,
       });
     }
 
@@ -134,16 +146,20 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
         description: 'Add a logo and banner to make your profile stand out.',
         icon: Icons.Image,
         action: isMissingLogo
-          ? {
-              label: 'Add logo',
-              onPress: handleEditProfileImage,
-            }
-          : {
-              label: 'Add banner',
-              onPress: handleEditBanner,
-            },
+          ? handleEditProfileImage
+            ? {
+                label: 'Add logo',
+                onPress: handleEditProfileImage,
+              }
+            : undefined
+          : handleEditBanner
+            ? {
+                label: 'Add banner',
+                onPress: handleEditBanner,
+              }
+            : undefined,
         secondaryAction:
-          isMissingLogo && isMissingBanner
+          isMissingLogo && isMissingBanner && handleEditBanner
             ? {
                 label: 'Add banner',
                 onPress: handleEditBanner,
@@ -172,10 +188,12 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
         title: 'Invite your team',
         description: 'Add team members so clients can book them.',
         icon: Icons.Users,
-        action: {
-          label: 'Invite worker',
-          onPress: handleAddWorker,
-        },
+        action: handleAddWorker
+          ? {
+              label: 'Invite worker',
+              onPress: handleAddWorker,
+            }
+          : undefined,
       });
     }
 
@@ -185,10 +203,12 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
         title: 'Showcase your work',
         description: 'Upload photos to highlight your best work.',
         icon: Icons.Camera,
-        action: {
-          label: 'Add photos',
-          onPress: handleAddPhoto,
-        },
+        action: handleAddPhoto
+          ? {
+              label: 'Add photos',
+              onPress: handleAddPhoto,
+            }
+          : undefined,
       });
     }
 
@@ -225,18 +245,95 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
     workingDays.length,
   ]);
 
-  if (!canEdit) return null;
+  const filteredItems = useMemo(() => {
+    if (!filterIds || filterIds.length === 0) return missingSetupItems;
+    return missingSetupItems.filter((item) => filterIds.includes(item.id));
+  }, [filterIds, missingSetupItems]);
+
+  if (!canEdit || filteredItems.length === 0) return null;
+
+  const cards = (
+    <View className="gap-3">
+      {filteredItems.map((item) => (
+        <View
+          key={item.id}
+          className="bg-card/70 rounded-2xl border border-border/50 p-4"
+        >
+          <View className="flex-row items-start gap-3">
+            <View className="h-10 w-10 rounded-xl bg-primary/10 items-center justify-center">
+              <item.icon size={18} className="text-primary" />
+            </View>
+            <View className="flex-1">
+              <Text className="font-subtitle text-foreground">
+                {item.title}
+              </Text>
+              <Text className="font-caption text-muted-foreground mt-1">
+                {item.description}
+              </Text>
+              {(item.action || item.secondaryAction) && (
+                <View className="flex-row flex-wrap gap-2 mt-3">
+                  {item.action && (
+                    <Pressable
+                      onPress={item.action.onPress}
+                      className="px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30"
+                    >
+                      <Text className="text-primary font-caption">
+                        {item.action.label}
+                      </Text>
+                    </Pressable>
+                  )}
+                  {item.secondaryAction && (
+                    <Pressable
+                      onPress={item.secondaryAction.onPress}
+                      className="px-4 py-1.5 rounded-full bg-muted/40 border border-border/60"
+                    >
+                      <Text className="text-muted-foreground font-caption">
+                        {item.secondaryAction.label}
+                      </Text>
+                    </Pressable>
+                  )}
+                </View>
+              )}
+            </View>
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+
+  if (variant === 'inline') {
+    return <View className="px-6 mb-6">{cards}</View>;
+  }
+
   return (
     <View className="px-6 mb-8">
       <View className="flex-row items-center justify-between">
         <Text className="font-title text-lg text-foreground">
           Profile setup
         </Text>
-        <Text className="font-caption text-muted-foreground">
-          {profileCompletion.completedCount}/{profileCompletion.total}
-        </Text>
+        <Pressable
+          onPress={() => setExpanded(!expanded)}
+          className="flex-row items-center gap-1"
+          aria-expanded={expanded}
+          data-expanded={expanded}
+        >
+          <Text className="font-caption text-muted-foreground">
+            {profileCompletion.completedCount}/{profileCompletion.total}
+          </Text>
+          {expanded ? (
+            <Icons.ChevronUp
+              size={18}
+              className="text-muted-foreground stroke-1.5"
+            />
+          ) : (
+            <Icons.ChevronDown
+              size={18}
+              className="text-muted-foreground stroke-1.5"
+            />
+          )}
+        </Pressable>
       </View>
-      <View className="mt-3 h-3 rounded-full bg-muted/30 overflow-hidden">
+      <View className="mt-3 h-3 rounded-full bg-muted/80 overflow-hidden">
         <AnimatedProgress
           currentStep={profileCompletion.completedCount}
           totalSteps={profileCompletion.total}
@@ -245,62 +342,17 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
       <Text className="font-caption text-muted-foreground mt-2">
         Complete your profile to attract more bookings.
       </Text>
-      {missingSetupItems.length > 0 && (
+      {expanded && (
         <View className="mt-5 gap-3">
           <View className="flex-row items-center justify-between">
             <Text className="font-subtitle text-foreground">
               Missing pieces
             </Text>
             <Text className="font-caption text-muted-foreground">
-              {missingSetupItems.length} left
+              {filteredItems.length} left
             </Text>
           </View>
-          <View className="gap-3">
-            {missingSetupItems.map((item) => (
-              <View
-                key={item.id}
-                className="bg-card/70 rounded-2xl border border-border/50 p-4"
-              >
-                <View className="flex-row items-start gap-3">
-                  <View className="h-10 w-10 rounded-xl bg-primary/10 items-center justify-center">
-                    <item.icon size={18} className="text-primary" />
-                  </View>
-                  <View className="flex-1">
-                    <Text className="font-subtitle text-foreground">
-                      {item.title}
-                    </Text>
-                    <Text className="font-caption text-muted-foreground mt-1">
-                      {item.description}
-                    </Text>
-                    {(item.action || item.secondaryAction) && (
-                      <View className="flex-row flex-wrap gap-2 mt-3">
-                        {item.action && (
-                          <Pressable
-                            onPress={item.action.onPress}
-                            className="px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30"
-                          >
-                            <Text className="text-primary font-caption">
-                              {item.action.label}
-                            </Text>
-                          </Pressable>
-                        )}
-                        {item.secondaryAction && (
-                          <Pressable
-                            onPress={item.secondaryAction.onPress}
-                            className="px-4 py-1.5 rounded-full bg-muted/40 border border-border/60"
-                          >
-                            <Text className="text-muted-foreground font-caption">
-                              {item.secondaryAction.label}
-                            </Text>
-                          </Pressable>
-                        )}
-                      </View>
-                    )}
-                  </View>
-                </View>
-              </View>
-            ))}
-          </View>
+          {cards}
         </View>
       )}
     </View>

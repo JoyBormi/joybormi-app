@@ -61,6 +61,8 @@ export const useError = () => {
           });
         }
 
+        if (code === 0) return null;
+
         // Show error message from backend (backend provides localized messages)
         toast.error({
           title: message ?? t('common.errors.somethingWentWrong'),

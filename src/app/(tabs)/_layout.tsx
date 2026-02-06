@@ -1,6 +1,6 @@
-import { useSegments } from 'expo-router';
+import { useRouter, useSegments } from 'expo-router';
 import { TabList, Tabs, TabSlot, TabTrigger } from 'expo-router/ui';
-import React from 'react';
+import React, { Fragment, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -20,8 +20,30 @@ export default function TabLayout() {
   const { appType } = useUserStore();
 
   const segments = useSegments() as string[];
+  const router = useRouter();
 
   const isTabBarHidden = SCREENS_WITHOUT_TAB.some((s) => segments.includes(s));
+
+  // ────────────────── Memos ────────────────── //
+  const isOnBrandProfile = useMemo(
+    () => segments.includes('brand-profile'),
+    [segments],
+  );
+  const isOnWorkerProfile = useMemo(
+    () => segments.includes('worker-profile'),
+    [segments],
+  );
+
+  useEffect(() => {
+    if (appType === EUserType.CREATOR && isOnWorkerProfile) {
+      router.replace(routes.tabs.brand.brand_profile);
+      return;
+    }
+
+    if (appType === EUserType.WORKER && isOnBrandProfile) {
+      router.replace(routes.tabs.brand.worker_profile);
+    }
+  }, [appType, isOnBrandProfile, isOnWorkerProfile, router]);
 
   return (
     <Tabs key={appType}>
@@ -38,12 +60,16 @@ export default function TabLayout() {
         <TabTrigger name="Home" href="/" asChild>
           <TabButton icon="Home">{t('common.tabs.home')}</TabButton>
         </TabTrigger>
-        <TabTrigger name="second" href="/(calendar)/month" asChild>
-          <TabButton icon="Calendar">{t('common.tabs.calendar')}</TabButton>
-        </TabTrigger>
-        <TabTrigger name="reservations" href="/reservations" asChild>
-          <TabButton icon="List">{t('common.tabs.reservations')}</TabButton>
-        </TabTrigger>
+        {appType !== EUserType.CREATOR && (
+          <Fragment>
+            <TabTrigger name="second" href="/(calendar)/month" asChild>
+              <TabButton icon="Calendar">{t('common.tabs.calendar')}</TabButton>
+            </TabTrigger>
+            <TabTrigger name="reservations" href="/reservations" asChild>
+              <TabButton icon="List">{t('common.tabs.reservations')}</TabButton>
+            </TabTrigger>
+          </Fragment>
+        )}
         {appType === EUserType.CREATOR && (
           <TabTrigger
             name="brand"
@@ -55,7 +81,7 @@ export default function TabLayout() {
         )}
         {appType === EUserType.WORKER && (
           <TabTrigger
-            name="brand"
+            name="worker"
             href={routes.tabs.brand.worker_profile}
             asChild
           >

@@ -20,6 +20,8 @@ import {
   PendingScreen,
   SuspendedScreen,
 } from '@/components/status-screens';
+import { Text } from '@/components/ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IMAGE_CATEGORIES } from '@/constants/global.constants';
 import { routes } from '@/constants/routes';
 import {
@@ -49,6 +51,14 @@ import { ProfilePhotosGrid, ProfileSkeleton } from '@/views/profile/components';
 import { ScheduleDisplay } from '@/views/worker-profile/components';
 
 import type { IWorker } from '@/types/worker.type';
+
+type BrandProfileTab =
+  | 'setup'
+  | 'about'
+  | 'services'
+  | 'schedule'
+  | 'team'
+  | 'photos';
 
 /**
  * @description Brand Profile Management Page - For creators to manage their brand
@@ -85,6 +95,7 @@ const BrandProfileScreen: React.FC = () => {
   const { mutateAsync: deleteFile } = useDeleteFile();
 
   // ───────────────── Local state ────────────────── //
+  const [activeTab, setActiveTab] = useState<BrandProfileTab>('setup');
   const [selectedPhoto, setSelectedPhoto] = useState<IFile | null>(null);
   const [localPhotos, setLocalPhotos] = useState<IFile[]>([]);
   const mergedPhotos = useMemo(
@@ -260,6 +271,56 @@ const BrandProfileScreen: React.FC = () => {
     }
   };
 
+  const missingProps = useMemo(
+    () => ({
+      canEdit,
+      brand,
+      workers: team || [],
+      services,
+      mergedPhotos,
+      workingDays: schedule?.workingDays ?? [],
+      handleAddPhoto,
+      handleAddWorker,
+      handleEditBrand,
+      handleEditProfileImage,
+      handleEditBanner,
+    }),
+    [
+      canEdit,
+      brand,
+      team,
+      services,
+      mergedPhotos,
+      schedule?.workingDays,
+      handleAddPhoto,
+      handleAddWorker,
+      handleEditBrand,
+      handleEditProfileImage,
+      handleEditBanner,
+    ],
+  );
+  const renderMissing = useCallback(
+    (
+      filterIds?: (
+        | 'details'
+        | 'description'
+        | 'images'
+        | 'services'
+        | 'team'
+        | 'photos'
+        | 'schedule'
+      )[],
+      variant: 'inline' | 'full' = 'inline',
+    ) => (
+      <BrandMissing
+        {...missingProps}
+        filterIds={filterIds as string[] | undefined}
+        variant={variant}
+      />
+    ),
+    [missingProps],
+  );
+
   // Early return if no brand data
   if (isLoading) return <ProfileSkeleton />;
   if (!brand) return <NotFoundScreen />;
@@ -295,76 +356,114 @@ const BrandProfileScreen: React.FC = () => {
               onEdit={handleEditBrand}
             />
 
-            {/* Quick Actions */}
-            {canEdit && (
-              <BrandQuickActions
-                onAddService={() =>
-                  router.push(
-                    routes.screens.upsert_service({
-                      ownerId: brand.id,
-                      ownerType: 'brand',
-                    }),
-                  )
-                }
-                onAddWorker={handleAddWorker}
-                onManageHours={() =>
-                  router.push(routes.screens.upsert_schedule(brand.id))
-                }
-                onSetupWorkerProfile={handleSetupWorkerProfile}
-              />
-            )}
+            <Tabs
+              value={activeTab}
+              onValueChange={(value) => setActiveTab(value as BrandProfileTab)}
+              className="flex-1"
+            >
+              <TabsList className="bg-background/95 backdrop-blur-xl border-b border-border mt-4 mb-5">
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerClassName="gap-2 px-6"
+                >
+                  <TabsTrigger value="setup">
+                    <Text>Setup</Text>
+                  </TabsTrigger>
+                  <TabsTrigger value="about">
+                    <Text>About</Text>
+                  </TabsTrigger>
+                  <TabsTrigger value="services">
+                    <Text>Services</Text>
+                  </TabsTrigger>
+                  <TabsTrigger value="schedule">
+                    <Text>Schedule</Text>
+                  </TabsTrigger>
+                  <TabsTrigger value="team">
+                    <Text>Team</Text>
+                  </TabsTrigger>
+                  <TabsTrigger value="photos">
+                    <Text>Photos</Text>
+                  </TabsTrigger>
+                </ScrollView>
+              </TabsList>
 
-            <BrandMissing
-              canEdit={canEdit}
-              brand={brand}
-              workers={team || []}
-              services={services}
-              mergedPhotos={mergedPhotos}
-              workingDays={schedule?.workingDays ?? []}
-              handleAddPhoto={handleAddPhoto}
-              handleAddWorker={handleAddWorker}
-              handleEditBrand={handleEditBrand}
-              handleEditProfileImage={handleEditProfileImage}
-              handleEditBanner={handleEditBanner}
-            />
+              <TabsContent value="setup" className="flex-1">
+                {renderMissing(undefined, 'full')}
 
-            {/* About Section */}
-            <BrandAbout
-              brand={brand}
-              canEdit={canEdit}
-              onEdit={handleEditBrand}
-            />
+                {/* Quick Actions */}
+                {canEdit && (
+                  <BrandQuickActions
+                    onAddService={() =>
+                      router.push(
+                        routes.screens.upsert_service({
+                          ownerId: brand.id,
+                          ownerType: 'brand',
+                        }),
+                      )
+                    }
+                    onAddWorker={handleAddWorker}
+                    onManageHours={() =>
+                      router.push(routes.screens.upsert_schedule(brand.id))
+                    }
+                    onSetupWorkerProfile={handleSetupWorkerProfile}
+                  />
+                )}
+              </TabsContent>
 
-            {/* Services Section */}
-            <BrandServicesList
-              ownerId={brand.id}
-              services={services}
-              canEdit={canEdit}
-            />
+              {/* About Section */}
+              <TabsContent value="about" className="flex-1">
+                {renderMissing(['details', 'description', 'images'])}
+                <BrandAbout
+                  brand={brand}
+                  canEdit={canEdit}
+                  onEdit={handleEditBrand}
+                />
+              </TabsContent>
 
-            <ScheduleDisplay
-              workingDays={schedule?.workingDays ?? []}
-              canEdit={canEdit}
-              onEditSchedule={() =>
-                router.push(routes.screens.upsert_schedule(brand.id))
-              }
-            />
+              {/* Services Section */}
+              <TabsContent value="services" className="flex-1">
+                {renderMissing(['services'])}
+                <BrandServicesList
+                  ownerId={brand.id}
+                  services={services}
+                  canEdit={canEdit}
+                />
+              </TabsContent>
 
-            {/* Team Section */}
-            <BrandTeamList
-              workers={team || []}
-              canEdit={canEdit}
-              onAddWorker={handleAddWorker}
-              onWorkerPress={handleWorkerPress}
-            />
+              <TabsContent value="schedule" className="flex-1">
+                {renderMissing(['schedule'])}
+                <ScheduleDisplay
+                  workingDays={schedule?.workingDays ?? []}
+                  canEdit={canEdit}
+                  onEditSchedule={() =>
+                    router.push(routes.screens.upsert_schedule(brand.id))
+                  }
+                />
+              </TabsContent>
 
-            {/* Photos Section */}
-            <ProfilePhotosGrid
-              photos={mergedPhotos}
-              canEdit={canEdit}
-              onAddPhoto={handleAddPhoto}
-              onPhotoPress={handlePhotoPress}
-            />
+              {/* Team Section */}
+              <TabsContent value="team" className="flex-1">
+                {renderMissing(['team'])}
+                <BrandTeamList
+                  workers={team || []}
+                  canEdit={canEdit}
+                  onAddWorker={handleAddWorker}
+                  onWorkerPress={handleWorkerPress}
+                />
+              </TabsContent>
+
+              {/* Photos Section */}
+              <TabsContent value="photos" className="flex-1">
+                {renderMissing(['photos'])}
+                <ProfilePhotosGrid
+                  photos={mergedPhotos}
+                  canEdit={canEdit}
+                  onAddPhoto={handleAddPhoto}
+                  onPhotoPress={handlePhotoPress}
+                />
+              </TabsContent>
+            </Tabs>
 
             {/* Reviews Section */}
             {/* <BrandReviewsList reviews={reviews} maxDisplay={2} /> */}

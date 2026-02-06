@@ -79,7 +79,7 @@ const createAgentClient = (): AxiosInstance => {
         // Fallback: use HTTP status text
         const fallbackError = new ApiError({
           error: {
-            code: response.status,
+            code: 0,
             message: response.statusText || 'Request failed',
             status: response.status,
             timestamp: new Date().toISOString(),
