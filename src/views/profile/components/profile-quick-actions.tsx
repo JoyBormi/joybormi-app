@@ -1,7 +1,8 @@
+import { LucideIcon } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, View } from 'react-native';
 
-import Icons, { type IconProps } from '@/components/icons';
+import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
 import { cn } from '@/lib/utils';
 
@@ -10,7 +11,7 @@ interface QuickAction {
   title: string;
   description: string;
   onPress: () => void;
-  icon: React.ComponentType<IconProps>;
+  icon: LucideIcon;
   iconClassName?: string;
   iconContainerClassName?: string;
   containerClassName?: string;

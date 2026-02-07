@@ -39,8 +39,10 @@ export const DayCard: React.FC<DayCardProps> = ({
   return (
     <View
       className={cn(
-        'rounded-2xl border transition-all shadow-sm backdrop-blur-xl',
-        isActive ? 'bg-card border-primary/20 ' : 'bg-muted/5 border-border/10',
+        'rounded-2xl border transition-all',
+        isActive
+          ? 'bg-popover border-primary/20 '
+          : 'bg-muted/5 border-border/10',
       )}
     >
       <PressableBounce
@@ -101,7 +103,7 @@ export const DayCard: React.FC<DayCardProps> = ({
           {config.breaks && config.breaks.length > 0 && (
             <View className="gap-3 mb-3">
               {config.breaks.map((breakItem) => (
-                <View key={breakItem.id} className="bg-muted/10 rounded-xl p-3">
+                <View key={breakItem.id} className="bg-muted/10 rounded-md">
                   <View className="flex-row items-center gap-2 pb-4 px-1.5">
                     <Icons.Coffee size={16} className="text-muted-foreground" />
                     <Pressable
@@ -138,10 +140,10 @@ export const DayCard: React.FC<DayCardProps> = ({
           {/* Add Break Button */}
           <Pressable
             onPress={() => onAddBreak(dayValue)}
-            className="flex-row items-center justify-center gap-2 bg-muted/5 border border-dashed border-border/30 rounded-xl p-3 active:bg-muted/10"
+            className="flex-row items-center justify-center gap-2 bg-card/5 border border-dashed border-border/70 rounded-md p-3 active:bg-muted/10"
           >
-            <Icons.Plus size={18} className="text-muted-foreground" />
-            <Text className="font-body text-muted-foreground">Add Break</Text>
+            <Icons.Plus size={18} className="text-card-foreground" />
+            <Text className="font-body text-card-foreground">Add Break</Text>
           </Pressable>
         </View>
       )}

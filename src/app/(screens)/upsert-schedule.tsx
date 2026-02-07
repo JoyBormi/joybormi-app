@@ -253,18 +253,23 @@ const ManageScheduleScreen = () => {
   }
 
   return (
-    <View className="main-area" style={{ paddingTop: insets.top }}>
+    <View
+      className="main-area bg-background"
+      style={{ paddingTop: insets.top }}
+    >
       <Header
         title="Working Hours"
-        subtitle="Manage your working hours"
+        subtitle="Set availability and breaks for each day."
         animate={false}
+        className="mb-4"
         variant="row"
       />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          gap: 16,
+          gap: 14,
+          paddingTop: 18,
           paddingBottom: insets.bottom + 100,
         }}
       >
@@ -295,9 +300,13 @@ const ManageScheduleScreen = () => {
         style={{ paddingBottom: insets.bottom }}
         className="absolute bottom-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-t border-border/50 px-5 py-4"
       >
-        <Button size="lg" onPress={handleSave} loading={isUpdatingSchedule}>
-          <Text>Save Changes</Text>
-        </Button>
+        <View className="flex-row items-center gap-3">
+          <View className="flex-1">
+            <Button size="lg" onPress={handleSave} loading={isUpdatingSchedule}>
+              <Text>Save Changes</Text>
+            </Button>
+          </View>
+        </View>
       </View>
 
       <TimePickerSheet

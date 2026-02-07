@@ -1,15 +1,16 @@
 import { router } from 'expo-router';
-import React, { useMemo, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import React, { useMemo } from 'react';
 
 import Icons from '@/components/icons';
-import { Text } from '@/components/ui';
-import { AnimatedProgress } from '@/components/ui/progress';
 import { routes } from '@/constants/routes';
 import { IBrand } from '@/types/brand.type';
 import { IFile } from '@/types/file.type';
 import { IWorkingDay } from '@/types/schedule.type';
 import { IService } from '@/types/service.type';
+import {
+  MissingItem,
+  ProfileMissing,
+} from '@/views/profile/components/profile-missing';
 
 import type { IWorker } from '@/types/worker.type';
 
@@ -46,9 +47,8 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
   variant = 'full',
   expandAll = false,
 }) => {
-  const [expanded, setExpanded] = useState(expandAll);
-  const profileCompletion = useMemo(() => {
-    const steps = [
+  const steps = useMemo(
+    () => [
       {
         label: 'Brand details',
         complete: Boolean(brand?.brandName && brand?.businessCategory),
@@ -77,34 +77,22 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
         label: 'Schedule',
         complete: workingDays.length > 0,
       },
-    ];
-    const completedCount = steps.filter((step) => step.complete).length;
-    return {
-      steps,
-      completedCount,
-      total: steps.length,
-    };
-  }, [
-    brand?.bannerImage,
-    brand?.brandName,
-    brand?.businessCategory,
-    brand?.description,
-    brand?.profileImage,
-    mergedPhotos.length,
-    services?.length,
-    workers.length,
-    workingDays.length,
-  ]);
+    ],
+    [
+      brand?.bannerImage,
+      brand?.brandName,
+      brand?.businessCategory,
+      brand?.description,
+      brand?.profileImage,
+      mergedPhotos.length,
+      services?.length,
+      workers.length,
+      workingDays.length,
+    ],
+  );
 
   const missingSetupItems = useMemo(() => {
-    const items: {
-      id: string;
-      title: string;
-      description: string;
-      icon: typeof Icons.Store;
-      action?: { label: string; onPress: () => void };
-      secondaryAction?: { label: string; onPress: () => void };
-    }[] = [];
+    const items: MissingItem[] = [];
 
     if (!brand?.brandName || !brand?.businessCategory) {
       items.push({
@@ -245,117 +233,16 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
     workingDays.length,
   ]);
 
-  const filteredItems = useMemo(() => {
-    if (!filterIds || filterIds.length === 0) return missingSetupItems;
-    return missingSetupItems.filter((item) => filterIds.includes(item.id));
-  }, [filterIds, missingSetupItems]);
-
-  if (!canEdit || filteredItems.length === 0) return null;
-
-  const cards = (
-    <View className="gap-3">
-      {filteredItems.map((item) => (
-        <View
-          key={item.id}
-          className="bg-card/70 rounded-2xl border border-border/50 p-4"
-        >
-          <View className="flex-row items-start gap-3">
-            <View className="h-10 w-10 rounded-xl bg-primary/10 items-center justify-center">
-              <item.icon size={18} className="text-primary" />
-            </View>
-            <View className="flex-1">
-              <Text className="font-subtitle text-foreground">
-                {item.title}
-              </Text>
-              <Text className="font-caption text-muted-foreground mt-1">
-                {item.description}
-              </Text>
-              {(item.action || item.secondaryAction) && (
-                <View className="flex-row flex-wrap gap-2 mt-3">
-                  {item.action && (
-                    <Pressable
-                      onPress={item.action.onPress}
-                      className="px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30"
-                    >
-                      <Text className="text-primary font-caption">
-                        {item.action.label}
-                      </Text>
-                    </Pressable>
-                  )}
-                  {item.secondaryAction && (
-                    <Pressable
-                      onPress={item.secondaryAction.onPress}
-                      className="px-4 py-1.5 rounded-full bg-muted/40 border border-border/60"
-                    >
-                      <Text className="text-muted-foreground font-caption">
-                        {item.secondaryAction.label}
-                      </Text>
-                    </Pressable>
-                  )}
-                </View>
-              )}
-            </View>
-          </View>
-        </View>
-      ))}
-    </View>
-  );
-
-  if (variant === 'inline') {
-    return <View className="px-6 mb-6">{cards}</View>;
-  }
-
   return (
-    <View className="px-6 mb-8">
-      <View className="flex-row items-center justify-between">
-        <Text className="font-title text-lg text-foreground">
-          Profile setup
-        </Text>
-        <Pressable
-          onPress={() => setExpanded(!expanded)}
-          className="flex-row items-center gap-1"
-          aria-expanded={expanded}
-          data-expanded={expanded}
-        >
-          {expanded ? (
-            <Icons.ChevronUp
-              size={18}
-              className="text-muted-foreground stroke-1.5"
-            />
-          ) : (
-            <Icons.ChevronDown
-              size={18}
-              className="text-muted-foreground stroke-1.5"
-            />
-          )}
-          <Text className="font-caption text-muted-foreground">
-            {profileCompletion.completedCount}/{profileCompletion.total}
-          </Text>
-        </Pressable>
-      </View>
-      <View className="mt-3 h-3 rounded-full bg-muted/80 overflow-hidden">
-        <AnimatedProgress
-          currentStep={profileCompletion.completedCount}
-          totalSteps={profileCompletion.total}
-        />
-      </View>
-      <Text className="font-caption text-muted-foreground mt-2">
-        Complete your profile to attract more bookings.
-      </Text>
-      {expanded && (
-        <View className="mt-5 gap-3">
-          <View className="flex-row items-center justify-between">
-            <Text className="font-subtitle text-foreground">
-              Missing pieces
-            </Text>
-            <Text className="font-caption text-muted-foreground">
-              {filteredItems.length} left
-            </Text>
-          </View>
-          {cards}
-        </View>
-      )}
-    </View>
+    <ProfileMissing
+      canEdit={canEdit}
+      steps={steps}
+      items={missingSetupItems}
+      filterIds={filterIds}
+      variant={variant}
+      expandAll={expandAll}
+      summaryText="Complete your profile to attract more bookings."
+    />
   );
 };
 

@@ -2,7 +2,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { Fragment, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import {
   SafeAreaView,
@@ -21,7 +21,7 @@ import {
   PendingScreen,
   SuspendedScreen,
 } from '@/components/status-screens';
-import { Button, Text } from '@/components/ui';
+import { Text } from '@/components/ui';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IMAGE_CATEGORIES } from '@/constants/global.constants';
 import { routes } from '@/constants/routes';
@@ -32,11 +32,9 @@ import {
   useGetBrandTeam,
   useUpdateBrand,
 } from '@/hooks/brand';
-import { normalizeFileUrl, useDeleteFile, useUploadFile } from '@/hooks/files';
+import { useDeleteFile, useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
-import { buildUploadedFile } from '@/lib/utils';
-import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
 import { BrandStatus } from '@/types/brand.type';
 import { IFile } from '@/types/file.type';
@@ -49,7 +47,13 @@ import {
   BrandServicesList,
   BrandTeamList,
 } from '@/views/brand-profile/components';
-import { ProfilePhotosGrid, ProfileSkeleton } from '@/views/profile/components';
+import {
+  DangerZone,
+  ProfilePhotosGrid,
+  ProfileSkeleton,
+} from '@/views/profile/components';
+import { useProfileGallery } from '@/views/profile/hooks/use-profile-gallery';
+import { createImageUploadHandler } from '@/views/profile/utils/profile-media';
 import { ScheduleDisplay } from '@/views/worker-profile/components';
 
 import type { IWorker } from '@/types/worker.type';
@@ -100,12 +104,23 @@ const BrandProfileScreen: React.FC = () => {
 
   // ───────────────── Local state ────────────────── //
   const [activeTab, setActiveTab] = useState<BrandProfileTab>('setup');
-  const [selectedPhoto, setSelectedPhoto] = useState<IFile | null>(null);
-  const [localPhotos, setLocalPhotos] = useState<IFile[]>([]);
-  const mergedPhotos = useMemo(
-    () => [...localPhotos, ...(photos ?? [])],
-    [localPhotos, photos],
-  );
+  const {
+    selectedPhoto,
+    setSelectedPhoto,
+    mergedPhotos,
+    handleUploadPhotos,
+    handleDeletePhoto,
+  } = useProfileGallery({
+    ownerId: brand?.id,
+    ownerType: 'BRAND',
+    photos,
+    uploadFile,
+    deleteFile,
+    defaultCategory: IMAGE_CATEGORIES.other,
+    fileNamePrefix: 'brand-photo',
+    onRefresh: refetchPhotos,
+    onErrorMessage: t('common.errors.somethingWentWrong'),
+  });
 
   const refetch = () => {
     refetchBrand();
@@ -131,64 +146,40 @@ const BrandProfileScreen: React.FC = () => {
     uploadBannerSheetRef.current?.present();
   }, [uploadBannerSheetRef]);
 
-  const handleUploadBanner = async (uri: string) => {
-    if (!brand?.id) return;
-
-    try {
-      const file = buildUploadedFile(uri, IMAGE_CATEGORIES.brand_banner);
-      const uploadedFile = await uploadFile({
-        file,
-        ownerId: brand.id,
+  const handleUploadBanner = useMemo(
+    () =>
+      createImageUploadHandler({
+        ownerId: brand?.id,
         ownerType: 'BRAND',
         category: IMAGE_CATEGORIES.brand_banner,
-      });
-
-      if (!uploadedFile.url) {
-        throw new Error(t('common.errors.somethingWentWrong'));
-      }
-
-      const bannerUrl = normalizeFileUrl(uploadedFile.url);
-
-      if (!bannerUrl) {
-        throw new Error(t('common.errors.somethingWentWrong'));
-      }
-
-      await updateBrand({ brandId: brand.id, bannerImage: bannerUrl });
-    } catch {
-      toast.error({ title: t('common.errors.somethingWentWrong') });
-    }
-  };
+        uploadFile,
+        onUpdate: async (url) => {
+          if (!brand?.id) return;
+          await updateBrand({ brandId: brand.id, bannerImage: url });
+        },
+        onErrorMessage: t('common.errors.somethingWentWrong'),
+      }),
+    [brand?.id, t, updateBrand, uploadFile],
+  );
   const handleEditProfileImage = useCallback(() => {
     uploadProfileImageSheetRef.current?.present();
   }, [uploadProfileImageSheetRef]);
 
-  const handleUploadProfileImage = async (uri: string) => {
-    if (!brand?.id) return;
-
-    try {
-      const file = buildUploadedFile(uri, IMAGE_CATEGORIES.brand_avatar);
-      const uploadedFile = await uploadFile({
-        file,
-        ownerId: brand.id,
+  const handleUploadProfileImage = useMemo(
+    () =>
+      createImageUploadHandler({
+        ownerId: brand?.id,
         ownerType: 'BRAND',
         category: IMAGE_CATEGORIES.brand_avatar,
-      });
-
-      if (!uploadedFile.url) {
-        throw new Error(t('common.errors.somethingWentWrong'));
-      }
-
-      const profileUrl = normalizeFileUrl(uploadedFile.url);
-
-      if (!profileUrl) {
-        throw new Error(t('common.errors.somethingWentWrong'));
-      }
-
-      await updateBrand({ brandId: brand.id, profileImage: profileUrl });
-    } catch {
-      toast.error({ title: t('common.errors.somethingWentWrong') });
-    }
-  };
+        uploadFile,
+        onUpdate: async (url) => {
+          if (!brand?.id) return;
+          await updateBrand({ brandId: brand.id, profileImage: url });
+        },
+        onErrorMessage: t('common.errors.somethingWentWrong'),
+      }),
+    [brand?.id, t, updateBrand, uploadFile],
+  );
 
   const handleAddWorker = useCallback(() => {
     inviteTeamSheetRef.current?.present();
@@ -221,65 +212,8 @@ const BrandProfileScreen: React.FC = () => {
   };
 
   /**
-   * @description Uploads new photos to the brand
-   * @param newPhotos The new photos to upload
+   * Photo handlers are managed by useProfileGallery
    */
-  const handleUploadPhotos = async (
-    newPhotos: { uri: string; category: string }[],
-  ) => {
-    if (!brand?.id || newPhotos.length === 0) return;
-
-    try {
-      const uploadResults = await Promise.all(
-        newPhotos.map((photo, index) =>
-          uploadFile({
-            ownerId: brand.id,
-            ownerType: 'BRAND',
-            file: buildUploadedFile(photo.uri, `brand-photo-${index}`),
-            category: photo.category ?? IMAGE_CATEGORIES.other,
-          }),
-        ),
-      );
-      const photosToAdd = uploadResults
-        .map((uploadedFile, index) => {
-          const url = normalizeFileUrl(uploadedFile.url!);
-          if (!url) return null;
-          return {
-            id: uploadedFile.id ?? `photo-${Date.now()}-${index}`,
-            url,
-            category: (newPhotos[index]?.category ??
-              'other') as IFile['category'],
-            uploadedAt: new Date().toISOString(),
-          };
-        })
-        .filter((photo) => Boolean(photo));
-      if (photosToAdd.length > 0) {
-        setLocalPhotos((prev) => [...photosToAdd, ...prev] as IFile[]);
-      }
-
-      if (selectedPhoto?.id) {
-        await deleteFile(selectedPhoto.id);
-        setSelectedPhoto(null);
-        refetchPhotos();
-      }
-    } catch {
-      toast.error({ title: t('common.errors.somethingWentWrong') });
-    }
-  };
-
-  /**
-   * @description Deletes a photo
-   * @param fileId The ID of the photo to delete
-   */
-  const handleDeletePhoto = async (fileId: string) => {
-    if (!brand?.id || !fileId) return;
-    try {
-      await deleteFile(fileId);
-      refetchPhotos();
-    } catch {
-      toast.error({ title: t('common.errors.somethingWentWrong') });
-    }
-  };
 
   const missingProps = useMemo(
     () => ({
@@ -334,6 +268,7 @@ const BrandProfileScreen: React.FC = () => {
   // Early return if no brand data
   if (isLoading) return <ProfileSkeleton />;
   if (!brand) return <NotFoundScreen />;
+  console.log(team);
 
   return (
     <Fragment>
@@ -478,35 +413,14 @@ const BrandProfileScreen: React.FC = () => {
               </TabsContent>
 
               <TabsContent value="danger" className="flex-1 min-h-[50vh]">
-                <View className="px-6 pt-2">
-                  <View className="rounded-3xl border border-destructive/25 bg-destructive/5 p-5">
-                    <View className="h-1.5 w-16 rounded-full bg-destructive/70 mb-4" />
-                    <Text className="font-title text-lg text-destructive">
-                      Danger Zone
-                    </Text>
-                    <Text className="mt-2 text-sm text-muted-foreground">
-                      Deleting your brand is permanent. This removes your brand
-                      profile, team, services, schedule, and photos.
-                    </Text>
-
-                    <View className="mt-5 rounded-2xl border border-border/40 bg-background/80 px-4 py-4">
-                      <Text className="font-subtitle text-foreground">
-                        Delete brand
-                      </Text>
-                      <Text className="mt-1 text-xs text-muted-foreground">
-                        You will lose access to all brand data and team members.
-                      </Text>
-                      <Button
-                        variant="destructive"
-                        className="mt-4"
-                        onPress={handleDeleteBrand}
-                        disabled={!canEdit || isDeleting}
-                      >
-                        <Text>Delete Brand</Text>
-                      </Button>
-                    </View>
-                  </View>
-                </View>
+                <DangerZone
+                  description="Deleting your brand is permanent. This removes your brand profile, team, services, schedule, and photos."
+                  actionTitle="Delete brand"
+                  actionDescription="You will lose access to all brand data and team members."
+                  actionLabel="Delete Brand"
+                  onPress={handleDeleteBrand}
+                  disabled={!canEdit || isDeleting}
+                />
               </TabsContent>
             </Tabs>
 

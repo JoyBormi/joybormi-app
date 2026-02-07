@@ -121,6 +121,10 @@ export const UploadPhotosSheet = forwardRef<
           uri: asset.uri,
           category: selectedCategory,
         }));
+        setSelectedPhoto({
+          uri: result.assets[0].uri,
+          category: selectedCategory,
+        });
         setSelectedPhotos((prev) => [...prev, ...newPhotos]);
       }
     }
@@ -216,37 +220,6 @@ export const UploadPhotosSheet = forwardRef<
           {isEditMode ? 'Edit Photo' : 'Upload Photos'}
         </Text>
 
-        {/* Image / Picker */}
-        <Pressable
-          onPress={pickImages}
-          className={cn(
-            'self-center items-center justify-center',
-            isEditMode
-              ? 'w-52 h-52'
-              : 'w-52 h-52 rounded-2xl border-2 border-dashed border-primary/30',
-          )}
-        >
-          {isEditMode && selectedPhoto ? (
-            <View className="relative">
-              <Image
-                source={{ uri: selectedPhoto.uri }}
-                className="w-52 h-52 rounded-2xl object-contain"
-              />
-              {/* Pen icon */}
-              <View className="absolute bottom-2 right-2 bg-black/60 rounded-full p-2">
-                <Icons.Pencil size={16} className="text-white" />
-              </View>
-            </View>
-          ) : (
-            <>
-              <Icons.Plus size={32} className="text-primary" />
-              <Text className="font-subtitle text-foreground mt-2">
-                Select Photos
-              </Text>
-            </>
-          )}
-        </Pressable>
-
         {/* Category (ALWAYS visible) */}
         <View className="flex-row flex-wrap gap-2">
           {resolvedCategories.map((cat) => {
@@ -285,12 +258,42 @@ export const UploadPhotosSheet = forwardRef<
           })}
         </View>
 
+        {/* Image / Picker */}
+        <Pressable
+          onPress={pickImages}
+          className={cn(
+            'self-center items-center justify-center',
+            isEditMode
+              ? 'w-52 h-52'
+              : 'w-full h-52 rounded-2xl border-2 border-dashed border-primary/30',
+          )}
+        >
+          {isEditMode && selectedPhoto ? (
+            <View className="relative">
+              <Image
+                source={{ uri: selectedPhoto.uri }}
+                className="w-52 h-52 rounded-2xl object-contain"
+              />
+              <View className="absolute bottom-2 right-2 bg-black/60 rounded-full p-2">
+                <Icons.Pencil size={16} className="text-white" />
+              </View>
+            </View>
+          ) : (
+            <>
+              <Icons.Plus size={32} className="text-primary" />
+              <Text className="font-subtitle text-foreground mt-2">
+                Select Photos
+              </Text>
+            </>
+          )}
+        </Pressable>
+
         {/* Grid (upload mode only) */}
         {!isEditMode && selectedPhotos.length > 0 && (
           <View className="flex-row flex-wrap gap-2">
             {selectedPhotos.map((photo, index) => (
               <Image
-                key={index}
+                key={`${photo.uri}-${index}`}
                 source={{ uri: photo.uri }}
                 className="w-[31%] aspect-square rounded-xl"
               />

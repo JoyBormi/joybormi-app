@@ -2,6 +2,8 @@
  * Worker Profile Types
  */
 
+export type WorkerStatus = 'ACTIVE' | 'INACTIVE' | 'PENDING';
+
 export interface IWorker {
   id: string;
   userId: string;
@@ -14,7 +16,7 @@ export interface IWorker {
   specialties: string[];
   rating: number;
   reviewCount: number;
-  status: 'active' | 'inactive' | 'pending';
+  status: WorkerStatus;
   email: string;
   phone: string;
 }

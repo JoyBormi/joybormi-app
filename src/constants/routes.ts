@@ -59,6 +59,8 @@ export const routes = {
     }),
     edit_profile:
       '/(screens)/(worker)/edit-worker-profile' as RelativePathString,
+    experience_history:
+      '/(screens)/(worker)/experience-history' as RelativePathString,
     invite_code: '/(screens)/(worker)/invite-code' as RelativePathString,
     event: (id: string): Href => ({
       pathname: '/(screens)/(worker)/event/[id]',

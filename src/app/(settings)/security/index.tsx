@@ -113,7 +113,7 @@ export default function SecurityScreen() {
 
   return (
     <KeyboardAvoid
-      className="bg-background px-4"
+      className="bg-background px-5"
       scrollConfig={{
         contentContainerStyle: {
           paddingBottom: insets.bottom + 40,
@@ -128,38 +128,48 @@ export default function SecurityScreen() {
       />
 
       {/* --- ACCESS SECTION --- */}
-      <Text className="font-caption text-xs text-muted-foreground uppercase tracking-tighter mb-2 ml-1">
-        Access
-      </Text>
-      <View className="bg-card border border-border rounded-xl px-4 mb-6">
-        <View className="flex-row items-center justify-between py-3 border-b border-border/50">
-          <Text className="text-sm font-medium text-foreground">Face ID</Text>
-          <Switch value={faceId} onValueChange={setFaceId} />
-        </View>
-        <View className="flex-row items-center justify-between py-3">
-          <Text className="text-sm font-medium text-foreground">
-            Lock Screen
-          </Text>
-          <Switch value={appLock} onValueChange={setAppLock} />
+      <View className="mb-6">
+        <Text className="font-title text-foreground mb-2">Access</Text>
+        <View className="bg-card/70 border border-border/60 rounded-2xl px-4">
+          <View className="flex-row items-center justify-between py-4 border-b border-border/40">
+            <View>
+              <Text className="text-sm font-medium text-foreground">
+                Face ID
+              </Text>
+              <Text className="text-xs text-muted-foreground">
+                Unlock with biometrics
+              </Text>
+            </View>
+            <Switch value={faceId} onValueChange={setFaceId} />
+          </View>
+          <View className="flex-row items-center justify-between py-4">
+            <View>
+              <Text className="text-sm font-medium text-foreground">
+                App Lock
+              </Text>
+              <Text className="text-xs text-muted-foreground">
+                Require a passcode on open
+              </Text>
+            </View>
+            <Switch value={appLock} onValueChange={setAppLock} />
+          </View>
         </View>
       </View>
 
       {/* --- CONTACTS SECTION --- */}
-      <Text className="font-caption text-xs text-muted-foreground uppercase tracking-tighter mb-2 ml-1">
-        Verification
-      </Text>
-      <View className="gap-y-3 mb-6">
+      <View className="mb-6">
+        <Text className="font-title text-foreground mb-2">Verification</Text>
         {/* Email */}
-        <View className="bg-card border border-border rounded-xl p-3">
+        <View className="bg-card/70 border border-border/60 rounded-2xl p-4 mb-3">
           <View className="flex-row items-center gap-3">
             <View className="flex-1">
-              <Text className="text-[10px] text-muted-foreground font-medium uppercase mb-1">
+              <Text className="text-[11px] text-muted-foreground font-medium uppercase mb-1">
                 Email
               </Text>
               <Input
                 value={normalized.currentEmail}
                 onChangeText={(v) => verificationForm.setValue('email', v)}
-                className="h-7 p-0 bg-transparent border-0 text-sm"
+                className="h-8 p-0 bg-transparent border-0 text-sm"
                 editable={user?.userMethod === EUserMethod.PHONE}
               />
             </View>
@@ -168,8 +178,8 @@ export default function SecurityScreen() {
             ) : (
               <Button
                 size="sm"
-                variant="secondary"
-                className="h-8 px-4 rounded-lg"
+                variant="outline"
+                className="h-9 px-4 rounded-xl"
                 onPress={() => {}}
               >
                 <Text className="text-xs">Verify</Text>
@@ -179,16 +189,16 @@ export default function SecurityScreen() {
         </View>
 
         {/* Phone */}
-        <View className="bg-card border border-border rounded-xl p-3">
+        <View className="bg-card/70 border border-border/60 rounded-2xl p-4">
           <View className="flex-row items-center gap-3">
             <View className="flex-1">
-              <Text className="text-[10px] text-muted-foreground font-medium uppercase mb-1">
+              <Text className="text-[11px] text-muted-foreground font-medium uppercase mb-1">
                 Phone
               </Text>
               <PhoneInput
                 value={verificationForm.getValues('phone')}
                 onChangeText={(v) => verificationForm.setValue('phone', v)}
-                className="h-7 p-0 bg-transparent border-0 text-sm"
+                className="h-8 p-0 bg-transparent border-0 text-sm"
               />
             </View>
             {phoneVerification.isVerified ? (
@@ -196,8 +206,8 @@ export default function SecurityScreen() {
             ) : (
               <Button
                 size="sm"
-                variant="secondary"
-                className="h-8 px-4 rounded-lg"
+                variant="outline"
+                className="h-9 px-4 rounded-xl"
                 onPress={handleSendPhoneOtp}
                 disabled={isSendingPhoneOtp || phoneTimer.seconds > 0}
               >
@@ -213,15 +223,15 @@ export default function SecurityScreen() {
           </View>
 
           {phoneTimer.hasStarted && !phoneVerification.isVerified && (
-            <View className="mt-3 pt-3 border-t border-border/50 flex-row gap-2">
+            <View className="mt-4 pt-4 border-t border-border/40 flex-row gap-2">
               <NumberInput
                 placeholder="OTP Code"
-                className="flex-1 h-10 bg-muted/50 rounded-lg px-3 text-sm"
+                className="flex-1 h-11 bg-muted/40 rounded-xl px-3 text-sm"
                 onChangeText={(v) => verificationForm.setValue('phoneOtp', v)}
               />
               <Button
                 size="sm"
-                className="h-10 px-4"
+                className="h-11 px-5 rounded-xl"
                 onPress={handleVerifyPhone}
                 disabled={isVerifyingPhoneOtp}
               >
@@ -237,24 +247,26 @@ export default function SecurityScreen() {
       </View>
 
       {/* --- PASSWORD SECTION --- */}
-      <Text className="font-caption text-xs text-muted-foreground uppercase tracking-tighter mb-2 ml-1">
-        Password
-      </Text>
-      <View className="bg-card border border-border rounded-xl p-4 flex-row items-center justify-between">
-        <View>
-          <Text className="text-sm font-medium">Account Password</Text>
-          <Text className="text-xs text-muted-foreground">
-            Last changed 3 months ago
-          </Text>
+      <View className="mb-2">
+        <Text className="font-title text-foreground mb-2">Password</Text>
+        <View className="bg-card/70 border border-border/60 rounded-2xl p-4 flex-row items-center justify-between">
+          <View>
+            <Text className="text-sm font-medium text-foreground">
+              Account Password
+            </Text>
+            <Text className="text-xs text-muted-foreground">
+              Last changed 3 months ago
+            </Text>
+          </View>
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-xl px-4 border-border"
+            onPress={() => router.push('/(settings)/security/change-password')}
+          >
+            <Text className="text-xs">Update</Text>
+          </Button>
         </View>
-        <Button
-          variant="outline"
-          size="sm"
-          className="rounded-lg px-4 border-border"
-          onPress={() => router.push('/(settings)/security/change-password')}
-        >
-          <Text className="text-xs">Update</Text>
-        </Button>
       </View>
     </KeyboardAvoid>
   );

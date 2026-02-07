@@ -1,15 +1,16 @@
 import { router } from 'expo-router';
-import React, { useMemo, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import React, { useMemo } from 'react';
 
 import Icons from '@/components/icons';
-import { Text } from '@/components/ui';
-import { AnimatedProgress } from '@/components/ui/progress';
 import { routes } from '@/constants/routes';
 import { IFile } from '@/types/file.type';
 import { IWorkingDay } from '@/types/schedule.type';
 import { IService } from '@/types/service.type';
 import { IWorker } from '@/types/worker.type';
+import {
+  MissingItem,
+  ProfileMissing,
+} from '@/views/profile/components/profile-missing';
 
 type WorkerMissingProps = {
   canEdit: boolean;
@@ -40,9 +41,8 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
   variant = 'full',
   expandAll = false,
 }) => {
-  const [expanded, setExpanded] = useState(expandAll);
-  const profileCompletion = useMemo(() => {
-    const steps = [
+  const steps = useMemo(
+    () => [
       {
         label: 'Profile details',
         complete: Boolean(worker?.name && worker?.role),
@@ -67,33 +67,21 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
         label: 'Schedule',
         complete: workingDays.length > 0,
       },
-    ];
-    const completedCount = steps.filter((step) => step.complete).length;
-    return {
-      steps,
-      completedCount,
-      total: steps.length,
-    };
-  }, [
-    mergedPhotos.length,
-    services?.length,
-    worker?.avatar,
-    worker?.bio,
-    worker?.coverImage,
-    worker?.name,
-    worker?.role,
-    workingDays.length,
-  ]);
+    ],
+    [
+      mergedPhotos.length,
+      services?.length,
+      worker?.avatar,
+      worker?.bio,
+      worker?.coverImage,
+      worker?.name,
+      worker?.role,
+      workingDays.length,
+    ],
+  );
 
   const missingSetupItems = useMemo(() => {
-    const items: {
-      id: string;
-      title: string;
-      description: string;
-      icon: typeof Icons.User;
-      action?: { label: string; onPress: () => void };
-      secondaryAction?: { label: string; onPress: () => void };
-    }[] = [];
+    const items: MissingItem[] = [];
 
     if (!worker?.name || !worker?.role) {
       items.push({
@@ -225,98 +213,15 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
     workingDays.length,
   ]);
 
-  const filteredItems = useMemo(() => {
-    if (!filterIds || filterIds.length === 0) return missingSetupItems;
-    return missingSetupItems.filter((item) => filterIds.includes(item.id));
-  }, [filterIds, missingSetupItems]);
-
-  if (!canEdit || filteredItems.length === 0) return null;
-
-  const cards = (
-    <View className="mt-4 gap-3">
-      {filteredItems.map((item) => {
-        const Icon = item.icon;
-
-        return (
-          <View
-            key={item.id}
-            className="rounded-2xl border border-border/50 bg-card/50 p-4"
-          >
-            <View className="flex-row items-start gap-3">
-              <View className="h-10 w-10 rounded-xl bg-primary/10 items-center justify-center">
-                <Icon className="text-primary" size={20} />
-              </View>
-              <View className="flex-1">
-                <Text className="font-subtitle text-foreground">
-                  {item.title}
-                </Text>
-                <Text className="font-caption text-muted-foreground mt-1">
-                  {item.description}
-                </Text>
-              </View>
-            </View>
-
-            <View className="flex-row gap-3 mt-4">
-              {item.action && (
-                <Pressable
-                  onPress={item.action.onPress}
-                  className="flex-1 rounded-xl border border-primary/20 bg-primary/10 px-3 py-2"
-                >
-                  <Text className="text-primary text-center font-subtitle">
-                    {item.action.label}
-                  </Text>
-                </Pressable>
-              )}
-              {item.secondaryAction && (
-                <Pressable
-                  onPress={item.secondaryAction.onPress}
-                  className="flex-1 rounded-xl border border-border/50 bg-muted/20 px-3 py-2"
-                >
-                  <Text className="text-foreground text-center font-subtitle">
-                    {item.secondaryAction.label}
-                  </Text>
-                </Pressable>
-              )}
-            </View>
-          </View>
-        );
-      })}
-    </View>
-  );
-
-  if (variant === 'inline') {
-    return <View className="px-6 mb-6">{cards}</View>;
-  }
-
   return (
-    <View className="px-6 mb-8">
-      <View className="flex-row items-center justify-between">
-        <Text className="font-title text-lg text-foreground">
-          Profile setup
-        </Text>
-        {expanded ? (
-          <Icons.ChevronUp
-            size={18}
-            className="text-muted-foreground stroke-1.5"
-          />
-        ) : (
-          <Icons.ChevronDown
-            size={18}
-            className="text-muted-foreground stroke-1.5"
-          />
-        )}
-        <Text className="font-caption text-muted-foreground">
-          {profileCompletion.completedCount}/{profileCompletion.total}
-        </Text>
-      </View>
-      <View className="mt-3 h-3 rounded-full bg-muted/80 overflow-hidden">
-        <AnimatedProgress
-          currentStep={profileCompletion.completedCount}
-          totalSteps={profileCompletion.total}
-        />
-      </View>
-      {expanded && cards}
-    </View>
+    <ProfileMissing
+      canEdit={canEdit}
+      steps={steps}
+      items={missingSetupItems}
+      filterIds={filterIds}
+      variant={variant}
+      expandAll={expandAll}
+    />
   );
 };
 

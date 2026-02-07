@@ -21,20 +21,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IMAGE_CATEGORIES } from '@/constants/global.constants';
 import { routes } from '@/constants/routes';
 import { useGetBrandPhotos } from '@/hooks/brand';
-import { normalizeFileUrl, useDeleteFile, useUploadFile } from '@/hooks/files';
+import { useDeleteFile, useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
 import {
   useDeleteWorker,
+  useGetExperiences,
   useGetWorkerProfile,
   useUpdateWorkerProfile,
 } from '@/hooks/worker';
-import { buildUploadedFile } from '@/lib/utils';
-import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
 import { IFile } from '@/types/file.type';
 import { EUserType } from '@/types/user.type';
-import { ProfilePhotosGrid, ProfileSkeleton } from '@/views/profile/components';
+import {
+  DangerZone,
+  ProfilePhotosGrid,
+  ProfileSkeleton,
+} from '@/views/profile/components';
+import { useProfileGallery } from '@/views/profile/hooks/use-profile-gallery';
+import { createImageUploadHandler } from '@/views/profile/utils/profile-media';
 import {
   AboutSectionDisplay,
   ProfileCard,
@@ -50,6 +55,7 @@ type WorkerProfileTab =
   | 'services'
   | 'schedule'
   | 'photos'
+  | 'experience'
   | 'danger';
 
 const WORKER_PHOTO_CATEGORIES = [
@@ -99,6 +105,7 @@ const WorkerProfileScreen: React.FC = () => {
   const { data: schedule, refetch: refetchSchedule } = useGetSchedule(
     worker?.brandId,
   );
+  const { data: experiences } = useGetExperiences();
 
   // Mutations
   const { mutateAsync: uploadFile } = useUploadFile();
@@ -109,12 +116,23 @@ const WorkerProfileScreen: React.FC = () => {
 
   // Local state for UI
   const [activeTab, setActiveTab] = useState<WorkerProfileTab>('setup');
-  const [selectedPhoto, setSelectedPhoto] = useState<IFile | null>(null);
-  const [localPhotos, setLocalPhotos] = useState<IFile[]>([]);
-  const mergedPhotos = useMemo(
-    () => [...localPhotos, ...(photos ?? [])],
-    [localPhotos, photos],
-  );
+  const {
+    selectedPhoto,
+    setSelectedPhoto,
+    mergedPhotos,
+    handleUploadPhotos,
+    handleDeletePhoto,
+  } = useProfileGallery({
+    ownerId: worker?.id,
+    ownerType: 'WORKER',
+    photos,
+    uploadFile,
+    deleteFile,
+    defaultCategory: IMAGE_CATEGORIES.other,
+    fileNamePrefix: 'worker-photo',
+    onRefresh: refetchPhotos,
+    onErrorMessage: t('common.errors.somethingWentWrong'),
+  });
   const workingDays = useMemo(() => schedule?.workingDays, [schedule]);
 
   const refetch = () => {
@@ -144,63 +162,39 @@ const WorkerProfileScreen: React.FC = () => {
     uploadBannerSheetRef.current?.present();
   }, [uploadBannerSheetRef]);
 
-  const handleUploadBanner = async (uri: string) => {
-    if (!worker?.id) return;
-
-    try {
-      const file = buildUploadedFile(uri, IMAGE_CATEGORIES.worker_cover);
-      const uploadedFile = await uploadFile({
-        file,
-        category: IMAGE_CATEGORIES.worker_cover,
-        ownerId: worker.id,
+  const handleUploadBanner = useMemo(
+    () =>
+      createImageUploadHandler({
+        ownerId: worker?.id,
         ownerType: 'WORKER',
-      });
-
-      if (!uploadedFile.url) {
-        throw new Error(t('errors.uploadFailed'));
-      }
-
-      const bannerUrl = normalizeFileUrl(uploadedFile.url);
-
-      if (!bannerUrl) {
-        throw new Error(t('errors.uploadFailed'));
-      }
-
-      await updateWorkerProfile({ coverImage: bannerUrl });
-    } catch {
-      toast.error({ title: t('common.errors.somethingWentWrong') });
-    }
-  };
+        category: IMAGE_CATEGORIES.worker_cover,
+        uploadFile,
+        onUpdate: async (url) => {
+          await updateWorkerProfile({ coverImage: url });
+        },
+        onErrorMessage: t('common.errors.somethingWentWrong'),
+      }),
+    [t, updateWorkerProfile, uploadFile, worker?.id],
+  );
 
   const handleEditProfileImage = useCallback(() => {
     uploadProfileImageSheetRef.current?.present();
   }, [uploadProfileImageSheetRef]);
 
-  const handleUploadProfileImage = async (uri: string) => {
-    if (!worker?.id) return;
-
-    try {
-      const file = buildUploadedFile(uri, IMAGE_CATEGORIES.worker_avatar);
-      const uploadedFile = await uploadFile({
-        file,
-        category: IMAGE_CATEGORIES.worker_avatar,
-        ownerId: worker.id,
+  const handleUploadProfileImage = useMemo(
+    () =>
+      createImageUploadHandler({
+        ownerId: worker?.id,
         ownerType: 'WORKER',
-      });
-      if (!uploadedFile.url) {
-        throw new Error(t('errors.uploadFailed'));
-      }
-
-      const profileUrl = normalizeFileUrl(uploadedFile.url);
-
-      if (!profileUrl) {
-        throw new Error(t('errors.uploadFailed'));
-      }
-      await updateWorkerProfile({ avatar: profileUrl });
-    } catch {
-      toast.error({ title: t('common.errors.somethingWentWrong') });
-    }
-  };
+        category: IMAGE_CATEGORIES.worker_avatar,
+        uploadFile,
+        onUpdate: async (url) => {
+          await updateWorkerProfile({ avatar: url });
+        },
+        onErrorMessage: t('common.errors.somethingWentWrong'),
+      }),
+    [t, updateWorkerProfile, uploadFile, worker?.id],
+  );
 
   const handleAddPhoto = useCallback(() => {
     uploadPhotosSheetRef.current?.present();
@@ -211,58 +205,9 @@ const WorkerProfileScreen: React.FC = () => {
     uploadPhotosSheetRef.current?.present();
   };
 
-  const handleUploadPhotos = async (
-    newPhotos: { uri: string; category: string }[],
-  ) => {
-    if (!worker?.id || newPhotos.length === 0) return;
-
-    try {
-      const uploadResults = await Promise.all(
-        newPhotos.map((photo, index) =>
-          uploadFile({
-            file: buildUploadedFile(photo.uri, `worker-photo-${index}`),
-            category: photo.category ?? IMAGE_CATEGORIES.other,
-            ownerId: worker.id,
-            ownerType: 'WORKER',
-          }),
-        ),
-      );
-      const photosToAdd = uploadResults
-        .map((uploadedFile, index) => {
-          const url = normalizeFileUrl(uploadedFile.url!);
-          if (!url) return null;
-          return {
-            id: uploadedFile.id ?? `photo-${Date.now()}-${index}`,
-            url,
-            category: (newPhotos[index]?.category ??
-              IMAGE_CATEGORIES.other) as IFile['category'],
-            uploadedAt: new Date().toISOString(),
-          };
-        })
-        .filter((photo) => Boolean(photo));
-      if (photosToAdd.length > 0) {
-        setLocalPhotos((prev) => [...photosToAdd, ...prev] as IFile[]);
-      }
-
-      if (selectedPhoto?.id) {
-        await deleteFile(selectedPhoto.id);
-        setSelectedPhoto(null);
-        refetchPhotos();
-      }
-    } catch {
-      toast.error({ title: t('common.errors.somethingWentWrong') });
-    }
-  };
-
-  const handleDeletePhoto = async (fileId: string) => {
-    if (!worker?.id || !fileId) return;
-    try {
-      await deleteFile(fileId);
-      refetchPhotos();
-    } catch {
-      toast.error({ title: t('common.errors.somethingWentWrong') });
-    }
-  };
+  /**
+   * Photo handlers are managed by useProfileGallery
+   */
 
   const missingProps = useMemo(
     () => ({
@@ -374,6 +319,9 @@ const WorkerProfileScreen: React.FC = () => {
                   <TabsTrigger value="photos">
                     <Text>Photos</Text>
                   </TabsTrigger>
+                  <TabsTrigger value="experience">
+                    <Text>Experience</Text>
+                  </TabsTrigger>
                   <TabsTrigger value="danger">
                     <Text>Danger</Text>
                   </TabsTrigger>
@@ -459,36 +407,65 @@ const WorkerProfileScreen: React.FC = () => {
                 />
               </TabsContent>
 
-              <TabsContent value="danger" className="flex-1">
-                <View className="px-6 pt-2">
-                  <View className="rounded-3xl border border-destructive/25 bg-destructive/5 p-5">
-                    <View className="h-1.5 w-16 rounded-full bg-destructive/70 mb-4" />
-                    <Text className="font-title text-lg text-destructive">
-                      Danger Zone
+              <TabsContent value="experience" className="flex-1">
+                <View className="px-6">
+                  <View className="flex-row items-center justify-between mb-4">
+                    <Text className="font-title text-lg text-foreground">
+                      Experience
                     </Text>
-                    <Text className="mt-2 text-sm text-muted-foreground">
-                      Deleting your worker profile is permanent. This removes
-                      your availability, services, and portfolio photos.
-                    </Text>
-
-                    <View className="mt-5 rounded-2xl border border-border/40 bg-background/80 px-4 py-4">
-                      <Text className="font-subtitle text-foreground">
-                        Delete worker profile
-                      </Text>
-                      <Text className="mt-1 text-xs text-muted-foreground">
-                        You will lose access to your worker data and reviews.
-                      </Text>
+                    {canEdit && (
                       <Button
-                        variant="destructive"
-                        className="mt-4"
-                        onPress={handleDeleteWorker}
-                        disabled={!canEdit || isDeleting}
+                        size="sm"
+                        variant="outline"
+                        onPress={() =>
+                          router.push(routes.worker.experience_history)
+                        }
                       >
-                        <Text>Delete Worker</Text>
+                        <Text>Manage</Text>
                       </Button>
-                    </View>
+                    )}
                   </View>
+
+                  {!experiences || experiences.length === 0 ? (
+                    <View className="rounded-2xl border border-border/60 bg-card/60 p-4">
+                      <Text className="text-sm text-muted-foreground">
+                        Add your work history to build trust with clients.
+                      </Text>
+                    </View>
+                  ) : (
+                    <View className="gap-3">
+                      {experiences.slice(0, 3).map((experience) => (
+                        <View
+                          key={experience.id}
+                          className="rounded-2xl border border-border/60 bg-card/60 p-4"
+                        >
+                          <Text className="font-subtitle text-foreground">
+                            {experience.title}
+                          </Text>
+                          <Text className="text-sm text-muted-foreground">
+                            {experience.company}
+                          </Text>
+                        </View>
+                      ))}
+                      {experiences.length > 3 && (
+                        <Text className="text-xs text-muted-foreground">
+                          +{experiences.length - 3} more experiences
+                        </Text>
+                      )}
+                    </View>
+                  )}
                 </View>
+              </TabsContent>
+
+              <TabsContent value="danger" className="flex-1">
+                <DangerZone
+                  description="Deleting your worker profile is permanent. This removes your availability, services, and portfolio photos."
+                  actionTitle="Delete worker profile"
+                  actionDescription="You will lose access to your worker data and reviews."
+                  actionLabel="Delete Worker"
+                  onPress={handleDeleteWorker}
+                  disabled={!canEdit || isDeleting}
+                />
               </TabsContent>
             </Tabs>
           </ScrollView>

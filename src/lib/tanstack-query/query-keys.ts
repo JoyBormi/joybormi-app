@@ -51,6 +51,7 @@ export const queryKeys = {
     availability: ['worker', 'availability'],
     reviews: ['worker', 'reviews'],
     stats: ['worker', 'stats'],
+    experiences: ['worker', 'experiences'],
   },
 
   // ============================================

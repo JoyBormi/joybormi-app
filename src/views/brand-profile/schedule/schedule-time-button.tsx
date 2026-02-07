@@ -19,7 +19,7 @@ export const TimeButton = ({
   <Pressable
     onPress={onPress}
     className={cn(
-      'flex-1 bg-card/30 active:bg-card/50 rounded-xl flex-row items-center justify-between border border-border/20',
+      'flex-1 bg-card/50 active:bg-card/50 rounded-md flex-row items-center justify-between border border-border/80',
       compact ? 'p-2.5' : 'p-3.5',
     )}
   >
