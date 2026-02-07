@@ -102,10 +102,10 @@ export const BrandCard: React.FC<BrandCardProps> = ({
 
           {/* Edit Brand Button */}
           {canEdit && (
-            <Button onPress={onEdit} className="bg-primary">
+            <Button onPress={onEdit}>
               <View className="flex-row items-center gap-2">
                 <Icons.Pencil size={18} className="text-primary-foreground" />
-                <Text className="font-subtitle text-primary-foreground">
+                <Text className="font-body text-primary-foreground">
                   Edit Brand
                 </Text>
               </View>

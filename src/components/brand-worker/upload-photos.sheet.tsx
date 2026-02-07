@@ -11,7 +11,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { Image, Pressable, View } from 'react-native';
+import { Dimensions, Image, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Icons from '@/components/icons';
@@ -51,6 +51,8 @@ export const UploadPhotosSheet = forwardRef<
 >(({ onUpload, onDelete, onReplace, value, setValue, categories }, ref) => {
   const insets = useSafeAreaInsets();
   const animationConfigs = useBottomSheetTimingConfigs({ duration: 150 });
+  const pickerWidth = Dimensions.get('window').width - 48;
+  const thumbSize = (pickerWidth - 16) / 3;
 
   const isEditMode = Boolean(value);
 
@@ -129,6 +131,11 @@ export const UploadPhotosSheet = forwardRef<
       }
     }
   }, [isEditMode, selectedCategory]);
+
+  const handleRemovePhoto = useCallback((index: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSelectedPhotos((prev) => prev.filter((_, i) => i !== index));
+  }, []);
 
   /**
    * Upload photos
@@ -259,45 +266,79 @@ export const UploadPhotosSheet = forwardRef<
         </View>
 
         {/* Image / Picker */}
-        <Pressable
-          onPress={pickImages}
-          className={cn(
-            'self-center items-center justify-center',
-            isEditMode
-              ? 'w-52 h-52'
-              : 'w-full h-52 rounded-2xl border-2 border-dashed border-primary/30',
-          )}
-        >
-          {isEditMode && selectedPhoto ? (
-            <View className="relative">
+        {isEditMode ? (
+          selectedPhoto ? (
+            <Pressable
+              onPress={pickImages}
+              className="relative overflow-hidden rounded-2xl"
+              style={{ width: 208, height: 208, alignSelf: 'center' }}
+            >
               <Image
                 source={{ uri: selectedPhoto.uri }}
-                className="w-52 h-52 rounded-2xl object-contain"
+                style={{ width: 208, height: 208, borderRadius: 16 }}
+                resizeMode="cover"
               />
               <View className="absolute bottom-2 right-2 bg-black/60 rounded-full p-2">
                 <Icons.Pencil size={16} className="text-white" />
               </View>
-            </View>
+            </Pressable>
           ) : (
-            <>
+            <Pressable
+              onPress={pickImages}
+              className="items-center justify-center rounded-2xl border-2 border-dashed border-primary/30 self-center"
+              style={{ width: 208, height: 208 }}
+            >
               <Icons.Plus size={32} className="text-primary" />
               <Text className="font-subtitle text-foreground mt-2">
                 Select Photos
               </Text>
-            </>
-          )}
-        </Pressable>
+            </Pressable>
+          )
+        ) : (
+          <View className="gap-3">
+            {/* Selected photos grid with remove */}
+            {selectedPhotos.length > 0 && (
+              <View className="flex-row flex-wrap gap-2">
+                {selectedPhotos.map((photo, index) => (
+                  <View
+                    key={`${photo.uri}-${index}`}
+                    className="relative"
+                    style={{ width: thumbSize, height: thumbSize }}
+                  >
+                    <Image
+                      source={{ uri: photo.uri }}
+                      style={{
+                        width: thumbSize,
+                        height: thumbSize,
+                        borderRadius: 12,
+                      }}
+                      resizeMode="cover"
+                    />
+                    <Pressable
+                      onPress={() => handleRemovePhoto(index)}
+                      className="absolute -top-1.5 -right-1.5 bg-destructive rounded-full p-1"
+                    >
+                      <Icons.X
+                        size={12}
+                        className="text-destructive-foreground"
+                      />
+                    </Pressable>
+                  </View>
+                ))}
+              </View>
+            )}
 
-        {/* Grid (upload mode only) */}
-        {!isEditMode && selectedPhotos.length > 0 && (
-          <View className="flex-row flex-wrap gap-2">
-            {selectedPhotos.map((photo, index) => (
-              <Image
-                key={`${photo.uri}-${index}`}
-                source={{ uri: photo.uri }}
-                className="w-[31%] aspect-square rounded-xl"
-              />
-            ))}
+            {/* Add more / initial picker */}
+            <Pressable
+              onPress={pickImages}
+              className="flex-row items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary/30 py-5"
+              style={{ width: pickerWidth }}
+            >
+              <Icons.Plus size={20} className="text-primary" />
+              <Text className="font-subtitle text-primary">
+                {selectedPhotos.length > 0 ? 'Add More' : 'Select Photos'}
+              </Text>
+            </Pressable>
           </View>
         )}
 

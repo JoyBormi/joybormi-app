@@ -53,10 +53,7 @@ export const routes = {
 
   // ───────────────────────────────── Worker
   worker: {
-    details: (id: string): Href => ({
-      pathname: '/(screens)/(worker)/[id]',
-      params: { id },
-    }),
+    details: (id: string): Href => `/(screens)/(worker)/${id}`,
     edit_profile:
       '/(screens)/(worker)/edit-worker-profile' as RelativePathString,
     experience_history:

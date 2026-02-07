@@ -1,99 +1,84 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
-import React, { useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BlockedSheet, BlockedSheetRef } from '@/components/modals/block-modal';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
+import { Loading } from '@/components/status-screens';
 import { Button, Text, Textarea } from '@/components/ui';
 import { Input } from '@/components/ui/input';
+import { useGetWorkerProfile, useUpdateWorkerProfile } from '@/hooks/worker';
+import { toast } from '@/providers/toaster';
 import {
   WorkerProfileFormData,
   workerProfileSchema,
 } from '@/views/worker-profile/utils';
 
-import type { IWorker } from '@/types/worker.type';
-
-interface EditProfileScreenProps {
-  worker: IWorker;
-}
-
-/**
- * Edit Profile Bottom Sheet Component
- * Form for editing worker profile information
- */
-const EditProfileScreen = ({
-  worker = {
-    id: 'worker-123',
-    userId: 'worker-123',
-    brandId: 'brand-123',
-    name: 'Sarah Johnson',
-    role: 'Senior Stylist',
-    avatar: 'https://i.pravatar.cc/150?img=5',
-    coverImage: 'https://images.unsplash.com/photo-1560066984-138dadb4c035',
-    bio: 'Passionate hair stylist with 8+ years of experience in color treatments and modern cuts.',
-    specialties: ['Hair Coloring', 'Balayage', 'Haircuts', 'Styling'],
-    rating: 4.9,
-    reviewCount: 127,
-    status: 'active',
-    email: 'sarah.j@example.com',
-    phone: '+1 (555) 123-4567',
-  },
-}: EditProfileScreenProps) => {
+const EditProfileScreen = () => {
   const insets = useSafeAreaInsets();
-  const blockedSheetRef = useRef<BlockedSheetRef>(null);
+  const { data: worker, isLoading } = useGetWorkerProfile();
+  const { mutateAsync: updateWorkerProfile, isPending } =
+    useUpdateWorkerProfile();
+
   const form = useForm<WorkerProfileFormData>({
     resolver: zodResolver(workerProfileSchema),
     defaultValues: {
-      name: worker.name,
-      role: worker.role,
-      bio: worker.bio,
-      specialties: worker.specialties,
-      email: worker.email,
-      phone: worker.phone,
-      avatar: worker.avatar,
-      coverImage: worker.coverImage,
+      name: '',
+      role: '',
+      bio: '',
+      specialties: [],
+      email: '',
+      phone: '',
+      avatar: '',
+      coverImage: '',
     },
   });
 
+  useEffect(() => {
+    if (worker) {
+      form.reset({
+        name: worker.username ?? '',
+        role: worker.jobTitle ?? '',
+        bio: worker.bio ?? '',
+        specialties: worker.specialties ?? [],
+        email: worker.email ?? '',
+        phone: worker.phone ?? '',
+        avatar: worker.avatar ?? '',
+        coverImage: worker.coverImage ?? '',
+      });
+    }
+  }, [worker, form]);
+
   const isFormDirty = form.formState.isDirty;
 
-  //   useEffect(() => {
-  //     form.reset({
-  //       name: worker.name,
-  //       role: worker.role,
-  //       bio: worker.bio,
-  //       specialties: worker.specialties,
-  //       email: worker.email,
-  //       phone: worker.phone,
-  //       avatar: worker.avatar,
-  //       coverImage: worker.coverImage,
-  //     });
-  //   }, [worker, form]);
-
-  const handleSubmit = form.handleSubmit((data) => {
-    console.log(`STRINGIFIED 👉:`, JSON.stringify(data, null, 2));
+  const handleSubmit = form.handleSubmit(async (data) => {
+    try {
+      await updateWorkerProfile({
+        name: data.name,
+        role: data.role,
+        bio: data.bio,
+        specialties: data.specialties,
+        email: data.email,
+        phone: data.phone,
+      });
+      toast.success({ title: 'Profile updated' });
+      router.back();
+    } catch {
+      toast.error({ title: 'Failed to update profile' });
+    }
   });
 
+  if (isLoading || !worker) return <Loading />;
+
   return (
-    <KeyboardAvoid
-      className="bg-background px-4"
-      scrollConfig={{ showsVerticalScrollIndicator: false }}
-    >
+    <KeyboardAvoid className="main-area">
       <Header
         title="Edit Profile"
         subtitle="Update your profile information"
         className="mb-10"
-        onGoBack={() => {
-          if (isFormDirty) {
-            blockedSheetRef.current?.show();
-          } else {
-            router.back();
-          }
-        }}
       />
 
       <FormField
@@ -164,17 +149,13 @@ const EditProfileScreen = ({
         className="bg-primary mt-6 w-2/5 self-end"
         style={{ marginBottom: insets.bottom + 50 }}
         disabled={!isFormDirty}
-        size="action"
+        loading={isPending}
+        size="lg"
       >
         <Text className="font-subtitle text-primary-foreground">
           Save Changes
         </Text>
       </Button>
-      <BlockedSheet
-        ref={blockedSheetRef}
-        onCancel={() => router.back()}
-        onConfirm={() => blockedSheetRef.current?.hide()}
-      />
     </KeyboardAvoid>
   );
 };

@@ -42,7 +42,7 @@ export const DayCard: React.FC<DayCardProps> = ({
         'rounded-2xl border transition-all',
         isActive
           ? 'bg-popover border-primary/20 '
-          : 'bg-muted/5 border-border/10',
+          : 'bg-muted/45 border-border/10',
       )}
     >
       <PressableBounce

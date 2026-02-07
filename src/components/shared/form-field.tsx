@@ -13,7 +13,13 @@ import { View } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 
-export type TFieldValue = string | number | boolean | undefined | null;
+export type TFieldValue =
+  | string
+  | string[]
+  | number
+  | boolean
+  | undefined
+  | null;
 
 type FormFieldProps<T extends FieldValues> = {
   control: Control<T>;

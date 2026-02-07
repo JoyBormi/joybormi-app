@@ -230,7 +230,7 @@ const PreferencesScreen: React.FC = () => {
   }, []);
 
   return (
-    <View style={{ paddingTop: insets.top, flex: 1 }}>
+    <View style={{ paddingTop: insets.top }} className="safe-area">
       <Header
         title={t('settings.preferencesScreen.title')}
         subtitle={t('settings.preferencesScreen.subtitle')}

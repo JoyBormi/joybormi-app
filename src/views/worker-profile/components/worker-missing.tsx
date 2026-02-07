@@ -45,7 +45,7 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
     () => [
       {
         label: 'Profile details',
-        complete: Boolean(worker?.name && worker?.role),
+        complete: Boolean(worker?.username && worker?.jobTitle),
       },
       {
         label: 'Description',
@@ -74,8 +74,8 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
       worker?.avatar,
       worker?.bio,
       worker?.coverImage,
-      worker?.name,
-      worker?.role,
+      worker?.username,
+      worker?.jobTitle,
       workingDays.length,
     ],
   );
@@ -83,7 +83,7 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
   const missingSetupItems = useMemo(() => {
     const items: MissingItem[] = [];
 
-    if (!worker?.name || !worker?.role) {
+    if (!worker?.username || !worker?.jobTitle) {
       items.push({
         id: 'details',
         title: 'Add profile details',
@@ -208,8 +208,8 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
     worker?.brandId,
     worker?.coverImage,
     worker?.id,
-    worker?.name,
-    worker?.role,
+    worker?.username,
+    worker?.jobTitle,
     workingDays.length,
   ]);
 

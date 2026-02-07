@@ -8,8 +8,8 @@ export interface IWorker {
   id: string;
   userId: string;
   brandId: string;
-  name: string;
-  role: string;
+  username: string;
+  jobTitle: string;
   avatar: string;
   coverImage?: string;
   bio: string;

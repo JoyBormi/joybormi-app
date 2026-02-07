@@ -1,6 +1,6 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
-import React, { Fragment, useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
@@ -122,13 +122,19 @@ const BrandProfileScreen: React.FC = () => {
     onErrorMessage: t('common.errors.somethingWentWrong'),
   });
 
-  const refetch = () => {
+  const refetch = useCallback(() => {
     refetchBrand();
     refetchServices();
     refetchTeam();
     refetchPhotos();
     refetchSchedule();
-  };
+  }, [
+    refetchBrand,
+    refetchServices,
+    refetchTeam,
+    refetchPhotos,
+    refetchSchedule,
+  ]);
 
   // ───────────────── Bottom sheet refs ────────────────── //
   const uploadBannerSheetRef = useRef<BottomSheetModal>(null);
@@ -144,7 +150,7 @@ const BrandProfileScreen: React.FC = () => {
 
   const handleEditBanner = useCallback(() => {
     uploadBannerSheetRef.current?.present();
-  }, [uploadBannerSheetRef]);
+  }, []);
 
   const handleUploadBanner = useMemo(
     () =>
@@ -163,7 +169,7 @@ const BrandProfileScreen: React.FC = () => {
   );
   const handleEditProfileImage = useCallback(() => {
     uploadProfileImageSheetRef.current?.present();
-  }, [uploadProfileImageSheetRef]);
+  }, []);
 
   const handleUploadProfileImage = useMemo(
     () =>
@@ -183,7 +189,7 @@ const BrandProfileScreen: React.FC = () => {
 
   const handleAddWorker = useCallback(() => {
     inviteTeamSheetRef.current?.present();
-  }, [inviteTeamSheetRef]);
+  }, []);
 
   const handleDeleteBrand = useCallback(() => {
     if (!canEdit) return;
@@ -204,12 +210,15 @@ const BrandProfileScreen: React.FC = () => {
 
   const handleAddPhoto = useCallback(() => {
     uploadPhotosSheetRef.current?.present();
-  }, [uploadPhotosSheetRef]);
+  }, []);
 
-  const handlePhotoPress = (photo: IFile) => {
-    setSelectedPhoto(photo);
-    uploadPhotosSheetRef.current?.present();
-  };
+  const handlePhotoPress = useCallback(
+    (photo: IFile) => {
+      setSelectedPhoto(photo);
+      uploadPhotosSheetRef.current?.present();
+    },
+    [setSelectedPhoto],
+  );
 
   /**
    * Photo handlers are managed by useProfileGallery
@@ -265,205 +274,198 @@ const BrandProfileScreen: React.FC = () => {
     [missingProps],
   );
 
-  // Early return if no brand data
+  // Early returns for loading / missing / non-active statuses
   if (isLoading) return <ProfileSkeleton />;
   if (!brand) return <NotFoundScreen />;
-  console.log(team);
+  if (brand.status === BrandStatus.PENDING)
+    return <PendingScreen onRefresh={refetchBrand} />;
+  if (brand.status === BrandStatus.SUSPENDED) return <SuspendedScreen />;
+  if (
+    brand.status === BrandStatus.REJECTED ||
+    brand.status === BrandStatus.WITHDRAWN
+  )
+    return <NotFoundScreen />;
 
   return (
-    <Fragment>
-      {brand?.status === BrandStatus.PENDING ? (
-        <PendingScreen onRefresh={refetchBrand} />
-      ) : brand?.status === BrandStatus.SUSPENDED ? (
-        <SuspendedScreen />
-      ) : brand?.status === BrandStatus.REJECTED ||
-        brand?.status === BrandStatus.WITHDRAWN ? (
-        <NotFoundScreen />
-      ) : (
-        <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
-          <ScrollView
-            className="flex-1"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
-            refreshControl={
-              <RefreshControl refreshing={isLoading} onRefresh={refetch} />
-            }
-          >
-            {/* Brand Profile Card */}
-            <BrandCard
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
+        refreshControl={
+          <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+        }
+      >
+        {/* Brand Profile Card */}
+        <BrandCard
+          brand={brand}
+          servicesCount={services?.length ?? 0}
+          workersCount={team?.length ?? 0}
+          photosCount={mergedPhotos.length}
+          canEdit={canEdit}
+          onEditAvatar={handleEditProfileImage}
+          onEditBanner={handleEditBanner}
+          onEdit={handleEditBrand}
+        />
+
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value as BrandProfileTab)}
+          className="flex-1"
+        >
+          <TabsList className="bg-background/95 backdrop-blur-xl border-b border-border mt-4 mb-5">
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerClassName="gap-2 px-6"
+            >
+              <TabsTrigger value="setup">
+                <Text>Setup</Text>
+              </TabsTrigger>
+              <TabsTrigger value="about">
+                <Text>About</Text>
+              </TabsTrigger>
+              <TabsTrigger value="services">
+                <Text>Services</Text>
+              </TabsTrigger>
+              <TabsTrigger value="schedule">
+                <Text>Schedule</Text>
+              </TabsTrigger>
+              <TabsTrigger value="team">
+                <Text>Team</Text>
+              </TabsTrigger>
+              <TabsTrigger value="photos">
+                <Text>Photos</Text>
+              </TabsTrigger>
+              <TabsTrigger value="danger">
+                <Text>Danger</Text>
+              </TabsTrigger>
+            </ScrollView>
+          </TabsList>
+
+          <TabsContent value="setup" className="flex-1">
+            {renderMissing(undefined, 'full')}
+
+            {/* Quick Actions */}
+            {canEdit && (
+              <BrandQuickActions
+                onAddService={() =>
+                  router.push(
+                    routes.screens.upsert_service({
+                      ownerId: brand.id,
+                      ownerType: 'brand',
+                    }),
+                  )
+                }
+                onAddWorker={handleAddWorker}
+                onManageHours={() =>
+                  router.push(routes.screens.upsert_schedule(brand.id))
+                }
+                onSetupWorkerProfile={handleSetupWorkerProfile}
+              />
+            )}
+          </TabsContent>
+
+          {/* About Section */}
+          <TabsContent value="about" className="flex-1 min-h-[50vh]">
+            {renderMissing(['details', 'description', 'images'])}
+            <BrandAbout
               brand={brand}
-              servicesCount={services?.length || 0}
-              workersCount={team?.length || 0}
-              photosCount={mergedPhotos.length}
               canEdit={canEdit}
-              onEditAvatar={handleEditProfileImage}
-              onEditBanner={handleEditBanner}
               onEdit={handleEditBrand}
             />
+          </TabsContent>
 
-            <Tabs
-              value={activeTab}
-              onValueChange={(value) => setActiveTab(value as BrandProfileTab)}
-              className="flex-1"
-            >
-              <TabsList className="bg-background/95 backdrop-blur-xl border-b border-border mt-4 mb-5">
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerClassName="gap-2 px-6"
-                >
-                  <TabsTrigger value="setup">
-                    <Text>Setup</Text>
-                  </TabsTrigger>
-                  <TabsTrigger value="about">
-                    <Text>About</Text>
-                  </TabsTrigger>
-                  <TabsTrigger value="services">
-                    <Text>Services</Text>
-                  </TabsTrigger>
-                  <TabsTrigger value="schedule">
-                    <Text>Schedule</Text>
-                  </TabsTrigger>
-                  <TabsTrigger value="team">
-                    <Text>Team</Text>
-                  </TabsTrigger>
-                  <TabsTrigger value="photos">
-                    <Text>Photos</Text>
-                  </TabsTrigger>
-                  <TabsTrigger value="danger">
-                    <Text>Danger</Text>
-                  </TabsTrigger>
-                </ScrollView>
-              </TabsList>
+          {/* Services Section */}
+          <TabsContent value="services" className="flex-1 min-h-[50vh]">
+            {renderMissing(['services'])}
+            <BrandServicesList
+              ownerId={brand.id}
+              services={services}
+              canEdit={canEdit}
+            />
+          </TabsContent>
 
-              <TabsContent value="setup" className="flex-1">
-                {renderMissing(undefined, 'full')}
+          <TabsContent value="schedule" className="flex-1 min-h-[50vh]">
+            {renderMissing(['schedule'])}
+            <ScheduleDisplay
+              workingDays={schedule?.workingDays ?? []}
+              canEdit={canEdit}
+              onEditSchedule={() =>
+                router.push(routes.screens.upsert_schedule(brand.id))
+              }
+            />
+          </TabsContent>
 
-                {/* Quick Actions */}
-                {canEdit && (
-                  <BrandQuickActions
-                    onAddService={() =>
-                      router.push(
-                        routes.screens.upsert_service({
-                          ownerId: brand.id,
-                          ownerType: 'brand',
-                        }),
-                      )
-                    }
-                    onAddWorker={handleAddWorker}
-                    onManageHours={() =>
-                      router.push(routes.screens.upsert_schedule(brand.id))
-                    }
-                    onSetupWorkerProfile={handleSetupWorkerProfile}
-                  />
-                )}
-              </TabsContent>
+          {/* Team Section */}
+          <TabsContent value="team" className="flex-1 min-h-[50vh]">
+            {renderMissing(['team'])}
+            <BrandTeamList
+              workers={team ?? []}
+              canEdit={canEdit}
+              onAddWorker={handleAddWorker}
+              onWorkerPress={handleWorkerPress}
+            />
+          </TabsContent>
 
-              {/* About Section */}
-              <TabsContent value="about" className="flex-1 min-h-[50vh]">
-                {renderMissing(['details', 'description', 'images'])}
-                <BrandAbout
-                  brand={brand}
-                  canEdit={canEdit}
-                  onEdit={handleEditBrand}
-                />
-              </TabsContent>
+          {/* Photos Section */}
+          <TabsContent value="photos" className="flex-1 min-h-[50vh]">
+            {renderMissing(['photos'])}
+            <ProfilePhotosGrid
+              photos={mergedPhotos}
+              canEdit={canEdit}
+              onAddPhoto={handleAddPhoto}
+              onPhotoPress={handlePhotoPress}
+            />
+          </TabsContent>
 
-              {/* Services Section */}
-              <TabsContent value="services" className="flex-1 min-h-[50vh]">
-                {renderMissing(['services'])}
-                <BrandServicesList
-                  ownerId={brand.id}
-                  services={services}
-                  canEdit={canEdit}
-                />
-              </TabsContent>
+          <TabsContent value="danger" className="flex-1 min-h-[50vh]">
+            <DangerZone
+              description="Deleting your brand is permanent. This removes your brand profile, team, services, schedule, and photos."
+              actionTitle="Delete brand"
+              actionDescription="You will lose access to all brand data and team members."
+              actionLabel="Delete Brand"
+              onPress={handleDeleteBrand}
+              disabled={!canEdit || isDeleting}
+            />
+          </TabsContent>
+        </Tabs>
+      </ScrollView>
 
-              <TabsContent value="schedule" className="flex-1 min-h-[50vh]">
-                {renderMissing(['schedule'])}
-                <ScheduleDisplay
-                  workingDays={schedule?.workingDays ?? []}
-                  canEdit={canEdit}
-                  onEditSchedule={() =>
-                    router.push(routes.screens.upsert_schedule(brand.id))
-                  }
-                />
-              </TabsContent>
+      {/* Bottom Sheets */}
+      <UploadBannerSheet
+        ref={uploadBannerSheetRef}
+        currentBanner={brand.bannerImage || ''}
+        onUpload={handleUploadBanner}
+      />
 
-              {/* Team Section */}
-              <TabsContent value="team" className="flex-1 min-h-[50vh]">
-                {renderMissing(['team'])}
-                <BrandTeamList
-                  workers={team || []}
-                  canEdit={canEdit}
-                  onAddWorker={handleAddWorker}
-                  onWorkerPress={handleWorkerPress}
-                />
-              </TabsContent>
+      <UploadProfileImageSheet
+        ref={uploadProfileImageSheetRef}
+        currentImage={brand.profileImage || ''}
+        onUpload={handleUploadProfileImage}
+      />
 
-              {/* Photos Section */}
-              <TabsContent value="photos" className="flex-1 min-h-[50vh]">
-                {renderMissing(['photos'])}
-                <ProfilePhotosGrid
-                  photos={mergedPhotos}
-                  canEdit={canEdit}
-                  onAddPhoto={handleAddPhoto}
-                  onPhotoPress={handlePhotoPress}
-                />
-              </TabsContent>
+      <InviteTeamSheet
+        ref={inviteTeamSheetRef}
+        brandId={brand.id}
+        brandName={brand.brandName}
+      />
 
-              <TabsContent value="danger" className="flex-1 min-h-[50vh]">
-                <DangerZone
-                  description="Deleting your brand is permanent. This removes your brand profile, team, services, schedule, and photos."
-                  actionTitle="Delete brand"
-                  actionDescription="You will lose access to all brand data and team members."
-                  actionLabel="Delete Brand"
-                  onPress={handleDeleteBrand}
-                  disabled={!canEdit || isDeleting}
-                />
-              </TabsContent>
-            </Tabs>
+      <UploadPhotosSheet
+        value={selectedPhoto}
+        ref={uploadPhotosSheetRef}
+        setValue={setSelectedPhoto}
+        onUpload={handleUploadPhotos}
+        onDelete={handleDeletePhoto}
+      />
 
-            {/* Reviews Section */}
-            {/* <BrandReviewsList reviews={reviews} maxDisplay={2} /> */}
-          </ScrollView>
-
-          {/* Bottom Sheets */}
-          <UploadBannerSheet
-            ref={uploadBannerSheetRef}
-            currentBanner={brand.bannerImage || ''}
-            onUpload={handleUploadBanner}
-          />
-
-          <UploadProfileImageSheet
-            ref={uploadProfileImageSheetRef}
-            currentImage={brand.profileImage || ''}
-            onUpload={handleUploadProfileImage}
-          />
-
-          <InviteTeamSheet
-            ref={inviteTeamSheetRef}
-            brandId={brand.id}
-            brandName={brand.brandName}
-          />
-
-          <UploadPhotosSheet
-            value={selectedPhoto}
-            ref={uploadPhotosSheetRef}
-            setValue={setSelectedPhoto}
-            onUpload={handleUploadPhotos}
-            onDelete={handleDeletePhoto}
-          />
-
-          <DeleteModal
-            ref={deleteModalRef}
-            onConfirm={async () => {
-              await deleteBrand();
-            }}
-          />
-        </SafeAreaView>
-      )}
-    </Fragment>
+      <DeleteModal
+        ref={deleteModalRef}
+        onConfirm={async () => {
+          await deleteBrand();
+        }}
+      />
+    </SafeAreaView>
   );
 };
 
