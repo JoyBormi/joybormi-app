@@ -317,9 +317,6 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
           aria-expanded={expanded}
           data-expanded={expanded}
         >
-          <Text className="font-caption text-muted-foreground">
-            {profileCompletion.completedCount}/{profileCompletion.total}
-          </Text>
           {expanded ? (
             <Icons.ChevronUp
               size={18}
@@ -331,6 +328,9 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
               className="text-muted-foreground stroke-1.5"
             />
           )}
+          <Text className="font-caption text-muted-foreground">
+            {profileCompletion.completedCount}/{profileCompletion.total}
+          </Text>
         </Pressable>
       </View>
       <View className="mt-3 h-3 rounded-full bg-muted/80 overflow-hidden">

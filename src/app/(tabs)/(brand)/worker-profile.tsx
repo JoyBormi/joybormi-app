@@ -2,7 +2,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { router } from 'expo-router';
 import React, { Fragment, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import {
   SafeAreaView,
@@ -14,8 +14,9 @@ import {
   UploadPhotosSheet,
   UploadProfileImageSheet,
 } from '@/components/brand-worker';
+import { DeleteModal, DeleteModalRef } from '@/components/modals';
 import { NotFoundScreen, PendingScreen } from '@/components/status-screens';
-import { Text } from '@/components/ui';
+import { Button, Text } from '@/components/ui';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IMAGE_CATEGORIES } from '@/constants/global.constants';
 import { routes } from '@/constants/routes';
@@ -23,7 +24,11 @@ import { useGetBrandPhotos } from '@/hooks/brand';
 import { normalizeFileUrl, useDeleteFile, useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
-import { useGetWorkerProfile, useUpdateWorkerProfile } from '@/hooks/worker';
+import {
+  useDeleteWorker,
+  useGetWorkerProfile,
+  useUpdateWorkerProfile,
+} from '@/hooks/worker';
 import { buildUploadedFile } from '@/lib/utils';
 import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
@@ -39,7 +44,13 @@ import {
   WorkerMissing,
 } from '@/views/worker-profile/components';
 
-type WorkerProfileTab = 'setup' | 'about' | 'services' | 'schedule' | 'photos';
+type WorkerProfileTab =
+  | 'setup'
+  | 'about'
+  | 'services'
+  | 'schedule'
+  | 'photos'
+  | 'danger';
 
 const WORKER_PHOTO_CATEGORIES = [
   {
@@ -93,6 +104,8 @@ const WorkerProfileScreen: React.FC = () => {
   const { mutateAsync: uploadFile } = useUploadFile();
   const { mutateAsync: deleteFile } = useDeleteFile();
   const { mutateAsync: updateWorkerProfile } = useUpdateWorkerProfile();
+  const { mutateAsync: deleteWorker, isPending: isDeleting } =
+    useDeleteWorker();
 
   // Local state for UI
   const [activeTab, setActiveTab] = useState<WorkerProfileTab>('setup');
@@ -115,11 +128,17 @@ const WorkerProfileScreen: React.FC = () => {
   const uploadBannerSheetRef = useRef<BottomSheetModal>(null);
   const uploadProfileImageSheetRef = useRef<BottomSheetModal>(null);
   const uploadPhotosSheetRef = useRef<BottomSheetModal>(null);
+  const deleteModalRef = useRef<DeleteModalRef>(null);
 
   // Handlers
   const handleEditProfile = useCallback(() => {
     router.push(routes.worker.edit_profile);
   }, []);
+
+  const handleDeleteWorker = useCallback(() => {
+    if (!canEdit) return;
+    deleteModalRef.current?.show();
+  }, [canEdit]);
 
   const handleEditBanner = useCallback(() => {
     uploadBannerSheetRef.current?.present();
@@ -355,6 +374,9 @@ const WorkerProfileScreen: React.FC = () => {
                   <TabsTrigger value="photos">
                     <Text>Photos</Text>
                   </TabsTrigger>
+                  <TabsTrigger value="danger">
+                    <Text>Danger</Text>
+                  </TabsTrigger>
                 </ScrollView>
               </TabsList>
 
@@ -436,6 +458,38 @@ const WorkerProfileScreen: React.FC = () => {
                   onPhotoPress={handlePhotoPress}
                 />
               </TabsContent>
+
+              <TabsContent value="danger" className="flex-1">
+                <View className="px-6 pt-2">
+                  <View className="rounded-3xl border border-destructive/25 bg-destructive/5 p-5">
+                    <View className="h-1.5 w-16 rounded-full bg-destructive/70 mb-4" />
+                    <Text className="font-title text-lg text-destructive">
+                      Danger Zone
+                    </Text>
+                    <Text className="mt-2 text-sm text-muted-foreground">
+                      Deleting your worker profile is permanent. This removes
+                      your availability, services, and portfolio photos.
+                    </Text>
+
+                    <View className="mt-5 rounded-2xl border border-border/40 bg-background/80 px-4 py-4">
+                      <Text className="font-subtitle text-foreground">
+                        Delete worker profile
+                      </Text>
+                      <Text className="mt-1 text-xs text-muted-foreground">
+                        You will lose access to your worker data and reviews.
+                      </Text>
+                      <Button
+                        variant="destructive"
+                        className="mt-4"
+                        onPress={handleDeleteWorker}
+                        disabled={!canEdit || isDeleting}
+                      >
+                        <Text>Delete Worker</Text>
+                      </Button>
+                    </View>
+                  </View>
+                </View>
+              </TabsContent>
             </Tabs>
           </ScrollView>
 
@@ -459,6 +513,13 @@ const WorkerProfileScreen: React.FC = () => {
             onUpload={handleUploadPhotos}
             onDelete={handleDeletePhoto}
             categories={WORKER_PHOTO_CATEGORIES}
+          />
+
+          <DeleteModal
+            ref={deleteModalRef}
+            onConfirm={async () => {
+              await deleteWorker();
+            }}
           />
         </SafeAreaView>
       )}

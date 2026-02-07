@@ -148,8 +148,8 @@ export function Select({
                       className={cn(
                         'flex-1 p-4 mb-2 rounded-2xl border',
                         isSelected
-                          ? 'bg-primary/40 border-primary/20'
-                          : 'bg-secondary/40 border-transparent active:bg-secondary/40',
+                          ? 'bg-primary/80 border-primary/20'
+                          : 'bg-secondary/80 border-transparent active:bg-secondary/90',
                       )}
                     >
                       <Text

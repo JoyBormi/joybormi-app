@@ -49,14 +49,14 @@ export function GlobalAlert() {
         <Animated.View
           entering={FadeIn.duration(120)}
           exiting={FadeOut.duration(150)}
-          className="absolute inset-0  bg-black/10"
+          className="absolute inset-0 bg-black/20"
         />
 
         {/* Modal content with linear-style Zoom for a "system" feel */}
         <Animated.View
           entering={ZoomIn.duration(250)}
           exiting={ZoomOut.duration(200)}
-          className="w-full z-50 max-w-sm overflow-hidden rounded-xl border border-foreground/20 shadow-2xl shadow-primary/10"
+          className="w-full z-50 max-w-sm overflow-hidden rounded-xl border border-foreground/20 shadow-2xl shadow-primary/10 bg-card/30"
         >
           <BlurView
             intensity={Platform.OS === 'ios' ? 55 : 80}
@@ -85,12 +85,12 @@ export function GlobalAlert() {
             {/* Actions: Clean hierarchy */}
             <View className="flex-row gap-3">
               {options.cancelLabel !== null && (
-                <Button onPress={handleCancel} className="w-full">
+                <Button onPress={handleCancel} className="flex-1" size="lg">
                   <Text>{options.cancelLabel || 'Cancel'}</Text>
                 </Button>
               )}
 
-              <Button onPress={handleConfirm} className="w-full" size="lg">
+              <Button onPress={handleConfirm} className="flex-1" size="lg">
                 <Text className="font-semibold text-white">
                   {options.confirmLabel || 'Confirm'}
                 </Text>

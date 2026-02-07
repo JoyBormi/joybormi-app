@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
@@ -23,6 +23,7 @@ type WorkerMissingProps = {
   workingDays?: IWorkingDay[];
   filterIds?: string[];
   variant?: 'full' | 'inline';
+  expandAll?: boolean;
 };
 
 const WorkerMissing: React.FC<WorkerMissingProps> = ({
@@ -37,7 +38,9 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
   workingDays = [],
   filterIds,
   variant = 'full',
+  expandAll = false,
 }) => {
+  const [expanded, setExpanded] = useState(expandAll);
   const profileCompletion = useMemo(() => {
     const steps = [
       {
@@ -291,6 +294,17 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
         <Text className="font-title text-lg text-foreground">
           Profile setup
         </Text>
+        {expanded ? (
+          <Icons.ChevronUp
+            size={18}
+            className="text-muted-foreground stroke-1.5"
+          />
+        ) : (
+          <Icons.ChevronDown
+            size={18}
+            className="text-muted-foreground stroke-1.5"
+          />
+        )}
         <Text className="font-caption text-muted-foreground">
           {profileCompletion.completedCount}/{profileCompletion.total}
         </Text>
@@ -301,7 +315,7 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
           totalSteps={profileCompletion.total}
         />
       </View>
-      {cards}
+      {expanded && cards}
     </View>
   );
 };

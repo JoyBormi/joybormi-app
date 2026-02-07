@@ -115,7 +115,7 @@ export const DeleteModal = forwardRef<DeleteModalRef, DeleteModalProps>(
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          className="flex-1 bg-red-500"
+          className="flex-1"
         >
           {/* Backdrop */}
           <Pressable

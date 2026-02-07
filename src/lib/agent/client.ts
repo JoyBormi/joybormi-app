@@ -61,7 +61,7 @@ const createAgentClient = (): AxiosInstance => {
       // Server responded with something
       if (response) {
         // Backend sends flat error format: { code, message, status, timestamp }
-        if (data?.code && data?.message) {
+        if (data?.message) {
           const apiError = new ApiError({
             error: {
               code: data.code,
@@ -80,7 +80,7 @@ const createAgentClient = (): AxiosInstance => {
         const fallbackError = new ApiError({
           error: {
             code: 0,
-            message: response.statusText || 'Request failed',
+            message: data?.message || response.statusText || 'Request failed',
             status: response.status,
             timestamp: new Date().toISOString(),
           },

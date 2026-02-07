@@ -75,6 +75,16 @@ module.exports = {
         '3xl': '16px',
         '4xl': '20px',
       },
+      borderRadius: {
+        xs: 'calc(var(--radius) - 6px)',
+        sm: 'calc(var(--radius) - 4px)',
+        md: 'calc(var(--radius) - 2px)',
+        lg: 'var(--radius)',
+        xl: 'calc(var(--radius) + 2px)',
+        '2xl': 'calc(var(--radius) + 6px)',
+        '3xl': 'calc(var(--radius) + 10px)',
+        '4xl': 'calc(var(--radius) + 14px)',
+      },
       radius: {
         xs: '2px',
         sm: '4px',

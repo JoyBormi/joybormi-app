@@ -40,7 +40,7 @@ const BackgroundBlob = ({
 export function PendingScreen<T extends { status: string }>({
   onRefresh,
 }: {
-  onRefresh: () => Promise<QueryObserverResult<T, Error>>;
+  onRefresh: () => Promise<QueryObserverResult<T, Error> | void>;
 }) {
   const [refreshing, setRefreshing] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -52,7 +52,7 @@ export function PendingScreen<T extends { status: string }>({
 
     const result = await onRefresh();
 
-    if (result.data?.status === BrandStatus.ACTIVE) {
+    if (result?.data?.status === BrandStatus.ACTIVE) {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 2500);
     }

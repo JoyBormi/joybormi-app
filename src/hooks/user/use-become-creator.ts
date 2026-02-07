@@ -2,9 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { agent } from '@/lib/agent/client';
 import { queryKeys } from '@/lib/tanstack-query';
-import { TCreateBrandInput } from '@/lib/validations/brand';
+import { TCreateBrandInput } from '@/lib/validation';
 import { useUserStore } from '@/stores';
-import { EUserType } from '@/types/user.type';
+import { EUserType, IUser } from '@/types/user.type';
 
 /**
  * Become creator API call
@@ -18,17 +18,18 @@ export const becomeCreatorApi = async (
  */
 export function useBecomeCreator() {
   const queryClient = useQueryClient();
-  const { setAppType } = useUserStore();
+  const { setAppType, setUser, user } = useUserStore();
 
   return useMutation<string, Error, TCreateBrandInput>({
     mutationFn: becomeCreatorApi,
 
-    onSuccess: (message) => {
+    onSuccess: () => {
       // Invalidate all queries to refetch with new user context
       queryClient.invalidateQueries({
         queryKey: queryKeys.auth.me,
       });
       setAppType(EUserType.CREATOR);
+      setUser({ ...user, role: EUserType.CREATOR } as IUser);
     },
   });
 }

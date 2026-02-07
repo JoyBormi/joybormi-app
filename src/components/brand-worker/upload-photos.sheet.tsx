@@ -33,7 +33,7 @@ interface UploadPhotosSheetProps {
   onDelete?: (fileId: string) => void;
   onReplace?: (fileId: string) => void;
   value?: IFile | null;
-  setValue?: (photo: IFile) => void;
+  setValue?: (photo: IFile | null) => void;
   categories?: PhotoCategoryOption[];
 }
 
@@ -48,7 +48,7 @@ const DEFAULT_CATEGORIES: PhotoCategoryOption[] = [
 export const UploadPhotosSheet = forwardRef<
   BottomSheetModal,
   UploadPhotosSheetProps
->(({ onUpload, onDelete, onReplace, value, categories }, ref) => {
+>(({ onUpload, onDelete, onReplace, value, setValue, categories }, ref) => {
   const insets = useSafeAreaInsets();
   const animationConfigs = useBottomSheetTimingConfigs({ duration: 150 });
 
@@ -98,7 +98,8 @@ export const UploadPhotosSheet = forwardRef<
     setSelectedPhotos([]);
     setSelectedPhoto(null);
     setSelectedCategory(defaultCategory);
-  }, [defaultCategory, ref]);
+    setValue?.(null);
+  }, [defaultCategory, ref, setValue]);
 
   const pickImages = useCallback(async () => {
     const result = await ImagePicker.launchImageLibraryAsync({

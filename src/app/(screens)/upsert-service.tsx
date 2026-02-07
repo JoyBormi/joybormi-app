@@ -38,9 +38,10 @@ const UpsertServiceScreen = () => {
   const params = useLocalSearchParams<{
     ownerId?: string;
     serviceId?: string;
+    brandId?: string;
   }>();
 
-  const ownerId = params.ownerId;
+  const ownerId = params.ownerId ?? params.brandId;
   const serviceId = params.serviceId;
   const isEdit = !!serviceId;
 

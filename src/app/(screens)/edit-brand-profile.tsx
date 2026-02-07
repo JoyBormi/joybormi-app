@@ -1,11 +1,9 @@
 import { router } from 'expo-router';
-import { RefreshCcw } from 'lucide-react-native';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { DeleteModal, DeleteModalRef } from '@/components/modals';
 import { KeyboardAvoid } from '@/components/shared';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
@@ -15,11 +13,11 @@ import {
   Input,
   NumberInput,
   PhoneInput,
+  Select,
   Text,
   Textarea,
 } from '@/components/ui';
-import { routes } from '@/constants/routes';
-import { useDeleteBrand, useGetBrand, useUpdateBrand } from '@/hooks/brand';
+import { useGetBrand, useUpdateBrand } from '@/hooks/brand';
 import { toast } from '@/providers/toaster';
 
 export interface BrandForm {
@@ -43,8 +41,6 @@ const EditBrandProfileScreen = () => {
   // Fetch brand data
   const { data: brand, isLoading } = useGetBrand();
   const { mutateAsync: updateBrand, isPending: isUpdating } = useUpdateBrand();
-  const { mutateAsync: deleteBrand, isPending: isDeleting } = useDeleteBrand();
-  const deleteModalRef = useRef<DeleteModalRef>(null);
 
   // Form state matching backend schema
   const form = useForm<BrandForm>({
@@ -115,11 +111,6 @@ const EditBrandProfileScreen = () => {
       router.back();
     });
   }, [brand, form, updateBrand]);
-
-  const handleDelete = useCallback(() => {
-    if (!brand) return;
-    deleteModalRef.current?.show();
-  }, [brand]);
 
   if (isLoading || !brand) return <Loading />;
 
@@ -232,23 +223,46 @@ const EditBrandProfileScreen = () => {
           <FormField
             required
             control={form.control}
-            name="city"
-            label="City"
+            name="country"
+            label="Country"
             className="flex-1"
-            render={({ field }) => <Input {...field} placeholder="City" />}
+            render={({ field }) => (
+              <Select
+                options={[{ label: 'Uzbekistan', value: 'UZB' }]}
+                {...field}
+                placeholder="Country"
+              />
+            )}
           />
-
           <FormField
             required
             control={form.control}
             name="state"
             label="State"
             className="flex-1"
-            render={({ field }) => <Input {...field} placeholder="State" />}
+            render={({ field }) => (
+              <Select
+                options={[
+                  { label: 'Tashkent', value: 'Toshkent' },
+                  { label: 'Samarqand', value: 'Samarqand' },
+                  { label: 'Bukhara', value: 'Bukhara' },
+                ]}
+                {...field}
+                placeholder="State"
+              />
+            )}
           />
         </View>
 
         <View className="flex-row gap-3">
+          <FormField
+            required
+            control={form.control}
+            name="city"
+            label="City"
+            className="flex-1"
+            render={({ field }) => <Input {...field} placeholder="City" />}
+          />
           <FormField
             required
             control={form.control}
@@ -259,52 +273,19 @@ const EditBrandProfileScreen = () => {
               <NumberInput {...field} placeholder="12345" />
             )}
           />
-
-          <FormField
-            required
-            control={form.control}
-            name="country"
-            label="Country"
-            className="flex-1"
-            render={({ field }) => <Input {...field} placeholder="Country" />}
-          />
         </View>
       </View>
 
       {/* Action Buttons */}
-      <View className="mt-4 gap-4 flex-row">
-        <Button
-          onPress={handleDelete}
-          variant="outline"
-          size="lg"
-          className="flex-[0.3] border-destructive"
-          disabled={isDeleting}
-        >
-          <Text className="text-destructive">Delete</Text>
-        </Button>
-
-        <Button
-          onPress={handleSave}
-          disabled={!isFormDirty || isUpdating}
-          size="lg"
-          className="flex-[0.7]"
-        >
-          {isUpdating ? (
-            <RefreshCcw
-              size={20}
-              className="text-primary-foreground animate-spin"
-            />
-          ) : (
-            <Text>Save Changes</Text>
-          )}
-        </Button>
-      </View>
-      <DeleteModal
-        ref={deleteModalRef}
-        onConfirm={async () => {
-          await deleteBrand().then(() => router.replace(routes.tabs.home));
-        }}
-      />
+      <Button
+        onPress={handleSave}
+        disabled={!isFormDirty || isUpdating}
+        loading={isUpdating}
+        size="lg"
+        className="flex-1 mt-4"
+      >
+        <Text>Save Changes</Text>
+      </Button>
     </KeyboardAvoid>
   );
 };

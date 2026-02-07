@@ -52,7 +52,7 @@ export const useError = () => {
           return;
         }
 
-        if (status === 0 || code === ErrorCodes.NETWORK_CONNECTION_ERROR) {
+        if (status === 0) {
           return alert({
             title: t('common.errors.ohNo'),
             subtitle: t('common.errors.somethingWentWrong'),
@@ -60,8 +60,6 @@ export const useError = () => {
             cancelLabel: null,
           });
         }
-
-        if (code === 0) return null;
 
         // Show error message from backend (backend provides localized messages)
         toast.error({
@@ -74,7 +72,7 @@ export const useError = () => {
       // If it's not an ApiError, show a generic error
       alert({
         title: t('common.errors.ohNo'),
-        subtitle: t('common.errors.somethingWentWrong'),
+        subtitle: error.message ?? t('common.errors.somethingWentWrong'),
         confirmLabel: t('common.buttons.ok'),
         cancelLabel: null,
       });

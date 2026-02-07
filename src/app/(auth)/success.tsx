@@ -1,4 +1,5 @@
 import { useGlobalSearchParams, useRouter } from 'expo-router';
+import LottieView from 'lottie-react-native';
 import { MotiView } from 'moti';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +7,7 @@ import { View } from 'react-native';
 
 import Icons from '@/components/icons';
 import { Button, Text } from '@/components/ui';
+import { animations } from '@/constants/animations';
 import { routes } from '@/constants/routes';
 import { Feedback } from '@/lib/haptics';
 
@@ -18,7 +20,17 @@ export default function SuccessScreen() {
   const subtitle = t(`auth.success.${type}.subtitle`);
 
   return (
-    <View className="flex-1 justify-center items-center px-4 bg-background">
+    <View className="flex-1 items-center px-4 bg-background">
+      {/* lottie confetti */}
+
+      <LottieView
+        source={animations.confetti}
+        autoPlay
+        loop
+        style={{ width: '100%', height: '100%', position: 'absolute' }}
+      />
+      <View className="flex-[0.4]" />
+
       <MotiView
         from={{
           scale: 0,

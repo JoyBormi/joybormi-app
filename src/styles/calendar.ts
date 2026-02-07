@@ -30,11 +30,11 @@ export const getMonthTheme = (colors: ThemeHex['dark']['colors']): Theme => ({
 
   // Selected day
   selectedDayBackgroundColor: colors.primary,
-  selectedDayTextColor: colors.text,
+  selectedDayTextColor: colors.primaryForeground ?? '#ffffff',
 
   // Dots
-  dotColor: colors.border,
-  selectedDotColor: colors.background,
+  dotColor: colors.muted,
+  selectedDotColor: colors.primaryForeground ?? '#ffffff',
 
   textDayStyle: {
     fontFamily: 'Montserrat-Regular',
@@ -53,11 +53,11 @@ export const getTimelineTheme = (colors: ThemeHex['dark']['colors']): Theme => {
     textSectionTitleColor: colors.text,
     dayTextColor: colors.text,
     todayTextColor: colors.primary,
-    selectedDayTextColor: colors.text,
+    selectedDayTextColor: colors.primaryForeground ?? '#ffffff',
     selectedDayBackgroundColor: colors.primary,
     todayDotColor: colors.primary,
-    dotColor: colors.border,
-    selectedDotColor: colors.background,
+    dotColor: colors.muted,
+    selectedDotColor: colors.primaryForeground ?? '#ffffff',
     textDisabledColor: colors.border,
     weekVerticalMargin: 6,
     monthTextColor: colors.text,

@@ -177,6 +177,7 @@ const CreateBrand: React.FC = () => {
         alert({
           title: t('brand.setup.success.title'),
           subtitle: t('brand.setup.success.message'),
+          cancelLabel: null,
           onConfirm: () => {
             router.replace(routes.tabs.brand.brand_profile);
             clearDraft();
@@ -240,11 +241,9 @@ const CreateBrand: React.FC = () => {
   return (
     <KeyboardAvoid
       className="main-area"
-      scrollConfig={{
-        contentContainerStyle: {
-          paddingTop: insets.top + 10,
-          paddingBottom: insets.bottom + 50,
-        },
+      contentContainerStyle={{
+        paddingTop: insets.top + 10,
+        paddingBottom: insets.bottom + 50,
       }}
     >
       {/* Custom Header with Back Button */}
@@ -286,6 +285,7 @@ const CreateBrand: React.FC = () => {
             onPress={handleBack}
             disabled={isSubmitting}
             className="px-6"
+            size="lg"
           >
             <Text className="font-semibold text-foreground">
               {t('common.buttons.back')}
@@ -297,18 +297,18 @@ const CreateBrand: React.FC = () => {
             onPress={handleNext}
             disabled={!isCurrentStepValid() || isSubmitting}
             className="flex-1"
+            size="lg"
           >
-            <Text className="font-semibold text-primary-foreground">Next</Text>
+            <Text>Next</Text>
           </Button>
         ) : (
           <Button
             onPress={handleSubmit(onSubmit)}
             disabled={!isValid || isSubmitting}
             className="flex-1"
+            size="lg"
           >
-            <Text className="font-semibold text-primary-foreground">
-              {isSubmitting ? 'Loading...' : 'Submit'}
-            </Text>
+            <Text>{isSubmitting ? 'Loading...' : 'Submit'}</Text>
           </Button>
         )}
       </View>

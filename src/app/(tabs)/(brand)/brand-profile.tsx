@@ -2,7 +2,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { Fragment, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import {
   SafeAreaView,
@@ -15,16 +15,18 @@ import {
   UploadPhotosSheet,
   UploadProfileImageSheet,
 } from '@/components/brand-worker';
+import { DeleteModal, DeleteModalRef } from '@/components/modals';
 import {
   NotFoundScreen,
   PendingScreen,
   SuspendedScreen,
 } from '@/components/status-screens';
-import { Text } from '@/components/ui';
+import { Button, Text } from '@/components/ui';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IMAGE_CATEGORIES } from '@/constants/global.constants';
 import { routes } from '@/constants/routes';
 import {
+  useDeleteBrand,
   useGetBrand,
   useGetBrandPhotos,
   useGetBrandTeam,
@@ -58,7 +60,8 @@ type BrandProfileTab =
   | 'services'
   | 'schedule'
   | 'team'
-  | 'photos';
+  | 'photos'
+  | 'danger';
 
 /**
  * @description Brand Profile Management Page - For creators to manage their brand
@@ -93,6 +96,7 @@ const BrandProfileScreen: React.FC = () => {
   const { mutateAsync: updateBrand } = useUpdateBrand();
   const { mutateAsync: uploadFile } = useUploadFile();
   const { mutateAsync: deleteFile } = useDeleteFile();
+  const { mutateAsync: deleteBrand, isPending: isDeleting } = useDeleteBrand();
 
   // ───────────────── Local state ────────────────── //
   const [activeTab, setActiveTab] = useState<BrandProfileTab>('setup');
@@ -116,6 +120,7 @@ const BrandProfileScreen: React.FC = () => {
   const uploadProfileImageSheetRef = useRef<BottomSheetModal>(null);
   const inviteTeamSheetRef = useRef<BottomSheetModal>(null);
   const uploadPhotosSheetRef = useRef<BottomSheetModal>(null);
+  const deleteModalRef = useRef<DeleteModalRef>(null);
 
   // ───────────────── Handlers ────────────────── //
   const handleEditBrand = useCallback(() => {
@@ -188,6 +193,11 @@ const BrandProfileScreen: React.FC = () => {
   const handleAddWorker = useCallback(() => {
     inviteTeamSheetRef.current?.present();
   }, [inviteTeamSheetRef]);
+
+  const handleDeleteBrand = useCallback(() => {
+    if (!canEdit) return;
+    deleteModalRef.current?.show();
+  }, [canEdit]);
 
   const handleSetupWorkerProfile = useCallback(() => {
     setAppType(EUserType.WORKER);
@@ -385,6 +395,9 @@ const BrandProfileScreen: React.FC = () => {
                   <TabsTrigger value="photos">
                     <Text>Photos</Text>
                   </TabsTrigger>
+                  <TabsTrigger value="danger">
+                    <Text>Danger</Text>
+                  </TabsTrigger>
                 </ScrollView>
               </TabsList>
 
@@ -412,7 +425,7 @@ const BrandProfileScreen: React.FC = () => {
               </TabsContent>
 
               {/* About Section */}
-              <TabsContent value="about" className="flex-1">
+              <TabsContent value="about" className="flex-1 min-h-[50vh]">
                 {renderMissing(['details', 'description', 'images'])}
                 <BrandAbout
                   brand={brand}
@@ -422,7 +435,7 @@ const BrandProfileScreen: React.FC = () => {
               </TabsContent>
 
               {/* Services Section */}
-              <TabsContent value="services" className="flex-1">
+              <TabsContent value="services" className="flex-1 min-h-[50vh]">
                 {renderMissing(['services'])}
                 <BrandServicesList
                   ownerId={brand.id}
@@ -431,7 +444,7 @@ const BrandProfileScreen: React.FC = () => {
                 />
               </TabsContent>
 
-              <TabsContent value="schedule" className="flex-1">
+              <TabsContent value="schedule" className="flex-1 min-h-[50vh]">
                 {renderMissing(['schedule'])}
                 <ScheduleDisplay
                   workingDays={schedule?.workingDays ?? []}
@@ -443,7 +456,7 @@ const BrandProfileScreen: React.FC = () => {
               </TabsContent>
 
               {/* Team Section */}
-              <TabsContent value="team" className="flex-1">
+              <TabsContent value="team" className="flex-1 min-h-[50vh]">
                 {renderMissing(['team'])}
                 <BrandTeamList
                   workers={team || []}
@@ -454,7 +467,7 @@ const BrandProfileScreen: React.FC = () => {
               </TabsContent>
 
               {/* Photos Section */}
-              <TabsContent value="photos" className="flex-1">
+              <TabsContent value="photos" className="flex-1 min-h-[50vh]">
                 {renderMissing(['photos'])}
                 <ProfilePhotosGrid
                   photos={mergedPhotos}
@@ -462,6 +475,38 @@ const BrandProfileScreen: React.FC = () => {
                   onAddPhoto={handleAddPhoto}
                   onPhotoPress={handlePhotoPress}
                 />
+              </TabsContent>
+
+              <TabsContent value="danger" className="flex-1 min-h-[50vh]">
+                <View className="px-6 pt-2">
+                  <View className="rounded-3xl border border-destructive/25 bg-destructive/5 p-5">
+                    <View className="h-1.5 w-16 rounded-full bg-destructive/70 mb-4" />
+                    <Text className="font-title text-lg text-destructive">
+                      Danger Zone
+                    </Text>
+                    <Text className="mt-2 text-sm text-muted-foreground">
+                      Deleting your brand is permanent. This removes your brand
+                      profile, team, services, schedule, and photos.
+                    </Text>
+
+                    <View className="mt-5 rounded-2xl border border-border/40 bg-background/80 px-4 py-4">
+                      <Text className="font-subtitle text-foreground">
+                        Delete brand
+                      </Text>
+                      <Text className="mt-1 text-xs text-muted-foreground">
+                        You will lose access to all brand data and team members.
+                      </Text>
+                      <Button
+                        variant="destructive"
+                        className="mt-4"
+                        onPress={handleDeleteBrand}
+                        disabled={!canEdit || isDeleting}
+                      >
+                        <Text>Delete Brand</Text>
+                      </Button>
+                    </View>
+                  </View>
+                </View>
               </TabsContent>
             </Tabs>
 
@@ -494,6 +539,13 @@ const BrandProfileScreen: React.FC = () => {
             setValue={setSelectedPhoto}
             onUpload={handleUploadPhotos}
             onDelete={handleDeletePhoto}
+          />
+
+          <DeleteModal
+            ref={deleteModalRef}
+            onConfirm={async () => {
+              await deleteBrand();
+            }}
           />
         </SafeAreaView>
       )}
