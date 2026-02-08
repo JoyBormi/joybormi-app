@@ -2,14 +2,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { ActivityIndicator, View } from 'react-native';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Loading, NotFoundScreen } from '@/components/status-screens';
-import { Button, Select, SelectValue, Text, Textarea } from '@/components/ui';
+import { Button, Select, Text, Textarea } from '@/components/ui';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import {
@@ -23,25 +23,22 @@ import {
 import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
 import { alert } from '@/stores/use-alert-store';
+import { ServiceOwnerType } from '@/types/service.type';
 import { normalizeInput } from '@/utils/helpers';
 import { validateFormErrors } from '@/utils/validation';
 
 /**
  * Add/Edit Service Screen
- * Route: /((screens))/add-service?id={brandId}&serviceId={serviceId}
- * - id: brandId (required for creating new service)
+ * Route: /((screens))/add-service?serviceId={serviceId}
  * - serviceId: service id (optional, for editing existing service)
  */
 const UpsertServiceScreen = () => {
-  const { user } = useUserStore();
+  const { appType } = useUserStore();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{
-    ownerId?: string;
     serviceId?: string;
-    brandId?: string;
   }>();
 
-  const ownerId = params.ownerId ?? params.brandId;
   const serviceId = params.serviceId;
   const isEdit = !!serviceId;
 
@@ -66,7 +63,6 @@ const UpsertServiceScreen = () => {
       durationMins: '',
       price: '',
       currency: 'UZS',
-      ownerType: user?.role,
     },
   });
 
@@ -78,7 +74,6 @@ const UpsertServiceScreen = () => {
         description: service.description,
         durationMins: String(service.durationMins),
         price: service.price.toString(),
-        ownerType: service.ownerType,
       });
     }
   }, [isEdit, service, form]);
@@ -92,8 +87,6 @@ const UpsertServiceScreen = () => {
   }, [form.formState.errors, form]);
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    if (!user?.id) return;
-
     if (isEdit && serviceId) {
       // Update existing service
       await updateService(
@@ -116,20 +109,16 @@ const UpsertServiceScreen = () => {
           },
         },
       );
-    } else if (ownerId) {
-      // Create new service
+    } else {
       await createService(
         {
-          brandId: ownerId,
+          ownerType: appType as unknown as ServiceOwnerType,
           name: data.name,
           description: data.description,
           durationMins: parseInt(data.durationMins),
           price: normalizeInput(data.price)
             ? Number(normalizeInput(data.price))
             : 0,
-          currency: data.currency,
-          ownerId: user.id,
-          ownerType: user.role,
         },
         {
           onSuccess() {
@@ -170,25 +159,11 @@ const UpsertServiceScreen = () => {
     );
   }
 
-  // Missing ownerId for new service
-  if (!isEdit && !ownerId) {
-    return (
-      <NotFoundScreen
-        title="Invalid Request"
-        message="ID is required to create a new service."
-        actionLabel="Go Back"
-        onAction={() => router.back()}
-      />
-    );
-  }
-
   return (
     <KeyboardAvoid
       className="main-area"
-      scrollConfig={{
-        contentContainerStyle: {
-          paddingBottom: insets.bottom + 16,
-        },
+      contentContainerStyle={{
+        paddingBottom: insets.bottom + 16,
       }}
     >
       {/* Header */}
@@ -202,7 +177,7 @@ const UpsertServiceScreen = () => {
       />
 
       {/* Form Fields */}
-      <View className="gap-4">
+      <View className="gap-4 mt-5">
         <FormField
           control={form.control}
           name="name"
@@ -244,7 +219,7 @@ const UpsertServiceScreen = () => {
           render={({ field }) => (
             <Select
               value={field.value}
-              onChangeText={field.onChangeText as (value: SelectValue) => void}
+              onChangeText={field.onChangeText}
               placeholder="Select duration"
               options={[
                 { label: '30 min', value: '30' },
@@ -265,7 +240,7 @@ const UpsertServiceScreen = () => {
           render={({ field }) => (
             <NumberInput
               {...field}
-              placeholder="80 000 so'm"
+              placeholder="Enter price"
               thousandSeparator
               maxDecimals={0}
               returnKeyType="done"
@@ -282,7 +257,7 @@ const UpsertServiceScreen = () => {
           render={({ field }) => (
             <Select
               value={field.value}
-              onChangeText={field.onChangeText as (value: SelectValue) => void}
+              onChangeText={field.onChangeText}
               placeholder="Select currency"
               options={[
                 { label: 'So`m', value: 'UZS' },
@@ -302,17 +277,9 @@ const UpsertServiceScreen = () => {
           disabled={
             !form.formState.isValid || isCreatingService || isUpdatingService
           }
+          loading={isCreatingService || isUpdatingService}
         >
-          {isCreatingService || isUpdatingService ? (
-            <ActivityIndicator
-              size="small"
-              className="text-primary-foreground"
-            />
-          ) : (
-            <Text className="font-title">
-              {isEdit ? 'Save Changes' : 'Create Service'}
-            </Text>
-          )}
+          <Text>{isEdit ? 'Save Changes' : 'Create Service'}</Text>
         </Button>
         {isEdit && (
           <Button

@@ -8,7 +8,7 @@ import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Loading } from '@/components/status-screens';
-import { Button, Text, Textarea } from '@/components/ui';
+import { Button, PhoneInput, Select, Text, Textarea } from '@/components/ui';
 import { Input } from '@/components/ui/input';
 import { useGetWorkerProfile, useUpdateWorkerProfile } from '@/hooks/worker';
 import { toast } from '@/providers/toaster';
@@ -20,55 +20,43 @@ import {
 const EditProfileScreen = () => {
   const insets = useSafeAreaInsets();
   const { data: worker, isLoading } = useGetWorkerProfile();
-  const { mutateAsync: updateWorkerProfile, isPending } =
-    useUpdateWorkerProfile();
+  const { mutateAsync, isPending } = useUpdateWorkerProfile();
 
   const form = useForm<WorkerProfileFormData>({
     resolver: zodResolver(workerProfileSchema),
     defaultValues: {
-      name: '',
-      role: '',
+      username: '',
+      firstName: '',
+      lastName: '',
+      jobTitle: '',
       bio: '',
-      specialties: [],
       email: '',
       phone: '',
-      avatar: '',
-      coverImage: '',
+      instagram: '',
+      languages: [],
     },
   });
 
   useEffect(() => {
-    if (worker) {
-      form.reset({
-        name: worker.username ?? '',
-        role: worker.jobTitle ?? '',
-        bio: worker.bio ?? '',
-        specialties: worker.specialties ?? [],
-        email: worker.email ?? '',
-        phone: worker.phone ?? '',
-        avatar: worker.avatar ?? '',
-        coverImage: worker.coverImage ?? '',
-      });
-    }
+    if (!worker) return;
+
+    form.reset({
+      username: worker.username ?? '',
+      firstName: worker.firstName ?? '',
+      lastName: worker.lastName ?? '',
+      jobTitle: worker.jobTitle ?? '',
+      bio: worker.bio ?? '',
+      email: worker.email ?? '',
+      phone: worker.phone ?? '',
+      instagram: worker.instagram ?? '',
+      languages: worker.languages ?? [],
+    });
   }, [worker, form]);
 
-  const isFormDirty = form.formState.isDirty;
-
-  const handleSubmit = form.handleSubmit(async (data) => {
-    try {
-      await updateWorkerProfile({
-        name: data.name,
-        role: data.role,
-        bio: data.bio,
-        specialties: data.specialties,
-        email: data.email,
-        phone: data.phone,
-      });
-      toast.success({ title: 'Profile updated' });
-      router.back();
-    } catch {
-      toast.error({ title: 'Failed to update profile' });
-    }
+  const onSubmit = form.handleSubmit(async (data) => {
+    await mutateAsync(data);
+    toast.success({ title: 'Profile updated' });
+    router.back();
   });
 
   if (isLoading || !worker) return <Loading />;
@@ -83,22 +71,62 @@ const EditProfileScreen = () => {
 
       <FormField
         control={form.control}
-        name="name"
-        label="Full Name"
+        name="username"
+        label="Username"
         required
         render={({ field }) => (
-          <Input placeholder="Enter your full name" {...field} />
+          <Input
+            placeholder="Your username"
+            {...field}
+            returnKeyType="next"
+            onSubmitEditing={() => form.setFocus('firstName')}
+          />
         )}
       />
 
       <FormField
         control={form.control}
-        name="role"
-        label="Role/Title"
+        name="firstName"
+        label="First Name"
+        className="mt-4"
+        render={({ field }) => (
+          <Input
+            placeholder="First name"
+            {...field}
+            returnKeyType="next"
+            onSubmitEditing={() => form.setFocus('lastName')}
+          />
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="lastName"
+        label="Last Name"
+        className="mt-4"
+        render={({ field }) => (
+          <Input
+            placeholder="Last name"
+            {...field}
+            returnKeyType="next"
+            onSubmitEditing={() => form.setFocus('jobTitle')}
+          />
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="jobTitle"
+        label="Job Title"
         required
         className="mt-4"
         render={({ field }) => (
-          <Input placeholder="e.g. Senior Stylist" {...field} />
+          <Input
+            placeholder="e.g. Senior Stylist"
+            {...field}
+            returnKeyType="next"
+            onSubmitEditing={() => form.setFocus('bio')}
+          />
         )}
       />
 
@@ -107,9 +135,14 @@ const EditProfileScreen = () => {
         name="bio"
         label="Bio"
         required
-        className="mt-4 min-h-[120px]"
+        className="mt-4"
         render={({ field }) => (
-          <Textarea placeholder="Tell us about yourself" {...field} />
+          <Textarea
+            placeholder="Tell us about yourself"
+            {...field}
+            returnKeyType="next"
+            onSubmitEditing={() => form.setFocus('email')}
+          />
         )}
       />
 
@@ -121,10 +154,12 @@ const EditProfileScreen = () => {
         className="mt-4"
         render={({ field }) => (
           <Input
-            placeholder="your.email@example.com"
+            placeholder="your@email.com"
             keyboardType="email-address"
             autoCapitalize="none"
             {...field}
+            returnKeyType="next"
+            onSubmitEditing={() => form.setFocus('phone')}
           />
         )}
       />
@@ -136,25 +171,59 @@ const EditProfileScreen = () => {
         required
         className="mt-4"
         render={({ field }) => (
-          <Input
-            placeholder="+1 (555) 123-4567"
-            keyboardType="phone-pad"
+          <PhoneInput
             {...field}
+            returnKeyType="next"
+            onSubmitEditing={() => form.setFocus('languages')}
+          />
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="languages"
+        label="Languages"
+        required
+        className="mt-4"
+        render={({ field }) => (
+          <Select
+            onChangeText={field.onChangeText}
+            value={field.value}
+            multi
+            options={[
+              { label: 'Uzbek', value: 'uz' },
+              { label: 'English', value: 'en' },
+              { label: 'Russian', value: 'ru' },
+            ]}
+          />
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="instagram"
+        label="Instagram"
+        className="mt-4"
+        render={({ field }) => (
+          <Input
+            placeholder="@username"
+            autoCapitalize="none"
+            {...field}
+            returnKeyType="done"
+            onSubmitEditing={() => form.setFocus('instagram')}
           />
         )}
       />
 
       <Button
-        onPress={handleSubmit}
-        className="bg-primary mt-6 w-2/5 self-end"
+        onPress={onSubmit}
+        className=" mt-6 min-w-fit self-end"
         style={{ marginBottom: insets.bottom + 50 }}
-        disabled={!isFormDirty}
+        disabled={!form.formState.isDirty}
         loading={isPending}
         size="lg"
       >
-        <Text className="font-subtitle text-primary-foreground">
-          Save Changes
-        </Text>
+        <Text>Save Changes</Text>
       </Button>
     </KeyboardAvoid>
   );

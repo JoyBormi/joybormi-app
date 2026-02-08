@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FlashList } from '@shopify/flash-list';
 import { ChevronDown, X } from 'lucide-react-native';
 import React, { Fragment, useMemo, useState } from 'react';
@@ -14,14 +13,14 @@ import Animated, {
 import { Feedback } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
 
+import { TFieldValue } from '../shared/form-field';
+
 import { PressableBounce } from './pressable-bounce';
 import { Text } from './text';
 
-export type SelectValue = string | number;
-
 interface Option {
   label: string;
-  value: SelectValue;
+  value: TFieldValue;
 }
 
 type SelectProps = {
@@ -29,18 +28,10 @@ type SelectProps = {
   placeholder?: string;
   title?: string;
   onBlur?: () => void;
-} & (
-  | {
-      multi: true;
-      value: SelectValue[];
-      onChangeText: (value: SelectValue[]) => void;
-    }
-  | {
-      multi?: false;
-      value: SelectValue | undefined;
-      onChangeText: (value: SelectValue) => void;
-    }
-);
+  multi?: boolean;
+  value: TFieldValue;
+  onChangeText: (value: TFieldValue) => void;
+};
 
 export function Select({
   options,
@@ -61,16 +52,16 @@ export function Select({
     return selected ? selected.label : placeholder;
   }, [value, options, multi, placeholder]);
 
-  const toggleOption = (itemValue: SelectValue) => {
+  const toggleOption = (itemValue: TFieldValue) => {
     Feedback.selection();
     if (multi) {
       const currentValues = Array.isArray(value) ? value : [];
-      const newValue = currentValues.includes(itemValue)
+      const newValue = currentValues.includes(itemValue as string)
         ? currentValues.filter((v) => v !== itemValue)
         : [...currentValues, itemValue];
-      onChangeText?.(newValue as any);
+      onChangeText?.(newValue as string[]);
     } else {
-      onChangeText?.(itemValue as any);
+      onChangeText?.(itemValue as string);
       setVisible(false);
     }
   };
@@ -134,12 +125,13 @@ export function Select({
               <FlashList
                 data={options}
                 contentContainerStyle={{ padding: 16 }}
-                keyExtractor={(item) => item.value.toString()}
+                keyExtractor={(item) => item.value?.toString() || ''}
                 showsVerticalScrollIndicator={false}
                 extraData={value}
                 renderItem={({ item }) => {
                   const isSelected = multi
-                    ? Array.isArray(value) && value.includes(item.value)
+                    ? Array.isArray(value) &&
+                      value.includes(item.value as string)
                     : value === item.value;
 
                   return (
@@ -154,7 +146,7 @@ export function Select({
                     >
                       <Text
                         className={cn(
-                          'text-base capitalize w-full',
+                          'text-base capitalize w-full font-montserrat-medium',
                           isSelected
                             ? 'font-semibold text-primary-foreground'
                             : 'text-foreground',
@@ -175,7 +167,7 @@ export function Select({
                   className="w-full bg-primary py-4 rounded-2xl items-center active:opacity-90"
                 >
                   <Text className="text-primary-foreground font-semibold">
-                    {t('common.buttons.done')}
+                    {t('common.buttons.submit')}
                   </Text>
                 </Pressable>
               </View>

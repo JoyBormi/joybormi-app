@@ -18,10 +18,6 @@ interface ProfileCardProps {
   onEditBanner: () => void;
 }
 
-/**
- * Profile Card Component
- * Displays worker avatar, info, stats, and edit button
- */
 export const ProfileCard: React.FC<ProfileCardProps> = ({
   worker,
   servicesCount,
@@ -39,76 +35,67 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
         canEdit={canEdit}
         onEdit={onEditBanner}
       />
+
       <View className="main-area">
         <View className="bg-card/50 backdrop-blur-xl px-6 pb-6">
-          {/* Avatar and Basic Info */}
-          <View className="items-center mb-6">
+          {/* Avatar + Identity */}
+          <View className="items-center mb-4">
             <ProfileAvatar
               imageUri={worker.avatar}
               canEdit={canEdit}
               onEdit={onEditAvatar}
-              containerClassName="mb-4 -mt-20"
+              containerClassName="mb-3 -mt-20"
               editButtonSize={40}
               editIconSize={18}
             />
 
-            <Text className="font-title text-center text-foreground mb-1">
-              {worker.name}
-            </Text>
-            <Text className="font-subtitle text-muted-foreground mb-3">
-              {worker.role}
+            <Text className="font-title text-center text-foreground">
+              {worker.username}
             </Text>
 
-            {/* Rating Badge */}
-            <View className="flex-row items-center gap-2 bg-warning/10 px-4 py-2 rounded-full">
-              <Icons.Star size={16} className="text-warning" fill="#f59e0b" />
-              <Text className="font-subtitle text-foreground">
-                {worker.rating}
+            {worker.jobTitle && (
+              <Text className="font-subtitle text-muted-foreground mt-1">
+                {worker.jobTitle}
               </Text>
-              <Text className="font-caption text-muted-foreground">
-                • {worker.reviewCount} reviews
-              </Text>
-            </View>
+            )}
           </View>
 
           {/* Quick Stats */}
           <View className="flex-row gap-3 mb-6">
             <View className="flex-1 bg-muted/20 rounded-2xl p-4 items-center">
               <Icons.Briefcase size={20} className="text-primary mb-2" />
-              <Text className="font-heading text-lg text-foreground">
+              <Text className="font-heading text-foreground">
                 {servicesCount}
               </Text>
               <Text className="font-caption text-muted-foreground">
                 Services
               </Text>
             </View>
+
             <View className="flex-1 bg-muted/20 rounded-2xl p-4 items-center">
               <Icons.Calendar size={20} className="text-success mb-2" />
-              <Text className="font-heading text-lg text-foreground">
+              <Text className="font-heading text-foreground">
                 {workDaysCount}
               </Text>
               <Text className="font-caption text-muted-foreground">
                 Work Days
               </Text>
             </View>
+
             <View className="flex-1 bg-muted/20 rounded-2xl p-4 items-center">
               <Icons.Star size={20} className="text-warning mb-2" />
-              <Text className="font-heading text-lg text-foreground">
+              <Text className="font-heading text-foreground">
                 {photosCount}
               </Text>
               <Text className="font-caption text-muted-foreground">Photos</Text>
             </View>
           </View>
 
-          {/* Edit Profile Button */}
+          {/* Edit */}
           {canEdit && (
-            <Button onPress={onEdit} className="bg-primary">
-              <View className="flex-row items-center gap-2">
-                <Icons.Pencil size={18} className="text-primary-foreground" />
-                <Text className="font-subtitle text-primary-foreground">
-                  Edit Profile
-                </Text>
-              </View>
+            <Button onPress={onEdit}>
+              <Icons.Pencil size={16} className="text-primary-foreground" />
+              <Text>Edit Profile</Text>
             </Button>
           )}
         </View>

@@ -3,24 +3,24 @@ import { useQuery } from '@tanstack/react-query';
 import { agent } from '@/lib/agent';
 import { queryKeys } from '@/lib/tanstack-query';
 
-import type { IService } from '@/types/service.type';
+import type { IService, ServiceOwnerType } from '@/types/service.type';
 
-interface GetServicesParams {
-  brandId?: string;
+type ServicesQuery = {
   ownerId?: string;
-}
-
-const getServices = async (params: GetServicesParams): Promise<IService[]> => {
-  const queryParams = new URLSearchParams();
-  if (params.brandId) queryParams.append('brandId', params.brandId);
-  if (params.ownerId) queryParams.append('ownerId', params.ownerId);
-
-  return await agent.get(`/services?${queryParams.toString()}`);
+  ownerType?: ServiceOwnerType;
 };
 
-export const useGetServices = (params: GetServicesParams) =>
+export const useGetServices = ({ ownerId, ownerType }: ServicesQuery = {}) =>
   useQuery({
-    queryKey: [...queryKeys.service.list, { params }],
-    queryFn: () => getServices(params),
-    enabled: !!(params.brandId || params.ownerId),
+    queryKey: [...queryKeys.service.list, { ownerId, ownerType }],
+    queryFn: async (): Promise<IService[]> => {
+      const query = [
+        ownerId ? `ownerId=${ownerId}` : '',
+        ownerType ? `ownerType=${ownerType}` : '',
+      ]
+        .filter(Boolean)
+        .join('&');
+      return await agent.get(`/services${query ? `?${query}` : ''}`);
+    },
+    enabled: !!ownerId || !!ownerType,
   });

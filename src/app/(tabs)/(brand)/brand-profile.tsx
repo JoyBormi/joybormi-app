@@ -32,6 +32,7 @@ import { useGetServices } from '@/hooks/service';
 import { useUserStore } from '@/stores';
 import { BrandStatus } from '@/types/brand.type';
 import { IFile } from '@/types/file.type';
+import { ServiceOwnerType } from '@/types/service.type';
 import { EUserType } from '@/types/user.type';
 import {
   BrandAbout,
@@ -85,7 +86,8 @@ const BrandProfileScreen: React.FC = () => {
   const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos(brand?.id);
 
   const { data: services, refetch: refetchServices } = useGetServices({
-    brandId: brand?.id,
+    ownerId: brand?.id,
+    ownerType: brand?.id ? ServiceOwnerType.CREATOR : undefined,
   });
 
   const { data: team, refetch: refetchTeam } = useGetBrandTeam(brand?.id);
@@ -348,12 +350,7 @@ const BrandProfileScreen: React.FC = () => {
             {canEdit && (
               <BrandQuickActions
                 onAddService={() =>
-                  router.push(
-                    routes.screens.upsert_service({
-                      ownerId: brand.id,
-                      ownerType: 'brand',
-                    }),
-                  )
+                  router.push(routes.screens.upsert_service())
                 }
                 onAddWorker={handleAddWorker}
                 onManageHours={() =>
@@ -377,11 +374,7 @@ const BrandProfileScreen: React.FC = () => {
           {/* Services Section */}
           <TabsContent value="services" className="flex-1 min-h-[50vh]">
             {renderMissing(['services'])}
-            <BrandServicesList
-              ownerId={brand.id}
-              services={services}
-              canEdit={canEdit}
-            />
+            <BrandServicesList services={services} canEdit={canEdit} />
           </TabsContent>
 
           <TabsContent value="schedule" className="flex-1 min-h-[50vh]">

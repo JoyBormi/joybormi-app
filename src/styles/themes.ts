@@ -40,7 +40,7 @@ export const THEME_COLORS = {
     '--input': '220 12% 96%',
     '--ring': '268 55% 48%',
 
-    '--radius': '14px',
+    '--radius': '12px',
   }),
 
   dark: vars({
@@ -79,7 +79,7 @@ export const THEME_COLORS = {
     '--input': '220 10% 14%',
     '--ring': '268 60% 62%',
 
-    '--radius': '14px',
+    '--radius': '12px',
   }),
 };
 

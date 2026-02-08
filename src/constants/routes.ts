@@ -82,18 +82,15 @@ export const routes = {
   screens: {
     upsert_service: (
       params: {
-        ownerId?: string;
-        ownerType?: 'brand' | 'worker';
         serviceId?: string;
-        brandId?: string;
       } = {},
     ): Href => ({
       pathname: '/(screens)/upsert-service',
       params,
     }),
-    upsert_schedule: (brandId: string): Href => ({
+    upsert_schedule: (ownerId: string): Href => ({
       pathname: '/(screens)/upsert-schedule',
-      params: { brandId },
+      params: { ownerId },
     }),
   },
 

@@ -282,7 +282,7 @@ const EditBrandProfileScreen = () => {
         disabled={!isFormDirty || isUpdating}
         loading={isUpdating}
         size="lg"
-        className="flex-1 mt-4"
+        className="self-end min-w-fit mt-4"
       >
         <Text>Save Changes</Text>
       </Button>

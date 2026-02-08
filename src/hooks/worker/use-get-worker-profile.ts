@@ -6,6 +6,6 @@ import { IWorker } from '@/types/worker.type';
 
 export const useGetWorkerProfile = () =>
   useQuery({
-    queryKey: [...queryKeys.worker.profile],
+    queryKey: queryKeys.worker.profile,
     queryFn: async (): Promise<IWorker> => await agent.get(`/workers/me`),
   });

@@ -153,13 +153,7 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
         icon: Icons.Scissors,
         action: {
           label: 'Add service',
-          onPress: () =>
-            router.push(
-              routes.screens.upsert_service({
-                ownerId: worker?.id,
-                ownerType: 'worker',
-              }),
-            ),
+          onPress: () => router.push(routes.screens.upsert_service()),
         },
       });
     }

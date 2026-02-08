@@ -29,18 +29,18 @@ const ManageScheduleScreen = () => {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
-  const params = useLocalSearchParams<{ brandId?: string }>();
-  const brandId = params?.brandId;
+  const params = useLocalSearchParams<{ ownerId?: string }>();
+  const ownerId = params?.ownerId;
 
   const { dayNames, dayNamesShort } = useLocaleData();
 
   // Fetch existing schedule
   const { data: scheduleData, isLoading: isLoadingSchedule } =
-    useGetSchedule(brandId);
+    useGetSchedule(ownerId);
 
   // Mutations
   const { mutateAsync: updateSchedule, isPending: isUpdatingSchedule } =
-    useUpdateSchedule(brandId);
+    useUpdateSchedule(ownerId);
 
   const [schedule, setSchedule] = useState<IWorkingDay[]>([]);
   const [editingState, setEditingState] = useState<{
@@ -195,7 +195,7 @@ const ManageScheduleScreen = () => {
   }, []);
 
   const handleSave = async () => {
-    if (!brandId) return;
+    if (!ownerId) return;
 
     // Validate that at least one day is configured
     if (schedule.length === 0) {

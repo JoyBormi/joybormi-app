@@ -2,7 +2,6 @@ import React from 'react';
 import { Pressable, View } from 'react-native';
 
 import Icons from '@/components/icons';
-import { NoData } from '@/components/status-screens';
 import { Text } from '@/components/ui';
 
 import type { IService } from '@/types/service.type';
@@ -24,22 +23,7 @@ export const ServicesList: React.FC<ServicesListProps> = ({
   onServicePress,
   canEdit = true,
 }) => {
-  if (services.length === 0) {
-    return (
-      <NoData
-        title="No Services"
-        message="Create your first service to start accepting bookings."
-        action={
-          canEdit && onAddService
-            ? {
-                label: 'Add Service',
-                onPress: onAddService,
-              }
-            : undefined
-        }
-      />
-    );
-  }
+  if (services.length === 0) return null;
 
   return (
     <View className="px-6 mb-8">

@@ -5,7 +5,7 @@ export enum ServiceStatus {
 }
 
 export enum ServiceOwnerType {
-  BRAND = 'BRAND',
+  CREATOR = 'CREATOR',
   WORKER = 'WORKER',
 }
 
@@ -25,15 +25,11 @@ export interface IService {
 }
 
 export interface CreateServicePayload {
-  brandId: string;
+  ownerType: ServiceOwnerType;
   name: string;
   description?: string;
   durationMins: number;
   price: number;
-  currency: string;
-  status?: ServiceStatus;
-  ownerId: string;
-  ownerType: string;
 }
 
 export interface UpdateServicePayload {

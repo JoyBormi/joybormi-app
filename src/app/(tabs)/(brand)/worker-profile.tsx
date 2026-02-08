@@ -27,6 +27,7 @@ import {
 } from '@/hooks/worker';
 import { useUserStore } from '@/stores';
 import { IFile } from '@/types/file.type';
+import { ServiceOwnerType } from '@/types/service.type';
 import { EUserType } from '@/types/user.type';
 import {
   DangerZone,
@@ -94,14 +95,14 @@ const WorkerProfileScreen: React.FC = () => {
     isLoading: isWorkerLoading,
   } = useGetWorkerProfile();
   const { data: services, refetch: refetchServices } = useGetServices({
-    brandId: worker?.brandId,
     ownerId: worker?.id,
+    ownerType: worker?.id ? ServiceOwnerType.WORKER : undefined,
   });
   const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos(
     worker?.id,
   );
   const { data: schedule, refetch: refetchSchedule } = useGetSchedule(
-    worker?.brandId,
+    worker?.id,
   );
   const { data: experiences } = useGetExperiences();
 
@@ -345,15 +346,10 @@ const WorkerProfileScreen: React.FC = () => {
             {canEdit && (
               <QuickActionsSection
                 onAddService={() =>
-                  router.push(
-                    routes.screens.upsert_service({
-                      ownerId: worker.id,
-                      ownerType: 'worker',
-                    }),
-                  )
+                  router.push(routes.screens.upsert_service())
                 }
                 onEditSchedule={() =>
-                  router.push(routes.screens.upsert_schedule(worker.brandId))
+                  router.push(routes.screens.upsert_schedule(worker.id))
                 }
               />
             )}
@@ -375,19 +371,11 @@ const WorkerProfileScreen: React.FC = () => {
             <ServicesList
               services={services ?? []}
               canEdit={canEdit}
-              onAddService={() =>
-                router.push(
-                  routes.screens.upsert_service({
-                    ownerId: worker.id,
-                    ownerType: 'worker',
-                  }),
-                )
-              }
+              onAddService={() => router.push(routes.screens.upsert_service())}
               onServicePress={(service) =>
                 router.push(
                   routes.screens.upsert_service({
                     serviceId: service.id,
-                    ownerId: worker.id,
                   }),
                 )
               }
@@ -400,7 +388,7 @@ const WorkerProfileScreen: React.FC = () => {
               workingDays={workingDays ?? []}
               canEdit={canEdit}
               onEditSchedule={() =>
-                router.push(routes.screens.upsert_schedule(worker.brandId))
+                router.push(routes.screens.upsert_schedule(worker.id))
               }
             />
           </TabsContent>

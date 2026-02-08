@@ -23,15 +23,14 @@ export interface UpdateWorkerPayload {
 
 const updateWorkerProfile = async (
   payload: UpdateWorkerPayload,
-): Promise<IWorker> => await agent.put(`/workers/me/profile`, payload);
+): Promise<IWorker> => await agent.put(`/workers/me`, payload);
 
 export const useUpdateWorkerProfile = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: UpdateWorkerPayload) => updateWorkerProfile(payload),
-    onSuccess: (data) => {
-      queryClient.setQueryData([...queryKeys.worker.profile], data);
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.worker.profile });
     },
   });

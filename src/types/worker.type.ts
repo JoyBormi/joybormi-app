@@ -9,16 +9,21 @@ export interface IWorker {
   userId: string;
   brandId: string;
   username: string;
-  jobTitle: string;
-  avatar: string;
-  coverImage?: string;
-  bio: string;
-  specialties: string[];
-  rating: number;
-  reviewCount: number;
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
+  phone: string | null;
+  avatar: string | null;
+  coverImage: string | null;
+  bio: string | null;
+  jobTitle: string | null;
+  languages: string[];
+  instagram: string | null;
+  isPublic: boolean;
   status: WorkerStatus;
-  email: string;
-  phone: string;
+  scheduleId: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface IReview {

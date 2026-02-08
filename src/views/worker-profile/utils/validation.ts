@@ -1,18 +1,35 @@
 import { z } from 'zod';
 
+import { emailSchema, phoneSchema } from '@/lib/validation';
+
 /**
  * Validation schemas for Worker Profile forms
  */
 
 export const workerProfileSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  role: z.string().min(2, 'Role must be at least 2 characters'),
-  bio: z.string().min(10, 'Bio must be at least 10 characters'),
-  specialties: z.array(z.string()).min(1, 'At least one specialty is required'),
-  email: z.string().email('Invalid email address'),
-  phone: z.string().min(10, 'Phone number must be at least 10 characters'),
-  avatar: z.string().optional(),
-  coverImage: z.string().optional(),
+  username: z.string().min(1).optional(),
+
+  firstName: z.string().min(1).optional(),
+
+  lastName: z.string().min(1).optional(),
+
+  avatar: z.url().optional().or(z.literal('')),
+
+  coverImage: z.url().optional().or(z.literal('')),
+
+  bio: z.string().min(1).optional(),
+
+  jobTitle: z.string().min(1).optional(),
+
+  phone: phoneSchema,
+
+  email: emailSchema,
+
+  languages: z.array(z.string()).optional(),
+
+  instagram: z.string().optional(),
+
+  isPublic: z.boolean().optional(),
 });
 
 export const serviceSchema = z.object({

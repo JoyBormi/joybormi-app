@@ -31,6 +31,7 @@ import {
   Home,
   Image,
   Info,
+  Instagram,
   LayoutGrid,
   List,
   Lock,
@@ -109,6 +110,7 @@ iconWithClassName(Sparkles);
 iconWithClassName(Briefcase);
 iconWithClassName(Scissors);
 iconWithClassName(Stethoscope);
+iconWithClassName(Instagram);
 iconWithClassName(BookOpen);
 iconWithClassName(ChevronRight);
 iconWithClassName(ChevronLeft);
@@ -189,6 +191,7 @@ const Icons = {
   Store,
   CreditCard,
   FileText,
+  Instagram,
   Globe,
   HelpCircle,
   Lock,

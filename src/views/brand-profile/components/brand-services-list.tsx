@@ -13,7 +13,6 @@ import type { IService } from '@/types/service.type';
 interface BrandServicesListProps {
   services?: IService[];
   canEdit: boolean;
-  ownerId: string;
 }
 
 /**
@@ -23,7 +22,6 @@ interface BrandServicesListProps {
 export const BrandServicesList: React.FC<BrandServicesListProps> = ({
   services,
   canEdit,
-  ownerId,
 }) => {
   if (!services || services.length === 0) return null;
   return (
@@ -34,9 +32,7 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
         </Text>
         {canEdit && (
           <Pressable
-            onPress={() =>
-              router.push(routes.screens.upsert_service({ ownerId }))
-            }
+            onPress={() => router.push(routes.screens.upsert_service())}
           >
             <Icons.Plus size={20} className="text-primary" />
           </Pressable>
@@ -55,7 +51,6 @@ export const BrandServicesList: React.FC<BrandServicesListProps> = ({
                 router.push(
                   routes.screens.upsert_service({
                     serviceId: service.id,
-                    ownerId,
                   }),
                 )
               }
