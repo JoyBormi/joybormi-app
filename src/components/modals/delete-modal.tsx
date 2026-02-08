@@ -119,7 +119,7 @@ export const DeleteModal = forwardRef<DeleteModalRef, DeleteModalProps>(
         >
           {/* Backdrop */}
           <Pressable
-            className="flex-1 bg-black/50 items-center justify-center px-4"
+            className="flex-1 bg-black/20 items-center justify-center px-4"
             onPress={hide}
           >
             {/* Modal Content */}
@@ -128,13 +128,13 @@ export const DeleteModal = forwardRef<DeleteModalRef, DeleteModalProps>(
                 opacity,
                 transform: [{ scale }],
               }}
-              className="bg-card rounded-3xl w-full max-w-md px-6 pt-10 pb-8 border border-border/50"
+              className="bg-card rounded-3xl w-full max-w-md px-6 pt-10 pb-8 border border-border/70"
             >
-              <Text className="text-foreground font-heading text-xl text-center mb-2">
+              <Text className="text-foreground font-title text-center mb-2">
                 {t('common.deleteModal.title')}
               </Text>
 
-              <Text className="text-muted-foreground text-center mb-8">
+              <Text className="text-muted-foreground text-center mb-8 font-subbody">
                 {t('common.deleteModal.description', {
                   keyword: targetKeyword,
                 })}
@@ -166,6 +166,7 @@ export const DeleteModal = forwardRef<DeleteModalRef, DeleteModalProps>(
                   onPress={handleConfirm}
                   disabled={!isMatched}
                   variant="destructive"
+                  className="flex-1"
                 >
                   <Text>{t('common.deleteModal.button')}</Text>
                 </Button>

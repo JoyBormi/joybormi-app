@@ -122,10 +122,7 @@ export function BasicInfo<T extends FieldValues>({
           render={({ field }) => (
             <Textarea
               placeholder="Tell customers about your brand..."
-              multiline
-              numberOfLines={6}
-              textAlignVertical="top"
-              scrollEnabled={false}
+              scrollEnabled
               {...field}
             />
           )}

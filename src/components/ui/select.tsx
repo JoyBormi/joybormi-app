@@ -105,7 +105,7 @@ export function Select({
           <Animated.View
             entering={FadeIn.duration(120)}
             exiting={FadeOut.duration(150)}
-            className="absolute inset-0 bg-foreground/20"
+            className="absolute inset-0 bg-black/20"
           >
             <Pressable className="flex-1" onPress={() => setVisible(false)} />
           </Animated.View>

@@ -5,10 +5,10 @@ import { routes } from '@/constants/routes';
 import { agent } from '@/lib/agent';
 import { queryKeys } from '@/lib/tanstack-query';
 import { useUserStore } from '@/stores';
-import { EUserType } from '@/types/user.type';
+import { EUserType, IUser } from '@/types/user.type';
 
 export const useDeleteBrand = () => {
-  const { setAppType } = useUserStore();
+  const { setAppType, setUser, user } = useUserStore();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -17,6 +17,7 @@ export const useDeleteBrand = () => {
       router.replace(routes.root);
 
       setAppType(EUserType.USER);
+      setUser({ ...user, role: EUserType.USER } as IUser);
 
       // Clear all brand-related queries
       queryClient.invalidateQueries({

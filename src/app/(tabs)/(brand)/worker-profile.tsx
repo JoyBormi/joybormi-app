@@ -9,11 +9,6 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-import {
-  UploadBannerSheet,
-  UploadPhotosSheet,
-  UploadProfileImageSheet,
-} from '@/components/brand-worker';
 import { DeleteModal, DeleteModalRef } from '@/components/modals';
 import { NotFoundScreen, PendingScreen } from '@/components/status-screens';
 import { Text } from '@/components/ui';
@@ -37,6 +32,9 @@ import {
   DangerZone,
   ProfilePhotosGrid,
   ProfileSkeleton,
+  UploadBannerSheet,
+  UploadPhotosSheet,
+  UploadProfileImageSheet,
 } from '@/views/profile/components';
 import { useProfileGallery } from '@/views/profile/hooks/use-profile-gallery';
 import { createImageUploadHandler } from '@/views/profile/utils/profile-media';

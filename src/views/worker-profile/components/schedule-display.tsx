@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
@@ -15,16 +15,12 @@ interface ScheduleDisplayProps {
   canEdit?: boolean;
 }
 
-/**
- * Schedule Display Component
- * Shows weekly working days with date-of-month
- */
 export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
   workingDays,
   onEditSchedule,
   canEdit = true,
 }) => {
-  const { dayNamesShort } = useLocaleData();
+  const { dayNamesShort, dayNames } = useLocaleData();
 
   if (workingDays.length === 0) return null;
 
@@ -38,70 +34,111 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
   };
 
   return (
-    <View className="px-6 mb-12">
-      {/* Header */}
-      <View className="flex-row items-center justify-between mb-4">
-        <Text className="font-title text-lg text-foreground">
-          Schedule Overview
-        </Text>
+    <ScrollView
+      className="flex-1 bg-background px-6"
+      showsVerticalScrollIndicator={false}
+    >
+      {/* 1. Large Hero Header */}
+      <View className="pb-6 flex-row items-center justify-between">
+        <View>
+          <Text className="font-title text-3xl text-foreground">Schedule</Text>
+          <Text className="font-body text-muted-foreground mt-1">
+            Weekly working routine
+          </Text>
+        </View>
         {canEdit && (
-          <Pressable onPress={onEditSchedule} hitSlop={10}>
-            <Icons.Calendar size={20} className="text-primary" />
+          <Pressable
+            onPress={onEditSchedule}
+            className="h-12 w-12 bg-primary/10 rounded-full items-center justify-center"
+          >
+            <Icons.Calendar size={24} className="text-primary" />
           </Pressable>
         )}
       </View>
 
-      {/* Card */}
-      <View>
-        <Text className="font-body text-muted-foreground mb-4">
-          Working {workingDays.length} days per week
-        </Text>
+      {/* 2. Quick Stats Row */}
+      <View className="flex-row gap-4 mb-8">
+        <View className="flex-1 bg-success/10 p-5 rounded-xl border border-success/20">
+          <Text className="text-success font-title text-3xl">
+            {workingDays.length}
+          </Text>
+          <Text className="text-success/80 font-subtitle uppercase tracking-wider">
+            Work Days
+          </Text>
+        </View>
+        <View className="flex-1 bg-muted/30 p-5 rounded-xl">
+          <Text className="text-muted-foreground font-title">
+            {7 - workingDays.length}
+          </Text>
+          <Text className="text-muted-foreground/80 font-subtitle uppercase tracking-wider">
+            Rest Days
+          </Text>
+        </View>
+      </View>
 
-        {/* Days grid */}
-        <View className="flex-row flex-wrap justify-between gap-1 px-1">
-          {DAY_ORDER.map((day) => {
-            const date = getDateForWeekday(day);
-            const isToday = date.toDateString() === today.toDateString();
-            const isWorking = workingDays.some((dayObj) => {
-              const uiIndex = dayObj.dayOfWeek;
-              return uiIndex === day;
-            });
+      {/* 3. Detailed List of Days */}
+      <View className="gap-y-3 pb-12">
+        {DAY_ORDER.map((day) => {
+          const date = getDateForWeekday(day);
+          const isToday = date.toDateString() === today.toDateString();
+          const isWorking = workingDays.some(
+            (dayObj) => dayObj.dayOfWeek === day,
+          );
 
-            return (
+          return (
+            <View
+              key={day}
+              className={cn(
+                'flex-row items-center p-4 rounded-lg border',
+                isWorking
+                  ? 'bg-card border-border shadow-sm'
+                  : 'bg-muted/30 border-transparent opacity-60',
+              )}
+            >
+              {/* Date Circle */}
               <View
-                key={day}
                 className={cn(
-                  'w-[12%] h-16 rounded-xl items-center justify-center',
-                  isWorking
-                    ? 'bg-success/20 border border-success/30'
-                    : 'bg-muted/20',
+                  'w-14 h-14 rounded-full items-center justify-center mr-4',
+                  isWorking ? 'bg-success/20' : 'bg-muted',
                 )}
               >
-                {/* Day name */}
                 <Text
                   className={cn(
-                    'font-caption uppercase',
+                    'font-title',
                     isWorking ? 'text-success' : 'text-muted-foreground',
-                  )}
-                >
-                  {dayNamesShort[day]}
-                </Text>
-
-                {/* Day of month */}
-                <Text
-                  className={cn(
-                    'font-caption mt-0.5',
-                    isWorking ? 'text-success' : 'text-muted-foreground',
-                    isToday && 'font-bold',
                   )}
                 >
                   {date.getDate()}
                 </Text>
               </View>
-            );
-          })}
-        </View>
+
+              {/* Day Info */}
+              <View className="flex-1">
+                <View className="flex-row items-center">
+                  <Text
+                    className={cn(
+                      'font-title',
+                      isWorking ? 'text-foreground' : 'text-muted-foreground',
+                    )}
+                  >
+                    {dayNames ? dayNames[day] : dayNamesShort[day]}
+                  </Text>
+                  {isToday && (
+                    <View className="ml-2 px-2 py-0.5 bg-primary rounded-xs">
+                      <Text className="font-base text-primary-foreground uppercase">
+                        Today
+                      </Text>
+                    </View>
+                  )}
+                </View>
+                <Text className="text-muted-foreground font-caption">
+                  {isWorking ? 'Scheduled Shift' : 'Unavailable'}
+                </Text>
+              </View>
+            </View>
+          );
+        })}
       </View>
-    </View>
+    </ScrollView>
   );
 };

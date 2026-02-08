@@ -13,6 +13,7 @@ const Textarea = React.forwardRef<
     {
       className,
       multiline = true,
+      scrollEnabled = true,
       numberOfLines = 6,
       placeholderClassName,
       value,
@@ -30,6 +31,7 @@ const Textarea = React.forwardRef<
         )}
         placeholderClassName={cn('text-muted-foreground', placeholderClassName)}
         multiline={multiline}
+        scrollEnabled={scrollEnabled}
         numberOfLines={numberOfLines}
         textAlignVertical="top"
         value={value ? value?.toString() : ''}
