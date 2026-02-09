@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { KeyboardAvoid } from '@/components/shared';
@@ -31,73 +30,65 @@ export default function ChangePasswordScreen() {
 
   return (
     <KeyboardAvoid
-      className="bg-background px-4"
-      scrollConfig={{
-        showsVerticalScrollIndicator: false,
-        contentContainerStyle: {
-          paddingBottom: insets.bottom + 80,
-          paddingTop: 12,
-          rowGap: 24,
-        },
+      className="main-area"
+      contentContainerStyle={{
+        paddingBottom: insets.bottom + 50,
+        paddingTop: 12,
+        rowGap: 24,
       }}
     >
-      <Header
-        title="Change Password"
-        subtitle={t('auth.resetPwd.subtitle')}
-        className="mb-2"
+      <Header title="Change Password" subtitle={t('auth.resetPwd.subtitle')} />
+
+      <FormField
+        control={form.control}
+        name="currentPassword"
+        label="Current password"
+        render={({ field }) => (
+          <PasswordInput
+            {...field}
+            placeholder="Enter current password"
+            returnKeyType="next"
+            onSubmitEditing={() => form.setFocus('newPassword')}
+          />
+        )}
       />
 
-      <View className="gap-4">
-        <FormField
-          control={form.control}
-          name="currentPassword"
-          label="Current password"
-          render={({ field }) => (
-            <PasswordInput
-              {...field}
-              placeholder="Enter current password"
-              returnKeyType="next"
-              onSubmitEditing={() => form.setFocus('newPassword')}
-            />
-          )}
-        />
+      <FormField
+        control={form.control}
+        name="newPassword"
+        label="New password"
+        render={({ field }) => (
+          <PasswordInput
+            {...field}
+            placeholder={t('auth.newPasswordPlaceholder')}
+            returnKeyType="next"
+            onSubmitEditing={() => form.setFocus('confirmPassword')}
+          />
+        )}
+      />
 
-        <FormField
-          control={form.control}
-          name="newPassword"
-          label="New password"
-          render={({ field }) => (
-            <PasswordInput
-              {...field}
-              placeholder={t('auth.newPasswordPlaceholder')}
-              returnKeyType="next"
-              onSubmitEditing={() => form.setFocus('confirmPassword')}
-            />
-          )}
-        />
+      <FormField
+        control={form.control}
+        name="confirmPassword"
+        label="Confirm new password"
+        render={({ field }) => (
+          <PasswordInput
+            {...field}
+            placeholder={t('auth.confirmPasswordPlaceholder')}
+            returnKeyType="done"
+            onSubmitEditing={() => form.handleSubmit(handlePasswordUpdate)()}
+          />
+        )}
+      />
 
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          label="Confirm new password"
-          render={({ field }) => (
-            <PasswordInput
-              {...field}
-              placeholder={t('auth.confirmPasswordPlaceholder')}
-              returnKeyType="done"
-              onSubmitEditing={() => form.handleSubmit(handlePasswordUpdate)()}
-            />
-          )}
-        />
-
-        <Button
-          size="lg"
-          onPress={form.handleSubmit(handlePasswordUpdate)}
-          disabled={form.formState.isSubmitting}
-        >
-          <Text>Update password</Text>
-        </Button>
-      </View>
+      <Button
+        size="lg"
+        onPress={form.handleSubmit(handlePasswordUpdate)}
+        loading={form.formState.isSubmitting}
+        disabled={form.formState.isSubmitting}
+      >
+        <Text>Update password</Text>
+      </Button>
     </KeyboardAvoid>
   );
 }

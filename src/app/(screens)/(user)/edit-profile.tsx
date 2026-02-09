@@ -10,12 +10,11 @@ import { BlockModal, BlockModalRef } from '@/components/modals/block-modal';
 import { KeyboardAvoid } from '@/components/shared';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
-import { Button, Input, PhoneInput, Text } from '@/components/ui';
+import { Button, Input, PhoneInput, Select, Text } from '@/components/ui';
 import { useUpdateProfile } from '@/hooks/user/use-update-profile';
 import { ProfileFormData, profileSchema } from '@/lib/validation';
 import { useUserStore } from '@/stores';
 import { EUserMethod } from '@/types/user.type';
-import { emptyLocalEmail } from '@/utils/helpers';
 
 const EditProfileScreen = () => {
   const { t } = useTranslation();
@@ -70,14 +69,11 @@ const EditProfileScreen = () => {
 
   return (
     <KeyboardAvoid
-      className="bg-background px-4"
-      scrollConfig={{
-        showsVerticalScrollIndicator: false,
-        contentContainerStyle: {
-          paddingBottom: insets.bottom + 80,
-          paddingTop: 12,
-          rowGap: 24,
-        },
+      className="main-area"
+      contentContainerStyle={{
+        paddingBottom: insets.bottom + 80,
+        paddingTop: 12,
+        rowGap: 24,
       }}
     >
       <Header
@@ -161,8 +157,7 @@ const EditProfileScreen = () => {
           label={t('settings.profile.email')}
           render={({ field }) => (
             <Input
-              value={emptyLocalEmail(field.value ?? '')}
-              onChangeText={field.onChangeText}
+              {...field}
               editable={user?.userMethod === EUserMethod.PHONE}
               placeholder={t('settings.profile.emailPlaceholder')}
               keyboardType="email-address"
@@ -195,6 +190,72 @@ const EditProfileScreen = () => {
           {t('settings.profile.edit.address')}
         </Text>
 
+        <View className="flex-row gap-3">
+          <FormField
+            control={form.control}
+            name="country"
+            label={t('settings.profile.country')}
+            className="flex-1"
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={[{ value: 'UZB', label: 'Uzbekistan' }]}
+                placeholder={t('settings.profile.countryPlaceholder')}
+              />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="state"
+            label={t('settings.profile.state')}
+            className="flex-1"
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={[
+                  { value: 'TOSHKENT', label: 'Toshkent' },
+                  { value: 'SAMARQAND', label: 'Samarqand' },
+                  { value: 'BUXORO', label: 'Buxoro' },
+                ]}
+                placeholder={t('settings.profile.statePlaceholder')}
+              />
+            )}
+          />
+        </View>
+
+        <View className="flex-row gap-3">
+          <FormField
+            control={form.control}
+            name="city"
+            label={t('settings.profile.city')}
+            className="flex-1"
+            render={({ field }) => (
+              <Input
+                {...field}
+                value={field.value ?? ''}
+                placeholder={t('settings.profile.cityPlaceholder')}
+                returnKeyType="next"
+                onSubmitEditing={() => form.setFocus('state')}
+              />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="postalCode"
+            label={t('settings.profile.postalCode')}
+            className="flex-1"
+            render={({ field }) => (
+              <Input
+                {...field}
+                value={field.value ?? ''}
+                placeholder={t('settings.profile.postalCodePlaceholder')}
+                returnKeyType="next"
+                onSubmitEditing={() => form.setFocus('country')}
+              />
+            )}
+          />
+        </View>
+
         <FormField
           control={form.control}
           name="street"
@@ -224,74 +285,6 @@ const EditProfileScreen = () => {
             />
           )}
         />
-
-        <View className="flex-row gap-3">
-          <FormField
-            control={form.control}
-            name="city"
-            label={t('settings.profile.city')}
-            className="flex-1"
-            render={({ field }) => (
-              <Input
-                {...field}
-                value={field.value ?? ''}
-                placeholder={t('settings.profile.cityPlaceholder')}
-                returnKeyType="next"
-                onSubmitEditing={() => form.setFocus('state')}
-              />
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="state"
-            label={t('settings.profile.state')}
-            className="flex-1"
-            render={({ field }) => (
-              <Input
-                {...field}
-                value={field.value ?? ''}
-                placeholder={t('settings.profile.statePlaceholder')}
-                returnKeyType="next"
-                onSubmitEditing={() => form.setFocus('postalCode')}
-              />
-            )}
-          />
-        </View>
-
-        <View className="flex-row gap-3">
-          <FormField
-            control={form.control}
-            name="postalCode"
-            label={t('settings.profile.postalCode')}
-            className="flex-1"
-            render={({ field }) => (
-              <Input
-                {...field}
-                value={field.value ?? ''}
-                placeholder={t('settings.profile.postalCodePlaceholder')}
-                returnKeyType="next"
-                onSubmitEditing={() => form.setFocus('country')}
-              />
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="country"
-            label={t('settings.profile.country')}
-            className="flex-1"
-            render={({ field }) => (
-              <Input
-                {...field}
-                value={field.value ?? ''}
-                placeholder={t('settings.profile.countryPlaceholder')}
-                returnKeyType="next"
-                onSubmitEditing={() => form.setFocus('preferredLocation')}
-              />
-            )}
-          />
-        </View>
       </View>
 
       {/* Preferences */}
@@ -305,12 +298,14 @@ const EditProfileScreen = () => {
           name="preferredLocation"
           label={t('settings.profile.preferredLocation')}
           render={({ field }) => (
-            <Input
+            <Select
               {...field}
-              value={field.value ?? ''}
+              options={[
+                { value: 'TOSHKENT', label: 'Toshkent' },
+                { value: 'SAMARQAND', label: 'Samarqand' },
+                { value: 'BUXORO', label: 'Buxoro' },
+              ]}
               placeholder={t('settings.profile.preferredLocationPlaceholder')}
-              returnKeyType="done"
-              onSubmitEditing={() => form.handleSubmit(handleSave)}
             />
           )}
         />
@@ -321,6 +316,7 @@ const EditProfileScreen = () => {
         <Button
           onPress={form.handleSubmit(handleSave)}
           disabled={!isFormDirty || isPending}
+          loading={isPending}
           size="lg"
         >
           <Text>

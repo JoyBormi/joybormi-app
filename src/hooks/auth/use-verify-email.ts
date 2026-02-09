@@ -4,10 +4,7 @@ import { ApiResponse } from '@/lib/agent';
 import { agent } from '@/lib/agent/client';
 
 export interface VerifyEmailPayload {
-  email: string;
-  code: string;
-  disableSession?: boolean;
-  updateEmail?: boolean;
+  token: string;
 }
 
 interface VerifyEmailResponse {

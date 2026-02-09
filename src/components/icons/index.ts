@@ -13,6 +13,7 @@ import {
   Camera,
   Check,
   CheckCircle,
+  CheckCircle2,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -54,6 +55,7 @@ import {
   Settings,
   Share2,
   Shield,
+  ShieldAlert,
   SlidersHorizontal,
   Sparkles,
   Star,
@@ -141,6 +143,8 @@ iconWithClassName(Image);
 iconWithClassName(UserPlus);
 iconWithClassName(Copy);
 iconWithClassName(Volume2);
+iconWithClassName(CheckCircle2);
+iconWithClassName(ShieldAlert);
 
 const Icons = {
   AlertCircle,
@@ -211,6 +215,8 @@ const Icons = {
   Image,
   UserPlus,
   Copy,
+  CheckCircle2,
+  ShieldAlert,
   Volume2,
 } as const;
 

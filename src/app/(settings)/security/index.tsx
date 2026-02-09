@@ -3,19 +3,19 @@ import { router } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Switch, View } from 'react-native';
+import { Pressable, Switch, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Icons from '@/components/icons';
 import { KeyboardAvoid } from '@/components/shared';
+import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
 import { Button, Input, NumberInput, PhoneInput, Text } from '@/components/ui';
 import {
+  useSendEmailVerify,
   useSendPhoneOtp,
-  useVerifyEmail,
   useVerifyPhoneOtp,
 } from '@/hooks/auth';
-import { useOtpVerification } from '@/hooks/common';
 import { useTimer } from '@/hooks/common/use-timer';
 import { normalizePhone } from '@/lib/utils';
 import {
@@ -32,7 +32,6 @@ export default function SecurityScreen() {
   const insets = useSafeAreaInsets();
   const { user } = useUserStore();
 
-  // Local state for toggles
   const [faceId, setFaceId] = useState(false);
   const [appLock, setAppLock] = useState(false);
 
@@ -41,7 +40,6 @@ export default function SecurityScreen() {
     defaultValues: {
       email: user?.email ?? '',
       phone: user?.phone ?? '',
-      emailOtp: '',
       phoneOtp: '',
     },
   });
@@ -50,21 +48,23 @@ export default function SecurityScreen() {
     useSendPhoneOtp();
   const { mutateAsync: verifyPhoneOtp, isPending: isVerifyingPhoneOtp } =
     useVerifyPhoneOtp();
-  const { mutateAsync: verifyEmail, isPending: isVerifyingEmail } =
-    useVerifyEmail();
+
+  const {
+    mutateAsync: sendEmailVerification,
+    isPending: isSendingEmailVerify,
+  } = useSendEmailVerify();
 
   const phoneTimer = useTimer();
   const emailTimer = useTimer();
 
   const watched = useWatch({
     control: verificationForm.control,
-    name: ['email', 'phone', 'emailOtp', 'phoneOtp'],
+    name: ['email', 'phone', 'phoneOtp'],
   });
 
-  const [emailValue, phoneValue, emailOtp, phoneOtp] = watched.map(
+  const [emailValue, phoneValue, phoneOtp] = watched.map(
     (v) => v ?? '',
-  ) as [string, string, string, string];
-
+  ) as string[];
   const normalized = useMemo(
     () => ({
       currentEmail: emptyLocalEmail(emailValue),
@@ -75,26 +75,25 @@ export default function SecurityScreen() {
     [emailValue, phoneValue, user],
   );
 
-  const emailVerification = useOtpVerification<ContactVerificationFormData>({
-    currentValue: normalized.currentEmail,
-    originalValue: normalized.userEmail,
-    otpValue: emailOtp,
-    otpFieldName: 'emailOtp',
-    setValue: verificationForm.setValue,
-    timer: emailTimer,
-  });
+  // ───────────────── Email Verify ────────────────── //
+  const handleSendEmailVerification = useCallback(async () => {
+    if (!normalized.currentEmail) {
+      toast.error({ title: 'Enter email address' });
+      return;
+    }
+    const res = await sendEmailVerification({ email: normalized.currentEmail });
+    console.log(`STRINGIFIED 👉:`, JSON.stringify(res, null, 2));
 
-  const phoneVerification = useOtpVerification<ContactVerificationFormData>({
-    currentValue: normalized.currentPhone,
-    originalValue: normalized.userPhone,
-    otpValue: phoneOtp,
-    otpFieldName: 'phoneOtp',
-    setValue: verificationForm.setValue,
-    timer: phoneTimer,
-  });
+    toast.success({ title: 'Verification code sent' });
+
+    emailTimer.start(60);
+  }, [normalized.currentEmail, sendEmailVerification, emailTimer]);
 
   const handleSendPhoneOtp = useCallback(async () => {
-    if (!normalized.currentPhone) return toast.error({ title: 'Enter phone' });
+    if (!normalized.currentPhone) {
+      toast.error({ title: 'Enter phone number' });
+      return;
+    }
     await sendPhoneOtp({ phoneNumber: normalized.currentPhone });
     phoneTimer.start(60);
   }, [normalized.currentPhone, sendPhoneOtp, phoneTimer]);
@@ -107,166 +106,192 @@ export default function SecurityScreen() {
       disableSession: false,
       updatePhoneNumber: true,
     });
-    phoneVerification.markVerified();
     toast.success({ title: 'Verified' });
-  }, [normalized.currentPhone, phoneOtp, phoneVerification, verifyPhoneOtp]);
+  }, [normalized.currentPhone, phoneOtp, verifyPhoneOtp]);
+
+  const emailIsVerified = useMemo(() => {
+    return Boolean(user?.emailVerified && normalized.currentEmail);
+  }, [normalized, user]);
+
+  const phoneIsVerified = useMemo(() => {
+    return Boolean(user?.phoneNumberVerified && normalized.currentPhone);
+  }, [normalized, user]);
 
   return (
     <KeyboardAvoid
-      className="bg-background px-5"
-      scrollConfig={{
-        contentContainerStyle: {
-          paddingBottom: insets.bottom + 40,
-          paddingTop: 12,
-        },
+      className="bg-background"
+      contentContainerStyle={{
+        paddingTop: 8,
+        paddingBottom: insets.bottom + 24,
       }}
     >
       <Header
         title={t('settings.pages.security.title')}
         subtitle={t('settings.pages.security.description')}
-        className="mb-4"
+        className="mb-6 px-4"
       />
 
-      {/* --- ACCESS SECTION --- */}
-      <View className="mb-6">
-        <Text className="font-title text-foreground mb-2">Access</Text>
-        <View className="bg-card/70 border border-border/60 rounded-2xl px-4">
-          <View className="flex-row items-center justify-between py-4 border-b border-border/40">
-            <View>
-              <Text className="text-sm font-medium text-foreground">
-                Face ID
-              </Text>
-              <Text className="text-xs text-muted-foreground">
-                Unlock with biometrics
-              </Text>
-            </View>
-            <Switch value={faceId} onValueChange={setFaceId} />
-          </View>
-          <View className="flex-row items-center justify-between py-4">
-            <View>
-              <Text className="text-sm font-medium text-foreground">
-                App Lock
-              </Text>
-              <Text className="text-xs text-muted-foreground">
-                Require a passcode on open
-              </Text>
-            </View>
-            <Switch value={appLock} onValueChange={setAppLock} />
-          </View>
+      {/* ACCESS CONTROLS */}
+      <Text className="mx-4 mb-2 text-xs font-medium text-muted-foreground uppercase">
+        Access Controls
+      </Text>
+
+      <View className="mx-4 rounded-xl bg-muted/40 overflow-hidden">
+        <View className="flex-row items-center justify-between px-4 h-14">
+          <Text className="text-base text-foreground">Face ID</Text>
+          <Switch value={faceId} onValueChange={setFaceId} />
+        </View>
+        <View className="h-px bg-border/40 ml-4" />
+        <View className="flex-row items-center justify-between px-4 h-14">
+          <Text className="text-base text-foreground">App Lock</Text>
+          <Switch value={appLock} onValueChange={setAppLock} />
         </View>
       </View>
 
-      {/* --- CONTACTS SECTION --- */}
-      <View className="mb-6">
-        <Text className="font-title text-foreground mb-2">Verification</Text>
-        {/* Email */}
-        <View className="bg-card/70 border border-border/60 rounded-2xl p-4 mb-3">
-          <View className="flex-row items-center gap-3">
-            <View className="flex-1">
-              <Text className="text-[11px] text-muted-foreground font-medium uppercase mb-1">
-                Email
-              </Text>
-              <Input
-                value={normalized.currentEmail}
-                onChangeText={(v) => verificationForm.setValue('email', v)}
-                className="h-8 p-0 bg-transparent border-0 text-sm"
-                editable={user?.userMethod === EUserMethod.PHONE}
-              />
-            </View>
-            {emailVerification.isVerified ? (
-              <Icons.CheckCircle size={18} className="text-success" />
+      {/* CONTACT VERIFICATION */}
+      <Text className="mx-4 mt-6 mb-2 text-xs font-medium text-muted-foreground uppercase">
+        Contact Verification
+      </Text>
+
+      <View className="mx-4 rounded-xl bg-muted/40 overflow-hidden p-4 gap-4">
+        <View>
+          <Text className="text-sm text-muted-foreground mb-1">
+            Email Address
+          </Text>
+
+          <View className="flex-row items-center gap-2 justify-between">
+            <FormField
+              control={verificationForm.control}
+              name="email"
+              className="flex-1"
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  editable={user?.userMethod === EUserMethod.PHONE}
+                  placeholder="you@example.com"
+                />
+              )}
+            />
+            {emailIsVerified ? (
+              <Icons.CheckCircle2 className="text-green-500" size={24} />
             ) : (
-              <Button
-                size="sm"
-                variant="outline"
-                className="h-9 px-4 rounded-xl"
-                onPress={() => {}}
-              >
-                <Text className="text-xs">Verify</Text>
-              </Button>
+              <Icons.ShieldAlert className="text-red-500" size={24} />
             )}
           </View>
+
+          {!emailIsVerified && (
+            <>
+              {/* SEND CODE ROW */}
+              {emailTimer.seconds > 0 ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="mt-2 self-start"
+                  onPress={handleSendEmailVerification}
+                  disabled={isSendingEmailVerify || emailTimer.seconds > 0}
+                  loading={isSendingEmailVerify}
+                >
+                  <Text>Resend in {emailTimer.formatted}</Text>
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="mt-2 self-start"
+                  onPress={handleSendEmailVerification}
+                  disabled={isSendingEmailVerify}
+                  loading={isSendingEmailVerify}
+                >
+                  <Text>Send verification link</Text>
+                </Button>
+              )}
+            </>
+          )}
         </View>
 
-        {/* Phone */}
-        <View className="bg-card/70 border border-border/60 rounded-2xl p-4">
-          <View className="flex-row items-center gap-3">
-            <View className="flex-1">
-              <Text className="text-[11px] text-muted-foreground font-medium uppercase mb-1">
-                Phone
-              </Text>
-              <PhoneInput
-                value={verificationForm.getValues('phone')}
-                onChangeText={(v) => verificationForm.setValue('phone', v)}
-                className="h-8 p-0 bg-transparent border-0 text-sm"
-              />
-            </View>
-            {phoneVerification.isVerified ? (
-              <Icons.CheckCircle size={18} className="text-success" />
+        <View>
+          <Text className="text-sm text-muted-foreground mb-1">
+            Phone Number
+          </Text>
+          <View className="flex-row items-center gap-2">
+            <FormField
+              control={verificationForm.control}
+              name="phone"
+              className="flex-1"
+              render={({ field }) => <PhoneInput {...field} />}
+            />
+            {phoneIsVerified ? (
+              <Icons.CheckCircle2 className="text-green-500" size={24} />
             ) : (
+              <Icons.ShieldAlert className="text-red-500" size={24} />
+            )}
+          </View>
+          {!phoneIsVerified && (
+            <>
               <Button
                 size="sm"
                 variant="outline"
-                className="h-9 px-4 rounded-xl"
+                className="mt-2 self-start"
                 onPress={handleSendPhoneOtp}
+                loading={isSendingPhoneOtp}
                 disabled={isSendingPhoneOtp || phoneTimer.seconds > 0}
               >
-                {isSendingPhoneOtp ? (
-                  <ActivityIndicator size="small" />
-                ) : (
-                  <Text className="text-xs">
-                    {phoneTimer.seconds > 0 ? phoneTimer.formatted : 'Verify'}
-                  </Text>
-                )}
+                <Text>
+                  {phoneTimer.seconds > 0
+                    ? `Wait ${phoneTimer.formatted}`
+                    : 'Send code'}
+                </Text>
               </Button>
-            )}
-          </View>
 
-          {phoneTimer.hasStarted && !phoneVerification.isVerified && (
-            <View className="mt-4 pt-4 border-t border-border/40 flex-row gap-2">
-              <NumberInput
-                placeholder="OTP Code"
-                className="flex-1 h-11 bg-muted/40 rounded-xl px-3 text-sm"
-                onChangeText={(v) => verificationForm.setValue('phoneOtp', v)}
-              />
-              <Button
-                size="sm"
-                className="h-11 px-5 rounded-xl"
-                onPress={handleVerifyPhone}
-                disabled={isVerifyingPhoneOtp}
-              >
-                {isVerifyingPhoneOtp ? (
-                  <ActivityIndicator color="white" />
-                ) : (
-                  <Text>Confirm</Text>
-                )}
-              </Button>
-            </View>
+              {phoneTimer.hasStarted && (
+                <View className="flex-row gap-2 mt-2">
+                  <FormField
+                    control={verificationForm.control}
+                    name="phoneOtp"
+                    className="flex-1"
+                    render={({ field }) => (
+                      <NumberInput
+                        className="h-12 bg-muted/30 rounded-lg px-3"
+                        placeholder="SMS Code"
+                        value={String(field.value ?? '')}
+                        onChangeText={field.onChangeText}
+                      />
+                    )}
+                  />
+                  <Button
+                    size="sm"
+                    className="h-12 px-4"
+                    onPress={handleVerifyPhone}
+                    disabled={isVerifyingPhoneOtp}
+                    loading={isVerifyingPhoneOtp}
+                  >
+                    <Text>Confirm</Text>
+                  </Button>
+                </View>
+              )}
+            </>
           )}
         </View>
       </View>
 
-      {/* --- PASSWORD SECTION --- */}
-      <View className="mb-2">
-        <Text className="font-title text-foreground mb-2">Password</Text>
-        <View className="bg-card/70 border border-border/60 rounded-2xl p-4 flex-row items-center justify-between">
+      {/* PASSWORD */}
+      <Text className="mx-4 mt-6 mb-2 text-xs font-medium text-muted-foreground uppercase">
+        Password
+      </Text>
+
+      <View className="mx-4 rounded-xl bg-muted/40 overflow-hidden">
+        <Pressable
+          onPress={() => router.push('/(settings)/security/change-password')}
+          className="flex-row items-center justify-between px-4 py-5"
+        >
           <View>
-            <Text className="text-sm font-medium text-foreground">
-              Account Password
-            </Text>
+            <Text className="text-base text-foreground">Change Password</Text>
             <Text className="text-xs text-muted-foreground">
-              Last changed 3 months ago
+              Last updated 3 months ago
             </Text>
           </View>
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-xl px-4 border-border"
-            onPress={() => router.push('/(settings)/security/change-password')}
-          >
-            <Text className="text-xs">Update</Text>
-          </Button>
-        </View>
+          <Icons.ChevronRight size={18} className="text-muted-foreground" />
+        </Pressable>
       </View>
     </KeyboardAvoid>
   );

@@ -7,7 +7,6 @@ import { emailSchema, otpSchema, passwordSchema, phoneSchema } from './auth';
 export const contactVerificationSchema = z.object({
   email: emailSchema,
   phone: phoneSchema,
-  emailOtp: otpSchema,
   phoneOtp: otpSchema,
 });
 

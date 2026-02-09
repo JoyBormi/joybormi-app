@@ -10,6 +10,7 @@ export * from './use-me';
 export * from './use-refresh-session';
 export * from './use-register';
 export * from './use-reset-password';
+export * from './use-send-email-verify';
 export * from './use-send-phone-otp';
 export * from './use-session-monitor';
 export * from './use-verify-email';
