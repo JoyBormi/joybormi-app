@@ -1,8 +1,7 @@
-import { BlurView } from 'expo-blur';
 import * as Notifications from 'expo-notifications';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Linking, Modal, Platform, Pressable, View } from 'react-native';
+import { Linking, Modal, Pressable, View } from 'react-native';
 import Animated, {
   FadeIn,
   FadeOut,
@@ -58,42 +57,38 @@ export function NotificationPermissionModal() {
           exiting={SlideOutDown.duration(400)}
           className="w-full max-w-sm overflow-hidden rounded-[32px] border border-muted shadow-2xl"
         >
-          <BlurView
-            intensity={Platform.OS === 'ios' ? 60 : 100}
-            tint="light"
-            className="p-8 bg-background/60"
-          >
+          <View className="p-8 bg-muted">
             <Pressable
               onPress={() => setIsVisible(false)}
-              className="absolute right-4 top-4 z-10 p-2 rounded-full bg-primary-500/10"
+              className="absolute right-4 top-4 z-10 p-2 rounded-full bg-card/20"
               hitSlop={20}
             >
               <Icons.X className="w-6 h-6 text-foreground" />
             </Pressable>
 
             <View className="items-center">
-              <View className="bg-primary-100 rounded-full p-6 mb-6 shadow-inner">
+              <View className="bg-card/50 rounded-full p-6 mb-6 shadow-inner">
                 <Icons.Bell className="w-6 h-6 text-foreground" />
               </View>
 
               <View className="items-center mb-6">
-                <Text className="text-2xl font-semibold text-foreground text-center mb-2">
+                <Text className="font-title text-foreground text-center mb-2">
                   {t(
                     'common.permissions.notifications.title',
-                    'Enable Prayer Notifications',
+                    'Enable Notifications',
                   )}
                 </Text>
-                <Text className="text-[15px] leading-5 text-muted-foreground text-center px-2">
+                <Text className="font-body text-muted-foreground text-center px-2">
                   {t(
                     'common.permissions.notifications.message',
-                    'Stay on track with your prayers. Allow notifications to receive timely reminders for each prayer time.',
+                    'Allow notifications to receive timely reminders for each appointment.',
                   )}
                 </Text>
               </View>
 
               <View className="w-full gap-3">
                 <Button onPress={handleRequestPermission} className="w-full">
-                  <Text className="text-primary-foreground font-semibold">
+                  <Text>
                     {t(
                       'common.permissions.notifications.allow',
                       'Allow Notifications',
@@ -105,7 +100,7 @@ export function NotificationPermissionModal() {
                   onPress={handleOpenSettings}
                   className="w-full"
                 >
-                  <Text className="font-medium">
+                  <Text>
                     {t(
                       'common.permissions.notifications.settings',
                       'Open Settings',
@@ -114,7 +109,7 @@ export function NotificationPermissionModal() {
                 </Button>
               </View>
             </View>
-          </BlurView>
+          </View>
         </Animated.View>
       </Animated.View>
     </Modal>

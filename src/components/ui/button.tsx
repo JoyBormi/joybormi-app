@@ -18,7 +18,7 @@ const buttonVariants = cva('flex items-center justify-center rounded-xl', {
     },
     size: {
       default: 'h-12 px-6',
-      sm: 'h-10 px-4',
+      sm: 'h-10 px-4 rounded-md',
       lg: 'h-14 px-8',
       xl: 'h-16 px-10',
       icon: 'h-12 w-12',
@@ -43,10 +43,10 @@ const buttonTextVariants = cva('font-montserrat-medium text-foreground', {
       link: 'text-primary underline',
     },
     size: {
-      sm: 'text-base',
-      default: 'text-sm',
-      lg: 'text-lg',
-      xl: 'text-xl',
+      sm: 'font-caption',
+      default: 'font-body',
+      lg: 'font-title',
+      xl: 'font-title',
       icon: '',
       iconSm: '',
       iconLg: '',
@@ -104,12 +104,7 @@ const Button = React.forwardRef<
         >
           {(state) => (
             <View className="flex-row items-center gap-2">
-              {loading && (
-                <ActivityIndicator
-                  size="small"
-                  className="text-primary-foreground"
-                />
-              )}
+              {loading && <ActivityIndicator size="small" />}
               {typeof children === 'function' ? children(state) : children}
             </View>
           )}

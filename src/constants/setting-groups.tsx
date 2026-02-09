@@ -52,7 +52,7 @@ export const settingsGroups = ({
                 icon: Icons.Lock,
                 iconColor: 'text-green-500',
                 iconBgColor: 'bg-green-500/10',
-                href: routes.settings.security,
+                href: routes.settings.security.root,
               },
               {
                 id: 'payment',

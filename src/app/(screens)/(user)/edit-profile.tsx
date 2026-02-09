@@ -14,7 +14,6 @@ import { Button, Input, PhoneInput, Select, Text } from '@/components/ui';
 import { useUpdateProfile } from '@/hooks/user/use-update-profile';
 import { ProfileFormData, profileSchema } from '@/lib/validation';
 import { useUserStore } from '@/stores';
-import { EUserMethod } from '@/types/user.type';
 
 const EditProfileScreen = () => {
   const { t } = useTranslation();
@@ -158,12 +157,8 @@ const EditProfileScreen = () => {
           render={({ field }) => (
             <Input
               {...field}
-              editable={user?.userMethod === EUserMethod.PHONE}
+              editable={false}
               placeholder={t('settings.profile.emailPlaceholder')}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              returnKeyType="next"
-              onSubmitEditing={() => form.setFocus('phone')}
             />
           )}
         />
@@ -177,8 +172,7 @@ const EditProfileScreen = () => {
               {...field}
               placeholder={t('settings.profile.phonePlaceholder')}
               value={field.value ?? ''}
-              returnKeyType="next"
-              onSubmitEditing={() => form.setFocus('street')}
+              editable={false}
             />
           )}
         />

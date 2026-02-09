@@ -17,7 +17,7 @@ export default function TabLayout() {
 
   const insets = useSafeAreaInsets();
 
-  const { appType } = useUserStore();
+  const { appType, isLoggedIn } = useUserStore();
 
   const segments = useSegments() as string[];
   const router = useRouter();
@@ -60,7 +60,7 @@ export default function TabLayout() {
         <TabTrigger name="Home" href="/" asChild>
           <TabButton icon="Home">{t('common.tabs.home')}</TabButton>
         </TabTrigger>
-        {appType !== EUserType.CREATOR && (
+        {appType !== EUserType.CREATOR && isLoggedIn && (
           <Fragment>
             <TabTrigger name="second" href="/(calendar)/month" asChild>
               <TabButton icon="Calendar">{t('common.tabs.calendar')}</TabButton>
@@ -70,7 +70,7 @@ export default function TabLayout() {
             </TabTrigger>
           </Fragment>
         )}
-        {appType === EUserType.CREATOR && (
+        {appType === EUserType.CREATOR && isLoggedIn && (
           <TabTrigger
             name="brand"
             href={routes.tabs.brand.brand_profile}
@@ -79,7 +79,7 @@ export default function TabLayout() {
             <TabButton icon="Store">{t('common.tabs.store')}</TabButton>
           </TabTrigger>
         )}
-        {appType === EUserType.WORKER && (
+        {appType === EUserType.WORKER && isLoggedIn && (
           <TabTrigger
             name="worker"
             href={routes.tabs.brand.worker_profile}

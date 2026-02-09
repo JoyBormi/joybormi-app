@@ -100,7 +100,11 @@ export const routes = {
     help: '/(settings)/help' as RelativePathString,
     payment: '/(settings)/payment' as RelativePathString,
     preferences: '/(settings)/preferences' as RelativePathString,
-    security: '/(settings)/security' as RelativePathString,
+    security: {
+      root: '/(settings)/security' as RelativePathString,
+      change_password:
+        '/(settings)/security/change-password' as RelativePathString,
+    },
 
     legal: {
       privacy: '/(settings)/legal/privacy' as RelativePathString,
