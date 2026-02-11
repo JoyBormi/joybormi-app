@@ -101,9 +101,10 @@ const WorkerProfileScreen: React.FC = () => {
   const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos(
     worker?.id,
   );
-  const { data: schedule, refetch: refetchSchedule } = useGetSchedule(
-    worker?.id,
-  );
+  const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
+    brandId: worker?.brandId,
+    workerId: worker?.id,
+  });
   const { data: experiences } = useGetExperiences();
 
   // Mutations
@@ -349,7 +350,12 @@ const WorkerProfileScreen: React.FC = () => {
                   router.push(routes.screens.upsert_service())
                 }
                 onEditSchedule={() =>
-                  router.push(routes.screens.upsert_schedule(worker.id))
+                  router.push(
+                    routes.screens.upsert_schedule({
+                      brandId: worker.brandId,
+                      workerId: worker.id,
+                    }),
+                  )
                 }
               />
             )}
@@ -388,7 +394,12 @@ const WorkerProfileScreen: React.FC = () => {
               workingDays={workingDays ?? []}
               canEdit={canEdit}
               onEditSchedule={() =>
-                router.push(routes.screens.upsert_schedule(worker.id))
+                router.push(
+                  routes.screens.upsert_schedule({
+                    brandId: worker.brandId,
+                    workerId: worker.id,
+                  }),
+                )
               }
             />
           </TabsContent>

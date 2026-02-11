@@ -88,10 +88,29 @@ export const routes = {
       pathname: '/(screens)/upsert-service',
       params,
     }),
-    upsert_schedule: (ownerId: string): Href => ({
-      pathname: '/(screens)/upsert-schedule',
-      params: { ownerId },
-    }),
+    upsert_schedule: (
+      params:
+        | string
+        | {
+            brandId: string;
+            workerId?: string;
+          },
+    ): Href => {
+      if (typeof params === 'string') {
+        return {
+          pathname: '/(screens)/upsert-schedule',
+          params: { ownerId: params, brandId: params },
+        };
+      }
+
+      return {
+        pathname: '/(screens)/upsert-schedule',
+        params: {
+          brandId: params.brandId,
+          workerId: params.workerId,
+        },
+      };
+    },
   },
 
   // ───────────────────────────────── Settings

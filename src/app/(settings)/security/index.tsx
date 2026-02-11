@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
@@ -22,10 +22,11 @@ import { useTimer } from '@/hooks/common/use-timer';
 import { normalizePhone } from '@/lib/utils';
 import {
   ContactVerificationFormData,
-  contactVerificationSchema,
+  createContactVerificationSchema,
 } from '@/lib/validation';
 import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
+import { EUserMethod } from '@/types/user.type';
 import { emptyLocalEmail } from '@/utils/helpers';
 
 export default function SecurityScreen() {
@@ -33,11 +34,16 @@ export default function SecurityScreen() {
   const insets = useSafeAreaInsets();
   const { user } = useUserStore();
 
-  const [faceId, setFaceId] = useState(false);
-  const [appLock, setAppLock] = useState(false);
+  const isPhoneMethod = user?.userMethod === EUserMethod.PHONE;
+  const isEmailMethod = !isPhoneMethod;
+
+  const contactSchema = useMemo(
+    () => createContactVerificationSchema(user?.userMethod),
+    [user?.userMethod],
+  );
 
   const form = useForm<ContactVerificationFormData>({
-    resolver: zodResolver(contactVerificationSchema),
+    resolver: zodResolver(contactSchema),
     defaultValues: {
       email: user?.email ?? '',
       phone: user?.phone ?? '',
@@ -45,32 +51,33 @@ export default function SecurityScreen() {
     },
   });
 
-  const watched = useWatch({
+  const [emailValue = '', phoneValue = '', phoneOtp = ''] = useWatch({
     control: form.control,
     name: ['email', 'phone', 'phoneOtp'],
   });
 
-  const [emailValue, phoneValue, phoneOtp] = watched.map((v) => v ?? '');
-
-  const normalized = useMemo(
-    () => ({
+  const normalized = useMemo(() => {
+    return {
       currentEmail: emptyLocalEmail(emailValue),
       currentPhone: normalizePhone(phoneValue) || '',
       userEmail: emptyLocalEmail(user?.email ?? ''),
       userPhone: normalizePhone(user?.phone ?? '') || '',
-    }),
-    [emailValue, phoneValue, user],
-  );
-
-  /* ───────── EMAIL STATE ───────── */
+    };
+  }, [emailValue, phoneValue, user]);
 
   const emailHasChanged =
     !!normalized.currentEmail &&
     normalized.currentEmail !== normalized.userEmail;
 
-  const emailIsVerified = user?.emailVerified === true && !emailHasChanged;
+  const phoneHasChanged =
+    !!normalized.currentPhone &&
+    normalized.currentPhone !== normalized.userPhone;
 
-  /* ───────── HOOKS ───────── */
+  const emailIsVerified =
+    user && user?.emailVerified === true && !emailHasChanged;
+
+  const phoneIsVerified =
+    user && user?.phoneNumberVerified === true && !phoneHasChanged;
 
   const emailTimer = useTimer();
   const phoneTimer = useTimer();
@@ -87,216 +94,210 @@ export default function SecurityScreen() {
   const { mutateAsync: verifyPhoneOtp, isPending: isVerifyingPhoneOtp } =
     useVerifyPhoneOtp();
 
-  /* ───────── EMAIL ACTIONS ───────── */
+  /* ───────── ACTIONS ───────── */
 
   const handleChangeEmail = useCallback(async () => {
-    if (!normalized.currentEmail) {
-      toast.error({ title: 'Enter a valid email address' });
-      return;
-    }
+    const valid = await form.trigger('email');
+    if (!valid || !normalized.currentEmail) return;
 
     await changeEmail({
       newEmail: normalized.currentEmail,
       callbackURL: 'joy-bormi-app://verify-email',
     });
-    toast.success({
-      title: 'Email change started',
-      description:
-        'Approve the link sent to your current email, then verify the new email to finish.',
-    });
-  }, [normalized.currentEmail, changeEmail]);
+
+    toast.success({ title: 'Email change started' });
+  }, [changeEmail, form, normalized.currentEmail]);
 
   const handleSendEmailVerification = useCallback(async () => {
-    await sendEmailVerify({ email: normalized.currentEmail });
-    toast.info({
-      title: 'Verification email sent',
-      description: 'Check your inbox or spam folder.',
-    });
-    emailTimer.start(60);
-  }, [sendEmailVerify, normalized.currentEmail, emailTimer]);
+    const valid = await form.trigger('email');
+    if (!valid) return;
 
-  /* ───────── PHONE ACTIONS ───────── */
+    await sendEmailVerify({ email: normalized.currentEmail });
+    emailTimer.start(60);
+  }, [emailTimer, form, normalized.currentEmail, sendEmailVerify]);
 
   const handleSendPhoneOtp = useCallback(async () => {
-    if (!normalized.currentPhone) {
-      toast.error({ title: 'Enter phone number' });
-      return;
-    }
+    const valid = await form.trigger('phone');
+    if (!valid || !normalized.currentPhone) return;
+
     await sendPhoneOtp({ phoneNumber: normalized.currentPhone });
     phoneTimer.start(60);
-  }, [normalized.currentPhone, sendPhoneOtp, phoneTimer]);
+  }, [form, normalized.currentPhone, phoneTimer, sendPhoneOtp]);
 
   const handleVerifyPhone = useCallback(async () => {
     if (!phoneOtp) return;
+
     await verifyPhoneOtp({
       phoneNumber: normalized.currentPhone,
       code: phoneOtp,
       disableSession: false,
       updatePhoneNumber: true,
     });
+
     toast.success({ title: 'Phone verified' });
   }, [normalized.currentPhone, phoneOtp, verifyPhoneOtp]);
+
+  /* ───────── UI ───────── */
 
   return (
     <KeyboardAvoid
       className="main-area"
       contentContainerStyle={{
-        paddingTop: 8,
-        paddingBottom: insets.bottom + 24,
-        rowGap: 16,
+        paddingTop: 16,
+        paddingBottom: insets.bottom + 32,
+        rowGap: 40,
       }}
     >
       <Header
         title={t('settings.pages.security.title')}
         subtitle={t('settings.pages.security.description')}
-        className="mb-4"
       />
 
-      {/* ACCESS CONTROLS — unchanged */}
-
-      {/* CONTACT VERIFICATION */}
       {/* EMAIL */}
-      <View>
-        <Text className="text-sm text-muted-foreground mb-1">
-          Email Address
-        </Text>
+      {isEmailMethod && (
+        <View className="gap-sm">
+          <View className="flex-row items-center justify-between">
+            <Text className="font-subtitle text-muted-foreground">
+              Email Address
+            </Text>
+            {emailIsVerified ? (
+              <Icons.CheckCircle2 size={20} className="text-success" />
+            ) : (
+              <Icons.ShieldAlert size={20} className="text-warning" />
+            )}
+          </View>
 
-        <View className="flex-row items-center gap-2">
           <FormField
             control={form.control}
             name="email"
-            className="flex-1"
+            message={
+              !emailIsVerified && !emailHasChanged
+                ? 'You must verify this email.'
+                : undefined
+            }
             render={({ field }) => (
-              <Input
-                {...field}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                placeholder="you@example.com"
-              />
+              <View className="flex-row items-center gap-sm">
+                <Input
+                  {...field}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                />
+                {!emailIsVerified && !emailHasChanged && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onPress={handleSendEmailVerification}
+                    disabled={emailTimer.seconds > 0}
+                    loading={isSendingEmailVerify}
+                  >
+                    <Text>
+                      {emailTimer.seconds > 0
+                        ? `Resend in ${emailTimer.formatted}`
+                        : 'Send'}
+                    </Text>
+                  </Button>
+                )}
+              </View>
             )}
           />
 
-          {emailIsVerified ? (
-            <Icons.CheckCircle2 className="text-success" size={22} />
-          ) : (
-            <Icons.ShieldAlert className="text-warning" size={22} />
-          )}
-        </View>
-
-        {emailHasChanged && (
-          <Button
-            size="sm"
-            className="mt-2 self-start"
-            onPress={handleChangeEmail}
-            loading={isChangingEmail}
-          >
-            <Text>Save email</Text>
-          </Button>
-        )}
-
-        {!emailIsVerified && !emailHasChanged && (
-          <>
-            <Text className="mt-2 text-xs text-muted-foreground">
-              You must verify this email. Use an email you can access.
-            </Text>
-
+          {emailHasChanged && (
             <Button
               size="sm"
-              variant="outline"
-              className="mt-2 self-start"
-              onPress={handleSendEmailVerification}
-              disabled={emailTimer.seconds > 0}
-              loading={isSendingEmailVerify}
+              onPress={handleChangeEmail}
+              loading={isChangingEmail}
             >
-              <Text>
-                {emailTimer.seconds > 0
-                  ? `Resend in ${emailTimer.formatted}`
-                  : 'Send verification email'}
-              </Text>
+              <Text>Save email</Text>
             </Button>
-          </>
-        )}
-      </View>
+          )}
+        </View>
+      )}
 
-      {/* PHONE — FULLY PRESERVED */}
-      <View>
-        <Text className="text-sm text-muted-foreground mb-1">Phone Number</Text>
+      {/* PHONE */}
+      {isPhoneMethod && (
+        <View className="gap-sm">
+          <View className="flex-row items-center justify-between">
+            <Text className="font-subtitle text-muted-foreground">
+              Phone Number
+            </Text>
+            {phoneIsVerified ? (
+              <Icons.CheckCircle2 size={20} className="text-success" />
+            ) : (
+              <Icons.ShieldAlert size={20} className="text-warning" />
+            )}
+          </View>
 
-        <View className="flex-row items-center gap-2">
           <FormField
             control={form.control}
             name="phone"
-            className="flex-1"
-            render={({ field }) => <PhoneInput {...field} />}
-          />
-
-          {user?.phoneNumberVerified ? (
-            <Icons.CheckCircle2 className="text-success" size={22} />
-          ) : (
-            <Icons.ShieldAlert className="text-warning" size={22} />
-          )}
-        </View>
-
-        {!user?.phoneNumberVerified && (
-          <>
-            <Button
-              size="sm"
-              variant="outline"
-              className="mt-2 self-start"
-              onPress={handleSendPhoneOtp}
-              disabled={phoneTimer.seconds > 0}
-              loading={isSendingPhoneOtp}
-            >
-              <Text>
-                {phoneTimer.seconds > 0
-                  ? `Wait ${phoneTimer.formatted}`
-                  : 'Send code'}
-              </Text>
-            </Button>
-
-            {phoneTimer.hasStarted && (
-              <View className="flex-row gap-2 mt-2">
-                <FormField
-                  control={form.control}
-                  name="phoneOtp"
-                  className="flex-1"
-                  render={({ field }) => (
-                    <NumberInput
-                      className="h-12 bg-muted/30 rounded-lg px-3"
-                      placeholder="SMS Code"
-                      {...field}
-                    />
-                  )}
-                />
+            message={
+              !phoneIsVerified
+                ? 'Verify your number to secure your account.'
+                : undefined
+            }
+            render={({ field }) => (
+              <View className="flex-row items-center gap-sm">
+                <PhoneInput {...field} className="flex-1" />
                 <Button
-                  size="sm"
-                  onPress={handleVerifyPhone}
-                  loading={isVerifyingPhoneOtp}
+                  variant="outline"
+                  className="h-14"
+                  onPress={handleSendPhoneOtp}
+                  disabled={phoneTimer.seconds > 0}
+                  loading={isSendingPhoneOtp}
                 >
-                  <Text>Confirm</Text>
+                  <Text>
+                    {phoneTimer.seconds > 0
+                      ? `Wait ${phoneTimer.formatted}`
+                      : 'Send code'}
+                  </Text>
                 </Button>
               </View>
             )}
-          </>
-        )}
-      </View>
+          />
+
+          {!phoneIsVerified && (
+            <>
+              {phoneTimer.hasStarted && (
+                <View className="flex-row gap-md">
+                  <FormField
+                    control={form.control}
+                    name="phoneOtp"
+                    render={({ field }) => (
+                      <NumberInput placeholder="SMS Code" {...field} />
+                    )}
+                  />
+                  <Button
+                    size="sm"
+                    onPress={handleVerifyPhone}
+                    loading={isVerifyingPhoneOtp}
+                  >
+                    <Text>Confirm</Text>
+                  </Button>
+                </View>
+              )}
+            </>
+          )}
+        </View>
+      )}
+      <View className="h-px bg-border/50" />
 
       {/* PASSWORD */}
-      <Text className=" mt-6 text-xs font-medium text-muted-foreground uppercase">
-        Password
-      </Text>
+      <View className="gap-sm">
+        <Text className="font-subtitle uppercase text-muted-foreground">
+          Password
+        </Text>
 
-      <View className="rounded-xl bg-muted/40 overflow-hidden">
         <Pressable
           onPress={() => router.push(routes.settings.security.change_password)}
-          className="flex-row items-center justify-between px-4 py-5"
+          className="flex-row items-center justify-between border border-border p-sm rounded-md px-md"
         >
-          <View>
-            <Text className="text-base text-foreground">Change Password</Text>
-            <Text className="text-xs text-muted-foreground">
+          <View className="gap-xs">
+            <Text className="font-body text-foreground">Change Password</Text>
+            <Text className="font-caption text-muted-foreground">
               Last updated 3 months ago
             </Text>
           </View>
+
           <Icons.ChevronRight size={18} className="text-muted-foreground" />
         </Pressable>
       </View>

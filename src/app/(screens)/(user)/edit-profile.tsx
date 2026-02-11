@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -12,20 +12,27 @@ import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
 import { Button, Input, PhoneInput, Select, Text } from '@/components/ui';
 import { useUpdateProfile } from '@/hooks/user/use-update-profile';
-import { ProfileFormData, profileSchema } from '@/lib/validation';
+import { createProfileSchema, ProfileFormData } from '@/lib/validation';
 import { useUserStore } from '@/stores';
+import { EUserMethod } from '@/types/user.type';
 
 const EditProfileScreen = () => {
   const { t } = useTranslation();
   const { user } = useUserStore();
   const insets = useSafeAreaInsets();
   const blockedSheetRef = useRef<BlockModalRef>(null);
+  const isPhoneMethod = user?.userMethod === EUserMethod.PHONE;
+  const isEmailMethod = !isPhoneMethod;
 
   const { mutate: updateProfile, isPending } = useUpdateProfile();
+  const profileValidationSchema = useMemo(
+    () => createProfileSchema(user?.userMethod),
+    [user?.userMethod],
+  );
 
   // Form state
   const form = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema),
+    resolver: zodResolver(profileValidationSchema),
     defaultValues: {
       username: user?.username ?? '',
       firstName: user?.firstName ?? '',
@@ -47,15 +54,23 @@ const EditProfileScreen = () => {
 
   const handleSave = useCallback(
     (data: ProfileFormData) => {
-      // Only send changed fields
+      const hiddenContactField: keyof ProfileFormData = isPhoneMethod
+        ? 'email'
+        : 'phone';
+      const dirtyFields = form.formState.dirtyFields;
       const changedFields: Partial<ProfileFormData> = {};
-      Object.keys(data).forEach((key) => {
+
+      Object.keys(dirtyFields).forEach((key) => {
         const fieldKey = key as keyof ProfileFormData;
-        if (fieldKey === 'emailOtp' || fieldKey === 'phoneOtp') return;
-        if (data[fieldKey] !== form.formState.defaultValues?.[fieldKey]) {
-          changedFields[fieldKey] = data[fieldKey];
-        }
+        const isOtpField = fieldKey === 'emailOtp' || fieldKey === 'phoneOtp';
+        if (isOtpField || fieldKey === hiddenContactField) return;
+        changedFields[fieldKey] = data[fieldKey];
       });
+
+      if (Object.keys(changedFields).length === 0) {
+        router.back();
+        return;
+      }
 
       updateProfile(changedFields, {
         onSuccess: () => {
@@ -63,7 +78,7 @@ const EditProfileScreen = () => {
         },
       });
     },
-    [form.formState.defaultValues, updateProfile],
+    [form.formState.dirtyFields, isPhoneMethod, updateProfile],
   );
 
   return (
@@ -137,7 +152,7 @@ const EditProfileScreen = () => {
                 value={field.value ?? ''}
                 placeholder={t('settings.profile.lastNamePlaceholder')}
                 returnKeyType="next"
-                onSubmitEditing={() => form.setFocus('email')}
+                onSubmitEditing={() => form.setFocus('country')}
               />
             )}
           />
@@ -149,33 +164,38 @@ const EditProfileScreen = () => {
         <Text className="font-title text-lg text-foreground">
           {t('settings.profile.edit.contactInfo')}
         </Text>
+        {isEmailMethod && (
+          <FormField
+            control={form.control}
+            name="email"
+            label={t('settings.profile.email')}
+            message="You have joined with this email address, update it to change your email in the settings"
+            render={({ field }) => (
+              <Input
+                {...field}
+                editable={false}
+                placeholder={t('settings.profile.emailPlaceholder')}
+              />
+            )}
+          />
+        )}
 
-        <FormField
-          control={form.control}
-          name="email"
-          label={t('settings.profile.email')}
-          render={({ field }) => (
-            <Input
-              {...field}
-              editable={false}
-              placeholder={t('settings.profile.emailPlaceholder')}
-            />
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="phone"
-          label={t('settings.profile.phone')}
-          render={({ field }) => (
-            <PhoneInput
-              {...field}
-              placeholder={t('settings.profile.phonePlaceholder')}
-              value={field.value ?? ''}
-              editable={false}
-            />
-          )}
-        />
+        {isPhoneMethod && (
+          <FormField
+            control={form.control}
+            name="phone"
+            label={t('settings.profile.phone')}
+            message="You have joined with this phone number, update it to change your phone number in the settings"
+            render={({ field }) => (
+              <PhoneInput
+                {...field}
+                placeholder={t('settings.profile.phonePlaceholder')}
+                value={field.value ?? ''}
+                editable={false}
+              />
+            )}
+          />
+        )}
       </View>
 
       {/* Address */}
@@ -306,18 +326,18 @@ const EditProfileScreen = () => {
       </View>
 
       {/* Action Buttons */}
-      <View className="mt-4">
-        <Button
-          onPress={form.handleSubmit(handleSave)}
-          disabled={!isFormDirty || isPending}
-          loading={isPending}
-          size="lg"
-        >
-          <Text>
-            {isPending ? t('common.buttons.saving') : t('common.buttons.save')}
-          </Text>
-        </Button>
-      </View>
+
+      <Button
+        onPress={form.handleSubmit(handleSave)}
+        disabled={!isFormDirty || isPending}
+        loading={isPending}
+        size="lg"
+        className="self-end min-w-40 mt-4"
+      >
+        <Text>
+          {isPending ? t('common.buttons.saving') : t('common.buttons.save')}
+        </Text>
+      </Button>
 
       <BlockModal
         ref={blockedSheetRef}

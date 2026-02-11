@@ -48,7 +48,7 @@ export function Header({
       <MotiView
         from={animate ? { opacity: 0, translateY: 10 } : undefined}
         animate={animate ? { opacity: 1, translateY: 0 } : undefined}
-        transition={{ type: 'timing', duration: 900 }}
+        transition={{ type: 'timing', duration: 600 }}
         className={cn(variant === 'default' && 'pt-20', className)}
       >
         {/* DEFAULT — unchanged */}

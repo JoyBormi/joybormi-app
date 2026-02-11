@@ -6,7 +6,7 @@ import { TextClassContext } from '@/components/ui/text';
 import { Feedback } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
 
-const buttonVariants = cva('flex items-center justify-center rounded-xl', {
+const buttonVariants = cva('flex items-center justify-center rounded-md', {
   variants: {
     variant: {
       default: 'bg-primary active:opacity-90 shadow-sm',
@@ -44,8 +44,8 @@ const buttonTextVariants = cva('font-montserrat-medium text-foreground', {
     },
     size: {
       sm: 'font-caption',
-      default: 'font-body',
-      lg: 'font-title',
+      default: 'font-subbody',
+      lg: 'font-subtitle',
       xl: 'font-title',
       icon: '',
       iconSm: '',

@@ -9,25 +9,24 @@ import type {
 } from '@/types/schedule.type';
 
 const addDayOff = async (
-  brandId: string,
+  scheduleId: string,
   payload: CreateSpecialDayOffPayload,
 ): Promise<ISpecialDayOff> =>
-  await agent.post(`/brands/${brandId}/schedule/closures`, payload);
+  await agent.post(`/schedules/${scheduleId}/days-off`, payload);
 
-export const useAddDayOff = (brandId?: string) => {
+export const useAddDayOff = (scheduleId?: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: CreateSpecialDayOffPayload) => {
-      if (!brandId) {
-        throw new Error('Brand ID is required');
+      if (!scheduleId) {
+        throw new Error('Schedule ID is required');
       }
-      return addDayOff(brandId, payload);
+      return addDayOff(scheduleId, payload);
     },
     onSuccess: () => {
-      // Invalidate schedule queries to refetch days off
       queryClient.invalidateQueries({
-        queryKey: queryKeys.schedule.detail,
+        queryKey: queryKeys.schedule.all,
       });
     },
   });

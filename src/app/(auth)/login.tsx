@@ -160,6 +160,7 @@ export default function LoginScreen() {
         className="my-10"
         onPress={handleSubmit(onSubmit)}
         disabled={isPending}
+        loading={isPending}
         size="lg"
       >
         <Text>

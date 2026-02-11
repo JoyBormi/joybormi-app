@@ -4,6 +4,7 @@
 
 export * from './types';
 export * from './use-change-email';
+export * from './use-change-password';
 export * from './use-forgot-password';
 export * from './use-login';
 export * from './use-logout';

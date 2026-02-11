@@ -92,9 +92,9 @@ const BrandProfileScreen: React.FC = () => {
 
   const { data: team, refetch: refetchTeam } = useGetBrandTeam(brand?.id);
 
-  const { data: schedule, refetch: refetchSchedule } = useGetSchedule(
-    brand?.id,
-  );
+  const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
+    brandId: brand?.id,
+  });
 
   // ───────────────── Mutations ────────────────── //
   const { mutateAsync: updateBrand } = useUpdateBrand();
@@ -354,7 +354,11 @@ const BrandProfileScreen: React.FC = () => {
                 }
                 onAddWorker={handleAddWorker}
                 onManageHours={() =>
-                  router.push(routes.screens.upsert_schedule(brand.id))
+                  router.push(
+                    routes.screens.upsert_schedule({
+                      brandId: brand.id,
+                    }),
+                  )
                 }
                 onSetupWorkerProfile={handleSetupWorkerProfile}
               />
@@ -383,7 +387,11 @@ const BrandProfileScreen: React.FC = () => {
               workingDays={schedule?.workingDays ?? []}
               canEdit={canEdit}
               onEditSchedule={() =>
-                router.push(routes.screens.upsert_schedule(brand.id))
+                router.push(
+                  routes.screens.upsert_schedule({
+                    brandId: brand.id,
+                  }),
+                )
               }
             />
           </TabsContent>

@@ -61,7 +61,7 @@ export function GlobalAlert() {
           <BlurView
             intensity={Platform.OS === 'ios' ? 55 : 80}
             tint="light"
-            className="px-4 py-8"
+            className="px-4 py-8 rounded-xl"
           >
             <View className="items-center">
               {/* Creative Icon Housing */}
@@ -76,21 +76,21 @@ export function GlobalAlert() {
               </Text>
 
               {options.subtitle && (
-                <Text className="font-body text-muted-foreground text-center leading-5 px-1 mb-8">
+                <Text className="font-body text-muted-foreground text-center leading-5 px-1">
                   {options.subtitle}
                 </Text>
               )}
             </View>
 
             {/* Actions: Clean hierarchy */}
-            <View className="flex-row gap-3">
+            <View className="flex-row gap-3 mt-8">
               {options.cancelLabel !== null && (
-                <Button onPress={handleCancel} className="flex-1" size="lg">
+                <Button onPress={handleCancel} className="flex-1">
                   <Text>{options.cancelLabel || 'Cancel'}</Text>
                 </Button>
               )}
 
-              <Button onPress={handleConfirm} className="flex-1" size="lg">
+              <Button onPress={handleConfirm} className="flex-1">
                 <Text className="font-semibold text-white">
                   {options.confirmLabel || 'Confirm'}
                 </Text>

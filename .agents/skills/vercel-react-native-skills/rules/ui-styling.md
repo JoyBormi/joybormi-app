@@ -1,87 +1,245 @@
 ---
-title: Modern React Native Styling Patterns
-impact: MEDIUM
-impactDescription: consistent design, smoother borders, cleaner layouts
-tags: styling, css, layout, shadows, gradients
+title: JoyBormi React Native Styling Standards
+impact: HIGH
+impactDescription: strict design consistency, scalable UI system, enforced class composition
+tags: styling, nativewind, tokens, layout, cn, consistency
 ---
 
-## Modern React Native Styling Patterns
+## JoyBormi Styling Standards
 
-Follow these styling patterns for cleaner, more consistent React Native code.
+Follow these patterns strictly.
 
-**Always use `borderCurve: 'continuous'` with `borderRadius`:**
+---
+
+## 1. Always Use Semantic Tokens (Never Hardcode Colors)
+
+Use only theme tokens:
+
+- bg-background
+- bg-card
+- bg-primary
+- bg-muted
+- bg-secondary
+- bg-destructive
+- text-foreground
+- text-muted-foreground
+- border-border
 
 ```tsx
-// Incorrect
-{ borderRadius: 12 }
+// ❌ Incorrect
+<View className="bg-white" />
 
-// Correct – smoother iOS-style corners
-{ borderRadius: 12, borderCurve: 'continuous' }
+// ✅ Correct
+<View className="bg-card" />
 ```
 
-**Use `gap` instead of margin for spacing between elements:**
+---
+
+## 2. Typography: Use Utilities Only
+
+Do not use `text-sm`, `text-lg`, etc.
+
+Allowed:
+
+- font-heading
+- font-title
+- font-subtitle
+- font-body
+- font-subbody
+- font-caption
+- font-base
 
 ```tsx
-// Incorrect – margin on children
+// ❌ Incorrect
+<Text className="text-lg font-bold">Title</Text>
+
+// ✅ Correct
+<Text className="font-title text-foreground">
+  Title
+</Text>
+```
+
+Hierarchy = typography token + semantic color.
+
+---
+
+## 3. Spacing: Use Scale Only
+
+Use spacing scale (`xs → 4xl`)
+
+No arbitrary values like `p-[13px]`.
+
+```tsx
+// ❌ Incorrect
+<View className="p-[15px]" />
+
+// ✅ Correct
+<View className="p-4xl" />
+```
+
+Use:
+
+- `p-*` → internal spacing
+- `gap-*` → spacing between children
+
+---
+
+## 4. Use `gap` Instead of Margins
+
+```tsx
+// ❌ Incorrect
 <View>
-  <Text style={{ marginBottom: 8 }}>Title</Text>
-  <Text style={{ marginBottom: 8 }}>Subtitle</Text>
+  <Text className="mb-lg">Title</Text>
+  <Text className="mb-lg">Subtitle</Text>
 </View>
 
-// Correct – gap on parent
-<View style={{ gap: 8 }}>
-  <Text>Title</Text>
-  <Text>Subtitle</Text>
-</View>
-```
-
-**Use `padding` for space within, `gap` for space between:**
-
-```tsx
-<View style={{ padding: 16, gap: 12 }}>
-  <Text>First</Text>
-  <Text>Second</Text>
+// ✅ Correct
+<View className="gap-lg">
+  <Text className="font-title text-foreground">Title</Text>
+  <Text className="font-body text-muted-foreground">Subtitle</Text>
 </View>
 ```
 
-**Use `experimental_backgroundImage` for linear gradients:**
+No margin stacking between siblings.
+
+---
+
+## 5. Always Use `cn()` for Class Composition
+
+All conditional or dynamic classes must use:
+
+```ts
+import { cn } from '@/lib/utils';
+```
+
+Never use template string interpolation inside `className`.
+
+### ❌ Incorrect
 
 ```tsx
-// Incorrect – third-party gradient library
-<LinearGradient colors={['#000', '#fff']} />
+<Text
+  className={`font-body ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
+/>
+```
 
-// Correct – native CSS gradient syntax
+### ✅ Correct
+
+```tsx
+import { cn } from '@/lib/utils';
+
+<Text
+  className={cn(
+    'font-body',
+    isActive ? 'text-primary' : 'text-muted-foreground',
+  )}
+/>;
+```
+
+---
+
+## 6. Extract Conditional Logic Outside JSX
+
+Do not compute logic inside JSX.
+
+### ❌ Incorrect
+
+```tsx
 <View
+  className={cn(
+    'p-4xl rounded-xl',
+    isSelected && 'bg-primary'
+  )}
+>
+```
+
+### ✅ Correct
+
+```tsx
+<View
+  className={cn('p-4xl rounded-xl', isSelected ? 'bg-primary' : 'bg-card')}
+/>
+```
+
+---
+
+## 7. Border Radius Must Use Token Scale
+
+Use only:
+
+- rounded-xs
+- rounded-sm
+- rounded-md
+- rounded-lg
+- rounded-xl
+- rounded-2xl
+- rounded-3xl
+- rounded-4xl
+
+```tsx
+// ❌ Incorrect
+<View className="rounded-[14px]" />
+
+// ✅ Correct
+<View className="rounded-xl" />
+```
+
+---
+
+## 8. Shadows: Use `boxShadow`
+
+Do not use:
+
+- elevation
+- shadowColor objects
+
+```tsx
+<View
+  className="bg-card rounded-xl p-4xl"
   style={{
-    experimental_backgroundImage: 'linear-gradient(to bottom, #000, #fff)',
+    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
   }}
 />
 ```
 
-**Use CSS `boxShadow` string syntax for shadows:**
+Use sparingly.
+
+---
+
+## 9. Gradients (If Required)
+
+No third-party gradient libraries.
 
 ```tsx
-// Incorrect – legacy shadow objects or elevation
-{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1 }
-{ elevation: 4 }
-
-// Correct – CSS box-shadow syntax
-{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }
+<View
+  className="rounded-xl"
+  style={{
+    experimental_backgroundImage:
+      'linear-gradient(to bottom, hsl(var(--primary)), hsl(var(--secondary)))',
+  }}
+/>
 ```
 
-**Avoid multiple font sizes – use weight and color for emphasis:**
+---
 
-```tsx
-// Incorrect – varying font sizes for hierarchy
-<Text style={{ fontSize: 18 }}>Title</Text>
-<Text style={{ fontSize: 14 }}>Subtitle</Text>
-<Text style={{ fontSize: 12 }}>Caption</Text>
+## Non-Negotiable Rules
 
-// Correct – consistent size, vary weight and color
-<Text style={{ fontWeight: '600' }}>Title</Text>
-<Text style={{ color: '#666' }}>Subtitle</Text>
-<Text style={{ color: '#999' }}>Caption</Text>
+1. No hardcoded colors
+2. No arbitrary spacing
+3. No custom font sizes
+4. No inline template string classNames
+5. All dynamic classes must use `cn()`
+6. Prefer `gap` over margins
+7. Use semantic tokens only
+8. Use typography utilities only
+
+This ensures:
+
+- Design consistency
+- Dark mode compatibility
+- Predictable scaling
+- Clean class composition
+- Long-term maintainability
+
 ```
 
-Limiting font sizes creates visual consistency. Use `fontWeight` (bold/semibold)
-and grayscale colors for hierarchy instead.
+```
