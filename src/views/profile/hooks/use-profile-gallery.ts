@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { normalizeFileUrl } from '@/hooks/files';
 import { buildUploadedFile } from '@/lib/utils';
 import { toast } from '@/providers/toaster';
 import { FileOwnerType, IFile } from '@/types/file.type';
@@ -38,19 +37,14 @@ export const useProfileGallery = ({
   onErrorMessage,
 }: UseProfileGalleryParams) => {
   const [selectedPhoto, setSelectedPhoto] = useState<IFile | null>(null);
-  const [localPhotos, setLocalPhotos] = useState<IFile[]>([]);
-
-  const mergedPhotos = useMemo(
-    () => [...localPhotos, ...(photos ?? [])],
-    [localPhotos, photos],
-  );
+  const mergedPhotos = useMemo(() => photos ?? [], [photos]);
 
   const handleUploadPhotos = useCallback(
     async (newPhotos: { uri: string; category: string }[]) => {
       if (!ownerId || newPhotos.length === 0) return;
 
       try {
-        const uploadResults = await Promise.all(
+        await Promise.all(
           newPhotos.map((photo, index) =>
             uploadFile({
               file: buildUploadedFile(photo.uri, `${fileNamePrefix}-${index}`),
@@ -61,30 +55,12 @@ export const useProfileGallery = ({
           ),
         );
 
-        const photosToAdd = uploadResults
-          .map((uploadedFile, index) => {
-            if (!uploadedFile.url) return null;
-            const url = normalizeFileUrl(uploadedFile.url);
-            if (!url) return null;
-            return {
-              id: uploadedFile.id ?? `photo-${Date.now()}-${index}`,
-              url,
-              category: (newPhotos[index]?.category ??
-                defaultCategory) as IFile['category'],
-              uploadedAt: new Date().toISOString(),
-            };
-          })
-          .filter((photo) => Boolean(photo));
-
-        if (photosToAdd.length > 0) {
-          setLocalPhotos((prev) => [...photosToAdd, ...prev] as IFile[]);
-        }
-
         if (selectedPhoto?.id) {
           await deleteFile(selectedPhoto.id);
           setSelectedPhoto(null);
-          onRefresh();
         }
+
+        onRefresh();
       } catch {
         toast.error({ title: onErrorMessage ?? 'Something went wrong' });
       }

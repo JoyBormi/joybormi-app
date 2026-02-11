@@ -23,7 +23,7 @@ export const DangerZone: React.FC<DangerZoneProps> = ({
   disabled = false,
 }) => {
   return (
-    <View className="px-6 pt-2">
+    <View className="p-2">
       <View className="rounded-lg border border-destructive/25 bg-destructive/5 p-5">
         <View className="h-1.5 w-16 rounded-full bg-destructive/70 mb-4" />
         <Text className="font-title text-lg text-destructive">{title}</Text>
@@ -31,7 +31,7 @@ export const DangerZone: React.FC<DangerZoneProps> = ({
           {description}
         </Text>
 
-        <View className="mt-5 rounded-xl border border-border/40 bg-background/80 px-2.5 py-3.5">
+        <View className="mt-5 rounded-lg border border-border/40 bg-background/80 px-2.5 py-3.5">
           <Text className="font-subtitle text-foreground">{actionTitle}</Text>
           <Text className="mt-1 font-caption text-muted-foreground">
             {actionDescription}

@@ -4,7 +4,6 @@ import Icons from '@/components/icons';
 import { ProfileQuickActions } from '@/views/profile/components';
 
 interface BrandQuickActionsProps {
-  onAddService: () => void;
   onAddWorker: () => void;
   onManageHours: () => void;
   onSetupWorkerProfile: () => void;
@@ -15,7 +14,6 @@ interface BrandQuickActionsProps {
  * Displays action cards for common brand management tasks
  */
 export const BrandQuickActions: React.FC<BrandQuickActionsProps> = ({
-  onAddService,
   onAddWorker,
   onManageHours,
   onSetupWorkerProfile,
@@ -23,15 +21,6 @@ export const BrandQuickActions: React.FC<BrandQuickActionsProps> = ({
   return (
     <ProfileQuickActions
       actions={[
-        {
-          id: 'add-service',
-          title: 'Manage Services',
-          description: 'Auto-shown on your brand profile',
-          onPress: onAddService,
-          icon: Icons.Plus,
-          iconClassName: 'text-primary',
-          iconContainerClassName: 'bg-primary/10',
-        },
         {
           id: 'add-worker',
           title: 'Invite Team Member',

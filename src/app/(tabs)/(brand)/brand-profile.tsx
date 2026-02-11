@@ -360,7 +360,6 @@ const BrandProfileScreen: React.FC = () => {
             {/* Quick Actions */}
             {canEdit && (
               <BrandQuickActions
-                onAddService={handleManageWorkerServices}
                 onAddWorker={handleAddWorker}
                 onManageHours={() =>
                   router.push(

@@ -15,13 +15,13 @@ import { Text } from '@/components/ui';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IMAGE_CATEGORIES } from '@/constants/global.constants';
 import { routes } from '@/constants/routes';
-import { useGetBrandPhotos } from '@/hooks/brand';
 import { useDeleteFile, useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
 import {
   useDeleteWorker,
   useGetExperiences,
+  useGetWorkerPhotos,
   useGetWorkerProfile,
   useUpdateWorkerProfile,
 } from '@/hooks/worker';
@@ -98,7 +98,7 @@ const WorkerProfileScreen: React.FC = () => {
     ownerId: worker?.id,
     ownerType: worker?.id ? ServiceOwnerType.WORKER : undefined,
   });
-  const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos(
+  const { data: photos, refetch: refetchPhotos } = useGetWorkerPhotos(
     worker?.id,
   );
   const { data: schedule, refetch: refetchSchedule } = useGetSchedule({
