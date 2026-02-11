@@ -183,7 +183,12 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
           label: 'Add hours',
           onPress: () => {
             if (!worker?.brandId) return;
-            router.push(routes.screens.upsert_schedule(worker.brandId));
+            router.push(
+              routes.screens.upsert_schedule({
+                brandId: worker.brandId,
+                workerId: worker.id,
+              }),
+            );
           },
         },
       });
@@ -198,10 +203,10 @@ const WorkerMissing: React.FC<WorkerMissingProps> = ({
     mergedPhotos.length,
     services?.length,
     worker?.avatar,
+    worker?.id,
     worker?.bio,
     worker?.brandId,
     worker?.coverImage,
-    worker?.id,
     worker?.username,
     worker?.jobTitle,
     workingDays.length,

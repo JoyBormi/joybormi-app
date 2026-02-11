@@ -17,41 +17,48 @@ export const AboutSectionDisplay: React.FC<AboutSectionDisplayProps> = ({
   onEdit,
   canEdit = true,
 }) => {
+  const hasContacts = worker?.phone || worker?.email || worker?.instagram;
+
   return (
-    <View className="px-6 mb-8">
+    <View className="px-2 mb-8">
       {/* Header */}
-      <View className="flex-row items-center justify-between mb-4">
-        <Text className="font-title text-lg text-foreground">About</Text>
+      <View className="flex-row items-center justify-between mb-4 px-2">
+        <Text className="font-title text-foreground">About</Text>
 
         {canEdit && onEdit && (
-          <Pressable onPress={onEdit}>
-            <Icons.Pencil size={18} className="text-primary" />
+          <Pressable onPress={onEdit} className="flex-row items-center gap-1">
+            <Text className="font-body text-primary">Edit</Text>
+            <Icons.ChevronRight size={16} className="text-primary" />
           </Pressable>
         )}
       </View>
 
-      {/* Content Card */}
-      <View className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50">
-        {/* Job Title */}
-        {worker?.jobTitle && (
-          <Text className="font-subtitle text-foreground mb-3">
-            {worker.jobTitle}
-          </Text>
-        )}
+      {/* Grouped Card */}
+      <View className="bg-card rounded-lg overflow-hidden">
+        <View className="px-5 py-5">
+          {/* Job Title */}
+          {worker?.jobTitle ? (
+            <Text className="font-title text-foreground mb-3">
+              {worker.jobTitle}
+            </Text>
+          ) : null}
 
-        {/* Bio */}
-        <Text className="font-body text-muted-foreground leading-6 mb-5">
-          {worker?.bio ||
-            'Tell clients about your experience, style, and background.'}
-        </Text>
+          {/* Bio */}
+          <Text className="font-body text-muted-foreground">
+            {worker?.bio ||
+              'Tell clients about your experience, style, and background.'}
+          </Text>
+        </View>
+
+        {hasContacts && <View className="h-px bg-border ml-5" />}
 
         {/* Contact Info */}
-        {(worker?.phone || worker?.email || worker?.instagram) && (
-          <View className="mb-5 gap-3">
+        {hasContacts ? (
+          <View className="px-5 py-4 gap-3">
             {worker.phone && (
               <View className="flex-row items-center gap-2">
                 <Icons.Phone size={16} className="text-muted-foreground" />
-                <Text className="font-caption text-foreground">
+                <Text className="font-body text-foreground">
                   {worker.phone}
                 </Text>
               </View>
@@ -60,7 +67,7 @@ export const AboutSectionDisplay: React.FC<AboutSectionDisplayProps> = ({
             {worker.email && (
               <View className="flex-row items-center gap-2">
                 <Icons.Mail size={16} className="text-muted-foreground" />
-                <Text className="font-caption text-foreground">
+                <Text className="font-body text-foreground">
                   {worker.email}
                 </Text>
               </View>
@@ -69,36 +76,46 @@ export const AboutSectionDisplay: React.FC<AboutSectionDisplayProps> = ({
             {worker.instagram && (
               <View className="flex-row items-center gap-2">
                 <Icons.Instagram size={16} className="text-muted-foreground" />
-                <Text className="font-caption text-foreground">
+                <Text className="font-body text-foreground">
                   @{worker.instagram.replace('@', '')}
                 </Text>
               </View>
             )}
           </View>
-        )}
+        ) : null}
 
-        {/* Languages */}
         {worker?.languages?.length ? (
-          <View>
-            <Text className="font-caption text-muted-foreground mb-2">
-              Languages
-            </Text>
+          <>
+            <View className="h-px bg-border ml-5" />
 
-            <View className="flex-row flex-wrap gap-2">
-              {worker.languages.map((language) => (
-                <View
-                  key={language}
-                  className="bg-primary/10 px-4 py-2 rounded"
-                >
-                  <Text className="font-caption text-primary">{language}</Text>
-                </View>
-              ))}
+            <View className="px-5 py-4">
+              <Text className="font-caption text-muted-foreground mb-3">
+                Languages
+              </Text>
+
+              <View className="flex-row flex-wrap gap-2">
+                {worker.languages.map((language) => (
+                  <View
+                    key={language}
+                    className="bg-primary/10 px-3 py-1.5 rounded-full"
+                  >
+                    <Text className="font-caption text-primary">
+                      {language}
+                    </Text>
+                  </View>
+                ))}
+              </View>
             </View>
-          </View>
+          </>
         ) : (
-          <Text className="font-caption text-muted-foreground">
-            Add languages to help clients connect with you.
-          </Text>
+          <>
+            <View className="h-px bg-border ml-5" />
+            <View className="px-5 py-4">
+              <Text className="font-caption text-muted-foreground">
+                Add languages to help clients connect with you.
+              </Text>
+            </View>
+          </>
         )}
       </View>
     </View>

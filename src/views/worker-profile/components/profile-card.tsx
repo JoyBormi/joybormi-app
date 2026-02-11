@@ -62,7 +62,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
 
           {/* Quick Stats */}
           <View className="flex-row gap-3 mb-6">
-            <View className="flex-1 bg-muted/20 rounded-2xl p-4 items-center">
+            <View className="flex-1 bg-card rounded-xl p-4 items-center">
               <Icons.Briefcase size={20} className="text-primary mb-2" />
               <Text className="font-heading text-foreground">
                 {servicesCount}
@@ -72,7 +72,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
               </Text>
             </View>
 
-            <View className="flex-1 bg-muted/20 rounded-2xl p-4 items-center">
+            <View className="flex-1 bg-card rounded-xl p-4 items-center">
               <Icons.Calendar size={20} className="text-success mb-2" />
               <Text className="font-heading text-foreground">
                 {workDaysCount}
@@ -82,7 +82,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
               </Text>
             </View>
 
-            <View className="flex-1 bg-muted/20 rounded-2xl p-4 items-center">
+            <View className="flex-1 bg-card rounded-xl p-4 items-center">
               <Icons.Star size={20} className="text-warning mb-2" />
               <Text className="font-heading text-foreground">
                 {photosCount}
@@ -94,7 +94,11 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
           {/* Edit */}
           {canEdit && (
             <Button onPress={onEdit}>
-              <Icons.Pencil size={16} className="text-primary-foreground" />
+              <Icons.Pencil
+                size={16}
+                strokeWidth={1.3}
+                className="text-primary-foreground"
+              />
               <Text>Edit Profile</Text>
             </Button>
           )}

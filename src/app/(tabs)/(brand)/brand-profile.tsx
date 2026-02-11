@@ -29,6 +29,7 @@ import {
 import { useDeleteFile, useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
+import { useGetWorkerProfile } from '@/hooks/worker';
 import { useUserStore } from '@/stores';
 import { BrandStatus } from '@/types/brand.type';
 import { IFile } from '@/types/file.type';
@@ -39,7 +40,6 @@ import {
   BrandCard,
   BrandMissing,
   BrandQuickActions,
-  BrandServicesList,
   BrandTeamList,
 } from '@/views/brand-profile/components';
 import {
@@ -53,7 +53,10 @@ import {
 } from '@/views/profile/components';
 import { useProfileGallery } from '@/views/profile/hooks/use-profile-gallery';
 import { createImageUploadHandler } from '@/views/profile/utils/profile-media';
-import { ScheduleDisplay } from '@/views/worker-profile/components';
+import {
+  ScheduleDisplay,
+  ServicesList,
+} from '@/views/worker-profile/components';
 
 import type { IWorker } from '@/types/worker.type';
 
@@ -83,11 +86,12 @@ const BrandProfileScreen: React.FC = () => {
   // ───────────────── Queries ────────────────── //
 
   const { data: brand, refetch: refetchBrand, isLoading } = useGetBrand();
+  const { data: workerProfile } = useGetWorkerProfile();
   const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos(brand?.id);
 
   const { data: services, refetch: refetchServices } = useGetServices({
-    ownerId: brand?.id,
-    ownerType: brand?.id ? ServiceOwnerType.CREATOR : undefined,
+    ownerId: workerProfile?.id,
+    ownerType: workerProfile?.id ? ServiceOwnerType.WORKER : undefined,
   });
 
   const { data: team, refetch: refetchTeam } = useGetBrandTeam(brand?.id);
@@ -201,6 +205,11 @@ const BrandProfileScreen: React.FC = () => {
     router.replace(routes.tabs.brand.worker_profile);
   }, [router, setAppType]);
 
+  const handleManageWorkerServices = useCallback(() => {
+    setAppType(EUserType.WORKER);
+    router.replace(routes.tabs.brand.worker_profile);
+  }, [router, setAppType]);
+
   const handleWorkerPress = useCallback(
     (worker: IWorker) => {
       router.push(routes.worker.details(worker.id));
@@ -237,6 +246,7 @@ const BrandProfileScreen: React.FC = () => {
       handleEditBrand,
       handleEditProfileImage,
       handleEditBanner,
+      handleManageServices: handleManageWorkerServices,
     }),
     [
       canEdit,
@@ -250,6 +260,7 @@ const BrandProfileScreen: React.FC = () => {
       handleEditBrand,
       handleEditProfileImage,
       handleEditBanner,
+      handleManageWorkerServices,
     ],
   );
   const renderMissing = useCallback(
@@ -349,9 +360,7 @@ const BrandProfileScreen: React.FC = () => {
             {/* Quick Actions */}
             {canEdit && (
               <BrandQuickActions
-                onAddService={() =>
-                  router.push(routes.screens.upsert_service())
-                }
+                onAddService={handleManageWorkerServices}
                 onAddWorker={handleAddWorker}
                 onManageHours={() =>
                   router.push(
@@ -378,7 +387,11 @@ const BrandProfileScreen: React.FC = () => {
           {/* Services Section */}
           <TabsContent value="services" className="flex-1 min-h-[50vh]">
             {renderMissing(['services'])}
-            <BrandServicesList services={services} canEdit={canEdit} />
+            <ServicesList
+              services={services ?? []}
+              canEdit={false}
+              onServicePress={handleManageWorkerServices}
+            />
           </TabsContent>
 
           <TabsContent value="schedule" className="flex-1 min-h-[50vh]">

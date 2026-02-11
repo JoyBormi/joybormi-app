@@ -1,8 +1,6 @@
-import { router } from 'expo-router';
 import React, { useMemo } from 'react';
 
 import Icons from '@/components/icons';
-import { routes } from '@/constants/routes';
 import { IBrand } from '@/types/brand.type';
 import { IFile } from '@/types/file.type';
 import { IWorkingDay } from '@/types/schedule.type';
@@ -23,6 +21,7 @@ type BrandMissingProps = {
   handleEditProfileImage?: () => void;
   handleEditBanner?: () => void;
   handleAddWorker?: () => void;
+  handleManageServices?: () => void;
   handleAddPhoto?: () => void;
   mergedPhotos?: IFile[];
   workingDays?: IWorkingDay[];
@@ -40,6 +39,7 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
   handleEditProfileImage,
   handleEditBanner,
   handleAddWorker,
+  handleManageServices,
   handleAddPhoto,
   mergedPhotos = [],
   workingDays = [],
@@ -159,13 +159,16 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
     if ((services?.length ?? 0) === 0) {
       items.push({
         id: 'services',
-        title: 'List your services',
-        description: 'Show pricing and service details for clients.',
+        title: 'Manage worker services',
+        description:
+          'For MVP, services are managed from your worker profile and auto-shown here.',
         icon: Icons.Scissors,
-        action: {
-          label: 'Add service',
-          onPress: () => router.push(routes.screens.upsert_service()),
-        },
+        action: handleManageServices
+          ? {
+              label: 'Open worker profile',
+              onPress: handleManageServices,
+            }
+          : undefined,
       });
     }
 
@@ -223,6 +226,7 @@ const BrandMissing: React.FC<BrandMissingProps> = ({
     brand?.profileImage,
     handleAddPhoto,
     handleAddWorker,
+    handleManageServices,
     handleEditBanner,
     handleEditBrand,
     handleEditProfileImage,

@@ -44,7 +44,7 @@ const buttonTextVariants = cva('font-montserrat-medium text-foreground', {
     },
     size: {
       sm: 'font-caption',
-      default: 'font-subbody',
+      default: 'font-body',
       lg: 'font-subtitle',
       xl: 'font-title',
       icon: '',

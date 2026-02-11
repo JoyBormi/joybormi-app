@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { agent, ApiError } from '@/lib/agent';
+import { agent } from '@/lib/agent';
 import { queryKeys } from '@/lib/tanstack-query';
 
 import type { ISchedule } from '@/types/schedule.type';
@@ -29,18 +29,11 @@ const getSchedule = async ({
   brandId: string;
   workerId?: string;
 }): Promise<ISchedule | null> => {
-  try {
-    const endpoint = workerId
-      ? `/schedules/${brandId}/worker/${workerId}`
-      : `/schedules/${brandId}`;
+  const endpoint = workerId
+    ? `/schedules/${brandId}/worker/${workerId}`
+    : `/schedules/${brandId}`;
 
-    return await agent.get<ISchedule>(endpoint);
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 404) {
-      return null;
-    }
-    throw error;
-  }
+  return await agent.get<ISchedule>(endpoint);
 };
 
 export const useGetSchedule = (params?: ScheduleParams) => {

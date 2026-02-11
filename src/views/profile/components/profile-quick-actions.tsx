@@ -29,8 +29,10 @@ export const ProfileQuickActions: React.FC<ProfileQuickActionsProps> = ({
   if (actions.length === 0) return null;
 
   return (
-    <View className="px-6 mb-8">
-      <Text className="font-title text-lg text-foreground mb-4">{title}</Text>
+    <View className="px-2 mb-8">
+      <Text className="font-title text-lg text-foreground mb-4 px-2">
+        {title}
+      </Text>
       <View className="gap-3">
         {actions.map((action) => (
           <Pressable
@@ -54,7 +56,10 @@ export const ProfileQuickActions: React.FC<ProfileQuickActionsProps> = ({
                 <Text className="font-subtitle text-foreground mb-1">
                   {action.title}
                 </Text>
-                <Text className="font-caption text-muted-foreground">
+                <Text
+                  className="font-caption text-muted-foreground line-clamp-2"
+                  numberOfLines={2}
+                >
                   {action.description}
                 </Text>
               </View>

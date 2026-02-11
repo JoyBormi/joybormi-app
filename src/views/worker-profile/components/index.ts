@@ -3,7 +3,6 @@
  */
 
 export { AboutSectionDisplay } from './about-section';
-export { EditProfileSheet } from './edit-profile.sheet';
 export { ExperiencePreview } from './experience-preview';
 export { ProfileCard } from './profile-card';
 export { QuickActionsSection } from './quick-actions-section';

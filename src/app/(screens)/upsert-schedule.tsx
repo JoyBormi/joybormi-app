@@ -18,7 +18,11 @@ import { Loading } from '@/components/status-screens';
 import { Button, Text } from '@/components/ui';
 import { DAY_ORDER } from '@/constants/global.constants';
 import { useLocaleData } from '@/hooks/common/use-locale-data';
-import { useGetSchedule, useUpdateSchedule } from '@/hooks/schedule';
+import {
+  useCreateSchedule,
+  useGetSchedule,
+  useUpdateSchedule,
+} from '@/hooks/schedule';
 import { toast } from '@/providers/toaster';
 import { alert } from '@/stores/use-alert-store';
 import { DayCard } from '@/views/brand-profile/schedule';
@@ -30,11 +34,10 @@ const ManageScheduleScreen = () => {
   const insets = useSafeAreaInsets();
 
   const params = useLocalSearchParams<{
-    ownerId?: string;
     brandId?: string;
     workerId?: string;
   }>();
-  const brandId = params?.brandId ?? params?.ownerId;
+  const brandId = params?.brandId;
   const workerId = params?.workerId;
 
   const { dayNames, dayNamesShort } = useLocaleData();
@@ -47,11 +50,10 @@ const ManageScheduleScreen = () => {
 
   // Mutations
   const { mutateAsync: updateSchedule, isPending: isUpdatingSchedule } =
-    useUpdateSchedule({
-      brandId,
-      workerId,
-      scheduleId: scheduleData?.id,
-    });
+    useUpdateSchedule();
+
+  const { mutateAsync: createSchedule, isPending: isCreatingSchedule } =
+    useCreateSchedule();
 
   const [schedule, setSchedule] = useState<IWorkingDay[]>([]);
   const [editingState, setEditingState] = useState<{
@@ -220,7 +222,7 @@ const ManageScheduleScreen = () => {
 
     try {
       const workingDaysPayload = {
-        workingDays: schedule.map((day) => ({
+        days: schedule.map((day) => ({
           dayOfWeek: day.dayOfWeek,
           startTime: day.startTime,
           endTime: day.endTime,
@@ -231,7 +233,19 @@ const ManageScheduleScreen = () => {
         })),
       };
 
-      await updateSchedule(workingDaysPayload);
+      if (scheduleData?.id) {
+        await updateSchedule({
+          brandId,
+          workerId,
+          schedules: workingDaysPayload,
+        });
+      } else {
+        await createSchedule({
+          brandId,
+          workerId,
+          schedules: workingDaysPayload,
+        });
+      }
       router.back();
       toast.success({ title: t('common.success.scheduleSaved') });
     } catch (error) {
@@ -313,7 +327,11 @@ const ManageScheduleScreen = () => {
       >
         <View className="flex-row items-center gap-3">
           <View className="flex-1">
-            <Button size="lg" onPress={handleSave} loading={isUpdatingSchedule}>
+            <Button
+              size="lg"
+              onPress={handleSave}
+              loading={isUpdatingSchedule || isCreatingSchedule}
+            >
               <Text>Save Changes</Text>
             </Button>
           </View>

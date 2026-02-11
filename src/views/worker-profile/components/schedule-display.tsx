@@ -5,7 +5,6 @@ import Icons from '@/components/icons';
 import { Text } from '@/components/ui';
 import { DAY_ORDER } from '@/constants/global.constants';
 import { useLocaleData } from '@/hooks/common/use-locale-data';
-import { cn } from '@/lib/utils';
 
 import type { IWorkingDay } from '@/types/schedule.type';
 
@@ -25,7 +24,7 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
   if (workingDays.length === 0) return null;
 
   const today = new Date();
-  const todayUiIndex = (today.getDay() + 6) % 7; // Monday = 0
+  const todayUiIndex = (today.getDay() + 6) % 7;
 
   const getDateForWeekday = (uiIndex: number) => {
     const date = new Date(today);
@@ -33,112 +32,111 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
     return date;
   };
 
+  const formatDate = (date: Date) => {
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    return `${dd}/${mm}`;
+  };
+
+  const formatWorkingHours = (day: IWorkingDay | undefined) => {
+    if (!day) return 'Day Off';
+    return `${day.startTime} - ${day.endTime}`;
+  };
+
   return (
     <ScrollView
-      className="flex-1 bg-background px-6"
+      className="flex-1 bg-background px-2"
       showsVerticalScrollIndicator={false}
     >
-      {/* 1. Large Hero Header */}
-      <View className="pb-6 flex-row items-center justify-between">
-        <View>
-          <Text className="font-title text-3xl text-foreground">Schedule</Text>
-          <Text className="font-body text-muted-foreground mt-1">
-            Weekly working routine
-          </Text>
-        </View>
+      {/* Header */}
+      <View className="pb-6 flex-row items-center justify-between px-2">
+        <Text className="font-title text-foreground">Weekly routine</Text>
+
         {canEdit && (
           <Pressable
             onPress={onEditSchedule}
-            className="h-12 w-12 bg-primary/10 rounded-full items-center justify-center"
+            className="flex-row items-center gap-2"
           >
-            <Icons.Calendar size={24} className="text-primary" />
+            <Text className="font-body text-primary">Edit</Text>
+            <Icons.ChevronRight size={18} className="text-primary" />
           </Pressable>
         )}
       </View>
 
-      {/* 2. Quick Stats Row */}
-      <View className="flex-row gap-4 mb-8">
-        <View className="flex-1 bg-success/10 p-5 rounded-xl border border-success/20">
-          <Text className="text-success font-title text-3xl">
-            {workingDays.length}
-          </Text>
-          <Text className="text-success/80 font-subtitle uppercase tracking-wider">
-            Work Days
-          </Text>
-        </View>
-        <View className="flex-1 bg-muted/30 p-5 rounded-xl">
-          <Text className="text-muted-foreground font-title">
-            {7 - workingDays.length}
-          </Text>
-          <Text className="text-muted-foreground/80 font-subtitle uppercase tracking-wider">
-            Rest Days
-          </Text>
+      {/* Quick Stats */}
+      <View className="bg-muted/60 rounded-xl overflow-hidden mb-8">
+        <View className="flex-row">
+          {/* Work Days */}
+          <View className="flex-1 px-2 py-3 items-center">
+            <Text className="font-heading text-foreground">
+              {workingDays.length}
+            </Text>
+            <Text className="font-caption text-muted-foreground mt-1">
+              Work Days
+            </Text>
+          </View>
+
+          {/* Divider */}
+          <View className="w-px bg-border/60" />
+
+          {/* Rest Days */}
+          <View className="flex-1 px-2 py-3 items-center">
+            <Text className="font-heading text-foreground">
+              {7 - workingDays.length}
+            </Text>
+            <Text className="font-caption text-muted-foreground mt-1">
+              Rest Days
+            </Text>
+          </View>
         </View>
       </View>
 
-      {/* 3. Detailed List of Days */}
-      <View className="gap-y-3 pb-12">
-        {DAY_ORDER.map((day) => {
+      {/* Grouped iOS-style Card */}
+      <View className="overflow-hidden rounded-lg bg-card">
+        {DAY_ORDER.map((day, index) => {
           const date = getDateForWeekday(day);
           const isToday = date.toDateString() === today.toDateString();
-          const isWorking = workingDays.some(
-            (dayObj) => dayObj.dayOfWeek === day,
-          );
+          const workingDay = workingDays.find((d) => d.dayOfWeek === day);
 
           return (
-            <View
-              key={day}
-              className={cn(
-                'flex-row items-center p-4 rounded-lg border',
-                isWorking
-                  ? 'bg-card border-border shadow-sm'
-                  : 'bg-muted/30 border-transparent opacity-60',
-              )}
-            >
-              {/* Date Circle */}
-              <View
-                className={cn(
-                  'w-14 h-14 rounded-full items-center justify-center mr-4',
-                  isWorking ? 'bg-success/20' : 'bg-muted',
-                )}
-              >
-                <Text
-                  className={cn(
-                    'font-title',
-                    isWorking ? 'text-success' : 'text-muted-foreground',
-                  )}
-                >
-                  {date.getDate()}
-                </Text>
+            <View key={day}>
+              <View className="flex-row items-center px-5 py-4">
+                {/* Left Side */}
+                <View className="flex-1">
+                  <View className="flex-row items-center gap-2">
+                    <Text className="font-title text-foreground">
+                      {dayNames ? dayNames[day] : dayNamesShort[day]}
+                    </Text>
+
+                    {isToday && (
+                      <View className="px-2 py-0.5 rounded-full bg-primary/10">
+                        <Text className="font-base text-primary">Today</Text>
+                      </View>
+                    )}
+                  </View>
+
+                  <Text className="font-caption text-muted-foreground mt-1">
+                    {formatWorkingHours(workingDay)}
+                  </Text>
+                </View>
+
+                {/* Right Side Date */}
+                <View className="items-end">
+                  <Text className="font-body text-muted-foreground">
+                    {formatDate(date)}
+                  </Text>
+                </View>
               </View>
 
-              {/* Day Info */}
-              <View className="flex-1">
-                <View className="flex-row items-center">
-                  <Text
-                    className={cn(
-                      'font-title',
-                      isWorking ? 'text-foreground' : 'text-muted-foreground',
-                    )}
-                  >
-                    {dayNames ? dayNames[day] : dayNamesShort[day]}
-                  </Text>
-                  {isToday && (
-                    <View className="ml-2 px-2 py-0.5 bg-primary rounded-xs">
-                      <Text className="font-base text-primary-foreground uppercase">
-                        Today
-                      </Text>
-                    </View>
-                  )}
-                </View>
-                <Text className="text-muted-foreground font-caption">
-                  {isWorking ? 'Scheduled Shift' : 'Unavailable'}
-                </Text>
-              </View>
+              {index !== DAY_ORDER.length - 1 && (
+                <View className="h-px bg-border ml-5" />
+              )}
             </View>
           );
         })}
       </View>
+
+      <View className="h-12" />
     </ScrollView>
   );
 };

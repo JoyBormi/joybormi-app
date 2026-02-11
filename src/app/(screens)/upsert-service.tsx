@@ -12,6 +12,7 @@ import { Loading, NotFoundScreen } from '@/components/status-screens';
 import { Button, Select, Text, Textarea } from '@/components/ui';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
+import { routes } from '@/constants/routes';
 import {
   ServiceFormData,
   serviceSchema,
@@ -24,6 +25,7 @@ import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
 import { alert } from '@/stores/use-alert-store';
 import { ServiceOwnerType } from '@/types/service.type';
+import { EUserType } from '@/types/user.type';
 import { normalizeInput } from '@/utils/helpers';
 import { validateFormErrors } from '@/utils/validation';
 
@@ -85,6 +87,16 @@ const UpsertServiceScreen = () => {
       form.setFocus(firstError as keyof ServiceFormData);
     }
   }, [form.formState.errors, form]);
+
+  useEffect(() => {
+    if (!isEdit && appType === EUserType.CREATOR) {
+      toast.info({
+        title:
+          'For MVP, create services in your worker profile. They are auto-shown on your brand profile.',
+      });
+      router.replace(routes.tabs.brand.worker_profile);
+    }
+  }, [appType, isEdit]);
 
   const handleSubmit = form.handleSubmit(async (data) => {
     if (isEdit && serviceId) {

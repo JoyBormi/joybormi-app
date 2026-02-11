@@ -25,8 +25,8 @@ export const BrandQuickActions: React.FC<BrandQuickActionsProps> = ({
       actions={[
         {
           id: 'add-service',
-          title: 'Add New Service',
-          description: 'Create a new service offering',
+          title: 'Manage Services',
+          description: 'Auto-shown on your brand profile',
           onPress: onAddService,
           icon: Icons.Plus,
           iconClassName: 'text-primary',

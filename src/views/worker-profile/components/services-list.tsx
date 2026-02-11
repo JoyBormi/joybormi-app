@@ -13,10 +13,6 @@ interface ServicesListProps {
   canEdit?: boolean;
 }
 
-/**
- * Services List Component
- * Displays list of worker services
- */
 export const ServicesList: React.FC<ServicesListProps> = ({
   services,
   onAddService,
@@ -26,44 +22,78 @@ export const ServicesList: React.FC<ServicesListProps> = ({
   if (services.length === 0) return null;
 
   return (
-    <View className="px-6 mb-8">
-      <View className="flex-row items-center justify-between mb-4">
-        <Text className="font-title text-lg text-foreground">
+    <View className="px-2 mb-8">
+      {/* Header */}
+      <View className="flex-row items-center justify-between mb-4 px-2">
+        <Text className="font-title text-foreground">
           My Services ({services.length})
         </Text>
+
         {canEdit && onAddService && (
-          <Pressable onPress={onAddService}>
-            <Icons.Plus size={20} className="text-primary" />
+          <Pressable
+            onPress={onAddService}
+            className="flex-row items-center gap-1"
+          >
+            <Text className="font-body text-primary">Add</Text>
+            <Icons.ChevronRight size={16} className="text-primary" />
           </Pressable>
         )}
       </View>
-      <View className="gap-3">
-        {services.map((service) => (
-          <Pressable
-            key={service.id}
-            onPress={() => onServicePress?.(service)}
-            disabled={!onServicePress}
-            className="bg-card/50 backdrop-blur-xl rounded-2xl p-5 border border-border/50"
-          >
-            <View className="flex-row items-start justify-between mb-3">
-              <Text className="font-subtitle text-foreground flex-1">
-                {service.name}
-              </Text>
-              <Text className="font-subtitle text-primary">
-                ${service.price}
-              </Text>
+
+      {!canEdit && (
+        <View className="mb-4 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+          <Text className="font-caption text-primary">
+            Your worker profile services are automatically shown here for now.
+          </Text>
+        </View>
+      )}
+
+      {/* Grouped Card */}
+      <View className="bg-card rounded-lg overflow-hidden">
+        {services.map((service, index) => {
+          const isPressable = !!onServicePress;
+
+          const Container = isPressable ? Pressable : View;
+
+          return (
+            <View key={service.id}>
+              <Container
+                onPress={
+                  isPressable ? () => onServicePress?.(service) : undefined
+                }
+                className="px-5 py-4"
+              >
+                <View className="gap-3">
+                  <View className="flex-row items-center justify-between">
+                    <Text className="font-title text-foreground">
+                      {service.name}
+                    </Text>
+                    <Text className="font-title text-primary">
+                      {service.currency} {service.price}
+                    </Text>
+                  </View>
+
+                  {service.description ? (
+                    <Text className="font-body text-muted-foreground mt-1">
+                      {service.description}
+                    </Text>
+                  ) : null}
+                </View>
+
+                <View className="flex-row items-center gap-2 mt-3">
+                  <Icons.Clock size={14} className="text-muted-foreground" />
+                  <Text className="font-caption text-muted-foreground">
+                    {service.durationMins} min
+                  </Text>
+                </View>
+              </Container>
+
+              {index !== services.length - 1 && (
+                <View className="h-px bg-border ml-5" />
+              )}
             </View>
-            <Text className="font-body text-muted-foreground mb-3">
-              {service.description}
-            </Text>
-            <View className="flex-row items-center gap-2">
-              <Icons.Clock size={16} className="text-muted-foreground" />
-              <Text className="font-caption text-muted-foreground">
-                {service.durationMins} minutes
-              </Text>
-            </View>
-          </Pressable>
-        ))}
+          );
+        })}
       </View>
     </View>
   );
