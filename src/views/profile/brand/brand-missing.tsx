@@ -1,6 +1,8 @@
+import { router } from 'expo-router';
 import React, { useMemo } from 'react';
 
 import Icons from '@/components/icons';
+import { routes } from '@/constants/routes';
 import { IBrand } from '@/types/brand.type';
 import { IFile } from '@/types/file.type';
 import { IWorkingDay } from '@/types/schedule.type';

@@ -1,12 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
-import React, { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BlockModal, BlockModalRef } from '@/components/modals/block-modal';
 import { KeyboardAvoid } from '@/components/shared';
 import FormField from '@/components/shared/form-field';
 import { Header } from '@/components/shared/header';
@@ -20,7 +19,7 @@ const EditProfileScreen = () => {
   const { t } = useTranslation();
   const { user } = useUserStore();
   const insets = useSafeAreaInsets();
-  const blockedSheetRef = useRef<BlockModalRef>(null);
+
   const isPhoneMethod = user?.userMethod === EUserMethod.PHONE;
   const isEmailMethod = !isPhoneMethod;
 
@@ -94,13 +93,6 @@ const EditProfileScreen = () => {
         title={t('settings.profile.edit.title')}
         subtitle={t('settings.profile.edit.subtitle')}
         className="mb-4"
-        onGoBack={() => {
-          if (isFormDirty) {
-            blockedSheetRef.current?.show();
-          } else {
-            router.back();
-          }
-        }}
       />
 
       {/* Basic Information */}
@@ -338,12 +330,6 @@ const EditProfileScreen = () => {
           {isPending ? t('common.buttons.saving') : t('common.buttons.save')}
         </Text>
       </Button>
-
-      <BlockModal
-        ref={blockedSheetRef}
-        onCancel={() => router.back()}
-        onConfirm={() => blockedSheetRef.current?.hide()}
-      />
     </KeyboardAvoid>
   );
 };

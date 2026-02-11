@@ -23,7 +23,7 @@ import {
   LocationDetails,
   Review,
   StepIndicator,
-} from '@/views/brand-profile/create-brand';
+} from '@/views/create-brand';
 
 type SetupStep = 0 | 1 | 2 | 3;
 

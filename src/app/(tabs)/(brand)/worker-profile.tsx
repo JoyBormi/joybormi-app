@@ -47,7 +47,7 @@ import {
   ScheduleDisplay,
   ServicesList,
   WorkerMissing,
-} from '@/views/worker-profile/components';
+} from '@/views/profile/worker';
 
 type WorkerProfileTab =
   | 'setup'

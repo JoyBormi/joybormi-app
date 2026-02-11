@@ -73,7 +73,7 @@ export const routes = {
   // ───────────────────────────────── Category
   category: {
     view: (category: string): Href => ({
-      pathname: '/(category)/[category]',
+      pathname: '/(category)/[category]' as RelativePathString,
       params: { category },
     }),
   },

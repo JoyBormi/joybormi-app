@@ -25,7 +25,7 @@ import {
 } from '@/hooks/schedule';
 import { toast } from '@/providers/toaster';
 import { alert } from '@/stores/use-alert-store';
-import { DayCard } from '@/views/brand-profile/schedule';
+import { DayCard } from '@/views/profile/components/schedule';
 
 import type { IWorkingDay } from '@/types/schedule.type';
 

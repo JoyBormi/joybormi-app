@@ -15,7 +15,7 @@ import { toast } from '@/providers/toaster';
 import {
   WorkerProfileFormData,
   workerProfileSchema,
-} from '@/views/worker-profile/utils';
+} from '@/views/profile/worker/validation';
 
 const EditProfileScreen = () => {
   const insets = useSafeAreaInsets();

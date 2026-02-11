@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import Icons from '@/components/icons';
 import FormField from '@/components/shared/form-field';
 import { Input } from '@/components/ui/input';
-import { Select, SelectValue } from '@/components/ui/select';
+import { Select } from '@/components/ui/select';
 import { Text } from '@/components/ui/text';
 import { Textarea } from '@/components/ui/textarea';
 import { UploadField } from '@/components/ui/uploader';
@@ -104,7 +104,7 @@ export function BasicInfo<T extends FieldValues>({
           render={({ field }) => (
             <Select
               value={field.value}
-              onChangeText={field.onChangeText as (value: SelectValue) => void}
+              onChangeText={field.onChangeText}
               options={Object.values(Major).map((category) => ({
                 label: category,
                 value: category,

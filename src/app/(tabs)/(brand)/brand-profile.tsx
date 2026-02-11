@@ -41,7 +41,7 @@ import {
   BrandMissing,
   BrandQuickActions,
   BrandTeamList,
-} from '@/views/brand-profile/components';
+} from '@/views/profile/brand';
 import {
   DangerZone,
   InviteTeamSheet,
@@ -53,10 +53,7 @@ import {
 } from '@/views/profile/components';
 import { useProfileGallery } from '@/views/profile/hooks/use-profile-gallery';
 import { createImageUploadHandler } from '@/views/profile/utils/profile-media';
-import {
-  ScheduleDisplay,
-  ServicesList,
-} from '@/views/worker-profile/components';
+import { ScheduleDisplay, ServicesList } from '@/views/profile/worker';
 
 import type { IWorker } from '@/types/worker.type';
 

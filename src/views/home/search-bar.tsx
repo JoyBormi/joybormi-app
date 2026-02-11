@@ -1,8 +1,8 @@
-import { useRouter } from 'expo-router';
+import { RelativePathString, useRouter } from 'expo-router';
 import { MotiView } from 'moti';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { TextInput, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import Icons from '@/components/icons';
-import { Input, PressableBounce } from '@/components/ui';
+import { PressableBounce } from '@/components/ui';
 import { Major } from '@/constants/enum';
 import { routes } from '@/constants/routes';
 import { cn } from '@/lib/utils';
@@ -45,7 +45,7 @@ export function SearchBar({ className }: Props) {
     if (!search.trim()) return;
 
     router.push({
-      pathname: routes.category.view('all').pathname,
+      pathname: routes.category.view('all') as RelativePathString,
       params: {
         category: 'all',
         query: search,
@@ -84,7 +84,7 @@ export function SearchBar({ className }: Props) {
       transition={{ type: 'timing', duration: 500 }}
       className={cn('px-4 mt-10', className)}
     >
-      <PressableBounce className="flex-row items-center px-4 bg-card/50 rounded-full border border-border">
+      <PressableBounce className="flex-row items-center px-4 bg-card/80 rounded-full border border-border">
         <View className="flex-1 justify-center">
           {/* Animated placeholder */}
           {!search && (
@@ -99,12 +99,13 @@ export function SearchBar({ className }: Props) {
             </Animated.Text>
           )}
 
-          <Input
+          <TextInput
             value={search}
             onChangeText={setSearch}
             onSubmitEditing={handleSearch}
             onBlur={() => setSearch('')}
-            className="border-0 h-14 bg-transparent focus:bg-transparent font-body"
+            maxLength={30}
+            className="font-body text-foreground flex-1 h-14 native:leading-[1.25] px-3"
             returnKeyType="search"
             autoCapitalize="none"
             autoCorrect={false}
