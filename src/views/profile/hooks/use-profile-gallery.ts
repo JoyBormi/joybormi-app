@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { buildUploadedFile } from '@/lib/utils';
 import { toast } from '@/providers/toaster';
+import { actionChip } from '@/stores/use-action-chip-store';
 import { FileOwnerType, IFile } from '@/types/file.type';
 
 import { createImageUploadHandler } from '../utils/profile-media';
@@ -52,29 +53,51 @@ export const useProfileGallery = ({
   const handleUploadPhotos = useCallback(
     async (newPhotos: { uri: string; category: string }[]) => {
       if (!ownerId || newPhotos.length === 0) return;
+      const chipId = `photos-upload-${ownerType}-${ownerId}`;
 
       try {
-        await Promise.all(
-          newPhotos.map((photo, index) =>
-            uploadFile({
-              file: buildUploadedFile(
-                photo.uri,
-                `${photoFileNamePrefix}-${index}`,
-              ),
-              category: photo.category ?? defaultPhotoCategory,
-              ownerId,
-              ownerType,
-            }),
-          ),
-        );
+        actionChip.show({
+          id: chipId,
+          text: 'Uploading photos...',
+          progress: 0,
+        });
+
+        for (const [index, photo] of newPhotos.entries()) {
+          await uploadFile({
+            file: buildUploadedFile(
+              photo.uri,
+              `${photoFileNamePrefix}-${index}`,
+            ),
+            category: photo.category ?? defaultPhotoCategory,
+            ownerId,
+            ownerType,
+          });
+
+          actionChip.update({
+            id: chipId,
+            text: `Uploading photos (${index + 1}/${newPhotos.length})`,
+            progress: ((index + 1) / newPhotos.length) * 100,
+          });
+        }
 
         if (selectedPhoto?.id) {
+          actionChip.update({
+            id: chipId,
+            text: 'Finalizing upload...',
+          });
           await deleteFile(selectedPhoto.id);
           setSelectedPhoto(null);
         }
 
         onRefreshPhotos();
+        actionChip.update({
+          id: chipId,
+          text: 'Upload complete',
+          progress: 100,
+        });
+        setTimeout(() => actionChip.hide(chipId), 500);
       } catch {
+        actionChip.hide(chipId);
         toast.error({ title: onErrorMessage ?? 'Something went wrong' });
       }
     },
@@ -94,14 +117,21 @@ export const useProfileGallery = ({
   const handleDeletePhoto = useCallback(
     async (fileId: string) => {
       if (!ownerId || !fileId) return;
+      const chipId = `photo-delete-${ownerType}-${ownerId}`;
       try {
+        actionChip.show({
+          id: chipId,
+          text: 'Deleting photo...',
+        });
         await deleteFile(fileId);
         onRefreshPhotos();
+        actionChip.hide(chipId);
       } catch {
+        actionChip.hide(chipId);
         toast.error({ title: onErrorMessage ?? 'Something went wrong' });
       }
     },
-    [deleteFile, onErrorMessage, onRefreshPhotos, ownerId],
+    [deleteFile, onErrorMessage, onRefreshPhotos, ownerId, ownerType],
   );
 
   const handleUploadBanner = useMemo(

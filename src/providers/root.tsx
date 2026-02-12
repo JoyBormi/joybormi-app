@@ -8,6 +8,7 @@ import { NotificationPermissionModal } from '@/components/modals/notification-mo
 import { setupFocusManager } from '@/lib/tanstack-query/focus-manager';
 import { setupOnlineManager } from '@/lib/tanstack-query/online-manager';
 
+import { GlobalActionChip } from './action-chip';
 import { GlobalAlert } from './alert';
 import { I18nProvider } from './intl';
 import { NotificationProvider } from './notification-provider';
@@ -32,6 +33,7 @@ const RootProvider = ({ children }: { children: React.ReactNode }) => {
               <OfflineModal />
               <GlobalAlert />
               <ToastProvider />
+              <GlobalActionChip />
               <NotificationPermissionModal />
               <LocationPermissionModal />
             </BottomSheetModalProvider>

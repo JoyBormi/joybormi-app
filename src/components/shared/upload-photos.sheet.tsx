@@ -333,7 +333,7 @@ export const UploadPhotosSheet = forwardRef<
                         contentFit="cover"
                       />
                       <View className="absolute left-1.5 top-1.5 rounded-full bg-black/70 px-2 py-0.5">
-                        <Text className="text-[10px] font-subtitle text-white">
+                        <Text className="font-subbody text-white">
                           {categoryLabelMap[photo.category]}
                         </Text>
                       </View>
