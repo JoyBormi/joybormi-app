@@ -22,31 +22,21 @@ import { Button, Text } from '@/components/ui';
 import { IMAGE_CATEGORIES } from '@/constants/global.constants';
 import { cn } from '@/lib/utils';
 import { IFile } from '@/types/file.type';
-
-type PhotoCategory = (typeof IMAGE_CATEGORIES)[keyof typeof IMAGE_CATEGORIES];
-type PhotoCategoryOption = {
-  value: PhotoCategory;
-  label: string;
-  icon: string;
-};
+import {
+  DEFAULT_PROFILE_PHOTO_CATEGORIES,
+  ProfilePhotoCategory,
+  ProfilePhotoCategoryOption,
+} from '@/views/profile/constants';
 
 interface UploadPhotosSheetProps {
-  onUpload: (photos: { uri: string; category: PhotoCategory }[]) => void;
+  onUpload: (photos: { uri: string; category: ProfilePhotoCategory }[]) => void;
   onDelete?: (fileId: string) => void;
   onReplace?: (fileId: string) => void;
   value?: IFile | null;
   setValue?: (photo: IFile | null) => void;
-  categories?: PhotoCategoryOption[];
+  categories?: ProfilePhotoCategoryOption[];
   allowMultiple?: boolean;
 }
-
-const DEFAULT_CATEGORIES: PhotoCategoryOption[] = [
-  { value: IMAGE_CATEGORIES.interior, label: 'Interior', icon: 'Home' },
-  { value: IMAGE_CATEGORIES.exterior, label: 'Exterior', icon: 'Store' },
-  { value: IMAGE_CATEGORIES.service, label: 'Service', icon: 'Scissors' },
-  { value: IMAGE_CATEGORIES.team, label: 'Team', icon: 'Users' },
-  { value: IMAGE_CATEGORIES.other, label: 'Other', icon: 'Image' },
-];
 
 export const UploadPhotosSheet = forwardRef<
   BottomSheetModal,
@@ -71,7 +61,7 @@ export const UploadPhotosSheet = forwardRef<
 
     const isEditMode = Boolean(value);
 
-    const resolvedCategories = categories ?? DEFAULT_CATEGORIES;
+    const resolvedCategories = categories ?? DEFAULT_PROFILE_PHOTO_CATEGORIES;
     const defaultCategory =
       resolvedCategories.find(
         (category) => category.value === IMAGE_CATEGORIES.other,
@@ -80,21 +70,21 @@ export const UploadPhotosSheet = forwardRef<
       IMAGE_CATEGORIES.other;
 
     const [selectedPhotos, setSelectedPhotos] = useState<
-      { uri: string; category: PhotoCategory }[]
+      { uri: string; category: ProfilePhotoCategory }[]
     >([]);
 
     const [selectedPhoto, setSelectedPhoto] = useState<{
       uri: string;
-      category: PhotoCategory;
+      category: ProfilePhotoCategory;
     } | null>(null);
 
     const [selectedCategory, setSelectedCategory] =
-      useState<PhotoCategory>(defaultCategory);
+      useState<ProfilePhotoCategory>(defaultCategory);
     const categoryLabelMap = useMemo(
       () =>
         resolvedCategories.reduce(
           (acc, category) => ({ ...acc, [category.value]: category.label }),
-          {} as Record<PhotoCategory, string>,
+          {} as Record<ProfilePhotoCategory, string>,
         ),
       [resolvedCategories],
     );
@@ -105,9 +95,9 @@ export const UploadPhotosSheet = forwardRef<
       if (value) {
         setSelectedPhoto({
           uri: value.url,
-          category: value.category as PhotoCategory,
+          category: value.category as ProfilePhotoCategory,
         });
-        setSelectedCategory(value.category as PhotoCategory);
+        setSelectedCategory(value.category as ProfilePhotoCategory);
         setSelectedPhotos([]);
       } else {
         setSelectedPhoto(null);

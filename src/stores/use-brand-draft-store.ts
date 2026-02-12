@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { storage } from '@/lib/mmkv';
-import { TCreateBrandInput } from '@/lib/validations/brand';
+import { TCreateBrandInput } from '@/lib/validation';
 
 interface BrandDraftStore {
   draftData: Partial<TCreateBrandInput> | null;

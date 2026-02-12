@@ -10,9 +10,11 @@ import {
 } from 'react-native-safe-area-context';
 
 import { DeleteModal, DeleteModalRef } from '@/components/modals';
+import { UploadAvatarSheet } from '@/components/shared/upload-avatar.sheet';
+import { UploadBannerSheet } from '@/components/shared/upload-banner.sheet';
+import { UploadPhotosSheet } from '@/components/shared/upload-photos.sheet';
 import { NotFoundScreen, PendingScreen } from '@/components/status-screens';
-import { Text } from '@/components/ui';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { IMAGE_CATEGORIES } from '@/constants/global.constants';
 import { routes } from '@/constants/routes';
 import { useDeleteFile, useUploadFile } from '@/hooks/files';
@@ -33,12 +35,14 @@ import {
   DangerZone,
   ProfilePhotosGrid,
   ProfileSkeleton,
-  UploadBannerSheet,
-  UploadPhotosSheet,
-  UploadProfileImageSheet,
+  ProfileTabsBar,
 } from '@/views/profile/components';
+import {
+  WORKER_PROFILE_PHOTO_CATEGORIES,
+  WORKER_PROFILE_TABS,
+  WorkerProfileTab,
+} from '@/views/profile/constants';
 import { useProfileGallery } from '@/views/profile/hooks/use-profile-gallery';
-import { createImageUploadHandler } from '@/views/profile/utils/profile-media';
 import {
   AboutSectionDisplay,
   ExperiencePreview,
@@ -48,34 +52,6 @@ import {
   ServicesList,
   WorkerMissing,
 } from '@/views/profile/worker';
-
-type WorkerProfileTab =
-  | 'setup'
-  | 'about'
-  | 'services'
-  | 'schedule'
-  | 'photos'
-  | 'experience'
-  | 'danger';
-
-const WORKER_PHOTO_CATEGORIES = [
-  {
-    value: IMAGE_CATEGORIES.worker_portfolio,
-    label: 'Portfolio',
-    icon: 'Camera',
-  },
-  {
-    value: IMAGE_CATEGORIES.worker_certificates,
-    label: 'Certificates',
-    icon: 'Shield',
-  },
-  {
-    value: IMAGE_CATEGORIES.worker_workspace,
-    label: 'Workspace',
-    icon: 'Home',
-  },
-  { value: IMAGE_CATEGORIES.other, label: 'Other', icon: 'Image' },
-];
 
 /**
  * Worker Profile Management Page - For creators/workers to manage their worker
@@ -122,16 +98,30 @@ const WorkerProfileScreen: React.FC = () => {
     mergedPhotos,
     handleUploadPhotos,
     handleDeletePhoto,
+    handleUploadBanner,
+    handleUploadProfileImage,
   } = useProfileGallery({
     ownerId: worker?.id,
     ownerType: 'WORKER',
     photos,
     uploadFile,
     deleteFile,
-    defaultCategory: IMAGE_CATEGORIES.other,
-    fileNamePrefix: 'worker-photo',
-    onRefresh: refetchPhotos,
+    defaultPhotoCategory: IMAGE_CATEGORIES.other,
+    photoFileNamePrefix: 'worker-photo',
+    onRefreshPhotos: refetchPhotos,
     onErrorMessage: t('common.errors.somethingWentWrong'),
+    bannerCategory: IMAGE_CATEGORIES.worker_cover,
+    avatarCategory: IMAGE_CATEGORIES.worker_avatar,
+    onUploadBannerUrl: async (url) => {
+      await updateWorkerProfile({ coverImage: url });
+      refetchWorker();
+      refetchPhotos();
+    },
+    onUploadAvatarUrl: async (url) => {
+      await updateWorkerProfile({ avatar: url });
+      refetchWorker();
+      refetchPhotos();
+    },
   });
   const workingDays = useMemo(
     () => schedule?.[0]?.workingDays ?? [],
@@ -165,57 +155,9 @@ const WorkerProfileScreen: React.FC = () => {
     uploadBannerSheetRef.current?.present();
   }, []);
 
-  const handleUploadBanner = useMemo(
-    () =>
-      createImageUploadHandler({
-        ownerId: worker?.id,
-        ownerType: 'WORKER',
-        category: IMAGE_CATEGORIES.worker_cover,
-        uploadFile,
-        onUpdate: async (url) => {
-          await updateWorkerProfile({ coverImage: url });
-          refetchWorker();
-          refetchPhotos();
-        },
-        onErrorMessage: t('common.errors.somethingWentWrong'),
-      }),
-    [
-      t,
-      updateWorkerProfile,
-      uploadFile,
-      worker?.id,
-      refetchWorker,
-      refetchPhotos,
-    ],
-  );
-
   const handleEditProfileImage = useCallback(() => {
     uploadProfileImageSheetRef.current?.present();
   }, []);
-
-  const handleUploadProfileImage = useMemo(
-    () =>
-      createImageUploadHandler({
-        ownerId: worker?.id,
-        ownerType: 'WORKER',
-        category: IMAGE_CATEGORIES.worker_avatar,
-        uploadFile,
-        onUpdate: async (url) => {
-          await updateWorkerProfile({ avatar: url });
-          refetchWorker();
-          refetchPhotos();
-        },
-        onErrorMessage: t('common.errors.somethingWentWrong'),
-      }),
-    [
-      t,
-      updateWorkerProfile,
-      uploadFile,
-      worker?.id,
-      refetchWorker,
-      refetchPhotos,
-    ],
-  );
 
   const handleAddPhoto = useCallback(() => {
     uploadPhotosSheetRef.current?.present();
@@ -259,20 +201,10 @@ const WorkerProfileScreen: React.FC = () => {
   );
 
   const renderMissing = useCallback(
-    (
-      filterIds?: (
-        | 'details'
-        | 'description'
-        | 'images'
-        | 'services'
-        | 'photos'
-        | 'schedule'
-      )[],
-      variant: 'inline' | 'full' = 'inline',
-    ) => (
+    (filterIds?: string[], variant: 'inline' | 'full' = 'inline') => (
       <WorkerMissing
         {...missingProps}
-        filterIds={filterIds as string[] | undefined}
+        filterIds={filterIds}
         variant={variant}
       />
     ),
@@ -313,35 +245,7 @@ const WorkerProfileScreen: React.FC = () => {
           onValueChange={(value) => setActiveTab(value as WorkerProfileTab)}
           className="flex-1"
         >
-          <TabsList className="bg-background/95 backdrop-blur-xl border-b border-border mt-4 mb-5">
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerClassName="gap-2 px-6"
-            >
-              <TabsTrigger value="setup">
-                <Text>Setup</Text>
-              </TabsTrigger>
-              <TabsTrigger value="about">
-                <Text>About</Text>
-              </TabsTrigger>
-              <TabsTrigger value="services">
-                <Text>Services</Text>
-              </TabsTrigger>
-              <TabsTrigger value="schedule">
-                <Text>Schedule</Text>
-              </TabsTrigger>
-              <TabsTrigger value="experience">
-                <Text>Experience</Text>
-              </TabsTrigger>
-              <TabsTrigger value="photos">
-                <Text>Photos</Text>
-              </TabsTrigger>
-              <TabsTrigger value="danger">
-                <Text>Danger</Text>
-              </TabsTrigger>
-            </ScrollView>
-          </TabsList>
+          <ProfileTabsBar tabs={WORKER_PROFILE_TABS} />
 
           <TabsContent value="setup" className="flex-1">
             {renderMissing(undefined, 'full')}
@@ -355,7 +259,7 @@ const WorkerProfileScreen: React.FC = () => {
                 onJoinBrand={
                   user?.role === EUserType.CREATOR
                     ? undefined
-                    : () => router.push(routes.screens.worker.invite_code)
+                    : () => router.push(routes.worker.invite_code)
                 }
                 onEditSchedule={() =>
                   router.push(
@@ -440,14 +344,16 @@ const WorkerProfileScreen: React.FC = () => {
         </Tabs>
       </ScrollView>
 
-      {/* Bottom Sheets */}
+      {/* *****************************************************************
+       * Secondary Sheets
+       * ***************************************************************** */}
       <UploadBannerSheet
         ref={uploadBannerSheetRef}
         currentBanner={worker.coverImage || ''}
         onUpload={handleUploadBanner}
       />
 
-      <UploadProfileImageSheet
+      <UploadAvatarSheet
         ref={uploadProfileImageSheetRef}
         currentImage={worker.avatar || ''}
         onUpload={handleUploadProfileImage}
@@ -459,7 +365,7 @@ const WorkerProfileScreen: React.FC = () => {
         setValue={setSelectedPhoto}
         onUpload={handleUploadPhotos}
         onDelete={handleDeletePhoto}
-        categories={WORKER_PHOTO_CATEGORIES}
+        categories={WORKER_PROFILE_PHOTO_CATEGORIES}
       />
 
       <DeleteModal

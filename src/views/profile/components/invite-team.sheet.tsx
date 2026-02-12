@@ -14,8 +14,8 @@ import { ActivityIndicator, Pressable, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { CustomBottomSheet } from '@/components/bottom-sheet';
 import Icons from '@/components/icons';
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { Text } from '@/components/ui';
 import { agent } from '@/lib/agent';
 

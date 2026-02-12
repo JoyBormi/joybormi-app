@@ -5,8 +5,8 @@ import React, { forwardRef, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { CustomBottomSheet } from '@/components/bottom-sheet';
 import Icons from '@/components/icons';
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { routes } from '@/constants/routes';
 import { Feedback } from '@/lib/haptics';
 import { queryKeys } from '@/lib/tanstack-query';

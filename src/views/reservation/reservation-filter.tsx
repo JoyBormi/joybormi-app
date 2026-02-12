@@ -3,8 +3,8 @@ import dayjs from 'dayjs';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
+import { CustomBottomSheet } from '@/components/bottom-sheet';
 import Icons from '@/components/icons';
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { Feedback } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
 

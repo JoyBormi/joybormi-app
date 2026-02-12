@@ -10,13 +10,15 @@ import {
 } from 'react-native-safe-area-context';
 
 import { DeleteModal, DeleteModalRef } from '@/components/modals';
+import { UploadAvatarSheet } from '@/components/shared/upload-avatar.sheet';
+import { UploadBannerSheet } from '@/components/shared/upload-banner.sheet';
+import { UploadPhotosSheet } from '@/components/shared/upload-photos.sheet';
 import {
   NotFoundScreen,
   PendingScreen,
   SuspendedScreen,
 } from '@/components/status-screens';
-import { Text } from '@/components/ui';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { IMAGE_CATEGORIES } from '@/constants/global.constants';
 import { routes } from '@/constants/routes';
 import {
@@ -46,24 +48,13 @@ import {
   InviteTeamSheet,
   ProfilePhotosGrid,
   ProfileSkeleton,
-  UploadBannerSheet,
-  UploadPhotosSheet,
-  UploadProfileImageSheet,
+  ProfileTabsBar,
 } from '@/views/profile/components';
+import { BRAND_PROFILE_TABS, BrandProfileTab } from '@/views/profile/constants';
 import { useProfileGallery } from '@/views/profile/hooks/use-profile-gallery';
-import { createImageUploadHandler } from '@/views/profile/utils/profile-media';
 import { ScheduleDisplay, ServicesList } from '@/views/profile/worker';
 
 import type { IWorker } from '@/types/worker.type';
-
-type BrandProfileTab =
-  | 'setup'
-  | 'about'
-  | 'services'
-  | 'schedule'
-  | 'team'
-  | 'photos'
-  | 'danger';
 
 /**
  * @description Brand Profile Management Page - For creators to manage their brand
@@ -109,16 +100,28 @@ const BrandProfileScreen: React.FC = () => {
     mergedPhotos,
     handleUploadPhotos,
     handleDeletePhoto,
+    handleUploadBanner,
+    handleUploadProfileImage,
   } = useProfileGallery({
     ownerId: brand?.id,
     ownerType: 'BRAND',
     photos,
     uploadFile,
     deleteFile,
-    defaultCategory: IMAGE_CATEGORIES.other,
-    fileNamePrefix: 'brand-photo',
-    onRefresh: refetchPhotos,
+    defaultPhotoCategory: IMAGE_CATEGORIES.other,
+    photoFileNamePrefix: 'brand-photo',
+    onRefreshPhotos: refetchPhotos,
     onErrorMessage: t('common.errors.somethingWentWrong'),
+    bannerCategory: IMAGE_CATEGORIES.brand_banner,
+    avatarCategory: IMAGE_CATEGORIES.brand_avatar,
+    onUploadBannerUrl: async (url) => {
+      if (!brand?.id) return;
+      await updateBrand({ brandId: brand.id, bannerImage: url });
+    },
+    onUploadAvatarUrl: async (url) => {
+      if (!brand?.id) return;
+      await updateBrand({ brandId: brand.id, profileImage: url });
+    },
   });
 
   const refetch = useCallback(() => {
@@ -151,40 +154,9 @@ const BrandProfileScreen: React.FC = () => {
     uploadBannerSheetRef.current?.present();
   }, []);
 
-  const handleUploadBanner = useMemo(
-    () =>
-      createImageUploadHandler({
-        ownerId: brand?.id,
-        ownerType: 'BRAND',
-        category: IMAGE_CATEGORIES.brand_banner,
-        uploadFile,
-        onUpdate: async (url) => {
-          if (!brand?.id) return;
-          await updateBrand({ brandId: brand.id, bannerImage: url });
-        },
-        onErrorMessage: t('common.errors.somethingWentWrong'),
-      }),
-    [brand?.id, t, updateBrand, uploadFile],
-  );
   const handleEditProfileImage = useCallback(() => {
     uploadProfileImageSheetRef.current?.present();
   }, []);
-
-  const handleUploadProfileImage = useMemo(
-    () =>
-      createImageUploadHandler({
-        ownerId: brand?.id,
-        ownerType: 'BRAND',
-        category: IMAGE_CATEGORIES.brand_avatar,
-        uploadFile,
-        onUpdate: async (url) => {
-          if (!brand?.id) return;
-          await updateBrand({ brandId: brand.id, profileImage: url });
-        },
-        onErrorMessage: t('common.errors.somethingWentWrong'),
-      }),
-    [brand?.id, t, updateBrand, uploadFile],
-  );
 
   const handleAddWorker = useCallback(() => {
     inviteTeamSheetRef.current?.present();
@@ -259,23 +231,8 @@ const BrandProfileScreen: React.FC = () => {
     ],
   );
   const renderMissing = useCallback(
-    (
-      filterIds?: (
-        | 'details'
-        | 'description'
-        | 'images'
-        | 'services'
-        | 'team'
-        | 'photos'
-        | 'schedule'
-      )[],
-      variant: 'inline' | 'full' = 'inline',
-    ) => (
-      <BrandMissing
-        {...missingProps}
-        filterIds={filterIds as string[] | undefined}
-        variant={variant}
-      />
+    (filterIds?: string[], variant: 'inline' | 'full' = 'inline') => (
+      <BrandMissing {...missingProps} filterIds={filterIds} variant={variant} />
     ),
     [missingProps],
   );
@@ -319,35 +276,7 @@ const BrandProfileScreen: React.FC = () => {
           onValueChange={(value) => setActiveTab(value as BrandProfileTab)}
           className="flex-1"
         >
-          <TabsList className="bg-background/95 backdrop-blur-xl border-b border-border mt-4 mb-5">
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerClassName="gap-2 px-6"
-            >
-              <TabsTrigger value="setup">
-                <Text>Setup</Text>
-              </TabsTrigger>
-              <TabsTrigger value="about">
-                <Text>About</Text>
-              </TabsTrigger>
-              <TabsTrigger value="services">
-                <Text>Services</Text>
-              </TabsTrigger>
-              <TabsTrigger value="schedule">
-                <Text>Schedule</Text>
-              </TabsTrigger>
-              <TabsTrigger value="team">
-                <Text>Team</Text>
-              </TabsTrigger>
-              <TabsTrigger value="photos">
-                <Text>Photos</Text>
-              </TabsTrigger>
-              <TabsTrigger value="danger">
-                <Text>Danger</Text>
-              </TabsTrigger>
-            </ScrollView>
-          </TabsList>
+          <ProfileTabsBar tabs={BRAND_PROFILE_TABS} />
 
           <TabsContent value="setup" className="flex-1">
             {renderMissing(undefined, 'full')}
@@ -445,7 +374,7 @@ const BrandProfileScreen: React.FC = () => {
         onUpload={handleUploadBanner}
       />
 
-      <UploadProfileImageSheet
+      <UploadAvatarSheet
         ref={uploadProfileImageSheetRef}
         currentImage={brand.profileImage || ''}
         onUpload={handleUploadProfileImage}

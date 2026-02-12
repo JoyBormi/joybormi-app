@@ -6,6 +6,4 @@ export { ProfileMissing } from './profile-missing';
 export { ProfilePhotosGrid } from './profile-photos-grid';
 export { ProfileQuickActions } from './profile-quick-actions';
 export { ProfileSkeleton } from './profile-skeleton';
-export { UploadBannerSheet } from './upload-banner.sheet';
-export { UploadPhotosSheet } from './upload-photos.sheet';
-export { UploadProfileImageSheet } from './upload-profile-image.sheet';
+export { ProfileTabsBar } from './profile-tabs-bar';

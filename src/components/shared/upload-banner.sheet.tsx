@@ -8,23 +8,23 @@ import React, { forwardRef, useCallback, useState } from 'react';
 import { Image, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { CustomBottomSheet } from '@/components/bottom-sheet';
 import Icons from '@/components/icons';
-import CustomBottomSheet from '@/components/shared/bottom-sheet';
 import { Button, Text } from '@/components/ui';
 
-interface UploadProfileImageSheetProps {
-  currentImage?: string;
+interface UploadBannerSheetProps {
+  currentBanner?: string;
   onUpload: (uri: string) => void;
 }
 
 /**
- * Shared Upload Profile Image Sheet
+ * Shared Upload Banner/Cover Image Sheet
  * Used by both Brand and Worker profiles
  */
-export const UploadProfileImageSheet = forwardRef<
+export const UploadBannerSheet = forwardRef<
   BottomSheetModal,
-  UploadProfileImageSheetProps
->(({ currentImage, onUpload }, ref) => {
+  UploadBannerSheetProps
+>(({ currentBanner, onUpload }, ref) => {
   const insets = useSafeAreaInsets();
   const animationConfigs = useBottomSheetTimingConfigs({ duration: 150 });
 
@@ -37,9 +37,9 @@ export const UploadProfileImageSheet = forwardRef<
 
   const pickImage = useCallback(async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: 'images',
       allowsEditing: true,
-      aspect: [1, 1],
+      aspect: [16, 9],
       quality: 0.8,
     });
 
@@ -57,7 +57,7 @@ export const UploadProfileImageSheet = forwardRef<
     }
   }, [selectedImage, onUpload, handleClose]);
 
-  const displayImage = selectedImage || currentImage;
+  const displayImage = selectedImage || currentBanner;
 
   return (
     <CustomBottomSheet
@@ -73,45 +73,46 @@ export const UploadProfileImageSheet = forwardRef<
         className: 'rounded-b-3xl',
       }}
     >
-      <View className="gap-6 pb-8 pt-4 items-center">
+      <View className="gap-6 pb-8 pt-4">
         {/* Header */}
-        <View className="flex-row items-center justify-between w-full">
+        <View className="flex-row items-center justify-between">
           <Text className="font-heading text-xl text-foreground">
-            Profile Image
+            Banner Image
           </Text>
         </View>
 
         {/* Image Preview */}
         <Pressable
           onPress={pickImage}
-          className="w-40 h-40 rounded-3xl bg-muted/20 border-2 border-dashed border-border overflow-hidden items-center justify-center"
+          className="w-full h-48 rounded-2xl bg-muted/20 border-2 border-dashed border-border overflow-hidden items-center justify-center"
         >
           {displayImage ? (
             <Image source={{ uri: displayImage }} className="w-full h-full" />
           ) : (
             <View className="items-center gap-3">
               <View className="w-16 h-16 rounded-full bg-primary/20 items-center justify-center">
-                <Icons.Camera size={32} className="text-primary" />
+                <Icons.Image size={32} className="text-primary" />
               </View>
-              <Text className="font-caption text-muted-foreground">
-                Tap to upload
-              </Text>
+              <View className="items-center">
+                <Text className="font-subtitle text-foreground mb-1">
+                  Upload Banner
+                </Text>
+                <Text className="font-caption text-muted-foreground">
+                  Recommended: 16:9 aspect ratio
+                </Text>
+              </View>
             </View>
           )}
         </Pressable>
 
-        <Text className="font-caption text-muted-foreground text-center">
-          Recommended: Square image (1:1 ratio)
-        </Text>
-
         {/* Action Buttons */}
-        <View className="gap-3 w-full">
+        <View className="gap-3">
           {selectedImage && (
             <Button onPress={handleUpload} className="bg-primary">
               <View className="flex-row items-center gap-2">
                 <Icons.Upload size={18} className="text-primary-foreground" />
                 <Text className="font-subtitle text-primary-foreground">
-                  Save Profile Image
+                  Save Banner
                 </Text>
               </View>
             </Button>
@@ -122,7 +123,7 @@ export const UploadProfileImageSheet = forwardRef<
             className="border-border"
           >
             <View className="flex-row items-center gap-2">
-              <Icons.Camera size={18} className="text-foreground" />
+              <Icons.Image size={18} className="text-foreground" />
               <Text className="font-subtitle text-foreground">
                 {displayImage ? 'Change Image' : 'Select Image'}
               </Text>
@@ -141,4 +142,4 @@ export const UploadProfileImageSheet = forwardRef<
   );
 });
 
-UploadProfileImageSheet.displayName = 'UploadProfileImageSheet';
+UploadBannerSheet.displayName = 'UploadBannerSheet';

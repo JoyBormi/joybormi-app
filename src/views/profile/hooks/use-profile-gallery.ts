@@ -4,6 +4,8 @@ import { buildUploadedFile } from '@/lib/utils';
 import { toast } from '@/providers/toaster';
 import { FileOwnerType, IFile } from '@/types/file.type';
 
+import { createImageUploadHandler } from '../utils/profile-media';
+
 type UploadFileFn = (payload: {
   file: ReturnType<typeof buildUploadedFile>;
   category?: string;
@@ -19,10 +21,14 @@ type UseProfileGalleryParams = {
   photos?: IFile[];
   uploadFile: UploadFileFn;
   deleteFile: DeleteFileFn;
-  defaultCategory: string;
-  fileNamePrefix: string;
-  onRefresh: () => void;
+  defaultPhotoCategory: string;
+  photoFileNamePrefix: string;
+  onRefreshPhotos: () => void;
   onErrorMessage?: string;
+  bannerCategory: string;
+  avatarCategory: string;
+  onUploadBannerUrl: (url: string) => Promise<void>;
+  onUploadAvatarUrl: (url: string) => Promise<void>;
 };
 
 export const useProfileGallery = ({
@@ -31,10 +37,14 @@ export const useProfileGallery = ({
   photos,
   uploadFile,
   deleteFile,
-  defaultCategory,
-  fileNamePrefix,
-  onRefresh,
+  defaultPhotoCategory,
+  photoFileNamePrefix,
+  onRefreshPhotos,
   onErrorMessage,
+  bannerCategory,
+  avatarCategory,
+  onUploadBannerUrl,
+  onUploadAvatarUrl,
 }: UseProfileGalleryParams) => {
   const [selectedPhoto, setSelectedPhoto] = useState<IFile | null>(null);
   const mergedPhotos = useMemo(() => photos ?? [], [photos]);
@@ -47,8 +57,11 @@ export const useProfileGallery = ({
         await Promise.all(
           newPhotos.map((photo, index) =>
             uploadFile({
-              file: buildUploadedFile(photo.uri, `${fileNamePrefix}-${index}`),
-              category: photo.category ?? defaultCategory,
+              file: buildUploadedFile(
+                photo.uri,
+                `${photoFileNamePrefix}-${index}`,
+              ),
+              category: photo.category ?? defaultPhotoCategory,
               ownerId,
               ownerType,
             }),
@@ -60,17 +73,17 @@ export const useProfileGallery = ({
           setSelectedPhoto(null);
         }
 
-        onRefresh();
+        onRefreshPhotos();
       } catch {
         toast.error({ title: onErrorMessage ?? 'Something went wrong' });
       }
     },
     [
-      defaultCategory,
+      defaultPhotoCategory,
       deleteFile,
-      fileNamePrefix,
+      photoFileNamePrefix,
       onErrorMessage,
-      onRefresh,
+      onRefreshPhotos,
       ownerId,
       ownerType,
       selectedPhoto?.id,
@@ -83,12 +96,52 @@ export const useProfileGallery = ({
       if (!ownerId || !fileId) return;
       try {
         await deleteFile(fileId);
-        onRefresh();
+        onRefreshPhotos();
       } catch {
         toast.error({ title: onErrorMessage ?? 'Something went wrong' });
       }
     },
-    [deleteFile, onErrorMessage, onRefresh, ownerId],
+    [deleteFile, onErrorMessage, onRefreshPhotos, ownerId],
+  );
+
+  const handleUploadBanner = useMemo(
+    () =>
+      createImageUploadHandler({
+        ownerId,
+        ownerType,
+        category: bannerCategory,
+        uploadFile,
+        onUpdate: onUploadBannerUrl,
+        onErrorMessage,
+      }),
+    [
+      bannerCategory,
+      onErrorMessage,
+      onUploadBannerUrl,
+      ownerId,
+      ownerType,
+      uploadFile,
+    ],
+  );
+
+  const handleUploadProfileImage = useMemo(
+    () =>
+      createImageUploadHandler({
+        ownerId,
+        ownerType,
+        category: avatarCategory,
+        uploadFile,
+        onUpdate: onUploadAvatarUrl,
+        onErrorMessage,
+      }),
+    [
+      avatarCategory,
+      onErrorMessage,
+      onUploadAvatarUrl,
+      ownerId,
+      ownerType,
+      uploadFile,
+    ],
   );
 
   return {
@@ -97,5 +150,7 @@ export const useProfileGallery = ({
     mergedPhotos,
     handleUploadPhotos,
     handleDeletePhoto,
+    handleUploadBanner,
+    handleUploadProfileImage,
   };
 };
