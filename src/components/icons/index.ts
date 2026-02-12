@@ -49,6 +49,7 @@ import {
   Phone,
   PlayCircle,
   Plus,
+  QrCode,
   RefreshCcw,
   Scissors,
   Search,
@@ -145,6 +146,7 @@ iconWithClassName(Copy);
 iconWithClassName(Volume2);
 iconWithClassName(CheckCircle2);
 iconWithClassName(ShieldAlert);
+iconWithClassName(QrCode);
 
 const Icons = {
   AlertCircle,
@@ -173,6 +175,7 @@ const Icons = {
   Pencil,
   Plus,
   Search,
+  QrCode,
   Settings,
   Sun,
   ArrowRight,

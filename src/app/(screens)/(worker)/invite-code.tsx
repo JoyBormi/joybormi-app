@@ -1,12 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
-import { QrCode, X } from 'lucide-react-native';
+import { X } from 'lucide-react-native';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Modal, Pressable, View } from 'react-native';
 import { z } from 'zod';
 
+import Icons from '@/components/icons';
 import { Header } from '@/components/shared/header';
 import KeyboardAvoid from '@/components/shared/keyboard-avoid';
 import { Button, OtpInput, Text } from '@/components/ui';
@@ -70,7 +71,6 @@ function InviteCodeScreen() {
 
   const onSubmit = (data: InviteCodeForm) => {
     Feedback.success();
-    console.log('Invite code entered:', data.code);
     router.back();
   };
 
@@ -102,14 +102,14 @@ function InviteCodeScreen() {
 
   return (
     <KeyboardAvoid>
-      <View className="flex-1 px-5 pt-20">
+      <View className="flex-1 px-5">
         <Header
           title="Enter Invite Code"
           subtitle="Enter the 6-digit code provided by the creator brand"
         />
 
         {/* OTP */}
-        <View className="mt-16 items-center">
+        <View className="mt-32 items-center">
           <Controller
             control={control}
             name="code"
@@ -126,7 +126,7 @@ function InviteCodeScreen() {
         {/* Actions */}
         <View className="mt-auto mb-10 flex-row items-center gap-4">
           <Button variant="outline" size="iconLg" onPress={openScan}>
-            <QrCode size={24} />
+            <Icons.QrCode className="text-foreground" size={24} />
           </Button>
 
           <Button size="lg" className="flex-1" onPress={handleSubmit(onSubmit)}>

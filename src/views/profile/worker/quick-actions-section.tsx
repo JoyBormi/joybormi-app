@@ -6,6 +6,7 @@ import { ProfileQuickActions } from '@/views/profile/components';
 interface QuickActionsSectionProps {
   onAddService: () => void;
   onEditSchedule: () => void;
+  onJoinBrand?: () => void;
 }
 
 /**
@@ -15,6 +16,7 @@ interface QuickActionsSectionProps {
 export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({
   onAddService,
   onEditSchedule,
+  onJoinBrand,
 }) => {
   return (
     <ProfileQuickActions
@@ -37,6 +39,19 @@ export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({
           iconClassName: 'text-success',
           iconContainerClassName: 'bg-success/10',
         },
+        ...(onJoinBrand
+          ? [
+              {
+                id: 'join-brand',
+                title: 'Join Brand',
+                description: 'Add your work experience',
+                onPress: onJoinBrand,
+                icon: Icons.Briefcase,
+                iconClassName: 'text-warning',
+                iconContainerClassName: 'bg-warning/10',
+              },
+            ]
+          : []),
       ]}
     />
   );

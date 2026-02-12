@@ -29,7 +29,6 @@ import {
 import { useDeleteFile, useUploadFile } from '@/hooks/files';
 import { useGetSchedule } from '@/hooks/schedule';
 import { useGetServices } from '@/hooks/service';
-import { useGetWorkerProfile } from '@/hooks/worker';
 import { useUserStore } from '@/stores';
 import { BrandStatus } from '@/types/brand.type';
 import { IFile } from '@/types/file.type';
@@ -83,12 +82,11 @@ const BrandProfileScreen: React.FC = () => {
   // ───────────────── Queries ────────────────── //
 
   const { data: brand, refetch: refetchBrand, isLoading } = useGetBrand();
-  const { data: workerProfile } = useGetWorkerProfile();
   const { data: photos, refetch: refetchPhotos } = useGetBrandPhotos(brand?.id);
 
   const { data: services, refetch: refetchServices } = useGetServices({
-    ownerId: workerProfile?.id,
-    ownerType: workerProfile?.id ? ServiceOwnerType.WORKER : undefined,
+    ownerId: brand?.workerId,
+    ownerType: brand?.workerId ? ServiceOwnerType.WORKER : undefined,
   });
 
   const { data: team, refetch: refetchTeam } = useGetBrandTeam(brand?.id);
@@ -237,7 +235,7 @@ const BrandProfileScreen: React.FC = () => {
       workers: team || [],
       services,
       mergedPhotos,
-      workingDays: schedule?.workingDays ?? [],
+      workingDays: schedule?.[0]?.workingDays ?? [],
       handleAddPhoto,
       handleAddWorker,
       handleEditBrand,
@@ -251,7 +249,7 @@ const BrandProfileScreen: React.FC = () => {
       team,
       services,
       mergedPhotos,
-      schedule?.workingDays,
+      schedule,
       handleAddPhoto,
       handleAddWorker,
       handleEditBrand,
@@ -393,7 +391,7 @@ const BrandProfileScreen: React.FC = () => {
           <TabsContent value="schedule" className="flex-1 min-h-[50vh]">
             {renderMissing(['schedule'])}
             <ScheduleDisplay
-              workingDays={schedule?.workingDays ?? []}
+              workingDays={schedule?.[0]?.workingDays ?? []}
               canEdit={canEdit}
               onEditSchedule={() =>
                 router.push(

@@ -25,6 +25,7 @@ export interface IBrand {
   businessCertUrl: string;
   ownerFirstName: string;
   ownerLastName: string;
+  workerId: string;
 }
 
 export interface IBrandService {

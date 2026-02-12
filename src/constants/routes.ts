@@ -111,6 +111,9 @@ export const routes = {
         },
       };
     },
+    worker: {
+      invite_code: '/(screens)/(worker)/invite-code' as RelativePathString,
+    },
   },
 
   // ───────────────────────────────── Settings

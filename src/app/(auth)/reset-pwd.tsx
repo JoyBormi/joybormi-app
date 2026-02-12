@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
+import { useRouter } from 'expo-router';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -12,12 +12,13 @@ import { Button, PasswordInput, Text } from '@/components/ui';
 import { routes } from '@/constants/routes';
 import { useResetPassword } from '@/hooks/auth';
 import { ResetPasswordFormType, resetPasswordSchema } from '@/lib/validation';
+import { useAuthFlowStore } from '@/stores/use-auth-flow-store';
 
 export default function ResetPwdScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const params = useLocalSearchParams<{ resetToken?: string }>();
   const { mutate: resetPassword, isPending } = useResetPassword();
+  const { resetToken, clearResetToken } = useAuthFlowStore();
 
   const { control, handleSubmit } = useForm<ResetPasswordFormType>({
     resolver: zodResolver(resetPasswordSchema),
@@ -27,12 +28,14 @@ export default function ResetPwdScreen() {
     },
   });
 
-  const handleResetPassword = async (data: ResetPasswordFormType) => {
-    const resetToken = params.resetToken;
+  useEffect(() => {
     if (!resetToken) {
-      console.error('[Reset Password] No reset token provided');
-      return;
+      router.replace(routes.auth.forgot_password);
     }
+  }, [resetToken, router]);
+
+  const handleResetPassword = async (data: ResetPasswordFormType) => {
+    if (!resetToken) return;
 
     resetPassword(
       {
@@ -42,6 +45,7 @@ export default function ResetPwdScreen() {
       },
       {
         onSuccess: () => {
+          clearResetToken();
           router.replace(routes.auth.login);
         },
       },

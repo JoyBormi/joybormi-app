@@ -1,5 +1,4 @@
 import { QueryClientProvider } from '@tanstack/react-query';
-import { useEffect } from 'react';
 
 import { useError } from '@/hooks/common/use-error';
 import { ApiError } from '@/lib/agent';
@@ -38,48 +37,30 @@ const shouldRetry = (failureCount: number, error: unknown): boolean => {
 
 export const QueryProvider = ({ children }: { children: React.ReactNode }) => {
   const { errorHandler } = useError();
+  const queryCache = queryClient.getQueryCache();
+  const mutationCache = queryClient.getMutationCache();
 
-  // Configure query client with error handlers after hooks are initialized
-  useEffect(() => {
-    // Configure QueryCache to handle all query errors globally
-    // This catches errors from useMe and other queries (e.g., 401 session expired)
-    const queryCache = queryClient.getQueryCache();
-    const mutationCache = queryClient.getMutationCache();
-
-    // Set error handlers
-    queryCache.config.onError = errorHandler;
-    mutationCache.config.onError = errorHandler;
-
-    // Configure default options with retry logic
-    queryClient.setDefaultOptions({
-      queries: {
-        retry: shouldRetry,
-        retryDelay: (attemptIndex: number) =>
-          Math.min(1000 * 2 ** attemptIndex, 30000),
+  // Configure before descendants mount so first queries use global handlers.
+  queryCache.config.onError = errorHandler;
+  mutationCache.config.onError = errorHandler;
+  queryClient.setDefaultOptions({
+    queries: {
+      retry: shouldRetry,
+      retryDelay: (attemptIndex: number) =>
+        Math.min(1000 * 2 ** attemptIndex, 30000),
+    },
+    mutations: {
+      onSuccess: (data: unknown) => {
+        if (__DEV__) {
+          // eslint-disable-next-line no-console
+          console.info(
+            `Mutation Success ✅:`,
+            JSON.stringify({ data }, null, 2),
+          );
+        }
       },
-      mutations: {
-        onSuccess: (data: unknown) => {
-          if (__DEV__) {
-            // eslint-disable-next-line no-console
-            console.info(
-              `Mutation Success ✅:`,
-              JSON.stringify({ data }, null, 2),
-            );
-          }
-        },
-      },
-    });
-
-    // Cleanup: reset to no-op on unmount
-    return () => {
-      queryCache.config.onError = () => {
-        // no-op
-      };
-      mutationCache.config.onError = () => {
-        // no-op
-      };
-    };
-  }, [errorHandler]);
+    },
+  });
 
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

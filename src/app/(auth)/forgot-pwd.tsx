@@ -24,13 +24,13 @@ import { useForgotPassword, useVerifyResetCode } from '@/hooks/auth';
 import { Feedback } from '@/lib/haptics';
 import { normalizePhone } from '@/lib/utils';
 import { ForgotPasswordFormType, forgotPasswordSchema } from '@/lib/validation';
+import { useAuthFlowStore } from '@/stores/use-auth-flow-store';
 
 interface ForgotPwdState {
   tab: 'email' | 'phone';
   emailCodeSent: boolean;
   phoneCodeSent: boolean;
   isResending: boolean;
-  resetToken: string | null;
 }
 
 export default function ForgotPwdScreen() {
@@ -41,8 +41,8 @@ export default function ForgotPwdScreen() {
     emailCodeSent: false,
     phoneCodeSent: false,
     isResending: false,
-    resetToken: null,
   });
+  const { setResetToken } = useAuthFlowStore();
 
   const { mutate: sendCode, isPending: isSending } = useForgotPassword();
   const { mutate: verifyCode, isPending: isVerifying } = useVerifyResetCode();
@@ -131,12 +131,9 @@ export default function ForgotPwdScreen() {
       },
       {
         onSuccess: (response) => {
-          // Store reset token and navigate to reset password screen
-          setState((prev) => ({ ...prev, resetToken: response.resetToken }));
-          router.push({
-            pathname: routes.auth.reset_password,
-            params: { resetToken: response.resetToken },
-          });
+          // Keep token in-memory only; avoid exposing it via route params.
+          setResetToken(response.resetToken);
+          router.push(routes.auth.reset_password);
         },
       },
     );

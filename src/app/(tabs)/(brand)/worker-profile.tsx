@@ -85,7 +85,7 @@ const WORKER_PHOTO_CATEGORIES = [
 const WorkerProfileScreen: React.FC = () => {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const { appType } = useUserStore();
+  const { appType, user } = useUserStore();
 
   const canEdit = appType === EUserType.WORKER;
 
@@ -133,7 +133,10 @@ const WorkerProfileScreen: React.FC = () => {
     onRefresh: refetchPhotos,
     onErrorMessage: t('common.errors.somethingWentWrong'),
   });
-  const workingDays = useMemo(() => schedule?.workingDays, [schedule]);
+  const workingDays = useMemo(
+    () => schedule?.[0]?.workingDays ?? [],
+    [schedule],
+  );
 
   const refetch = useCallback(() => {
     refetchWorker();
@@ -348,6 +351,11 @@ const WorkerProfileScreen: React.FC = () => {
               <QuickActionsSection
                 onAddService={() =>
                   router.push(routes.screens.upsert_service())
+                }
+                onJoinBrand={
+                  user?.role === EUserType.CREATOR
+                    ? undefined
+                    : () => router.push(routes.screens.worker.invite_code)
                 }
                 onEditSchedule={() =>
                   router.push(
