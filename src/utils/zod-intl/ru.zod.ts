@@ -12,6 +12,10 @@ export const ruLocale = (): z.ZodErrorMap => {
           return 'Неверный формат email';
         case 'custom.password_not_match':
           return 'Пароли не совпадают';
+        case 'custom.invalid_date':
+          return 'Неверный формат даты';
+        case 'custom.invalid_date_range':
+          return 'Дата окончания не может быть раньше даты начала';
       }
     }
 

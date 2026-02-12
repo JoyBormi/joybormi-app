@@ -38,7 +38,7 @@ export const DangerZone: React.FC<DangerZoneProps> = ({
           </Text>
           <Button
             variant="destructive"
-            className="mt-4"
+            className="mt-8"
             onPress={onPress}
             disabled={disabled}
           >

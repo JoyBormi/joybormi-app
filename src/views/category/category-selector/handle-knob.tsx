@@ -4,6 +4,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import {
   Easing,
   SharedValue,
+  runOnJS,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
@@ -17,9 +18,11 @@ const EXPANDED_HEIGHT = 360;
 export function DraggableKnob({
   height,
   sheetHeight,
+  onExpandedChange,
 }: {
   height: SharedValue<number>;
   sheetHeight: SharedValue<number>;
+  onExpandedChange?: (expanded: boolean) => void;
 }) {
   const startHeight = useSharedValue(0);
 
@@ -43,6 +46,9 @@ export function DraggableKnob({
           duration: 200,
           easing: Easing.out(Easing.cubic),
         });
+        if (onExpandedChange) {
+          runOnJS(onExpandedChange)(true);
+        }
         return;
       }
 
@@ -52,6 +58,9 @@ export function DraggableKnob({
           duration: 200,
           easing: Easing.out(Easing.cubic),
         });
+        if (onExpandedChange) {
+          runOnJS(onExpandedChange)(false);
+        }
         return;
       }
 
@@ -66,6 +75,10 @@ export function DraggableKnob({
           easing: Easing.out(Easing.cubic),
         },
       );
+
+      if (onExpandedChange) {
+        runOnJS(onExpandedChange)(shouldOpen);
+      }
     });
 
   return (

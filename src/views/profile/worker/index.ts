@@ -4,6 +4,7 @@
 
 export { AboutSectionDisplay } from './about-section';
 export { ExperiencePreview } from './experience-preview';
+export * from './experience-history';
 export { ProfileCard } from './profile-card';
 export { QuickActionsSection } from './quick-actions-section';
 export { ReviewsList } from './reviews-list';

@@ -28,12 +28,12 @@ const getSchedule = async ({
 }: {
   brandId: string;
   workerId?: string;
-}): Promise<ISchedule[] | null> => {
+}): Promise<ISchedule | null> => {
   const endpoint = workerId
     ? `/schedules/${brandId}/worker/${workerId}`
     : `/schedules/${brandId}`;
 
-  return await agent.get<ISchedule[]>(endpoint);
+  return await agent.get<ISchedule>(endpoint);
 };
 
 export const useGetSchedule = (params?: ScheduleParams) => {

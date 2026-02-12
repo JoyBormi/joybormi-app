@@ -4,20 +4,27 @@ import DateTimePicker, {
 import React, { useCallback, useEffect, useState } from 'react';
 import { Platform, View } from 'react-native';
 
-import { fromTimeDate, toTimeDate } from '@/utils/date';
+import { fromDateOnly, toDateOnly } from '@/utils/date';
 
-interface TimePickerProps {
+interface DatePickerProps {
   value: string;
   onChange: (val: string) => void;
+  minimumDate?: Date;
+  maximumDate?: Date;
 }
 
-export const TimePicker = ({ value, onChange }: TimePickerProps) => {
+export const DatePicker = ({
+  value,
+  onChange,
+  minimumDate,
+  maximumDate,
+}: DatePickerProps) => {
   const [selectedDate, setSelectedDate] = useState<Date>(() =>
-    toTimeDate(value),
+    toDateOnly(value),
   );
 
   useEffect(() => {
-    setSelectedDate(toTimeDate(value));
+    setSelectedDate(toDateOnly(value));
   }, [value]);
 
   const handleChange = useCallback(
@@ -26,7 +33,7 @@ export const TimePicker = ({ value, onChange }: TimePickerProps) => {
       if (!date) return;
 
       setSelectedDate(date);
-      onChange(fromTimeDate(date));
+      onChange(fromDateOnly(date));
     },
     [onChange],
   );
@@ -34,11 +41,12 @@ export const TimePicker = ({ value, onChange }: TimePickerProps) => {
   return (
     <View className="items-center justify-center py-2">
       <DateTimePicker
-        mode="time"
+        mode="date"
         display={Platform.OS === 'ios' ? 'spinner' : 'default'}
         value={selectedDate}
         onChange={handleChange}
-        is24Hour
+        minimumDate={minimumDate}
+        maximumDate={maximumDate}
       />
     </View>
   );

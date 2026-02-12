@@ -1,35 +1,45 @@
 import { BlurView } from 'expo-blur';
 import { router } from 'expo-router';
 import { AnimatePresence, MotiView } from 'moti';
-import { memo, useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { memo, useCallback, useMemo, useState } from 'react';
+import { TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Icons from '@/components/icons';
-import { Input, PressableBounce } from '@/components/ui';
+import { PressableBounce } from '@/components/ui';
 import { routes } from '@/constants/routes';
 import { useKeyboardHeight } from '@/hooks/common';
 import { cn } from '@/lib/utils';
+
+interface CategoryFooterProps {
+  value: string;
+  onChangeText: (value: string) => void;
+  onFilterPress?: () => void;
+  onSubmitEditing?: () => void;
+  bottomInset?: number;
+}
 
 export const CategoryFooter = memo(function CategoryFooter({
   value,
   onChangeText,
   onFilterPress,
   onSubmitEditing,
-}: {
-  value: string;
-  onFilterPress?: () => void;
-  onChangeText: (value: string) => void;
-  onSubmitEditing?: () => void;
-}) {
+  bottomInset,
+}: CategoryFooterProps) {
   const keyboardHeight = useKeyboardHeight();
   const insets = useSafeAreaInsets();
   const [focused, setFocused] = useState(false);
+  const resolvedBottomInset = bottomInset ?? insets.bottom;
 
-  const lift = useMemo(
-    () => Math.max(0, keyboardHeight + insets.bottom),
-    [keyboardHeight, insets.bottom],
-  );
+  const lift = useMemo(() => Math.max(0, keyboardHeight), [keyboardHeight]);
+
+  const handleBackPress = useCallback(() => {
+    router.back();
+  }, []);
+
+  const handleBackLongPress = useCallback(() => {
+    router.dismissTo(routes.tabs.home);
+  }, []);
 
   return (
     <AnimatePresence>
@@ -38,68 +48,58 @@ export const CategoryFooter = memo(function CategoryFooter({
         animate={{ opacity: 1, scale: 1, translateY: -lift }}
         exit={{ opacity: 0, scale: 0.95, translateY: 40 }}
         transition={{ type: 'timing', duration: 220 }}
-        className="absolute bottom-4 left-6 right-6"
-        style={{ transform: [{ translateY: -lift }] }}
+        className="absolute left-6 right-6"
+        style={{ bottom: resolvedBottomInset }}
       >
         <View className="flex-row items-center justify-between gap-2">
-          {!focused && (
+          {!focused ? (
             <BlurView
-              intensity={focused ? 90 : 30}
+              intensity={30}
               tint="regular"
-              className={cn(
-                'overflow-hidden rounded-full',
-                focused
-                  ? 'bg-foreground/40 shadow-xl flex-1 '
-                  : 'bg-foreground/20 shadow-md',
-              )}
+              className="overflow-hidden rounded-full border border-border/50 bg-card/90 shadow-lg"
             >
               <PressableBounce
                 haptic
                 hitSlop={24}
-                onPress={() => router.back()}
-                onLongPress={() => router.dismissTo(routes.tabs.home)}
+                onPress={handleBackPress}
+                onLongPress={handleBackLongPress}
                 className="p-3 items-center justify-center rounded-full active:opacity-60"
               >
                 <Icons.ChevronLeft size={24} className="text-foreground" />
               </PressableBounce>
             </BlurView>
-          )}
+          ) : null}
 
           <BlurView
-            intensity={focused ? 90 : 30}
+            intensity={focused ? 90 : 40}
             tint="regular"
             className={cn(
-              'overflow-hidden rounded-full',
-              focused
-                ? 'bg-foreground/40 shadow-xl flex-1 '
-                : 'bg-foreground/20 shadow-md',
+              'overflow-hidden rounded-full border border-border/50',
+              focused ? 'bg-card/95 shadow-xl flex-1' : 'bg-card/90 shadow-lg',
             )}
           >
-            <Input
+            <TextInput
               value={value}
               onChangeText={onChangeText}
               placeholder="Search"
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
               onSubmitEditing={onSubmitEditing}
-              maxLength={45}
+              maxLength={25}
+              autoCapitalize="none"
+              placeholderTextColor="text-foreground/90"
               className={cn(
-                'bg-transparent border-0 rounded-full px-5 py-3 text-foreground ',
-                focused ? 'w-full' : 'w-36 text-center',
+                'rounded-full px-5 font-subtitle native:leading-[1.25] h-14 py-3 text-foreground',
+                focused ? 'w-full' : 'w-44 text-center',
               )}
             />
           </BlurView>
 
-          {!focused && onFilterPress && (
+          {!focused && onFilterPress ? (
             <BlurView
-              intensity={focused ? 90 : 30}
+              intensity={30}
               tint="regular"
-              className={cn(
-                'overflow-hidden rounded-full items-center',
-                focused
-                  ? 'bg-foreground/40 shadow-xl'
-                  : 'bg-foreground/20 shadow-md',
-              )}
+              className="overflow-hidden rounded-full items-center border border-border/50 bg-card/90 shadow-lg"
             >
               <PressableBounce
                 hitSlop={24}
@@ -113,7 +113,7 @@ export const CategoryFooter = memo(function CategoryFooter({
                 />
               </PressableBounce>
             </BlurView>
-          )}
+          ) : null}
         </View>
       </MotiView>
     </AnimatePresence>

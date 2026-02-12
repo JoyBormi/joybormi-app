@@ -1,7 +1,6 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
-import { Platform } from 'react-native';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import Animated from 'react-native-reanimated';
 import {
   SafeAreaView,
@@ -27,8 +26,9 @@ export default function CategoryScreen() {
   }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-
   const filterSheetRef = useRef<BottomSheetModal>(null);
+  const categoryValue = useMemo(() => category || 'all', [category]);
+
   const [filters, setFilters] = useState<CategoryFilters>({
     search: query || '',
     priceRange: { min: 0, max: 1000 },
@@ -37,38 +37,49 @@ export default function CategoryScreen() {
     sortBy: 'distance',
   });
 
-  const handleCategoryChange = (newCategory: string) => {
-    if (newCategory === 'all') {
-      router.replace(routes.category.view('all'));
-    } else {
-      router.replace(routes.category.view(newCategory));
-    }
-  };
+  const handleCategoryChange = useCallback(
+    (newCategory: string) => {
+      router.replace(
+        routes.category.view(newCategory === 'all' ? 'all' : newCategory),
+      );
+    },
+    [router],
+  );
 
-  const handleFilterPress = () => {
+  const handleFilterPress = useCallback(() => {
     filterSheetRef.current?.present();
-  };
+  }, []);
 
-  const handleApplyFilters = (newFilters: CategoryFilters) => {
+  const handleApplyFilters = useCallback((newFilters: CategoryFilters) => {
     setFilters(newFilters);
-  };
+  }, []);
+
+  const handleChangeSearch = useCallback((text: string) => {
+    setFilters((prev) => ({ ...prev, search: text }));
+  }, []);
+
+  const handleSubmitSearch = useCallback(() => {
+    if (!filters.search.trim()) return;
+    Feedback.light();
+    router.replace(routes.category.view(categoryValue));
+  }, [categoryValue, filters.search, router]);
 
   return (
     <SafeAreaView className="safe-area relative" edges={['top']}>
       <CategorySelector
-        selectedCategory={category || 'all'}
+        selectedCategory={categoryValue}
         onCategoryChange={handleCategoryChange}
       />
       <Animated.ScrollView
         bounces={false}
+        contentInsetAdjustmentBehavior="automatic"
         scrollEventThrottle={16}
-        contentContainerStyle={{
-          paddingBottom: insets.bottom + (Platform.OS === 'ios' ? 50 : 90),
-        }}
+        contentInset={{ bottom: insets.bottom }}
+        scrollIndicatorInsets={{ bottom: insets.bottom }}
         showsVerticalScrollIndicator={false}
       >
         <ServiceGrid
-          category={category || 'all'}
+          category={categoryValue}
           searchQuery={query}
           filters={filters}
         />
@@ -76,18 +87,9 @@ export default function CategoryScreen() {
       <CategoryFooter
         value={filters.search}
         onFilterPress={handleFilterPress}
-        onChangeText={(text) => setFilters({ ...filters, search: text })}
-        onSubmitEditing={() => {
-          if (!filters.search.trim()) return;
-          Feedback.light();
-          router.push({
-            pathname: routes.category.view(category || 'all').pathname,
-            params: {
-              category: category || 'all',
-              query: filters.search,
-            },
-          });
-        }}
+        onChangeText={handleChangeSearch}
+        onSubmitEditing={handleSubmitSearch}
+        bottomInset={insets.bottom}
       />
       <CategoryFilterSheet
         ref={filterSheetRef}

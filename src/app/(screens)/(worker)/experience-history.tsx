@@ -1,13 +1,13 @@
 import { FlashList } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import React, { memo, useCallback, useMemo, useState } from 'react';
-import { Alert, Pressable, Switch, View } from 'react-native';
+import { Alert, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Icons from '@/components/icons';
 import { Header } from '@/components/shared/header';
 import { Loading, NotFoundScreen } from '@/components/status-screens';
-import { Button, Input, Text } from '@/components/ui';
+import { Button, Text } from '@/components/ui';
 import {
   useCreateExperience,
   useDeleteExperience,
@@ -15,200 +15,30 @@ import {
   useUpdateExperience,
 } from '@/hooks/worker';
 import { toast } from '@/providers/toaster';
+import { formatPickerDate } from '@/utils/date';
+import {
+  EMPTY_EXPERIENCE_FORM_VALUES,
+  ExperienceForm,
+  type ExperienceFormValues,
+  mapExperienceToFormValues,
+  toCreateExperiencePayload,
+  toUpdateExperiencePayload,
+} from '@/views/profile/worker/experience-history';
 
-import type {
-  CreateExperiencePayload,
-  IExperience,
-  UpdateExperiencePayload,
-} from '@/types/experience.type';
-
-type ExperienceDraft = CreateExperiencePayload;
-
-const EMPTY_DRAFT: ExperienceDraft = {
-  company: '',
-  title: '',
-  startDate: '',
-  endDate: '',
-  isCurrent: false,
-};
-
-const FORM_CARD = 'rounded-2xl border border-primary/20 bg-primary/5 p-5 gap-4';
-const BASE_INPUT = 'text-sm';
+import type { IExperience } from '@/types/experience.type';
 
 const formatRange = (experience: IExperience) => {
-  const start = experience.startDate?.slice(0, 7) ?? '';
-  const end = experience.isCurrent
+  const startLabel = experience.startDate?.slice(0, 10)
+    ? formatPickerDate(experience.startDate.slice(0, 10))
+    : '';
+  const endLabel = experience.isCurrent
     ? 'Present'
-    : (experience.endDate?.slice(0, 7) ?? '');
+    : experience.endDate?.slice(0, 10)
+      ? formatPickerDate(experience.endDate.slice(0, 10))
+      : '';
 
-  return `${start}${end ? ` - ${end}` : ''}`;
+  return `${startLabel}${endLabel ? ` - ${endLabel}` : ''}`;
 };
-
-const mapExperienceToDraft = (experience: IExperience): ExperienceDraft => ({
-  company: experience.company ?? '',
-  title: experience.title ?? '',
-  startDate: experience.startDate?.slice(0, 10) ?? '',
-  endDate: experience.endDate?.slice(0, 10) ?? '',
-  isCurrent: experience.isCurrent,
-});
-
-const sanitizeDraft = (draft: ExperienceDraft): ExperienceDraft => ({
-  company: draft.company.trim(),
-  title: draft.title.trim(),
-  startDate: draft.startDate.trim(),
-  endDate: draft.isCurrent ? '' : draft.endDate?.trim(),
-  isCurrent: draft.isCurrent,
-});
-
-const validateDraft = (rawDraft: ExperienceDraft) => {
-  const draft = sanitizeDraft(rawDraft);
-  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-
-  if (!draft.title) return 'Job title is required.';
-  if (!draft.company) return 'Company is required.';
-  if (!draft.startDate) return 'Start date is required.';
-  if (!datePattern.test(draft.startDate)) {
-    return 'Start date must use YYYY-MM-DD.';
-  }
-
-  if (!draft.isCurrent) {
-    if (!draft.endDate) return 'End date is required unless current.';
-    if (!datePattern.test(draft.endDate)) {
-      return 'End date must use YYYY-MM-DD.';
-    }
-    if (draft.endDate < draft.startDate) {
-      return 'End date cannot be earlier than start date.';
-    }
-  }
-
-  return null;
-};
-
-type DraftUpdater = (
-  updater: (prev: ExperienceDraft) => ExperienceDraft,
-) => void;
-
-interface ExperienceFormProps {
-  draft: ExperienceDraft;
-  onChange: DraftUpdater;
-  submitLabel: string;
-  onSubmit: () => void;
-  onCancel: () => void;
-  loading: boolean;
-}
-
-const ExperienceForm = memo(function ExperienceForm({
-  draft,
-  onChange,
-  submitLabel,
-  onSubmit,
-  onCancel,
-  loading,
-}: ExperienceFormProps) {
-  return (
-    <View className={FORM_CARD}>
-      <View className="flex-row items-center gap-2">
-        <View className="rounded-full bg-primary/10 p-2">
-          <Icons.Briefcase size={16} className="text-primary" />
-        </View>
-        <Text className="font-subtitle text-foreground">{submitLabel}</Text>
-      </View>
-
-      <View className="gap-3">
-        <Input
-          placeholder="Job title"
-          value={draft.title}
-          onChangeText={(value) =>
-            onChange((prev) => ({ ...prev, title: value }))
-          }
-          className={BASE_INPUT}
-          returnKeyType="next"
-        />
-        <Input
-          placeholder="Company"
-          value={draft.company}
-          onChangeText={(value) =>
-            onChange((prev) => ({ ...prev, company: value }))
-          }
-          className={BASE_INPUT}
-          returnKeyType="next"
-        />
-
-        <View className="flex-row gap-3">
-          <View className="flex-1">
-            <Input
-              placeholder="Start (YYYY-MM-DD)"
-              value={draft.startDate}
-              onChangeText={(value) =>
-                onChange((prev) => ({ ...prev, startDate: value }))
-              }
-              keyboardType="numbers-and-punctuation"
-              autoCapitalize="none"
-              className={BASE_INPUT}
-            />
-          </View>
-          <View className="flex-1">
-            <Input
-              placeholder="End (YYYY-MM-DD)"
-              value={draft.endDate}
-              editable={!draft.isCurrent}
-              onChangeText={(value) =>
-                onChange((prev) => ({ ...prev, endDate: value }))
-              }
-              keyboardType="numbers-and-punctuation"
-              autoCapitalize="none"
-              className={BASE_INPUT}
-            />
-          </View>
-        </View>
-
-        <Pressable
-          onPress={() =>
-            onChange((prev) => ({
-              ...prev,
-              isCurrent: !prev.isCurrent,
-              endDate: !prev.isCurrent ? '' : prev.endDate,
-            }))
-          }
-          className="flex-row items-center justify-between rounded-xl border border-border/50 bg-background/60 px-4 py-3"
-        >
-          <Text className="mr-3 flex-1 text-sm text-foreground">
-            I currently work here
-          </Text>
-          <Switch
-            value={draft.isCurrent}
-            onValueChange={(value) =>
-              onChange((prev) => ({
-                ...prev,
-                isCurrent: value,
-                endDate: value ? '' : prev.endDate,
-              }))
-            }
-          />
-        </Pressable>
-      </View>
-
-      <View className="mt-1 flex-row gap-2">
-        <Button
-          size="lg"
-          className="flex-1"
-          onPress={onSubmit}
-          loading={loading}
-        >
-          <Text>{submitLabel}</Text>
-        </Button>
-        <Button
-          size="lg"
-          variant="outline"
-          className="flex-1"
-          onPress={onCancel}
-        >
-          <Text>Cancel</Text>
-        </Button>
-      </View>
-    </View>
-  );
-});
 
 interface ExperienceCardProps {
   item: IExperience;
@@ -232,18 +62,18 @@ const ExperienceCard = memo(function ExperienceCard({
 
         <View className="flex-1 gap-0.5">
           <Text className="font-subtitle text-foreground">{item.title}</Text>
-          <Text className="text-sm text-muted-foreground">{item.company}</Text>
+          <Text className="font-subbody text-muted-foreground">
+            {item.company}
+          </Text>
 
           <View className="mt-1 flex-row items-center gap-1.5">
             <Icons.Calendar size={12} className="text-muted-foreground" />
-            <Text className="text-xs text-muted-foreground">
+            <Text className="font-caption text-muted-foreground">
               {formatRange(item)}
             </Text>
             {item.isCurrent ? (
               <View className="ml-1 rounded-full bg-primary/10 px-2 py-0.5">
-                <Text className="text-[10px] font-subtitle text-primary">
-                  Current
-                </Text>
+                <Text className="font-base text-primary">Current</Text>
               </View>
             ) : null}
           </View>
@@ -256,9 +86,7 @@ const ExperienceCard = memo(function ExperienceCard({
           className="flex-row items-center gap-1 rounded-lg bg-muted/40 px-3 py-1.5"
         >
           <Icons.Pencil size={13} className="text-muted-foreground" />
-          <Text className="text-xs font-subtitle text-muted-foreground">
-            Edit
-          </Text>
+          <Text className="font-base text-muted-foreground">Edit</Text>
         </Pressable>
 
         <Pressable
@@ -267,7 +95,7 @@ const ExperienceCard = memo(function ExperienceCard({
           className="flex-row items-center gap-1 rounded-lg bg-destructive/10 px-3 py-1.5"
         >
           <Icons.Trash2 size={13} className="text-destructive" />
-          <Text className="text-xs font-subtitle text-destructive">Remove</Text>
+          <Text className="font-base text-destructive">Remove</Text>
         </Pressable>
       </View>
     </View>
@@ -277,10 +105,8 @@ const ExperienceCard = memo(function ExperienceCard({
 interface ExperienceRowProps {
   item: IExperience;
   editingId: string | null;
-  editingDraft: ExperienceDraft;
   onEditStart: (item: IExperience) => void;
-  onEditChange: DraftUpdater;
-  onEditSave: () => void;
+  onEditSave: (id: string, values: ExperienceFormValues) => Promise<void>;
   onEditCancel: () => void;
   onDelete: (item: IExperience) => void;
   isUpdating: boolean;
@@ -290,22 +116,21 @@ interface ExperienceRowProps {
 const ExperienceRow = memo(function ExperienceRow({
   item,
   editingId,
-  editingDraft,
   onEditStart,
-  onEditChange,
   onEditSave,
   onEditCancel,
   onDelete,
   isUpdating,
   isDeleting,
 }: ExperienceRowProps) {
+  const initialValues = useMemo(() => mapExperienceToFormValues(item), [item]);
+
   if (editingId === item.id) {
     return (
       <ExperienceForm
-        draft={editingDraft}
-        onChange={onEditChange}
-        submitLabel="Save Changes"
-        onSubmit={onEditSave}
+        initialValues={initialValues}
+        submitLabel="Save"
+        onSubmit={(values) => onEditSave(item.id, values)}
         onCancel={onEditCancel}
         loading={isUpdating}
       />
@@ -333,79 +158,52 @@ const ExperienceHistoryScreen = () => {
     useDeleteExperience();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [draft, setDraft] = useState<ExperienceDraft>(EMPTY_DRAFT);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingDraft, setEditingDraft] =
-    useState<ExperienceDraft>(EMPTY_DRAFT);
 
   const experiences = data ?? [];
 
   const closeCreateForm = useCallback(() => {
     setIsCreateOpen(false);
-    setDraft(EMPTY_DRAFT);
   }, []);
 
   const closeEditForm = useCallback(() => {
     setEditingId(null);
-    setEditingDraft(EMPTY_DRAFT);
   }, []);
 
-  const handleCreate = useCallback(async () => {
-    const validationError = validateDraft(draft);
-    if (validationError) {
-      toast.error({ title: validationError });
-      return;
-    }
-
-    const sanitized = sanitizeDraft(draft);
-
-    try {
-      await createExperience({
-        company: sanitized.company,
-        title: sanitized.title,
-        startDate: sanitized.startDate,
-        endDate: sanitized.isCurrent ? undefined : sanitized.endDate,
-        isCurrent: sanitized.isCurrent,
-      });
-
-      closeCreateForm();
-      toast.success({ title: 'Experience added.' });
-    } catch {
-      toast.error({ title: 'Failed to add experience. Please try again.' });
-    }
-  }, [closeCreateForm, createExperience, draft]);
+  const handleCreate = useCallback(
+    async (values: ExperienceFormValues) => {
+      try {
+        await createExperience(toCreateExperiencePayload(values));
+        closeCreateForm();
+        toast.success({ title: 'Experience added.' });
+      } catch {
+        toast.error({ title: 'Failed to add experience. Please try again.' });
+      }
+    },
+    [closeCreateForm, createExperience],
+  );
 
   const handleEditStart = useCallback((item: IExperience) => {
     setEditingId(item.id);
-    setEditingDraft(mapExperienceToDraft(item));
   }, []);
 
-  const handleEditSave = useCallback(async () => {
-    if (!editingId) return;
-
-    const validationError = validateDraft(editingDraft);
-    if (validationError) {
-      toast.error({ title: validationError });
-      return;
-    }
-
-    const sanitized = sanitizeDraft(editingDraft);
-    const payload: UpdateExperiencePayload = {
-      company: sanitized.company,
-      title: sanitized.title,
-      startDate: sanitized.startDate,
-      isCurrent: sanitized.isCurrent,
-      endDate: sanitized.isCurrent ? null : sanitized.endDate,
-    };
-
-    try {
-      await updateExperience({ id: editingId, payload });
-      closeEditForm();
-      toast.success({ title: 'Experience updated.' });
-    } catch {
-      toast.error({ title: 'Failed to update experience. Please try again.' });
-    }
-  }, [closeEditForm, editingDraft, editingId, updateExperience]);
+  const handleEditSave = useCallback(
+    async (id: string, values: ExperienceFormValues) => {
+      try {
+        await updateExperience({
+          id,
+          payload: toUpdateExperiencePayload(values),
+        });
+        closeEditForm();
+        toast.success({ title: 'Experience updated.' });
+      } catch {
+        toast.error({
+          title: 'Failed to update experience. Please try again.',
+        });
+      }
+    },
+    [closeEditForm, updateExperience],
+  );
 
   const handleDelete = useCallback(
     (item: IExperience) => {
@@ -447,9 +245,8 @@ const ExperienceHistoryScreen = () => {
 
         {isCreateOpen ? (
           <ExperienceForm
-            draft={draft}
-            onChange={setDraft}
-            submitLabel="Add Experience"
+            initialValues={EMPTY_EXPERIENCE_FORM_VALUES}
+            submitLabel="Add"
             onSubmit={handleCreate}
             onCancel={closeCreateForm}
             loading={isCreating}
@@ -467,7 +264,7 @@ const ExperienceHistoryScreen = () => {
         )}
 
         {experiences.length > 0 ? (
-          <Text className="text-xs font-subtitle uppercase tracking-wider text-muted-foreground">
+          <Text className="font-caption uppercase tracking-wider text-muted-foreground">
             {experiences.length} {experiences.length === 1 ? 'Role' : 'Roles'}
           </Text>
         ) : null}
@@ -475,7 +272,6 @@ const ExperienceHistoryScreen = () => {
     );
   }, [
     closeCreateForm,
-    draft,
     experiences.length,
     handleCreate,
     isCreateOpen,
@@ -488,9 +284,7 @@ const ExperienceHistoryScreen = () => {
         <ExperienceRow
           item={item}
           editingId={editingId}
-          editingDraft={editingDraft}
           onEditStart={handleEditStart}
-          onEditChange={setEditingDraft}
           onEditSave={handleEditSave}
           onEditCancel={closeEditForm}
           onDelete={handleDelete}
@@ -501,7 +295,6 @@ const ExperienceHistoryScreen = () => {
     ),
     [
       closeEditForm,
-      editingDraft,
       editingId,
       handleDelete,
       handleEditSave,
@@ -518,7 +311,7 @@ const ExperienceHistoryScreen = () => {
           <View className="rounded-full bg-muted/50 p-4">
             <Icons.Briefcase size={28} className="text-muted-foreground" />
           </View>
-          <Text className="text-center text-sm text-muted-foreground">
+          <Text className="font-subbody text-center text-muted-foreground">
             Add your first role to show clients what you do best.
           </Text>
         </View>

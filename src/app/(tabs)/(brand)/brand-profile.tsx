@@ -207,7 +207,7 @@ const BrandProfileScreen: React.FC = () => {
       workers: team || [],
       services,
       mergedPhotos,
-      workingDays: schedule?.[0]?.workingDays ?? [],
+      workingDays: schedule?.workingDays ?? [],
       handleAddPhoto,
       handleAddWorker,
       handleEditBrand,
@@ -320,7 +320,7 @@ const BrandProfileScreen: React.FC = () => {
           <TabsContent value="schedule" className="flex-1 min-h-[50vh]">
             {renderMissing(['schedule'])}
             <ScheduleDisplay
-              workingDays={schedule?.[0]?.workingDays ?? []}
+              workingDays={schedule?.workingDays ?? []}
               canEdit={canEdit}
               onEditSchedule={() =>
                 router.push(

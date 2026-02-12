@@ -123,10 +123,7 @@ const WorkerProfileScreen: React.FC = () => {
       refetchPhotos();
     },
   });
-  const workingDays = useMemo(
-    () => schedule?.[0]?.workingDays ?? [],
-    [schedule],
-  );
+  const workingDays = useMemo(() => schedule?.workingDays ?? [], [schedule]);
 
   const refetch = useCallback(() => {
     refetchWorker();

@@ -5,6 +5,7 @@ import { View } from 'react-native';
 import { Button, Text } from '@/components/ui';
 import { TimePicker } from '@/components/ui/time-picker';
 import { Feedback } from '@/lib/haptics';
+import { normalizeTimeValue } from '@/utils/date';
 
 import { DetachedSheet } from '../bottom-sheet';
 
@@ -22,9 +23,11 @@ export const TimePickerSheet = forwardRef<
   BottomSheetModal,
   TimePickerSheetProps
 >(({ value, onChange, title = 'Select Time' }, ref) => {
-  const [selectedTime, setSelectedTime] = useState(value);
+  const [selectedTime, setSelectedTime] = useState(() =>
+    normalizeTimeValue(value),
+  );
   useEffect(() => {
-    setSelectedTime(value);
+    setSelectedTime(normalizeTimeValue(value));
   }, [value]);
 
   const handleConfirm = () => {

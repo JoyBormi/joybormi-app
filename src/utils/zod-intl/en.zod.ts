@@ -20,6 +20,10 @@ export const enLocale = (): z.ZodErrorMap => {
           return 'You can select up to 3 working fields';
         case 'custom.otp_invalid':
           return 'Invalid OTP';
+        case 'custom.invalid_date':
+          return 'Invalid date format';
+        case 'custom.invalid_date_range':
+          return 'End date cannot be earlier than start date';
       }
     }
 

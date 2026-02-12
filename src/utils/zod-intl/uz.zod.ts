@@ -1,7 +1,7 @@
 import { z } from 'zod/v4';
 
 /** Detects JS type for human-friendly output */
-export const parsedType = (data: any): string => {
+export const parsedType = (data: unknown): string => {
   const t = typeof data;
 
   switch (t) {
@@ -99,6 +99,13 @@ export const uzLocale = (): z.ZodErrorMap => {
 
           case 'custom.otp_invalid':
             return { message: 'Noto‘g‘ri OTP' };
+          case 'custom.invalid_date':
+            return { message: 'Sana formati noto‘g‘ri' };
+          case 'custom.invalid_date_range':
+            return {
+              message:
+                'Tugash sanasi boshlanish sanasidan oldin bo‘lishi mumkin emas',
+            };
 
           default:
             return { message: 'Noto‘g‘ri qiymat' };
@@ -138,19 +145,34 @@ export const uzLocale = (): z.ZodErrorMap => {
       }
 
       case 'invalid_format': {
-        const _issue = issue as any;
-        if (_issue.format === 'starts_with')
-          return { message: `Matn "${_issue.prefix}" bilan boshlanishi kerak` };
-        if (_issue.format === 'ends_with')
-          return { message: `Matn "${_issue.suffix}" bilan tugashi kerak` };
-        if (_issue.format === 'includes')
-          return {
-            message: `Matn "${_issue.includes}" ni o‘z ichiga olishi kerak`,
-          };
-        if (_issue.format === 'regex')
-          return { message: `Matn mos kelishi kerak: ${_issue.pattern}` };
+        const invalidFormatIssue = issue as {
+          format: string;
+          prefix?: string;
+          suffix?: string;
+          includes?: string;
+          pattern?: string;
+        };
 
-        return { message: `Yaroqsiz ${Nouns[_issue.format] ?? issue.format}` };
+        if (invalidFormatIssue.format === 'starts_with')
+          return {
+            message: `Matn "${invalidFormatIssue.prefix}" bilan boshlanishi kerak`,
+          };
+        if (invalidFormatIssue.format === 'ends_with')
+          return {
+            message: `Matn "${invalidFormatIssue.suffix}" bilan tugashi kerak`,
+          };
+        if (invalidFormatIssue.format === 'includes')
+          return {
+            message: `Matn "${invalidFormatIssue.includes}" ni o‘z ichiga olishi kerak`,
+          };
+        if (invalidFormatIssue.format === 'regex')
+          return {
+            message: `Matn mos kelishi kerak: ${invalidFormatIssue.pattern}`,
+          };
+
+        return {
+          message: `Yaroqsiz ${Nouns[invalidFormatIssue.format] ?? issue.format}`,
+        };
       }
 
       case 'not_multiple_of':
