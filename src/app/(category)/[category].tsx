@@ -1,18 +1,16 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import Animated from 'react-native-reanimated';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-import { routes } from '@/constants/routes';
 import { Feedback } from '@/lib/haptics';
 import {
   CategoryFooter,
+  CategoryGrid,
   CategorySelector,
-  ServiceGrid,
 } from '@/views/category';
 import {
   CategoryFilterSheet,
@@ -20,30 +18,66 @@ import {
 } from '@/views/category/category-filter';
 
 export default function CategoryScreen() {
-  const { category, query } = useLocalSearchParams<{
+  const { category, query, location, searchTarget } = useLocalSearchParams<{
     category: string;
     query?: string;
+    location?: string;
+    searchTarget?: 'services' | 'brands';
   }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const filterSheetRef = useRef<BottomSheetModal>(null);
   const categoryValue = useMemo(() => category || 'all', [category]);
 
+  const routeQuery = useMemo(() => {
+    if (Array.isArray(query)) return query[0]?.trim() || '';
+    return query?.trim() || '';
+  }, [query]);
+  const routeLocation = useMemo(() => {
+    if (Array.isArray(location)) return location[0]?.trim() || '';
+    return location?.trim() || '';
+  }, [location]);
+  const targetValue = useMemo(
+    () => (searchTarget === 'brands' ? 'brands' : 'services'),
+    [searchTarget],
+  );
+
   const [filters, setFilters] = useState<CategoryFilters>({
-    search: query || '',
+    search: routeQuery,
+    location: routeLocation,
     priceRange: { min: 0, max: 1000 },
     rating: [],
     distance: 20,
     sortBy: 'distance',
   });
 
+  useEffect(() => {
+    setFilters((prev) => {
+      if (prev.search === routeQuery && prev.location === routeLocation) {
+        return prev;
+      }
+
+      return { ...prev, search: routeQuery, location: routeLocation };
+    });
+  }, [routeLocation, routeQuery]);
+
   const handleCategoryChange = useCallback(
     (newCategory: string) => {
-      router.replace(
-        routes.category.view(newCategory === 'all' ? 'all' : newCategory),
-      );
+      const nextCategory = newCategory === 'all' ? 'all' : newCategory;
+      const trimmedSearch = filters.search.trim();
+      const trimmedLocation = filters.location.trim();
+
+      router.replace({
+        pathname: '/(category)/[category]',
+        params: {
+          category: nextCategory,
+          searchTarget: targetValue,
+          ...(trimmedSearch ? { query: trimmedSearch } : {}),
+          ...(trimmedLocation ? { location: trimmedLocation } : {}),
+        },
+      });
     },
-    [router],
+    [filters.location, filters.search, router, targetValue],
   );
 
   const handleFilterPress = useCallback(() => {
@@ -59,10 +93,20 @@ export default function CategoryScreen() {
   }, []);
 
   const handleSubmitSearch = useCallback(() => {
-    if (!filters.search.trim()) return;
+    const trimmedSearch = filters.search.trim();
+    const trimmedLocation = filters.location.trim();
+
     Feedback.light();
-    router.replace(routes.category.view(categoryValue));
-  }, [categoryValue, filters.search, router]);
+    router.replace({
+      pathname: '/(category)/[category]',
+      params: {
+        category: categoryValue,
+        searchTarget: targetValue,
+        ...(trimmedSearch ? { query: trimmedSearch } : {}),
+        ...(trimmedLocation ? { location: trimmedLocation } : {}),
+      },
+    });
+  }, [categoryValue, filters.location, filters.search, router, targetValue]);
 
   return (
     <SafeAreaView className="safe-area relative" edges={['top']}>
@@ -70,20 +114,12 @@ export default function CategoryScreen() {
         selectedCategory={categoryValue}
         onCategoryChange={handleCategoryChange}
       />
-      <Animated.ScrollView
-        bounces={false}
-        contentInsetAdjustmentBehavior="automatic"
-        scrollEventThrottle={16}
-        contentInset={{ bottom: insets.bottom }}
-        scrollIndicatorInsets={{ bottom: insets.bottom }}
-        showsVerticalScrollIndicator={false}
-      >
-        <ServiceGrid
-          category={categoryValue}
-          searchQuery={query}
-          filters={filters}
-        />
-      </Animated.ScrollView>
+      <CategoryGrid
+        category={categoryValue}
+        searchQuery={filters.search}
+        searchTarget={targetValue}
+        filters={filters}
+      />
       <CategoryFooter
         value={filters.search}
         onFilterPress={handleFilterPress}

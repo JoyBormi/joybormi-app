@@ -21,11 +21,9 @@ export interface IService {
   createdAt: string;
   updatedAt: string;
   ownerId: string;
-  ownerType: ServiceOwnerType;
 }
 
 export interface CreateServicePayload {
-  ownerType: ServiceOwnerType;
   name: string;
   description?: string;
   durationMins: number;

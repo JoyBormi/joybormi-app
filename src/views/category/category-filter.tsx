@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 
 export interface CategoryFilters {
   search: string;
+  location: string;
   priceRange: {
     min: number;
     max: number;
@@ -49,12 +50,14 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
     const activeFiltersCount = useMemo(() => {
       let count = 0;
       if (localFilters.search.trim().length > 0) count += 1;
+      if (localFilters.location.trim().length > 0) count += 1;
       if (localFilters.rating.length > 0) count += 1;
       if (localFilters.distance !== 20) count += 1;
       if (localFilters.sortBy !== 'distance') count += 1;
       return count;
     }, [
       localFilters.distance,
+      localFilters.location,
       localFilters.rating.length,
       localFilters.search,
       localFilters.sortBy,
@@ -96,6 +99,7 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
       Feedback.medium();
       const resetFilters: CategoryFilters = {
         search: '',
+        location: '',
         priceRange: { min: 0, max: 1000 },
         rating: [],
         distance: 20,
@@ -106,6 +110,10 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
 
     const handleSearchChange = useCallback((text: string) => {
       setLocalFilters((prev) => ({ ...prev, search: text }));
+    }, []);
+
+    const handleLocationChange = useCallback((text: string) => {
+      setLocalFilters((prev) => ({ ...prev, location: text }));
     }, []);
 
     return (
@@ -178,6 +186,18 @@ export const CategoryFilterSheet = forwardRef<BottomSheetModal, Props>(
               placeholder="Search"
               value={localFilters.search}
               onChangeText={handleSearchChange}
+              className="border border-border rounded-2xl px-4 py-2 bg-card"
+            />
+          </View>
+
+          <View className="mb-8">
+            <Text className="text-sm text-muted-foreground uppercase tracking-wider font-bold mb-3">
+              Location
+            </Text>
+            <Input
+              placeholder="City, state, or country"
+              value={localFilters.location}
+              onChangeText={handleLocationChange}
               className="border border-border rounded-2xl px-4 py-2 bg-card"
             />
           </View>

@@ -27,9 +27,10 @@ type SelectProps = {
   options: Option[];
   placeholder?: string;
   title?: string;
-  onBlur?: () => void;
   multi?: boolean;
   value: TFieldValue;
+  children?: React.ReactNode;
+  onBlur?: () => void;
   onChangeText: (value: TFieldValue) => void;
 };
 
@@ -39,10 +40,11 @@ export function Select({
   onChangeText,
   placeholder = 'Select...',
   multi = false,
+  children,
   title,
 }: SelectProps) {
   const { t } = useTranslation();
-  const [visible, setVisible] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const displayLabel = useMemo(() => {
     if (multi && Array.isArray(value)) {
@@ -62,32 +64,33 @@ export function Select({
       onChangeText?.(newValue as string[]);
     } else {
       onChangeText?.(itemValue as string);
-      setVisible(false);
+      setShowModal(false);
     }
   };
 
   return (
     <Fragment>
-      <Pressable
-        onPress={() => setVisible(true)}
-        className="h-14 bg-muted/50 rounded-md border border-input focus:border-border focus:bg-muted/70 px-3 flex-row items-center w-full justify-between"
-      >
-        <Text
-          className={cn(
-            'font-body native:leading-[1.25]',
-            value !== undefined && value !== ''
-              ? 'text-foreground'
-              : 'text-muted-foreground',
-          )}
-        >
-          {displayLabel}
-        </Text>
-        <ChevronDown size={18} className="text-muted-foreground shrink-0" />
+      <Pressable onPress={() => setShowModal(true)}>
+        {children ?? (
+          <View className="h-14 bg-muted/50 rounded-md border border-input focus:border-border focus:bg-muted/70 px-3 flex-row items-center w-full justify-between">
+            <Text
+              className={cn(
+                'font-body native:leading-[1.25]',
+                value !== undefined && value !== ''
+                  ? 'text-foreground'
+                  : 'text-muted-foreground',
+              )}
+            >
+              {displayLabel}
+            </Text>
+            <ChevronDown size={18} className="text-muted-foreground shrink-0" />
+          </View>
+        )}
       </Pressable>
 
       <Modal
         transparent
-        visible={visible}
+        visible={showModal}
         animationType="none"
         statusBarTranslucent
       >
@@ -98,22 +101,22 @@ export function Select({
             exiting={FadeOut.duration(150)}
             className="absolute inset-0 bg-black/20"
           >
-            <Pressable className="flex-1" onPress={() => setVisible(false)} />
+            <Pressable className="flex-1" onPress={() => setShowModal(false)} />
           </Animated.View>
 
           {/* Modal Container */}
           <Animated.View
             entering={ZoomIn.duration(250)}
             exiting={ZoomOut.duration(200)}
-            className="w-full max-w-sm max-h-[60%] min-h-[400px] overflow-hidden rounded-xl border border-border shadow-2xl bg-card"
+            className="w-full max-w-sm max-h-[60%] h-[280px] overflow-hidden rounded-xl border border-border shadow-2xl bg-card"
           >
             {/* Header */}
-            <View className="flex-row items-center justify-between px-6 py-5">
-              <Text className="text-lg font-semibold text-foreground">
+            <View className="flex-row items-center justify-between px-6 py-3 border-b border-border">
+              <Text className="font-subtitle text-foreground">
                 {title || placeholder}
               </Text>
               <Pressable
-                onPress={() => setVisible(false)}
+                onPress={() => setShowModal(false)}
                 className="p-2 rounded-full bg-secondary active:bg-secondary/80"
               >
                 <X size={16} className="text-foreground" />
@@ -141,12 +144,12 @@ export function Select({
                         'flex-1 p-4 mb-2 rounded-2xl border',
                         isSelected
                           ? 'bg-primary/80 border-primary/20'
-                          : 'bg-secondary/80 border-transparent active:bg-secondary/90',
+                          : 'bg-secondary border-border active:bg-secondary/90',
                       )}
                     >
                       <Text
                         className={cn(
-                          'text-base capitalize w-full font-montserrat-medium',
+                          'capitalize w-full font-body',
                           isSelected
                             ? 'font-semibold text-primary-foreground'
                             : 'text-foreground',
@@ -163,7 +166,7 @@ export function Select({
             {multi && (
               <View className="p-4 pt-2 absolute bottom-2 left-0 right-0 w-fit">
                 <Pressable
-                  onPress={() => setVisible(false)}
+                  onPress={() => setShowModal(false)}
                   className="w-full bg-primary py-4 rounded-2xl items-center active:opacity-90"
                 >
                   <Text className="text-primary-foreground font-semibold">

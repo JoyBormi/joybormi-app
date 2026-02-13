@@ -74,7 +74,7 @@ export const CategoryFooter = memo(function CategoryFooter({
             intensity={focused ? 90 : 40}
             tint="regular"
             className={cn(
-              'overflow-hidden rounded-full border border-border/50',
+              'overflow-hidden rounded-full border border-border/80',
               focused ? 'bg-card/95 shadow-xl flex-1' : 'bg-card/90 shadow-lg',
             )}
           >
@@ -87,9 +87,8 @@ export const CategoryFooter = memo(function CategoryFooter({
               onSubmitEditing={onSubmitEditing}
               maxLength={25}
               autoCapitalize="none"
-              placeholderTextColor="text-foreground/90"
               className={cn(
-                'rounded-full px-5 font-subtitle native:leading-[1.25] h-14 py-3 text-foreground',
+                'rounded-full px-5 placeholder:text-muted-foreground font-subtitle native:leading-[1.25] h-14 py-3 text-foreground',
                 focused ? 'w-full' : 'w-44 text-center',
               )}
             />

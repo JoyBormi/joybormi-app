@@ -24,7 +24,6 @@ import {
 import { toast } from '@/providers/toaster';
 import { useUserStore } from '@/stores';
 import { alert } from '@/stores/use-alert-store';
-import { ServiceOwnerType } from '@/types/service.type';
 import { EUserType } from '@/types/user.type';
 import { normalizeInput } from '@/utils/helpers';
 import { validateFormErrors } from '@/utils/validation';
@@ -124,7 +123,6 @@ const UpsertServiceScreen = () => {
     } else {
       await createService(
         {
-          ownerType: appType as unknown as ServiceOwnerType,
           name: data.name,
           description: data.description,
           durationMins: parseInt(data.durationMins),

@@ -27,6 +27,7 @@ import {
   EyeClosed,
   FileText,
   Globe,
+  HandPlatter,
   Heart,
   HelpCircle,
   Home,
@@ -147,6 +148,7 @@ iconWithClassName(Volume2);
 iconWithClassName(CheckCircle2);
 iconWithClassName(ShieldAlert);
 iconWithClassName(QrCode);
+iconWithClassName(HandPlatter);
 
 const Icons = {
   AlertCircle,
@@ -154,6 +156,7 @@ const Icons = {
   Bell,
   Calendar,
   CalendarDays,
+  HandPlatter,
   CalendarPlus,
   Check,
   CheckCircle,
