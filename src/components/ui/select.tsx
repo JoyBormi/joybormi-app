@@ -72,7 +72,7 @@ export function Select({
     <Fragment>
       <Pressable onPress={() => setShowModal(true)}>
         {children ?? (
-          <View className="h-14 bg-muted/50 rounded-md border border-input focus:border-border focus:bg-muted/70 px-3 flex-row items-center w-full justify-between">
+          <View pointerEvents='none' className="h-14 bg-muted/50 rounded-md border border-input focus:border-border focus:bg-muted/70 px-3 flex-row items-center w-full justify-between">
             <Text
               className={cn(
                 'font-body native:leading-[1.25]',

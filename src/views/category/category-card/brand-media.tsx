@@ -1,27 +1,22 @@
 import { Image } from 'expo-image';
-import { GestureResponderEvent, Pressable, StyleSheet, View } from 'react-native';
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from 'react-native-reanimated';
+import { GestureResponderEvent, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 
 import Icons from '@/components/icons';
-import { PaginationDot } from '@/components/shared/paginated-dots';
 import { cn } from '@/lib/utils';
 
 type BrandMediaProps = {
   brandId: string;
+  profileImage?: string | null;
   images: string[];
   cardWidth: number;
   isFavorite: boolean;
   heartAnimatedStyle: object;
   onToggleFavorite: (e: GestureResponderEvent) => void;
+  onPressBrand?: (brandId: string) => void;
 };
 
 const styles = StyleSheet.create({
-  carouselItem: {
-    width: '100%',
-  },
   imageFill: {
     width: '100%',
     height: '100%',
@@ -30,51 +25,36 @@ const styles = StyleSheet.create({
 
 export function BrandMedia({
   brandId,
+  profileImage,
   images,
   cardWidth,
   isFavorite,
   heartAnimatedStyle,
   onToggleFavorite,
+  onPressBrand,
 }: BrandMediaProps) {
-  const scrollX = useSharedValue(0);
-
-  const onScrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollX.value = event.contentOffset.x;
-    },
-  });
+  const VISIBLE_COUNT = 3;
+  const imageSize = Math.floor(cardWidth / VISIBLE_COUNT);
+  const mediaImages = [
+    profileImage,
+    ...images.filter((image) => image !== profileImage),
+  ]
+    .filter(Boolean)
+    .slice(0, 5) as string[];
 
   return (
-    <View className="relative h-56 w-full">
-      <Animated.ScrollView
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onScroll={onScrollHandler}
-        scrollEventThrottle={16}
-        decelerationRate="fast"
-      >
-        {images.map((image, idx) => (
-          <View
+    <View style={{ height: imageSize }} className="relative w-full">
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {mediaImages.map((image, idx) => (
+          <Pressable
             key={`${brandId}-${idx}`}
-            style={[styles.carouselItem, { width: cardWidth }]}
-            className="h-full"
+            onPress={() => onPressBrand?.(brandId)}
+            style={{ width: imageSize, height: imageSize }}
           >
             <Image source={{ uri: image }} style={styles.imageFill} contentFit="cover" />
-          </View>
+          </Pressable>
         ))}
-      </Animated.ScrollView>
-
-      <View className="absolute bottom-3 left-0 right-0 flex-row justify-center">
-        {images.map((_, idx) => (
-          <PaginationDot
-            key={`${brandId}-dot-${idx}`}
-            index={idx}
-            scrollX={scrollX}
-            CARD_WIDTH={cardWidth}
-          />
-        ))}
-      </View>
+      </ScrollView>
 
       <Pressable
         onPress={onToggleFavorite}
@@ -90,4 +70,3 @@ export function BrandMedia({
     </View>
   );
 }
-

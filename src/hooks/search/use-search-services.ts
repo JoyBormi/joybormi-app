@@ -12,10 +12,12 @@ type SearchServicesResponse = {
 
 export type SearchService = {
   id?: string;
-  serviceId?: string;
+  serviceId: string;
   brandId: string;
   brandName: string;
   brandLocation?: string;
+  businessCategory?: string;
+  brandWorkingFields?: string[];
   brandProfileImage?: string | { url?: string; uri?: string; path?: string } | null;
   brandImages?: Array<string | { url?: string; uri?: string; path?: string }>;
   serviceName: string;
@@ -23,11 +25,7 @@ export type SearchService = {
   currency: string;
   price: number;
   workerName?: string;
-  workerWorkingHours?: Array<{
-    dayOfWeek: string;
-    startTime: string;
-    endTime: string;
-  }>;
+  workerProfilePic?: string | { url?: string; uri?: string; path?: string } | null;
 };
 
 type SearchServicesQuery = {
@@ -87,8 +85,6 @@ export const useSearchServices = ({
     getNextPageParam: (lastPage) => {
       return lastPage.services.nextCursor ?? undefined;
     },
-    enabled:
-      enabled ??
-      Boolean(normalizedQ || normalizedCategory || normalizedLocation || brandId),
+    enabled: enabled ?? true,
   });
 };

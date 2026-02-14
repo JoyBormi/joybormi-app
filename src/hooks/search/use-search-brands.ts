@@ -15,6 +15,8 @@ export type SearchBrand = {
   brandId: string;
   brandName: string;
   brandLocation?: string;
+  businessCategory?: string;
+  brandWorkingFields?: string[];
   brandProfileImage?: string | { url?: string; uri?: string; path?: string } | null;
   brandImages?: Array<string | { url?: string; uri?: string; path?: string }>;
 };
@@ -69,6 +71,6 @@ export const useSearchBrands = ({
     getNextPageParam: (lastPage) => {
       return lastPage.brands.nextCursor ?? undefined;
     },
-    enabled: enabled ?? Boolean(normalizedQ || normalizedCategory || normalizedLocation),
+    enabled: enabled ?? true,
   });
 };

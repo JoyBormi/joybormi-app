@@ -5,6 +5,8 @@ import Icons from '@/components/icons';
 type CardMetaProps = {
   brandName: string;
   brandLocation?: string;
+  businessCategory?: string;
+  brandWorkingFields?: string[];
   mode: 'services' | 'brands';
   serviceCount: number;
 };
@@ -12,9 +14,13 @@ type CardMetaProps = {
 export function CardMeta({
   brandName,
   brandLocation,
+  businessCategory,
+  brandWorkingFields,
   mode,
   serviceCount,
 }: CardMetaProps) {
+  const fieldsLabel = (brandWorkingFields || []).filter(Boolean).join(' • ');
+
   return (
     <>
       <View className="mb-2 flex-row items-start justify-between">
@@ -39,7 +45,17 @@ export function CardMeta({
           </Text>
         </View>
       </View>
+
+      {businessCategory ? (
+        <Text className="mb-1 text-xs font-medium text-foreground" numberOfLines={1}>
+          {businessCategory}
+        </Text>
+      ) : null}
+      {fieldsLabel ? (
+        <Text className="mb-3 text-xs text-muted-foreground" numberOfLines={1}>
+          {fieldsLabel}
+        </Text>
+      ) : null}
     </>
   );
 }
-

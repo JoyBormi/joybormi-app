@@ -52,14 +52,13 @@ export function SearchBar({ className }: Props) {
 
   const handleSearch = () => {
     const trimmedSearch = search.trim();
-    if (!trimmedSearch) return;
 
     router.push({
       pathname: '/(category)/[category]',
       params: {
         category: 'all',
-        query: trimmedSearch,
         searchTarget: searchTarget as string,
+        ...(trimmedSearch ? { query: trimmedSearch } : {}),
       },
     });
 
@@ -149,9 +148,9 @@ export function SearchBar({ className }: Props) {
         >
           <View className="px-4 h-14 flex items-center justify-center bg-card/80 rounded-full border border-border">
             {searchTarget === 'services' ? (
-              <Icons.HandPlatter size={20} />
+              <Icons.HandPlatter size={20} className="text-muted-foreground" />
             ) : (
-              <Icons.Store size={20} />
+              <Icons.Store size={20} className="text-muted-foreground" />
             )}
           </View>
         </Select>

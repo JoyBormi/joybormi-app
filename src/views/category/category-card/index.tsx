@@ -28,9 +28,49 @@ const styles = StyleSheet.create({
 const CARD_MARGIN = 16;
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 2;
+const FALLBACK_IMAGES = [
+  'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800',
+  'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800',
+  'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800',
+];
+
+const normalizeImageValue = (value: unknown): string | null => {
+  if (!value) return null;
+
+  if (typeof value === 'string') {
+    const raw = value.trim();
+    if (!raw) return null;
+    if (/^(https?:\/\/|file:\/\/|content:\/\/|data:|asset:)/i.test(raw)) {
+      return raw;
+    }
+    try {
+      return normalizeFileUrl(raw);
+    } catch {
+      return raw;
+    }
+  }
+
+  if (typeof value !== 'object') return null;
+
+  const candidate = value as Record<string, unknown>;
+  const urls = [
+    candidate.url,
+    candidate.uri,
+    candidate.path,
+    candidate.src,
+    candidate.imageUrl,
+    candidate.fileUrl,
+  ];
+
+  for (const url of urls) {
+    const parsed = normalizeImageValue(url);
+    if (parsed) return parsed;
+  }
+
+  return normalizeImageValue(candidate.file) || normalizeImageValue(candidate.data);
+};
 
 export function CategoryCard({ item, index, mode, onPress }: CategoryCardProps) {
-  console.log("🚀 ~ CategoryCard ~ item:", item)
   const scale = useSharedValue(1);
   const heartScale = useSharedValue(1);
   const heartRotate = useSharedValue(0);
@@ -38,12 +78,13 @@ export function CategoryCard({ item, index, mode, onPress }: CategoryCardProps) 
 
   const imagesToShow = useMemo(() => {
     const merged = [
-      ...(item.brandImages || []).map((img) => normalizeFileUrl(img)),
+      normalizeImageValue(item.brandProfileImage),
+      ...(item.brandImages || []).map((img) => normalizeImageValue(img)),
     ].filter(Boolean) as string[];
 
     const uniqueImages = Array.from(new Set(merged));
     if (uniqueImages.length > 0) return uniqueImages.slice(0, 5);
-    return [];
+    return FALLBACK_IMAGES;
   }, [item.brandImages, item.brandProfileImage]);
 
   const cardAnimatedStyle = useAnimatedStyle(() => ({
@@ -82,11 +123,13 @@ export function CategoryCard({ item, index, mode, onPress }: CategoryCardProps) 
       >
         <BrandMedia
           brandId={item.brandId}
+          profileImage={normalizeImageValue(item.brandProfileImage)}
           images={imagesToShow}
           cardWidth={CARD_WIDTH}
           isFavorite={isFavorite}
           heartAnimatedStyle={heartAnimatedStyle}
           onToggleFavorite={toggleFavorite}
+          onPressBrand={onPress}
         />
 
         <Pressable
@@ -98,16 +141,20 @@ export function CategoryCard({ item, index, mode, onPress }: CategoryCardProps) 
           <CardMeta
             brandName={item.brandName}
             brandLocation={item.brandLocation}
+            businessCategory={item.businessCategory}
+            brandWorkingFields={item.brandWorkingFields}
             mode={mode}
             serviceCount={item.services.length}
           />
+        </Pressable>
 
+        <Animated.View className="px-4 pb-4">
           {mode === 'services' ? (
             <ServiceStrip brandId={item.brandId} services={item.services} />
           ) : (
             <ServiceStrip brandId={item.brandId} services={[]} />
           )}
-        </Pressable>
+        </Animated.View>
       </Animated.View>
     </MotiView>
   );

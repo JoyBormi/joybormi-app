@@ -3,7 +3,6 @@ import { MotiView } from 'moti';
 import { useCallback, useMemo } from 'react';
 import { FlatList, Text, View } from 'react-native';
 
-import { routes } from '@/constants/routes';
 import {
   SearchService,
   useSearchBrands,
@@ -51,9 +50,7 @@ export function CategoryGrid({
     q: activeSearch,
     category: activeCategory,
     location: activeLocation,
-    enabled:
-      searchTarget === 'services' &&
-      Boolean(activeSearch || activeCategory || activeLocation),
+    enabled: searchTarget === 'services',
   });
 
   const services = useMemo(() => {
@@ -71,9 +68,7 @@ export function CategoryGrid({
     q: activeSearch,
     category: activeCategory,
     location: activeLocation,
-    enabled:
-      searchTarget === 'brands' &&
-      Boolean(activeSearch || activeCategory || activeLocation),
+    enabled: searchTarget === 'brands',
   });
 
   const brands = useMemo(() => {
@@ -87,6 +82,8 @@ export function CategoryGrid({
           brandId: brand.brandId || brand.id || '',
           brandName: brand.brandName,
           brandLocation: brand.brandLocation,
+          businessCategory: brand.businessCategory,
+          brandWorkingFields: brand.brandWorkingFields,
           brandProfileImage: brand.brandProfileImage,
           brandImages: brand.brandImages,
           services: [],
@@ -112,6 +109,8 @@ export function CategoryGrid({
         brandId: first.brandId,
         brandName: first.brandName,
         brandLocation: first.brandLocation,
+        businessCategory: first.businessCategory,
+        brandWorkingFields: first.brandWorkingFields,
         brandProfileImage: first.brandProfileImage,
         brandImages: first.brandImages,
         services: serviceItems,
@@ -151,7 +150,10 @@ export function CategoryGrid({
 
   const handleBrandPress = useCallback(
     (brandId: string) => {
-      router.push(routes.brand.details(brandId));
+      router.push({
+        pathname: '/(screens)/(brand)/[id]',
+        params: { id: brandId },
+      });
     },
     [router],
   );
@@ -169,18 +171,6 @@ export function CategoryGrid({
     },
     [handleBrandPress, searchTarget],
   );
-
-  if (!activeSearch && !activeCategory && !activeLocation) {
-    return (
-      <View className="flex-1 items-center justify-center px-4 py-20">
-        <Text className="font-body text-center text-muted-foreground">
-          {searchTarget === 'brands'
-            ? 'Type a keyword to search brands.'
-            : 'Type a keyword to search services.'}
-        </Text>
-      </View>
-    );
-  }
 
   if (isPending) {
     return (
