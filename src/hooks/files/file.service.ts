@@ -76,8 +76,10 @@ const normalizeFilesResponse = (
   return [];
 };
 
-export const normalizeFileUrl = (url: string): string => {
+export const normalizeFileUrl = (url?: string): string => {
   const r2Url = appConfig.api.r2BaseUrl;
+
+  if (!url) return '';
 
   // If backend already returns an absolute URL (R2 public URL), keep it as-is.
   if (/^https?:\/\//i.test(url)) {
@@ -152,7 +154,7 @@ export const uploadMultipleFiles = async ({
     ),
   );
 
-  return normalizeFilesResponse(uploads as UploadMultipleFilesApiResponse);
+  return normalizeFilesResponse(uploads);
 };
 
 export const getFileMetadata = async (id: string): Promise<IFile> =>

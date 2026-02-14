@@ -299,10 +299,10 @@ PODS:
   - libwebp/sharpyuv (1.5.0)
   - libwebp/webp (1.5.0):
     - libwebp/sharpyuv
-  - lottie-ios (4.5.0)
-  - lottie-react-native (7.3.5):
+  - lottie-ios (4.6.0)
+  - lottie-react-native (7.3.6):
     - hermes-engine
-    - lottie-ios (= 4.5.0)
+    - lottie-ios (= 4.6.0)
     - RCTRequired
     - RCTTypeSafety
     - React-Core
@@ -349,7 +349,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - NitroModules (0.33.7):
+  - NitroModules (0.33.9):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2778,11 +2778,11 @@ SPEC CHECKSUMS:
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
-  lottie-ios: a881093fab623c467d3bce374367755c272bdd59
-  lottie-react-native: 8e5dd0e51847600666057d2c9b95815ac9fdb165
+  lottie-ios: 8f959969761e9c45d70353667d00af0e5b9cadb3
+  lottie-react-native: 6a080b2f109ef611c75c503a33ebb8ea75db0c91
   MMKVCore: f2dd4c9befea04277a55e84e7812f930537993df
   NitroMmkv: c9fd61d98afd00a6e4e1656a415c28f7be0fd74e
-  NitroModules: a5ca899bb0c1326c937f11de6b050a467c5a12de
+  NitroModules: 97978583f36f88f7a348d5bf986d94bc4b340d0a
   RCTDeprecation: 943572d4be82d480a48f4884f670135ae30bf990
   RCTRequired: 8f3cfc90cc25cf6e420ddb3e7caaaabc57df6043
   RCTTypeSafety: 16a4144ca3f959583ab019b57d5633df10b5e97c

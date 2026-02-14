@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { MotiView } from 'moti';
 import { useCallback, useMemo } from 'react';
-import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 
 import { routes } from '@/constants/routes';
 import {
@@ -10,27 +10,13 @@ import {
   useSearchServices,
 } from '@/hooks/search';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CategoryCard } from './category-card';
-import { CategoryFilters } from './category-filter';
+import { CategoryCardSkeleton } from './category-skeleton';
+import { BrandCardModel, CategoryGridProps, SKELETON_ITEMS } from './category.types';
 
-interface CategoryGridProps {
-  category: string;
-  searchQuery?: string;
-  searchTarget?: 'services' | 'brands';
-  filters?: CategoryFilters;
-}
 
-type BrandCardModel = {
-  brandId: string;
-  brandName: string;
-  brandLocation?: string;
-  brandProfileImage?:
-    | string
-    | { url?: string; uri?: string; path?: string }
-    | null;
-  brandImages?: Array<string | { url?: string; uri?: string; path?: string }>;
-  services: SearchService[];
-};
+
 
 export function CategoryGrid({
   category,
@@ -39,6 +25,7 @@ export function CategoryGrid({
   filters,
 }: CategoryGridProps) {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const activeSearch = useMemo(
     () => filters?.search?.trim() || searchQuery?.trim() || '',
@@ -68,8 +55,6 @@ export function CategoryGrid({
       searchTarget === 'services' &&
       Boolean(activeSearch || activeCategory || activeLocation),
   });
-
-  console.log(`STRINGIFIED 👉:`, JSON.stringify(serviceData, null, 2));
 
   const services = useMemo(() => {
     return serviceData?.pages.flatMap((page) => page.services.data) ?? [];
@@ -164,6 +149,13 @@ export function CategoryGrid({
     searchTarget,
   ]);
 
+  const handleBrandPress = useCallback(
+    (brandId: string) => {
+      router.push(routes.brand.details(brandId));
+    },
+    [router],
+  );
+
   const renderItem = useCallback(
     ({ item, index }: { item: BrandCardModel; index: number }) => {
       return (
@@ -171,11 +163,11 @@ export function CategoryGrid({
           item={item}
           index={index}
           mode={searchTarget}
-          onPress={(brandId) => router.push(routes.brand.details(brandId))}
+          onPress={handleBrandPress}
         />
       );
     },
-    [router, searchTarget],
+    [handleBrandPress, searchTarget],
   );
 
   if (!activeSearch && !activeCategory && !activeLocation) {
@@ -192,9 +184,13 @@ export function CategoryGrid({
 
   if (isPending) {
     return (
-      <View className="flex-1 items-center justify-center py-20">
-        <ActivityIndicator />
-      </View>
+      <FlatList
+        data={SKELETON_ITEMS}
+        keyExtractor={(item) => `category-skeleton-${item}`}
+        renderItem={() => <CategoryCardSkeleton />}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 24 }}
+        showsVerticalScrollIndicator={false}
+      />
     );
   }
 
@@ -221,13 +217,13 @@ export function CategoryGrid({
       data={brandCards}
       renderItem={renderItem}
       keyExtractor={(item) => item.brandId}
-      contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 24 }}
+      contentContainerStyle={{ padding:16, paddingBottom: insets.bottom + 50 }}
       onEndReached={loadMore}
       onEndReachedThreshold={0.45}
       ListFooterComponent={
         isFetchingNextPage ? (
-          <View className="items-center py-4">
-            <ActivityIndicator />
+          <View className="px-4 pb-4">
+            <CategoryCardSkeleton />
           </View>
         ) : null
       }

@@ -12,6 +12,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		246CE7C36BDED35797112CB4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = BB48BC046C4371D439D7ED7D /* PrivacyInfo.xcprivacy */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		555AF4978D394599A529D28A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F774A6D41BA14C8C959C804B /* InfoPlist.strings */; };
 		8AC100A66DEF48F09B9E4EAA /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3DB6D51C7C104606BDD852B4 /* Montserrat-Regular.ttf */; };
 		A11F4126BEE4AFC210627DC4 /* libPods-JoyBormi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FF617276648E60EE4BBF4D5 /* libPods-JoyBormi.a */; };
 		AB62AC1324654E559D5A8782 /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 673EAD2BD4BE4BA780BA2A26 /* Montserrat-Medium.ttf */; };
@@ -39,6 +40,7 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = JoyBormi/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* JoyBormi-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "JoyBormi-Bridging-Header.h"; path = "JoyBormi/JoyBormi-Bridging-Header.h"; sourceTree = "<group>"; };
+		F774A6D41BA14C8C959C804B /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FF5DB5779FAC4E60B0C10D4E /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Bold.ttf"; path = "../src/assets/fonts/Montserrat-Bold.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -135,12 +137,22 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B899AC8F9A2548169DE1EE8B /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				F774A6D41BA14C8C959C804B /* InfoPlist.strings */,
+			);
+			name = en.lproj;
+			path = "";
+			sourceTree = "<group>";
+		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
 				BB2F792C24A3F905000567C9 /* Expo.plist */,
 				4478D71B1C9A4A08A6D21DEF /* ru.lproj */,
 				F01DBF1057244F5F82178BF3 /* uz.lproj */,
+				B899AC8F9A2548169DE1EE8B /* en.lproj */,
 			);
 			name = Supporting;
 			path = JoyBormi/Supporting;
@@ -244,6 +256,7 @@
 				AB62AC1324654E559D5A8782 /* Montserrat-Medium.ttf in Resources */,
 				B49540B0974F43CA965A0EEC /* Montserrat-Bold.ttf in Resources */,
 				246CE7C36BDED35797112CB4 /* PrivacyInfo.xcprivacy in Resources */,
+				555AF4978D394599A529D28A /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
